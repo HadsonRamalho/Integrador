@@ -2,7 +2,10 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title> Projeto Integrador </title>
+    
+
 </head>
 
 <body>
