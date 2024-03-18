@@ -12,7 +12,6 @@
         echo "Práticas Profissionais Integradoras I";
     ?>
 
-
 </body>
 
 </html>
