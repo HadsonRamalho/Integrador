@@ -24,6 +24,19 @@
   font-weight: bold ;
 }
 
+.formLogin {
+  margin: 0;
+  padding-top: 15vh;
+  display: flex;
+  flex-direction: column; /* Alteração para alinhar na vertical */
+  align-items: center; /* Centralizar os itens na vertical */
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+  line-height: 20px;
+}
+
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -35,10 +48,11 @@
   filter: drop-shadow(0 0 2em #db2424);
 }
 
-.row {
-  display: flex;
-  justify-content: center;
+.row input {
+  display: block;
+  margin-bottom: 10px; /* Espaçamento entre os inputs */
 }
+
 
 a {
   font-weight: 500;
@@ -85,8 +99,14 @@ button {
   outline: none;
 }
 
-#greet-input {
+#email-input {
   margin-right: 5px;
+  margin-top: 10px;
+}
+
+#senha-input{
+  margin-right: 6px;
+  margin-top: 10px;
 }
 
 #box{
@@ -105,20 +125,23 @@ button {
 #subtituloForm{
   font-family: serif;
   font-size: 20px;
+  text-align: center;
 }
 
-#campoEmailForm{
+#camposLoginForm{
   position: fixed; 
   top: 30%; 
   left: 50%; 
   transform:translate(-50%, -50%);
+  line-height: 26px;
 }
 
 #campoSenhaForm{
   position: fixed; 
-  top: 56%; 
+  top: 63%; 
   left: 50%; 
   transform:translate(-50%, -50%);
+  line-height: 26px;
 }
 
 #botaoConfirmarForm{
@@ -134,6 +157,16 @@ button {
   font-size: 12px;
   left: 39%;
   position: fixed;
+}
+
+#mensagemLogin{
+  font-size: 12px;
+  text-align: center;
+  top: 10%;
+  line-height: 14px; 
+  position: relative;
+  margin-right: 6px;
+  margin-top: 10px;
 }
 
 @media (prefers-color-scheme: dark) {

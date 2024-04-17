@@ -11,6 +11,9 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     setGreetMsg(await invoke("greet", { name }));
   }
+  async function greet2(){
+    setGreetMsg(await invoke("greet2", {name}));
+  }
   
   return (
     <div className="container">
@@ -19,7 +22,7 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          greet();
+          greet2();
         }}
       >
         <input
@@ -35,4 +38,71 @@ function App() {
   );
 }
 
-export default App;
+function SignUp(){
+  return (
+    <div className="formLogin">
+      <p>TESTE</p>
+      <form
+        className="row"
+      >
+        <input required
+          id="email-input"
+          placeholder="Novo email..." 
+        />  
+        <input required
+          id="senha-input"
+          placeholder="Nova senha..."
+        />
+      <p id="mensagemLogin">  </p>
+      <button type="submit">Procurar</button>
+      </form>
+    </div>
+  );
+}
+
+function Login(){
+  const [mensagemEmail, setMensagemEmail] = useState("");
+  const [email, setEmail] = useState("");
+
+  const [mensagemSenha, setMensagemSenha] = useState("");
+  const [senha, setSenha] = useState("");
+
+  async function loginEmail() {
+    setMensagemEmail(await invoke("loginEmail", { email }));
+  }
+
+  async function loginSenha(){
+    setMensagemSenha(await invoke("loginSenha", {email, senha}));
+  }
+  
+  return (
+    <div className="formLogin">
+      <p>[DEV | Back] Testando email e senha</p>
+      <form
+        className="row"
+        onSubmit={(e) => {
+          e.preventDefault();
+          loginEmail();
+          loginSenha();
+        }}
+      >
+        <input required
+          id="email-input"
+          onChange={(e) => setEmail(e.currentTarget.value)}
+          placeholder="E-mail a ser procurado..." 
+        />  
+        <input required
+          id="senha-input"
+          onChange={(e) => setSenha(e.currentTarget.value)}
+          placeholder="Senha a ser procurada..."
+        />
+      <p id="mensagemLogin"> {mensagemEmail} <br></br >{mensagemSenha} </p>
+      <button type="submit">Procurar</button>
+      </form>
+    </div>
+  );
+}
+
+
+
+export default Login;
