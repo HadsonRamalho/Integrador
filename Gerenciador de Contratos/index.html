@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -9,6 +9,29 @@
 
   <body>
     <div id="root"></div>
+    <form id="loginForm">
+      <div id="box">
+        <p id="subtituloForm">CONECTE-SE</p>
+        <div id="campoEmailForm">
+        <label for="email"> Email </label>
+        <input type="text" id="email" name="email" required>
+        </div>
+      <div id="campoSenhaForm">
+        <label for="senha"> Senha </label>
+        <input type="password" id="senha" name="senha" required>
+      </div>
+      <div id="botaoConfirmarForm"> 
+      <button type="submit">Confirmar</button>
+      </div>
+      <div>
+        <button id="botaoCriarContaForm" type="button">
+          Criar conta
+        </button>
+      </div>
+    </div>
+
+    </form>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
