@@ -11,12 +11,20 @@ function SignUp(){
           className="rowSignUp"
         >
           <input required
+            id="nome-input"
+            placeholder="Nome completo..."
+            />
+          <input required
             id="email-input"
-            placeholder="Novo email..." 
+            placeholder="Seu email..." 
           />  
           <input required
             id="senha-input"
-            placeholder="Nova senha..."
+            placeholder="Sua senha..."
+          />
+          <input required
+            id="senha-input"
+            placeholder="Confirme sua senha..."
           />
         <p id="mensagemSignUp">  </p>
         <button type="submit">Criar</button>

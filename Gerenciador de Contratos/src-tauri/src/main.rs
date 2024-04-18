@@ -2,27 +2,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    let mut vet_usuarios:[Usuario;10] = Default::default();
-    let mut encontrado = false;
-    vet_usuarios[0].email = "user1@u.com".to_string();
-    vet_usuarios[1].email = "user2@u.com".to_string();
-    vet_usuarios[3].email = "user3@u.com".to_string();
-    let mut indice:u32 = 0;
-    for i in vet_usuarios.iter() {
-        indice +=1 ;
-        if i.email.eq_ignore_ascii_case(name.trim()) {
-            encontrado = true;            
-            break;
-        }
-    }
-    if(encontrado){
-        format!("E-mail {} encontrado!", name)
-    } else {
-        format!("E-mail {} não existe na base de dados! Verifique se escreveu corretamente ou tente criar uma nova conta.", name)
-    }
-}
 
 fn inicializa_usuarios(){
     let mut vet_usuarios:[Usuario;10] = Default::default();
@@ -58,21 +37,20 @@ fn loginEmail(email: &str) -> String {
     }
 }
 
-fn verifica_senha(u: &Usuario, senha: &str) -> String{
+fn verifica_senha(u: &Usuario, senha: &str) -> (String, bool){
     let vazio = "";
     let mut encontrado = false;
     if u.senha.eq_ignore_ascii_case(senha.trim()) {
        encontrado = true;            
     }
     if(encontrado){
-        format!("Senha {} correta!", vazio)
-    } else {
-        format!("Senha {} incorreta.", vazio)
-    }
+        return (format!("Senha {} correta!", vazio), true)
+    }        
+    return (format!("Senha {} incorreta.", vazio), false)
 }
 
 #[tauri::command]
-fn loginSenha(email: &str, senha: &str) -> String{
+fn loginSenha(email: &str, senha: &str) -> (String, bool){
     let mut vet_usuarios:[Usuario;10] = Default::default();
     let mut encontrado = false;
     let mut email_encontrado = false;
@@ -89,11 +67,10 @@ fn loginSenha(email: &str, senha: &str) -> String{
         if i.email.eq_ignore_ascii_case(email.trim()) {
             email_encontrado = true;
             let u = i;
-            return verifica_senha(u, senha);
-            
+            return verifica_senha(u, senha);            
         }
     }
-    format!("{}", vazio)
+    return (format!("{}", vazio), false)
     
 }
 
@@ -104,7 +81,7 @@ struct Usuario{
 
 fn main() {
     tauri::Builder::default()
-       .invoke_handler(tauri::generate_handler![greet, loginEmail, loginSenha])
+       .invoke_handler(tauri::generate_handler![ loginEmail, loginSenha])
        .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
