@@ -39,6 +39,7 @@ function Login(){
           onChange={(e) => setSenha(e.currentTarget.value)}
           placeholder="Senha a ser procurada..."
         />
+        <button type="button" id="resetSenha">Resetar senha</button>
       <p id="mensagemLogin"> {mensagemEmail} <br></br >{mensagemSenha} </p>
       <button type="submit">Procurar</button>
       </form>

@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import SignUp from "./cria_conta";
+import ResetSenha from "./reset_senha";
 import "./styles.css";
 
-ReactDOM.createRoot(document.getElementById("subtituloForm")).render(
+  ReactDOM.createRoot(document.getElementById("subt")).render(
     <React.StrictMode>
-      <SignUp />
+      <ResetSenha />
     </React.StrictMode>
   );  

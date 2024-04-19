@@ -12,3 +12,7 @@ ReactDOM.createRoot(document.getElementById("camposLoginForm")).render(
 document.getElementById("botaoCriarContaForm").addEventListener("click", function() {
   window.location.href = "criar_conta.html";
 });
+
+document.getElementById("resetSenha").addEventListener("click", function() {
+  window.location.href = "reseta_senha.html";
+});
