@@ -15,7 +15,10 @@ function Login(){
   }
 
   async function loginSenha(){
-    setMensagemSenha(await invoke("loginSenha", {email, senha}));
+    const retorno = await invoke("loginSenha", {email, senha});
+    const [mensagem, sucesso] = retorno;
+    setMensagemSenha(mensagem);
+    console.log(sucesso);
   }
   
   return (
