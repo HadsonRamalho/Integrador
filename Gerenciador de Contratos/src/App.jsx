@@ -11,11 +11,11 @@ function Login(){
   const [senha, setSenha] = useState("");
 
   async function loginEmail() {
-    setMensagemEmail(await invoke("loginEmail", { email }));
+    setMensagemEmail(await invoke("login_email", { email }));
   }
 
   async function loginSenha(){
-    const retorno = await invoke("loginSenha", {email, senha});
+    const retorno = await invoke("login_senha", {email, senha});
     const [mensagem, sucesso] = retorno;
     setMensagemSenha(mensagem);
     console.log(sucesso);
