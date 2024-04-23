@@ -3,22 +3,24 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
-fn inicializa_usuarios() -> [Usuario ; 10]{
-    let mut vet_usuarios:[Usuario;10] = Default::default();
-    vet_usuarios[0].email = "user1@u.com".to_string();
-    vet_usuarios[1].email = "user2@u.com".to_string();
-    vet_usuarios[3].email = "user3@u.com".to_string();
+fn inicializa_usuarios() -> Vec<Usuario>{
+    let mut vet_users:Vec<Usuario> = Vec::new();
 
-    vet_usuarios[0].senha = "s1".to_string();
-    vet_usuarios[1].senha = "s2".to_string();
-    vet_usuarios[3].senha = "s3".to_string();
-    return (vet_usuarios)
+    vet_users.push(Usuario{email: "user1@u.com".to_string(), senha: "s1".to_string(), nome: "nome1".to_string(), UID: 00});
+    vet_users.push(Usuario{email: "user2@u.com".to_string(), senha: "s2".to_string(), nome: "nome2".to_string(), UID: 00});
+    vet_users.push(Usuario{email: "user3@u.com".to_string(), senha: "s3".to_string(), nome: "nome3".to_string(), UID: 00});
+
+    return (vet_users)
 }
 
 #[tauri::command]
 fn loginEmail(email: &str) -> String {
     let mut vet_usuarios:[Usuario;10] = Default::default();
     let mut encontrado = false;
+    let vazio = "";
+    if(email == vazio){
+        return format!("Campo de e-mail não deve ficar em branco {}", vazio)
+    }
     vet_usuarios[0].email = "user1@u.com".to_string();
     vet_usuarios[1].email = "user2@u.com".to_string();
     vet_usuarios[3].email = "user3@u.com".to_string();
@@ -30,7 +32,6 @@ fn loginEmail(email: &str) -> String {
             break;
         }
     }
-    let vazio = "";
     if(encontrado){
         format!("E-mail {} encontrado!", vazio)
     } else {
