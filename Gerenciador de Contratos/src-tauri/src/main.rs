@@ -101,7 +101,7 @@ fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> S
     if let Ok(mut usuarios) = resultado_importacao {
         let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string(), 00);
         if usuarios.email_repetido(email){
-            return format!("Erro: Esse email já está sendo utilizado.")
+            return format!("Erro: Esse e-mail já está sendo utilizado.")
         }
         usuarios.adiciona_usuario(usuario);
         
