@@ -40,7 +40,7 @@ function SignUp(){
           <input required
             id="email-input"
             onChange={(e) => setEmail(e.currentTarget.value)}
-            placeholder="E-mail a ser procurado..." 
+            placeholder="E-mail " 
           />
           <input required
             id="senha-input"

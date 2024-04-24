@@ -35,16 +35,17 @@ function Login(){
         <input required
           id="email-input"
           onChange={(e) => setEmail(e.currentTarget.value)}
-          placeholder="E-mail a ser procurado..." 
+          placeholder="E-mail " 
         />  
         <input required
           id="senha-input"
           onChange={(e) => setSenha(e.currentTarget.value)}
-          placeholder="Senha a ser procurada..."
+          placeholder="Senha"
+          type="password"
         />
-        <button type="button" id="resetSenha">Resetar senha</button>
       <p id="mensagemLogin"> {mensagemEmail} <br></br >{mensagemSenha} </p>
-      <button type="submit">Procurar</button>
+  
+      <button type="submit">Entrar</button>
       </form>
     </div>
   );
