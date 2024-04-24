@@ -9,8 +9,7 @@ use bincode::serialize;
 use serde::{Deserialize, Serialize};
 use bincode::deserialize;
 
-#[derive(Debug, Serialize, Deserialize)]
-#[derive(Default)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 struct Usuario{
     nome:String, email:String, senha:String, uid:u32
 }
@@ -21,8 +20,7 @@ impl Usuario{
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[derive(Default)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 struct Usuarios{
     usuarios: Vec<Usuario>, qtd: u32
 }
