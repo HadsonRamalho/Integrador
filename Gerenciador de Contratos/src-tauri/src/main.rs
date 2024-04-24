@@ -3,101 +3,157 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
-fn inicializa_usuarios() -> [Usuario; 10] {
-    let mut vet_usuarios: [Usuario; 10] = Default::default();
-    vet_usuarios[0].email = "user1@u.com".to_string();
-    vet_usuarios[1].email = "user2@u.com".to_string();
-    vet_usuarios[3].email = "user3@u.com".to_string();
+use std::fs::File;
+use std::io::{self, Read, Write};
+use bincode::serialize;
+use serde::{Deserialize, Serialize};
+use bincode::deserialize;
 
-    vet_usuarios[0].senha = "s1".to_string();
-    vet_usuarios[1].senha = "s2".to_string();
-    vet_usuarios[3].senha = "s3".to_string();
-    return (vet_usuarios);
+#[derive(Debug, Serialize, Deserialize)]
+#[derive(Default)]
+struct Usuario{
+    nome:String, email:String, senha:String, uid:u32
+}
+
+impl Usuario{
+    fn novo_usuario(nome: String, email: String, senha: String, uid: u32) -> Self{
+        Usuario {nome, email, senha, uid}
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[derive(Default)]
+struct Usuarios{
+    usuarios: Vec<Usuario>, qtd: u32
+}
+
+impl Usuarios{
+    fn adiciona_usuario(&mut self, usuario: Usuario){
+        self.usuarios.push(usuario)
+    }
+
+    fn email_repetido(&self, email: &str) -> bool{
+        for u in self.usuarios.as_slice(){
+            if u.email.eq_ignore_ascii_case(email){
+                return true
+            }
+        }
+        return false
+    }
+    
+    fn autentica(&self, email: &str, senha: &str) -> bool{
+        if self.email_repetido(email){
+            for u in self.usuarios.as_slice(){
+                if u.senha.eq(senha){
+                    return true
+                }
+            }
+        }        
+        return false
+    }
+}
+
+fn exportar_arquivo(usuarios: &Usuarios) -> io::Result<()> {
+    let file_path = "usuarios.bin";
+    let encoded: Vec<u8> = serialize(usuarios).map_err(|e| {
+        io::Error::new(io::ErrorKind::Other, format!("Failed to serialize: {}", e))
+    })?;
+    let mut file = File::create(file_path)?;
+    file.write_all(&encoded)?;
+    Ok(())
+}
+
+fn importar_arquivo() -> io::Result<Usuarios> {
+    let file_path = "usuarios.bin";
+    let mut file = File::open(file_path)?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer)?;
+
+    let usuarios: Usuarios = deserialize(&buffer).map_err(|e| {
+        io::Error::new(io::ErrorKind::Other, format!("Failed to deserialize: {}", e))
+    })?;
+    Ok(usuarios)
+}
+
+fn inicializa_usuarios() -> String{
+    let mut vet_users:Usuarios = Default::default();
+
+    vet_users.adiciona_usuario(Usuario{email: "user1@u.com".to_string(), senha: "s1".to_string(), nome: "nome1".to_string(), uid: 00});
+    vet_users.adiciona_usuario(Usuario{email: "user2@u.com".to_string(), senha: "s2".to_string(), nome: "nome2".to_string(), uid: 00});
+    vet_users.adiciona_usuario(Usuario{email: "user3@u.com".to_string(), senha: "s3".to_string(), nome: "nome3".to_string(), uid: 00});
+    vet_users.qtd = 3;
+    let x = exportar_arquivo(&vet_users);
+    if x.is_ok(){
+        return format!("Ok")
+    }
+    return format!("err?")
 }
 
 #[tauri::command]
-fn loginEmail(email: &str) -> String {
-    let mut vet_usuarios: [Usuario; 10] = Default::default();
-    let mut encontrado = false;
-    vet_usuarios[0].email = "user1@u.com".to_string();
-    vet_usuarios[1].email = "user2@u.com".to_string();
-    vet_usuarios[3].email = "user3@u.com".to_string();
-    let mut indice: u32 = 0;
-    for i in vet_usuarios.iter() {
-        indice += 1;
-        if i.email.eq_ignore_ascii_case(email.trim()) {
-            encontrado = true;
-            break;
+fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> String {
+    if senha1 != senha2 {
+        return format!("Senhas diferentes. Corrija!");
+    } 
+
+    inicializa_usuarios();
+
+    let resultado_importacao = importar_arquivo();
+    if let Ok(mut usuarios) = resultado_importacao {
+        let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string(), 00);
+        if usuarios.email_repetido(email){
+            return format!("Erro: Esse email já está sendo utilizado.")
         }
+        usuarios.adiciona_usuario(usuario);
+        
+        if let Err(e) = exportar_arquivo(&usuarios) {
+            return format!("Erro ao exportar arquivo: {}", e);
+        }
+
+        return format!("Conta criada com sucesso!");
     }
+    return format!("Erro ao importar arquivo de usuários!");
+}
+
+#[tauri::command]
+fn login_email(email: &str) -> String {
+    let mut encontrado = false;
     let vazio = "";
-    if (encontrado) {
+    if email == vazio{
+        return format!("Campo de e-mail não deve ficar em branco {}", vazio)
+    }
+
+    let resultado_importacao = importar_arquivo();
+    if let Ok(usuarios) = resultado_importacao{
+        encontrado = usuarios.email_repetido(email);
+    }
+
+    if encontrado{
         format!("E-mail {} encontrado!", vazio)
     } else {
         format!("E-mail {} não existe na base de dados! Verifique se escreveu corretamente ou tente criar uma nova conta.", vazio)
     }
 }
 
-fn verifica_senha(u: &Usuario, senha: &str) -> (String, bool) {
-    let vazio = "";
-    let mut encontrado = false;
-    if u.senha.eq_ignore_ascii_case(senha.trim()) {
-        encontrado = true;
-    }
-    if (encontrado) {
-        return (format!("Senha {} correta!", vazio), true);
-    }
-    return (format!("Senha {} incorreta.", vazio), false);
-}
-
 #[tauri::command]
-fn loginSenha(email: &str, senha: &str) -> (String, bool) {
-    let mut vet_usuarios: [Usuario; 10] = Default::default();
-    let mut encontrado = false;
-    let mut email_encontrado = false;
-    vet_usuarios[0].email = "user1@u.com".to_string();
-    vet_usuarios[1].email = "user2@u.com".to_string();
-    vet_usuarios[3].email = "user3@u.com".to_string();
-    vet_usuarios[0].senha = "s1".to_string();
-    vet_usuarios[1].senha = "s2".to_string();
-    vet_usuarios[3].senha = "s3".to_string();
-    let mut indice: usize = 0;
+fn login_senha(email: &str, senha: &str) -> (String, bool){
     let vazio = "";
-    for i in vet_usuarios.iter() {
-        indice += 1;
-        if i.email.eq_ignore_ascii_case(email.trim()) {
-            email_encontrado = true;
-            let u = i;
-            return verifica_senha(u, senha);
-        }
+    if senha == vazio{
+        return (format!("Campo de senha não deve ficar em branco {}", vazio), false)
     }
-    return (format!("{}", vazio), false);
-}
-
-#[tauri::command]
-fn buscaEmail(email: &str) -> String {
-    let users = inicializa_usuarios();
-    let mut encontrado = false;
-    for u in users {
-        if u.email.eq_ignore_ascii_case(email.trim()) {
-            encontrado = true;
-            return format!("Email encontrado. Reset possível");
+    
+    let resultado_importacao = importar_arquivo();
+    if let Ok(usuarios) = resultado_importacao{
+        if usuarios.autentica(email, senha) {
+            return (format!("Entrando! {}", vazio), true)
         }
-    }
-    return format!("Email não encontrado. Reset impossível");
-}
-
-#[derive(Default)]
-struct Usuario {
-    nome: String,
-    email: String,
-    senha: String,
-    UID: u32,
+    }    
+    return (format!("Senha incorreta! {}", vazio), false)
+    
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![loginEmail, loginSenha, buscaEmail])
-        .run(tauri::generate_context!())
+       .invoke_handler(tauri::generate_handler![cria_conta, login_senha, login_email])
+       .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -4,15 +4,38 @@ import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 
 function SignUp(){
+
+  const [mensagemCriarConta, setMensagemCriarConta] = useState("");
+  const [email, setEmail] = useState("");
+
+  const [nomeCompleto, setNomeCompleto] = useState("");
+
+  const [senha1, setSenha1] = useState("");
+  
+  const [senha2, setSenha2] = useState("");
+
+  async function criarConta() {
+    const retorno = await invoke("cria_conta", { email, nomeCompleto, senha1, senha2});
+    const mensagem = retorno;
+    setMensagemCriarConta(mensagem);
+    console.log(mensagem);
+  }
+
+
     return (
       <div className="formSignUp">
         <p>[DEV | BACK] | Testando criação de conta</p>
         <form
           className="rowSignUp"
+          onSubmit={(e) => {
+            e.preventDefault();
+            criarConta();
+          }}
         >
           <input required
             id="nome-input"
-            placeholder="Nome completo"
+            onChange={(e) => setNomeCompleto(e.currentTarget.value)}
+            placeholder="Nome completo..."
             />
           <input required
             id="email-input"
@@ -21,16 +44,17 @@ function SignUp(){
           />
           <input required
             id="senha-input"
-            placeholder="Sua senha"
-            type="password"
+            onChange={(e) => setSenha1(e.currentTarget.value)}
+            placeholder="Sua senha..."
           />
           <input required
             id="senha-input"
-            placeholder="Confirme sua senha"
-            type="password"
+            onChange={(e) => setSenha2(e.currentTarget.value)}
+            placeholder="Confirme sua senha..."
           />
-        <p id="mensagemSignUp">  </p>
+          <p id="mensagemLogin"> {mensagemCriarConta} </p>
         <button type="submit">Criar</button>
+    
         </form>
       </div>
     );
