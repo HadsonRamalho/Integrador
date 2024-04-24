@@ -12,20 +12,22 @@ function SignUp(){
         >
           <input required
             id="nome-input"
-            placeholder="Nome completo..."
+            placeholder="Nome completo"
             />
           <input required
             id="email-input"
             onChange={(e) => setEmail(e.currentTarget.value)}
-            placeholder="E-mail a ser procurado..." 
+            placeholder="E-mail " 
           />
           <input required
             id="senha-input"
-            placeholder="Sua senha..."
+            placeholder="Sua senha"
+            type="password"
           />
           <input required
             id="senha-input"
-            placeholder="Confirme sua senha..."
+            placeholder="Confirme sua senha"
+            type="password"
           />
         <p id="mensagemSignUp">  </p>
         <button type="submit">Criar</button>
