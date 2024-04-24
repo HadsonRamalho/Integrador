@@ -112,7 +112,7 @@ button {
 
 #senha-input{
   margin-right: 6px;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 #box{
@@ -122,8 +122,8 @@ button {
   left: 50%;
   transform: translate(-50%, -50%); 
   text-align: center; 
-  height: 400px; 
-  width: 400px; 
+  height: 500px; 
+  width: 450px; 
   line-height: 60px;
   filter: blur(0 0 50px);
 }
@@ -144,7 +144,7 @@ button {
 
 #campoSenhaForm{
   position: fixed; 
-  top: 63%; 
+  top: 84%; 
   left: 50%; 
   transform:translate(-50%, -50%);
   line-height: 26px;
@@ -166,7 +166,7 @@ button {
 }
 
 #mensagemLogin{
-  font-size: 12px;
+  font-size: 10px;
   text-align: center;
   top: 10%;
   line-height: 14px; 
