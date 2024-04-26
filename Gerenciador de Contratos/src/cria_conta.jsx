@@ -24,7 +24,6 @@ function SignUp(){
 
     return (
       <div className="formSignUp">
-        <p>[DEV | BACK] | Testando criação de conta</p>
         <form
           className="rowSignUp"
           onSubmit={(e) => {

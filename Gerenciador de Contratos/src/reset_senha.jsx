@@ -15,8 +15,7 @@ function ResetSenha(){
 
     return (
       <div className="formReset">
-        
-        <p>[DEV | BACK] | Testando reset de senha</p>
+
         <form
           className="rowReset"
           onSubmit={(e) => {

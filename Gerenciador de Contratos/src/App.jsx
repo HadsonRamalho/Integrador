@@ -23,7 +23,6 @@ function Login(){
   
   return (
     <div className="formLogin">
-      <p>[DEV | Back] Testando email e senha</p>
       <form
         className="row"
         onSubmit={(e) => {
