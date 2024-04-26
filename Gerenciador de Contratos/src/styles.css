@@ -116,7 +116,7 @@ button {
 }
 
 #box{
-  background-color: hsl(197, 52%, 45%);
+  background-color: hsl(223, 66%, 53%);
   position: fixed;
   top:50%;
   left: 50%;
@@ -178,7 +178,7 @@ button {
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
-    background-color: #212b31;
+    background-color: #6699C8;
   }
 
   a:hover {
