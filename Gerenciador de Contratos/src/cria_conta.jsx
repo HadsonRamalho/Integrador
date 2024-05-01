@@ -19,6 +19,14 @@ function SignUp(){
     const mensagem = retorno;
     setMensagemCriarConta(mensagem);
     console.log(mensagem);
+    //DB // [DEV | BACK] : Tratar criação duplicada
+    try {
+      await invoke("save_data", {email});
+      console.log('Dados salvos com sucesso no banco de dados!');
+    } catch (error) {
+        console.error('Erro ao salvar dados:', error);
+    }
+
   }
 
 

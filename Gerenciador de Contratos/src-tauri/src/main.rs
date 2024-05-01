@@ -9,6 +9,10 @@ use bincode::serialize;
 use serde::{Deserialize, Serialize};
 use bincode::deserialize;
 
+//DB
+use std::env;
+mod db;
+
 #[derive(Debug, Serialize, Deserialize, Default)]
 struct Usuario{
     nome:String, email:String, senha:String, uid:u32
@@ -93,14 +97,12 @@ fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> S
         return format!("Senhas diferentes. Corrija!");
     } 
 
-    inicializa_usuarios();
-
     let resultado_importacao = importar_arquivo();
     if let Ok(mut usuarios) = resultado_importacao {
-        let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string(), 00);
         if usuarios.email_repetido(email){
             return format!("Erro: Esse e-mail já está sendo utilizado.")
         }
+        let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string(), 00);
         usuarios.adiciona_usuario(usuario);
         
         if let Err(e) = exportar_arquivo(&usuarios) {
@@ -149,9 +151,19 @@ fn login_senha(email: &str, senha: &str) -> (String, bool){
     
 }
 
+//DB
+#[tauri::command]
+async fn save_data(email: String) -> Result<(), String> {
+    let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
+    db::insert_data(&pool, &email).await.map_err(|e| format!("{}", e))?;
+    Ok(())
+}
+//
+
 fn main() {
     tauri::Builder::default()
-       .invoke_handler(tauri::generate_handler![cria_conta, login_senha, login_email])
+       .invoke_handler(tauri::generate_handler![cria_conta, login_senha, login_email, save_data])
        .run(tauri::generate_context!())
         .expect("error while running tauri application");
+    inicializa_usuarios();
 }
