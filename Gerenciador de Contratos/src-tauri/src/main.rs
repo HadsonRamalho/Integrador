@@ -9,9 +9,10 @@ use bincode::serialize;
 use serde::{Deserialize, Serialize};
 use bincode::deserialize;
 
-//DB
+// Relacionados ao banco de dados
 use std::env;
 mod db;
+//
 
 #[derive(Debug, Serialize, Deserialize, Default)]
 struct Usuario{
@@ -55,6 +56,8 @@ impl Usuarios{
     }
 }
 
+
+// Funções obsoletas que funcionavam como banco de dados anteriormente
 fn exportar_arquivo(usuarios: &Usuarios) -> io::Result<()> {
     let file_path = "usuarios.bin";
     let encoded: Vec<u8> = serialize(usuarios).map_err(|e| {
@@ -90,28 +93,32 @@ fn inicializa_usuarios() -> String{
     }
     return format!("err?")
 }
+//
 
+
+// Por ora, retorna a mensagem que vai ser exibida na interface, e um bool no sucesso da criação da conta
+// também possui chamadas a funções obsoletas
 #[tauri::command]
-fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> String {
+fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> (String, bool) { 
+    let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
     if senha1 != senha2 {
-        return format!("Senhas diferentes. Corrija!");
+        return (format!("Senhas diferentes. Corrija!"), false);
     } 
-
-    let resultado_importacao = importar_arquivo();
+    let resultado_importacao = importar_arquivo(); // Importando arquivo obsoleto
     if let Ok(mut usuarios) = resultado_importacao {
-        if usuarios.email_repetido(email){
-            return format!("Erro: Esse e-mail já está sendo utilizado.")
+        if usuarios.email_repetido(&email){ // Reescrever fazendo uma pesquisa no banco de dados por uma conta já existente
+            return (format!("Erro: Esse e-mail já está sendo utilizado."), false)
         }
-        let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string(), 00);
-        usuarios.adiciona_usuario(usuario);
+        let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string(), 00); // Cria um novo usuário
+        usuarios.adiciona_usuario(usuario); // Adiciona o usuário ao objeto de usuários
         
-        if let Err(e) = exportar_arquivo(&usuarios) {
-            return format!("Erro ao exportar arquivo: {}", e);
+        if let Err(e) = exportar_arquivo(&usuarios) { // Função obsoleta de exportação de arquivo
+            return (format!("Erro ao exportar arquivo: {}", e), false); 
         }
 
-        return format!("Conta criada com sucesso!");
+        return (format!("Conta criada com sucesso!"),true);
     }
-    return format!("Erro ao importar arquivo de usuários!");
+    return (format!("Erro ao importar arquivo de usuários!"), false);
 }
 
 #[tauri::command]

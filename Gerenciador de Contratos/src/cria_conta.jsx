@@ -16,16 +16,18 @@ function SignUp(){
 
   async function criarConta() {
     const retorno = await invoke("cria_conta", { email, nomeCompleto, senha1, senha2});
-    const mensagem = retorno;
+    const [mensagem, sucesso] = retorno;
     setMensagemCriarConta(mensagem);
     console.log(mensagem);
     //DB // [DEV | BACK] : Tratar criação duplicada
-    try {
-      await invoke("save_data", {email});
-      console.log('Dados salvos com sucesso no banco de dados!');
-    } catch (error) {
-        console.error('Erro ao salvar dados:', error);
-    }
+    if (sucesso){
+      try {
+        await invoke("save_data", {email});
+        console.log('Dados salvos com sucesso no banco de dados!');
+      } catch (error) {
+          console.error('Erro ao salvar dados:', error);
+      }
+    }   
 
   }
 
