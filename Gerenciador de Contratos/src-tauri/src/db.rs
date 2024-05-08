@@ -29,28 +29,45 @@ pub async fn save_data(pool: &Pool, email: &str) -> Result<(), mysql_async::Erro
     let qtd; // Variável que vai armazenar o retorno do objeto de QuantidadeUsuarios
     qtd = qtd_users.pop();
 
-    conn.exec_drop(
-        "INSERT INTO usuarios (email, nome_completo, UUID) VALUES (?, ?, ?)",
-        (email, nulo, qtd) // Campos a serem inseridos na tabela
-    ).await?;
-    Ok(())
+    let mut repetido = false;
+    email_repetido(pool, email, &mut repetido).await?;
+
+    if repetido{ // Se o email for repetido, não faça nada
+       println!("Email repetido");
+       return Ok(())
+    }
+    else { // Se o email não for repetido, crie uma conta nova
+        conn.exec_drop(
+            "INSERT INTO usuarios (email, nome_completo, UUID) VALUES (?, ?, ?)",
+            (email, nulo, qtd) // Campos a serem inseridos na tabela
+        ).await?;
+     
+        Ok(())
+    }
+    
 }
 
 // Ainda não arrumei isto, mexe não rs
-/*
-pub async fn email_repetido(pool: &Pool, email:&str) -> Result<(), mysql_async::Error>{
+pub async fn email_repetido(pool: &Pool, email:&str, repetido:&bool) -> Result<(), mysql_async::Error>{
     let mut conn = pool.get_conn().await?;
     let mut emails_db = conn.exec_map(
         "SELECT email FROM usuarios",
-        (), |email| VerificacaoEmail { email },
+        (), |email:String| email ,
     ).await?;
+    let mut x:u32 = 0;
     for u in emails_db.iter_mut(){
-        let email_db = u.retorna_email();
+        let email_db = u.as_mut();
         if email_db == email{
-            println!("CONTA JÁ EXISTE");
+            println!("CONTA JÁ EXISTE"); 
+            let mut repetido = repetido;
+            repetido = &mut true;
+            return Ok(())
         } else{
             println!("CONTA CRIADA");
+            return Ok(())
         }
+        x += 1;
     }
+    println!("{}", x);
     Ok(())
-}*/
+}

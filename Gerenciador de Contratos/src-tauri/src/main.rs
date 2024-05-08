@@ -92,7 +92,6 @@ fn login_senha(email: &str, senha: &str) -> (String, bool){ // Retorna uma mensa
         if usuarios.autentica(email, senha) {
             return (format!("Entrando! {}", vazio), true)
         }
-    
     return (format!("Senha incorreta! {}", vazio), false)
     
 }
@@ -105,14 +104,13 @@ async fn save_data(email: &str) -> Result<(), String> { // Parâmetros devem ser
     Ok(())
 }
 
-// Verificação a ser finalizada
-/*
 #[tauri::command]
 async fn email_repetido(email: &str) -> Result<(), String> {
+    let mut repetido = false;
     let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
-    db::email_repetido(&pool, &email).await.map_err(|e| format!("{}", e))?;
+    db::email_repetido(&pool, &email, &repetido).await.map_err(|e| format!("{}", e))?;
     Ok(())
-}*/
+}
 //
 
 fn main() {
