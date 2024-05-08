@@ -45,7 +45,7 @@ function SignUp(){
           <input required
             id="nome-input"
             onChange={(e) => setNomeCompleto(e.currentTarget.value)}
-            placeholder="Nome completo..."
+            placeholder="Nome completo"
             />
           <input required
             id="email-input"
@@ -55,12 +55,14 @@ function SignUp(){
           <input required
             id="senha-input"
             onChange={(e) => setSenha1(e.currentTarget.value)}
-            placeholder="Sua senha..."
+            placeholder="Sua senha"
+            type="password"
           />
           <input required
             id="senha-input"
             onChange={(e) => setSenha2(e.currentTarget.value)}
-            placeholder="Confirme sua senha..."
+            placeholder="Confirme sua senha"
+            type="password"
           />
           <p id="mensagemLogin"> {mensagemCriarConta} </p>
         <button type="submit">Criar</button>
