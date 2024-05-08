@@ -3,36 +3,40 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
+// Útil para salvar arquivos localmente
+/* 
 use std::fs::File;
 use std::io::{self, Read, Write};
 use bincode::serialize;
 use serde::{Deserialize, Serialize};
 use bincode::deserialize;
+*/
 
 // Relacionados ao banco de dados
 use std::env;
 mod db;
 //
 
-#[derive(Debug, Serialize, Deserialize, Default)]
-struct Usuario{
-    nome:String, email:String, senha:String, uid:u32
+#[derive(Debug, Default)] //  Serialize, Deserialize,
+struct Usuario{ // Objeto de usuário para unificar dados
+    nome:String, email:String, senha:String,
 }
 
 impl Usuario{
-    fn novo_usuario(nome: String, email: String, senha: String, uid: u32) -> Self{
-        Usuario {nome, email, senha, uid}
+    fn novo_usuario(nome: String, email: String, senha: String) -> Self{
+        Usuario {nome, email, senha}
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Default)] //  Serialize, Deserialize,
 struct Usuarios{
-    usuarios: Vec<Usuario>, qtd: u32
+    usuarios: Vec<Usuario>, // Vetor de usuários
+                         // Provavelmente será substituída por dados do SQL
 }
 
 impl Usuarios{
     fn adiciona_usuario(&mut self, usuario: Usuario){
-        self.usuarios.push(usuario)
+        self.usuarios.push(usuario) // Salvando 
     }
 
     fn email_repetido(&self, email: &str) -> bool{
@@ -56,46 +60,6 @@ impl Usuarios{
     }
 }
 
-
-// Funções obsoletas que funcionavam como banco de dados anteriormente
-fn exportar_arquivo(usuarios: &Usuarios) -> io::Result<()> {
-    let file_path = "usuarios.bin";
-    let encoded: Vec<u8> = serialize(usuarios).map_err(|e| {
-        io::Error::new(io::ErrorKind::Other, format!("Failed to serialize: {}", e))
-    })?;
-    let mut file = File::create(file_path)?;
-    file.write_all(&encoded)?;
-    Ok(())
-}
-
-fn importar_arquivo() -> io::Result<Usuarios> {
-    let file_path = "usuarios.bin";
-    let mut file = File::open(file_path)?;
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer)?;
-
-    let usuarios: Usuarios = deserialize(&buffer).map_err(|e| {
-        io::Error::new(io::ErrorKind::Other, format!("Failed to deserialize: {}", e))
-    })?;
-    Ok(usuarios)
-}
-
-fn inicializa_usuarios() -> String{
-    let mut vet_users:Usuarios = Default::default();
-
-    vet_users.adiciona_usuario(Usuario{email: "user1@u.com".to_string(), senha: "s1".to_string(), nome: "nome1".to_string(), uid: 00});
-    vet_users.adiciona_usuario(Usuario{email: "user2@u.com".to_string(), senha: "s2".to_string(), nome: "nome2".to_string(), uid: 00});
-    vet_users.adiciona_usuario(Usuario{email: "user3@u.com".to_string(), senha: "s3".to_string(), nome: "nome3".to_string(), uid: 00});
-    vet_users.qtd = 3;
-    let x = exportar_arquivo(&vet_users);
-    if x.is_ok(){
-        return format!("Ok")
-    }
-    return format!("err?")
-}
-//
-
-
 // Por ora, retorna a mensagem que vai ser exibida na interface, e um bool no sucesso da criação da conta
 // também possui chamadas a funções obsoletas
 #[tauri::command]
@@ -104,73 +68,56 @@ fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> (
     if senha1 != senha2 {
         return (format!("Senhas diferentes. Corrija!"), false);
     } 
-    let resultado_importacao = importar_arquivo(); // Importando arquivo obsoleto
-    if let Ok(mut usuarios) = resultado_importacao {
-        if usuarios.email_repetido(&email){ // Reescrever fazendo uma pesquisa no banco de dados por uma conta já existente
-            return (format!("Erro: Esse e-mail já está sendo utilizado."), false)
-        }
-        let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string(), 00); // Cria um novo usuário
-        usuarios.adiciona_usuario(usuario); // Adiciona o usuário ao objeto de usuários
-        
-        if let Err(e) = exportar_arquivo(&usuarios) { // Função obsoleta de exportação de arquivo
-            return (format!("Erro ao exportar arquivo: {}", e), false); 
-        }
+    let mut usuarios:Usuarios = Default::default();
+    let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string()); // Cria um novo usuário
+    usuarios.adiciona_usuario(usuario); // Adiciona o usuário ao objeto de usuários
 
-        return (format!("Conta criada com sucesso!"),true);
-    }
-    return (format!("Erro ao importar arquivo de usuários!"), false);
+    return (format!("Conta criada com sucesso!"),true);
 }
 
 #[tauri::command]
-fn login_email(email: &str) -> String {
-    let mut encontrado = false;
-    let vazio = "";
-    if email == vazio{
-        return format!("Campo de e-mail não deve ficar em branco {}", vazio)
-    }
-
-    let resultado_importacao = importar_arquivo();
-    if let Ok(usuarios) = resultado_importacao{
-        encontrado = usuarios.email_repetido(email);
-    }
-
-    if encontrado{
-        format!("E-mail {} encontrado!", vazio)
-    } else {
-        format!("E-mail {} não existe na base de dados! Verifique se escreveu corretamente ou tente criar uma nova conta.", vazio)
-    }
+fn login_email() -> String { // Retorna uma mensagem de sucesso ou falha para o front
+    let vazio = ""; // String vazia a ser comparada caso a verificação no front falhe
+    return format!("Campo de e-mail não deve ficar em branco {}", vazio)
 }
 
 #[tauri::command]
-fn login_senha(email: &str, senha: &str) -> (String, bool){
-    let vazio = "";
-    if senha == vazio{
+fn login_senha(email: &str, senha: &str) -> (String, bool){ // Retorna uma mensagem para o front e um booleano
+    let vazio = ""; 
+    if senha == vazio{ // Comparação caso a verificação no front falhe
         return (format!("Campo de senha não deve ficar em branco {}", vazio), false)
     }
     
-    let resultado_importacao = importar_arquivo();
-    if let Ok(usuarios) = resultado_importacao{
+   let usuarios:Usuarios = Default::default();
         if usuarios.autentica(email, senha) {
             return (format!("Entrando! {}", vazio), true)
         }
-    }    
+    
     return (format!("Senha incorreta! {}", vazio), false)
     
 }
 
 //DB
 #[tauri::command]
-async fn save_data(email: String) -> Result<(), String> {
+async fn save_data(email: &str) -> Result<(), String> { // Parâmetros devem ser alterados conforme a necessidade posterior
     let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
-    db::insert_data(&pool, &email).await.map_err(|e| format!("{}", e))?;
+    db::save_data(&pool, &email).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
     Ok(())
 }
+
+// Verificação a ser finalizada
+/*
+#[tauri::command]
+async fn email_repetido(email: &str) -> Result<(), String> {
+    let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
+    db::email_repetido(&pool, &email).await.map_err(|e| format!("{}", e))?;
+    Ok(())
+}*/
 //
 
 fn main() {
     tauri::Builder::default()
-       .invoke_handler(tauri::generate_handler![cria_conta, login_senha, login_email, save_data])
+       .invoke_handler(tauri::generate_handler![cria_conta, login_senha, login_email, save_data]) // Registra funções do Tauri
        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
-    inicializa_usuarios();
+        .expect("erro ao tentar executar a aplicação Tauri");
 }

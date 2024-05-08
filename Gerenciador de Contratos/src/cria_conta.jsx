@@ -22,6 +22,7 @@ function SignUp(){
     //DB // [DEV | BACK] : Tratar criação duplicada
     if (sucesso){
       try {
+        //await invoke("email_repetido", {email});
         await invoke("save_data", {email});
         console.log('Dados salvos com sucesso no banco de dados!');
       } catch (error) {
