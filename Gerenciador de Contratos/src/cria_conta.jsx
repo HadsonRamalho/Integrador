@@ -15,20 +15,14 @@ function SignUp(){
   const [senha2, setSenha2] = useState("");
 
   async function criarConta() {
-    const retorno = await invoke("cria_conta", { email, nomeCompleto, senha1, senha2});
-    const [mensagem, sucesso] = retorno;
-    setMensagemCriarConta(mensagem);
-    console.log(mensagem);
+    const retorno_conta_criada = await invoke("cria_conta", {nomeCompleto, email, senha1, senha2});
+    if (retorno_conta_criada){
+      setMensagemCriarConta("Conta criada");
+    } else{
+      setMensagemCriarConta("Conta não foi criada");
+    }
+    console.log(retorno);
     //DB // [DEV | BACK] : Tratar criação duplicada
-    if (sucesso){
-      try {
-        //await invoke("email_repetido", {email});
-        await invoke("save_data", {email});
-        console.log('Dados salvos com sucesso no banco de dados!');
-      } catch (error) {
-          console.error('Erro ao salvar dados:', error);
-      }
-    }   
 
   }
 

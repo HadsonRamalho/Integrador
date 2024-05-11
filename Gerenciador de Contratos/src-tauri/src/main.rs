@@ -62,17 +62,19 @@ impl Usuarios{
 
 // Por ora, retorna a mensagem que vai ser exibida na interface, e um bool no sucesso da criação da conta
 // também possui chamadas a funções obsoletas
-#[tauri::command]
-fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> (String, bool) { 
+#[tauri::command] 
+async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
     let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
     if senha1 != senha2 {
-        return (format!("Senhas diferentes. Corrija!"), false);
-    } 
-    let mut usuarios:Usuarios = Default::default();
-    let usuario = Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), senha1.to_string()); // Cria um novo usuário
-    usuarios.adiciona_usuario(usuario); // Adiciona o usuário ao objeto de usuários
-
-    return (format!("Conta criada com sucesso!"),true);
+        return Ok(false); // Conta não criada
+    }     
+    let usuario = Usuario::novo_usuario(nomeCompleto.to_string(), email.to_string(), senha1.to_string()); // Cria um novo usuário
+    let mut email_repetido:u32 = 0;
+    let x = save_data(&usuario.email, &mut email_repetido).await;
+    if email_repetido == 0{   
+        return Ok(true); // Conta criada   
+    }
+    return Ok(false); // Conta não foi criada
 }
 
 #[tauri::command]
@@ -100,11 +102,10 @@ fn login_senha(email: &str, senha: &str) -> (String, bool){ // Retorna uma mensa
 }
 
 //DB
-#[tauri::command]
-async fn save_data(email: &str) -> Result<(), String> { // Parâmetros devem ser alterados conforme a necessidade posterior
+async fn save_data(email: &str, email_repetido: &mut u32) -> Result<u32, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
     let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
-    db::save_data(&pool, &email).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
-    Ok(())
+    db::save_data(&pool, &email, email_repetido).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
+    Ok(*(email_repetido))
 }
 
 #[tauri::command]
@@ -112,14 +113,13 @@ async fn email_repetido(email: &str) -> Result<(), String> {
     let mut repetido = 0;
     let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
     db::email_repetido(&pool, &email, &mut repetido).await.map_err(|e| format!("{}", e))?;
-    println!("A bool repetido é {}", repetido);
     Ok(())
 }
 //
 
 fn main() {
     tauri::Builder::default()
-       .invoke_handler(tauri::generate_handler![cria_conta, login_senha, login_email, save_data]) // Registra funções do Tauri
+       .invoke_handler(tauri::generate_handler![cria_conta, login_senha, login_email]) // Registra funções do Tauri
        .run(tauri::generate_context!())
         .expect("erro ao tentar executar a aplicação Tauri");
 }

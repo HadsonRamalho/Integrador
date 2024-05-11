@@ -17,7 +17,7 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
 }
 
 // Função save_data servirá para dar INSERT de um novo usuário no banco de dados
-pub async fn save_data(pool: &Pool, email: &str) -> Result<(), mysql_async::Error> {
+pub async fn save_data(pool: &Pool, email: &str, email_rep: &mut u32) -> Result<(), mysql_async::Error> {
     let mut conn = pool.get_conn().await?;
     let nulo = ""; // Não to pegando o nome completo do usuário ainda
     
@@ -31,9 +31,8 @@ pub async fn save_data(pool: &Pool, email: &str) -> Result<(), mysql_async::Erro
 
     let mut repetido = 0; // Um iterador que aumenta quando um email repetido é encontrado (Problemas pra usar bool)
     email_repetido(pool, email, &mut repetido).await?;
-    println!("Db bool repetido é {}", repetido);
+    *email_rep = repetido;
     if repetido != 0{ // Se o email for repetido, não faça nada
-       println!("Email repetido");
        return Ok(())
     }
     else { // Se o email não for repetido, crie uma conta nova
@@ -58,7 +57,6 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Resul
     for u in emails_db.iter_mut(){
         let email_db = u.as_mut();
         if email_db == email{
-            println!("CONTA JÁ EXISTE"); 
             *repetido += 1;
             return Ok(())
         }
