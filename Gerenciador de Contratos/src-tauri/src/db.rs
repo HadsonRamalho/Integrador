@@ -29,10 +29,10 @@ pub async fn save_data(pool: &Pool, email: &str) -> Result<(), mysql_async::Erro
     let qtd; // Variável que vai armazenar o retorno do objeto de QuantidadeUsuarios
     qtd = qtd_users.pop();
 
-    let mut repetido = false;
+    let mut repetido = 0; // Um iterador que aumenta quando um email repetido é encontrado (Problemas pra usar bool)
     email_repetido(pool, email, &mut repetido).await?;
-
-    if repetido{ // Se o email for repetido, não faça nada
+    println!("Db bool repetido é {}", repetido);
+    if repetido != 0{ // Se o email for repetido, não faça nada
        println!("Email repetido");
        return Ok(())
     }
@@ -48,7 +48,7 @@ pub async fn save_data(pool: &Pool, email: &str) -> Result<(), mysql_async::Erro
 }
 
 // Ainda não arrumei isto, mexe não rs
-pub async fn email_repetido(pool: &Pool, email:&str, repetido:&bool) -> Result<(), mysql_async::Error>{
+pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Result<(), mysql_async::Error>{
     let mut conn = pool.get_conn().await?;
     let mut emails_db = conn.exec_map(
         "SELECT email FROM usuarios",
@@ -59,14 +59,13 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&bool) -> Result<(
         let email_db = u.as_mut();
         if email_db == email{
             println!("CONTA JÁ EXISTE"); 
-            let mut repetido = repetido;
-            repetido = &mut true;
-            return Ok(())
-        } else{
-            println!("CONTA CRIADA");
+            *repetido += 1;
             return Ok(())
         }
         x += 1;
+    }
+    if *repetido == 0 as u32{
+        println!("CONTA CRIADA");
     }
     println!("{}", x);
     Ok(())
