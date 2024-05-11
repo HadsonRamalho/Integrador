@@ -17,9 +17,9 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
 }
 
 // Função save_data servirá para dar INSERT de um novo usuário no banco de dados
-pub async fn save_data(pool: &Pool, email: &str, email_rep: &mut u32) -> Result<(), mysql_async::Error> {
+pub async fn save_data(pool: &Pool, email: &str, senha: &str, email_rep: &mut u32) -> Result<(), mysql_async::Error> {
     let mut conn = pool.get_conn().await?;
-    let nulo = ""; // Não to pegando o nome completo do usuário ainda
+    let nome_nulo = ""; // Não to pegando o nome completo do usuário ainda
     
     let mut qtd_users = conn.exec_map( // exec_map retorna um vetor do tipo definido no parâmetro f:
         "SELECT COUNT(UUID) FROM usuarios",
@@ -37,8 +37,8 @@ pub async fn save_data(pool: &Pool, email: &str, email_rep: &mut u32) -> Result<
     }
     else { // Se o email não for repetido, crie uma conta nova
         conn.exec_drop(
-            "INSERT INTO usuarios (email, nome_completo, UUID) VALUES (?, ?, ?)",
-            (email, nulo, qtd) // Campos a serem inseridos na tabela
+            "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)",
+            (email, nome_nulo, senha, qtd) // Campos a serem inseridos na tabela
         ).await?;
      
         Ok(())
@@ -66,5 +66,43 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Resul
         println!("CONTA CRIADA");
     }
     println!("{}", x);
+    Ok(())
+}
+
+pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&mut u32) -> Result<(), mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    // Carregue os emails
+    let mut emails_db = conn.exec_map(
+        "SELECT email FROM usuarios",
+        (), |email:String| email ,
+    ).await?;
+    let email_encontrado:&str;
+    for u in emails_db.iter_mut(){
+        let email_db = u.as_mut();
+        if email_db == email{
+            email_encontrado = email_db;
+            break;
+        }
+    }
+
+    let mut senhas_db = conn.exec_map(
+        "SELECT senha FROM usuarios WHERE email = (?)",
+        (senha,), |senha:String| senha ,
+    ).await?;
+    for u in senhas_db.iter_mut(){
+        let mut senha_db = u.as_mut();
+        if senha_db == senha{
+            *senha_correta += 1;
+            break;
+        }
+    }
+
+
+    if *senha_correta != 0 as u32{
+        println!("CONTA ENCONTRADA");
+    } else{
+        *senha_correta = 0;
+        println!("Conta não encontrada?");
+    }
     Ok(())
 }
