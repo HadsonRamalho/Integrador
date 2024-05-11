@@ -36,6 +36,7 @@
   font-weight: bold;
   line-height: 20px;
   
+  
 }
 
 .rowSignUp{
@@ -53,7 +54,7 @@
 }
 
 .logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #db2424);
+  filter: drop-shadow(0 0 2em #be0b0b);
 }
 
 .row input {
@@ -69,7 +70,7 @@ a {
 }
  
 a:hover {
-  color: #f25353;
+  color: #a01818;
 }
 
 h1 {
@@ -78,7 +79,7 @@ h1 {
 
 input,
 button {
-  border-radius: 8px;
+  border-radius: px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
@@ -118,7 +119,7 @@ button {
 }
 
 #box{
-  background-color: hsl(223, 66%, 53%);
+  background-color: #169e69;
   position: fixed;
   top:50%;
   left: 50%;
@@ -133,36 +134,41 @@ button {
 
 #subtituloForm{
   font-family: serif;
-  font-size: 20px;
+  font-size: 20px; /*subtitulo*/
   text-align: center;
+  text-transform: uppercase;
 }
 
 #camposLoginForm{
   position: fixed; 
-  top: 30%; 
+  top: 30%; /* parte do login,entrar , email esenha*/
   left: 50%; 
-  transform:translate(-50%, -50%);
+  transform:translate(-55%, -55%);
   line-height: 26px;
+
+  
 }
 
 #campoSenhaForm{
   position: fixed; 
-  top: 84%; 
-  left: 50%; 
-  transform:translate(-50%, -50%);
+  top: 65%; /*84 esqueci a senha*/
+  left: 38%; /*50*/
+  transform:translate(-55%, -55%);
   line-height: 26px;
+  
 }
 
 #botaoConfirmarForm{
   position: fixed; 
-  top: 82%; 
-  left: 50%; 
+  top: 82%; /*82 desconhecido*/
+  left: 50%; /*50*/
   transform:translate(-50%, -50%);
+  
 }
 
 #botaoCriarContaForm{
-  background-color: #074368;
-  top: 90%;
+  background-color: #111;
+  top: 86%;/*90 criar conta*/
   font-size: 12px;
   left: 39%;
   position: fixed;
@@ -187,12 +193,12 @@ button {
   a:hover {
     color: #db2424;
   }
-
+  
   input,
   button {
     color: #ffffff;
-    background-color: #162a5098;
-    filter: drop-shadow(0 0 20px #84d7df);
+    background-color: #111;
+    /*filter: drop-shadow(0 0 20px #000404);*/
   }
   button:active {
     background-color: #160d0d69;
