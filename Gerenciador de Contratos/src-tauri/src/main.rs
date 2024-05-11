@@ -14,8 +14,6 @@ use bincode::deserialize;
 
 // Relacionados ao banco de dados
 use std::env;
-
-use db::verifica_senha;
 mod db;
 //
 
@@ -72,7 +70,7 @@ async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str)
     }     
     let usuario = Usuario::novo_usuario(nomeCompleto.to_string(), email.to_string(), senha1.to_string()); // Cria um novo usuário
     let mut email_repetido:u32 = 0;
-    let x = save_data(&usuario.email, senha1, &mut email_repetido).await;
+    let x = save_data(&usuario.nome, &usuario.email, senha1, &mut email_repetido).await;
     if email_repetido == 0{   
         return Ok(true); // Conta criada   
     }
@@ -96,7 +94,6 @@ async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna
     }
     let mut senha_correta:u32 = 0;
     let x = _verifica_senha(email, senha, &mut senha_correta).await;
-   let usuarios:Usuarios = Default::default();
     if( senha_correta != 0 ) {
         return Ok(true)
     } else{
@@ -106,9 +103,9 @@ async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna
 }
 
 //DB
-async fn save_data(email: &str, senha: &str, email_repetido: &mut u32) -> Result<u32, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
+async fn save_data(nome: &str, email: &str, senha: &str, email_repetido: &mut u32) -> Result<u32, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
     let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
-    db::save_data(&pool, &email, senha, email_repetido).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
+    db::save_data(&pool, nome, &email, senha, email_repetido).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
     Ok(*(email_repetido))
 }
 
