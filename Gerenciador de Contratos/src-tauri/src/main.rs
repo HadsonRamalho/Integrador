@@ -76,9 +76,12 @@ fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> (
 }
 
 #[tauri::command]
-fn login_email() -> String { // Retorna uma mensagem de sucesso ou falha para o front
+fn login_email(email: &str) -> String { // Retorna uma mensagem de sucesso ou falha para o front
     let vazio = ""; // String vazia a ser comparada caso a verificação no front falhe
-    return format!("Campo de e-mail não deve ficar em branco {}", vazio)
+    if(email == vazio){
+        return format!("Campo de e-mail não deve ficar em branco {}", vazio);
+    }
+    return format!("{}", vazio);
 }
 
 #[tauri::command]
@@ -106,9 +109,10 @@ async fn save_data(email: &str) -> Result<(), String> { // Parâmetros devem ser
 
 #[tauri::command]
 async fn email_repetido(email: &str) -> Result<(), String> {
-    let mut repetido = false;
+    let mut repetido = 0;
     let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
-    db::email_repetido(&pool, &email, &repetido).await.map_err(|e| format!("{}", e))?;
+    db::email_repetido(&pool, &email, &mut repetido).await.map_err(|e| format!("{}", e))?;
+    println!("A bool repetido é {}", repetido);
     Ok(())
 }
 //
