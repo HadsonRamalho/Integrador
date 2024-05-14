@@ -21,9 +21,6 @@ function SignUp(){
     } else{
       setMensagemCriarConta("Conta não foi criada");
     }
-    console.log(retorno);
-    //DB // [DEV | BACK] : Tratar criação duplicada
-
   }
 
 

@@ -28,38 +28,6 @@ impl Usuario{
     }
 }
 
-#[derive(Debug, Default)] //  Serialize, Deserialize,
-struct Usuarios{
-    usuarios: Vec<Usuario>, // Vetor de usuários
-                         // Provavelmente será substituída por dados do SQL
-}
-
-impl Usuarios{
-    fn adiciona_usuario(&mut self, usuario: Usuario){
-        self.usuarios.push(usuario) // Salvando 
-    }
-
-    fn email_repetido(&self, email: &str) -> bool{
-        for u in self.usuarios.as_slice(){
-            if u.email.eq_ignore_ascii_case(email){
-                return true
-            }
-        }
-        return false
-    }
-    
-    fn autentica(&self, email: &str, senha: &str) -> bool{
-        if self.email_repetido(email){
-            for u in self.usuarios.as_slice(){
-                if u.senha.eq(senha){
-                    return true
-                }
-            }
-        }        
-        return false
-    }
-}
-
 // Por ora, retorna a mensagem que vai ser exibida na interface, e um bool no sucesso da criação da conta
 // também possui chamadas a funções obsoletas
 #[tauri::command] 
@@ -70,7 +38,7 @@ async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str)
     }     
     let usuario = Usuario::novo_usuario(nomeCompleto.to_string(), email.to_string(), senha1.to_string()); // Cria um novo usuário
     let mut email_repetido:u32 = 0;
-    let x = save_data(&usuario.nome, &usuario.email, senha1, &mut email_repetido).await;
+    let _x = save_data(&usuario.nome, &usuario.email, &usuario.senha, &mut email_repetido).await;
     if email_repetido == 0{   
         return Ok(true); // Conta criada   
     }
@@ -80,7 +48,7 @@ async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str)
 #[tauri::command]
 fn login_email(email: &str) -> Result<bool, bool> { // Retorna uma mensagem de sucesso ou falha para o front
     let vazio = ""; // String vazia a ser comparada caso a verificação no front falhe
-    if(email == vazio){
+    if email == vazio{
         return Err(false)
     }
     return Ok(true)
@@ -89,12 +57,12 @@ fn login_email(email: &str) -> Result<bool, bool> { // Retorna uma mensagem de s
 #[tauri::command]
 async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna uma mensagem para o front e um booleano
     let vazio = ""; 
-    if senha == vazio{ // Comparação caso a verificação no front falhe
+    if senha == vazio{ // Verificação caso o campo do front falhe
         return Ok(false)
     }
     let mut senha_correta:u32 = 0;
-    let x = _verifica_senha(email, senha, &mut senha_correta).await;
-    if( senha_correta != 0 ) {
+    let _x = _verifica_senha(email, senha, &mut senha_correta).await;
+    if senha_correta != 0 {
         return Ok(true)
     } else{
         return Ok(false)
@@ -102,7 +70,6 @@ async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna
     
 }
 
-//DB
 async fn save_data(nome: &str, email: &str, senha: &str, email_repetido: &mut u32) -> Result<u32, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
     let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
     db::save_data(&pool, nome, &email, senha, email_repetido).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
@@ -115,14 +82,6 @@ async fn _verifica_senha(email: &str, senha: &str, senha_correta: &mut u32) -> R
     Ok(*(senha_correta))
 }
 
-#[tauri::command]
-async fn email_repetido(email: &str) -> Result<(), String> {
-    let mut repetido = 0;
-    let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
-    db::email_repetido(&pool, &email, &mut repetido).await.map_err(|e| format!("{}", e))?;
-    Ok(())
-}
-//
 
 fn main() {
     tauri::Builder::default()
