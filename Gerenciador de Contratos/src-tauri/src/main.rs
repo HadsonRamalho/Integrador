@@ -26,6 +26,13 @@ impl Usuario{
     fn novo_usuario(nome: String, email: String, senha: String) -> Self{
         Usuario {nome, email, senha}
     }
+    fn valida_email(&self) -> bool{
+        let mut verificador = false;
+        if self.email.contains("@") && self.email.contains(".") {
+            verificador = true;
+        }
+        verificador
+    }
 }
 
 // Por ora, retorna a mensagem que vai ser exibida na interface, e um bool no sucesso da criação da conta
@@ -33,12 +40,17 @@ impl Usuario{
 #[tauri::command] 
 async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
     let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
+    let usuario = Usuario::novo_usuario(nomeCompleto.to_string(), email.to_string(), senha1.to_string()); // Cria um novo usuário
+    let validacao_email = usuario.valida_email();
+    if validacao_email == false{
+        return Ok(false);
+    }
     if senha1 != senha2 {
         return Ok(false); // Conta não criada
-    }     
-    let usuario = Usuario::novo_usuario(nomeCompleto.to_string(), email.to_string(), senha1.to_string()); // Cria um novo usuário
+    }
+    
     let mut email_repetido:u32 = 0;
-    let _x = save_data(&usuario.nome, &usuario.email, &usuario.senha, &mut email_repetido).await;
+    let _consome_result = save_data(&usuario.nome, &usuario.email, &usuario.senha, &mut email_repetido).await;
     if email_repetido == 0{   
         return Ok(true); // Conta criada   
     }
