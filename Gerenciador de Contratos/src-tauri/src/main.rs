@@ -17,6 +17,11 @@ use std::env;
 mod db;
 //
 
+// Relacionados ao processo de hashing de senha
+use pwhash::bcrypt;
+use pwhash::unix;
+//
+
 #[derive(Debug, Default)] //  Serialize, Deserialize,
 struct Usuario{ // Objeto de usuário para unificar dados
     nome:String, email:String, senha:String,
@@ -28,7 +33,7 @@ impl Usuario{
     }
 }
 
-fn valida_email(email: String) -> bool{
+fn valida_email(email: &str) -> bool{
     let mut verificador = false;
     if email.contains("@") && email.contains(".") {
         verificador = true;
@@ -36,21 +41,31 @@ fn valida_email(email: String) -> bool{
     verificador
 }
 
+fn enc_senha(senha: &str) -> String{
+    let enc = bcrypt::hash(senha).unwrap();
+    return enc
+}
+
+fn dec_senha(senha_digitada: &str, hash: String) -> bool{
+    let dec = unix::verify(senha_digitada, &hash);
+    return dec
+}
+
 // Por ora, retorna a mensagem que vai ser exibida na interface, e um bool no sucesso da criação da conta
 // também possui chamadas a funções obsoletas
 #[tauri::command] 
 async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
     let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
-    let usuario = Usuario::novo_usuario(nomeCompleto.to_string(), email.to_string(), senha1.to_string()); // Cria um novo usuário
-    let validacao_email = valida_email(email);
+    let validacao_email = valida_email(&email);
     if validacao_email == false{
         return Ok(false); // Conta não criada
     }
     if senha1 != senha2 {
         return Ok(false); // Conta não criada
     }
-    
+    let hash = enc_senha(senha1); // Criptografando a senha (Standard *BSD hash)
     let mut email_repetido:u32 = 0;
+    let usuario = Usuario::novo_usuario(nomeCompleto.to_string(), email.to_string(), hash); // Cria um novo usuário
     let _consome_result = save_data(&usuario.nome, &usuario.email, &usuario.senha, &mut email_repetido).await;
     if email_repetido == 0{   
         return Ok(true); // Conta criada   

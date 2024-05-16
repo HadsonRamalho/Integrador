@@ -1,6 +1,8 @@
 use mysql_async::{Pool, prelude::*};
 use dotenv::dotenv;
-use std::env; // borrow::Borrow,
+use std::env;
+
+use crate::dec_senha; // borrow::Borrow,
 
 // Carregando as credenciais do arquivo .env
 pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
@@ -91,7 +93,8 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&
     ).await?;
     for u in senhas_db.iter_mut(){ // Percorrendo o vetor de senhas
         let senha_db = u.as_mut();
-        if senha_db == senha{
+        let hash_dec = dec_senha(senha, senha_db.to_string()); // Verificando o hash da senha
+        if hash_dec{ // Se o hash estiver correto, valida o login
             *senha_correta += 1; // Quando a senha é encontrada, aumenta em 1 a variável referente ao sucesso da busca
             break;
         }
