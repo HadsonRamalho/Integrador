@@ -17,7 +17,7 @@ use std::env;
 mod db;
 //
 
-// Relacionados ao processo de hashing de senha
+// Relacionados ao processo de criptografia de senha
 use pwhash::bcrypt;
 use pwhash::unix;
 //
