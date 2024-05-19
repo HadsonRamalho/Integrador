@@ -11,7 +11,6 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
     let db_user = env::var("DB_USER").expect("DB_USER não definido no arquivo .env");
     let db_password = env::var("DB_PASSWORD").expect("DB_PASSWORD não definido no arquivo .env");
     let db_name = env::var("DB_NAME").expect("DB_NAME não definido no arquivo .env");
-    println!("{db_host}, {db_user}, {db_password}, {db_name}");
     
     let url = format!("mysql://{}:{}@{}/{}", db_user, db_password, db_host, db_name);
     let pool = Pool::from_url(url);
