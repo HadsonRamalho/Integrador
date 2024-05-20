@@ -72,7 +72,7 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
 }
 
 // O parâmetro repetido:&mut u32 é um inteiro que deve aumentar caso um email igual ao buscado seja encontrado
-pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Result<(), mysql_async::Error>{
+pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Result<String, mysql_async::Error>{
     let mut conn = pool.get_conn().await?; // Conectando no banco
     let mut emails_db = conn.exec_map( // emails_db é um vetor de emails que é adquirido do banco de dados
         "SELECT email FROM usuarios",
@@ -82,10 +82,10 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Resul
         let email_db = u.as_mut(); // agora, email_db será a variável referente a cada elemento (sim, esse passo é necessário)
         if email_db == email{ 
             *repetido += 1; // Aumenta em 1 o iterador responsável por sinalizar emails repetidos
-            return Ok(())
+            return Ok(email.to_string())
         }
     }
-    Ok(())
+    Ok("Encontrado".to_string())
 }
 
 // Essa função 'autentica' os dados inseridos pelo usuário

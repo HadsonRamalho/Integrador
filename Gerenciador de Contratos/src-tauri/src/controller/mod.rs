@@ -145,7 +145,7 @@ pub fn valida_email(email: &str) -> bool{
 /// - senha: Senha a ser criptografada.
 ///
 /// # Retorno
-/// - String: Retorna a senha criptografada.
+/// - String: Retorna o hash da senha criptografada.
 pub fn enc_senha(senha: &str) -> String{
     let enc = bcrypt::hash(senha).unwrap();
     return enc
