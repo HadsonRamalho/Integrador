@@ -1,7 +1,7 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
+//npmimport "./App.css";
 
 
 
@@ -15,8 +15,7 @@ function ResetSenha(){
 
     return (
       <div className="formReset">
-        
-        <p>[DEV | BACK] | Testando reset de senha</p>
+
         <form
           className="rowReset"
           onSubmit={(e) => {

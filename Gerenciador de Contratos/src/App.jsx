@@ -1,7 +1,7 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
+//import "./App.css";
 
 function Login(){
   const [mensagemEmail, setMensagemEmail] = useState("");
@@ -15,15 +15,17 @@ function Login(){
   }
 
   async function loginSenha(){
-    const retorno = await invoke("login_senha", {email, senha});
-    const [mensagem, sucesso] = retorno;
-    setMensagemSenha(mensagem);
-    console.log(sucesso);
+    const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
+    if(retorno_conta_encontrada){
+      setMensagemSenha("Entrando na conta!");
+    } 
+    if (!retorno_conta_encontrada){
+      setMensagemSenha("Login mal-sucedido");
+    }
   }
   
   return (
     <div className="formLogin">
-      <p>[DEV | Back] Testando email e senha</p>
       <form
         className="row"
         onSubmit={(e) => {
