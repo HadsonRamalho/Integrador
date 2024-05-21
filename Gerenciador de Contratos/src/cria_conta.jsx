@@ -25,6 +25,7 @@ function SignUp(){
 
 
     return (
+  
       <div className="formSignUp">
         <form
           className="rowSignUp"
@@ -57,6 +58,7 @@ function SignUp(){
           />
           <p id="mensagemLogin"> {mensagemCriarConta} </p>
         <button type="submit">Criar</button>
+      
     
         </form>
       </div>
