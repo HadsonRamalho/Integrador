@@ -170,8 +170,7 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&
             break;
         }
     } 
-    ///////////
-    
+    ///////////    
 
     let mut senhas_db = conn.exec_map( // senhas_db é um vetor que armazena as senhas dos usuários
         "SELECT senha FROM usuarios WHERE email = (?)", // Carrega a senha atual do email selecionado
