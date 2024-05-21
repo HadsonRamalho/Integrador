@@ -3,27 +3,62 @@ use dotenv::dotenv;
 use std::env;
 use crate::controller;
 
+/// Estrutura que representa um usuário.
+///
+/// A estrutura contém os seguintes campos:
+/// - nome: Nome completo do usuário.
+/// - email: Endereço de email do usuário.
+/// - senha: Senha do usuário.
 pub struct Usuario{ // Objeto de usuário para unificar dados
     nome:String, email:String, senha:String,
 }
 
+
 impl Usuario{
+    /// Cria uma nova instância de um usuário.
+    ///
+    /// # Parâmetros
+    /// - nome: Nome completo do usuário.
+    /// - email: Endereço de email do usuário.
+    /// - senha: Senha do usuário.
+    ///
+    /// # Retornos
+    /// - Usuario: Retorna uma nova instância de `Usuario`.
     pub fn novo_usuario(nome: String, email: String, senha: String) -> Self{
         Usuario {nome, email, senha}
     }
+
+    /// Obtém o nome do usuário.
+    ///
+    /// # Retornos
+    /// - &str: Retorna uma referência para o nome do usuário.
     pub fn get_nome(&mut self) -> &str{
         return &self.nome;
     }
+
+    /// Obtém o email do usuário.
+    ///
+    /// # Retornos
+    /// - &str: Retorna uma referência para o email do usuário.
     pub fn get_email(&mut self) -> &str{
         return &self.email;
     }
+
+    /// Obtém a senha (hash) do usuário.
+    ///
+    /// # Retornos
+    /// - &str: Retorna uma referência para a senha (hash) do usuário.
     pub fn get_hash(&mut self) -> &str{
         return &self.senha;
     }
     
 }
 
-// Carregando as credenciais do arquivo .env
+/// Cria uma pool de conexões com o banco de dados usando as credenciais do arquivo .env.
+///
+/// # Retornos
+/// - Result<Pool, mysql_async::Error>: Retorna Ok(pool) se a pool for criada com sucesso, 
+///   ou Err(mysql_async::Error) se houver um erro na criação da pool.
 pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
     dotenv().ok();
     let db_host = env::var("DB_HOST")
@@ -40,8 +75,18 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
     pool
 }
 
-// Função save_data servirá para dar INSERT de um novo usuário no banco de dados
-// O parâmetro email_rep é uma referência de um inteiro, que aumenta de valor quando o email buscado é encontrado no banco de dados
+/// Insere um novo usuário no banco de dados.
+///
+/// # Parâmetros
+/// - pool: Pool de conexões com o banco de dados.
+/// - nome: Nome completo do usuário.
+/// - email: Endereço de email do usuário.
+/// - senha: Senha do usuário.
+/// - email_rep: Referência mutável para um contador de emails repetidos.
+///
+/// # Retornos
+/// - Result<(), mysql_async::Error>: Retorna Ok(()) se o usuário for inserido com sucesso,
+///   ou Err(mysql_async::Error) se houver um erro na inserção dos dados.
 pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_rep: &mut u32) -> Result<(), mysql_async::Error> {
     let mut conn = pool.get_conn().await?;
     
@@ -71,7 +116,17 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
     
 }
 
-// O parâmetro repetido:&mut u32 é um inteiro que deve aumentar caso um email igual ao buscado seja encontrado
+/// Verifica se um email já está cadastrado no banco de dados.
+///
+/// # Parâmetros
+/// - pool: Pool de conexões com o banco de dados.
+/// - email: Endereço de email a ser verificado.
+/// - repetido: Referência mutável para um contador que será incrementado se o email já estiver cadastrado.
+///
+/// # Retornos
+/// - Result<String, mysql_async::Error>: Retorna Ok("Encontrado") se o email for encontrado,
+///   ou Err(mysql_async::Error) se houver um erro na verificação.
+
 pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Result<String, mysql_async::Error>{
     let mut conn = pool.get_conn().await?; // Conectando no banco
     let mut emails_db = conn.exec_map( // emails_db é um vetor de emails que é adquirido do banco de dados
@@ -88,8 +143,17 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Resul
     Ok("Encontrado".to_string())
 }
 
-// Essa função 'autentica' os dados inseridos pelo usuário
-// Aqui, o parâmetro senha_correta:&mut u32 deve ser diferente de 0 para sinalizar que a senha está correta para o email selecionado
+/// Verifica a senha de um usuário.
+///
+/// # Parâmetros
+/// - pool: Pool de conexões com o banco de dados.
+/// - email: Endereço de email do usuário.
+/// - senha: Senha digitada pelo usuário.
+/// - senha_correta: Referência mutável para um contador que será incrementado se a senha estiver correta.
+///
+/// # Retornos
+/// - Result<(), mysql_async::Error>: Retorna Ok(()) se a senha for verificada com sucesso,
+///   ou Err(mysql_async::Error) se houver um erro na verificação.
 pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&mut u32) -> Result<(), mysql_async::Error>{
     // Esse trecho de código vai virar uma função separada posteriormente 
     ///////////
