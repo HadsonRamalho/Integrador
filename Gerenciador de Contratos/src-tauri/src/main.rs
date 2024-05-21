@@ -14,106 +14,69 @@ use bincode::deserialize;
 
 // Relacionados ao banco de dados
 use std::env;
-mod db;
 //
 
-// Relacionados ao processo de criptografia de senha
-use pwhash::bcrypt;
-use pwhash::unix;
-//
+mod model;
+mod controller;
 
-#[derive(Debug, Default)] //  Serialize, Deserialize,
-struct Usuario{ // Objeto de usuário para unificar dados
-    nome:String, email:String, senha:String,
-}
+use lettre::transport::smtp::authentication::{Credentials, Mechanism};
+use lettre::{Message, SmtpTransport, Transport};
 
-impl Usuario{
-    fn novo_usuario(nome: String, email: String, senha: String) -> Self{
-        Usuario {nome, email, senha}
-    }
-}
+fn envia_email(email: String){
+  // as credenciais SMTP
+  let smtp_username = "gerenciadordecontratosgdc@gmail.com";
+  let smtp_password = "qeaa rzhm inlt bcyh";
 
-fn valida_email(email: &str) -> bool{
-    let mut verificador = false;
-    if email.contains("@") && email.contains(".") {
-        verificador = true;
-    }
-    verificador
-}
+  // o servidor SMTP e porta
+  let smtp_server = "smtp.gmail.com";
+  let smtp_port = 587;
 
-fn enc_senha(senha: &str) -> String{
-    let enc = bcrypt::hash(senha).unwrap();
-    return enc
-}
+  // credenciais de autenticação SMTP
+  let smtp_credentials = Credentials::new(smtp_username.to_string(), smtp_password.to_string());
 
-fn dec_senha(senha_digitada: &str, hash: String) -> bool{
-    let dec = unix::verify(senha_digitada, &hash);
-    return dec
-}
+  // transporte SMTP
+  let smtp_transport = SmtpTransport::starttls_relay(&smtp_server)
+      .unwrap()
+      .credentials(smtp_credentials)
+      .authentication(vec![Mechanism::Plain])
+      .build();
 
-// Por ora, retorna a mensagem que vai ser exibida na interface, e um bool no sucesso da criação da conta
-// também possui chamadas a funções obsoletas
-#[tauri::command] 
-async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
-    let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
-    let validacao_email = valida_email(&email);
-    if validacao_email == false{
-        return Ok(false); // Conta não criada
-    }
-    if senha1 != senha2 {
-        return Ok(false); // Conta não criada
-    }
-    let hash = enc_senha(senha1); // Criptografando a senha (Standard *BSD hash)
-    let mut email_repetido:u32 = 0;
-    let usuario = Usuario::novo_usuario(nomeCompleto.to_string(), email.to_string(), hash); // Cria um novo usuário
-    let _consome_result = save_data(&usuario.nome, &usuario.email, &usuario.senha, &mut email_repetido).await;
-    if email_repetido == 0{   
-        return Ok(true); // Conta criada   
-    }
-    return Ok(false); // Conta não foi criada
+  // conteúdo do e-mail
+  let email = Message::builder()
+      .from("gerenciadordecontratosgdc@gmail.com".parse().unwrap())
+      .to(email.parse().unwrap())
+      .subject("Gerenciador de Contratos | Reset de senha")
+      .body("Seu código de verificação é: {XXXX}".to_string())
+      .unwrap();
+
+  // enviar o e-mail usando o transporte SMTP
+  match smtp_transport.send(&email) {
+      Ok(_) => println!("E-mail enviado com sucesso!"),
+      Err(err) => eprintln!("Erro ao enviar e-mail: {:?}", err),
+  }
 }
 
 #[tauri::command]
-fn login_email(email: &str) -> Result<bool, bool> { // Retorna uma mensagem de sucesso ou falha para o front
-    let vazio = ""; // String vazia a ser comparada caso a verificação no front falhe
-    if email == vazio{
-        return Err(false)
+async fn encontra_email(email: &str) -> Result<bool, bool>{
+    let mut repetido = 0;
+    let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
+    let _consome_result = model::email_repetido(&pool, email, &mut repetido).await;
+    println!("{repetido}");
+    if repetido != 0 {
+        envia_email(_consome_result.unwrap());
+        Ok(true)}
+    else {
+        Ok(false)
     }
-    return Ok(true)
 }
-
-#[tauri::command]
-async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna uma mensagem para o front e um booleano
-    let vazio = ""; 
-    if senha == vazio{ // Verificação caso o campo do front falhe
-        return Ok(false)
-    }
-    let mut senha_correta:u32 = 0;
-    let _x = _verifica_senha(email, senha, &mut senha_correta).await;
-    if senha_correta != 0 {
-        return Ok(true)
-    } else{
-        return Ok(false)
-    }
-    
-}
-
-async fn save_data(nome: &str, email: &str, senha: &str, email_repetido: &mut u32) -> Result<u32, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
-    let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
-    db::save_data(&pool, nome, &email, senha, email_repetido).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
-    Ok(*(email_repetido))
-}
-
-async fn _verifica_senha(email: &str, senha: &str, senha_correta: &mut u32) -> Result<u32, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
-    let pool = db::create_pool().await.map_err(|e| format!("{}", e))?;
-    db::verifica_senha(&pool, &email, senha,senha_correta).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
-    Ok(*(senha_correta))
-}
-
 
 fn main() {
     tauri::Builder::default()
-       .invoke_handler(tauri::generate_handler![cria_conta, login_senha, login_email]) // Registra funções do Tauri
+       .invoke_handler(tauri::generate_handler![
+        controller::cria_conta,
+        controller::login_senha, 
+        controller::login_email,
+        encontra_email]) // Registra funções do Tauri
        .run(tauri::generate_context!())
         .expect("erro ao tentar executar a aplicação Tauri");
 }

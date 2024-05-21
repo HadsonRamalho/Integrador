@@ -6,12 +6,19 @@ import { invoke } from "@tauri-apps/api/tauri";
 
 
 function ResetSenha(){
-    const [mensagemReset, buscaEmail] = useState("");
-    const [email, setEmai] = useState("");
-  
-    async function buscarEmail() {
-      buscaEmail(await invoke("buscaEmail", { email }));
+  const [mensagemReset, setMensagemReset] = useState("");
+  const [email, setEmail] = useState("");
+
+  async function loginEmail() {
+    const r = await invoke("encontra_email", { email });
+    if (r){
+      setMensagemReset("Email enviado");
+    } else{
+      setMensagemReset("Email não enviado");
     }
+    console.log(r);
+  }
+  
 
     return (
       <div className="formReset">
@@ -20,12 +27,12 @@ function ResetSenha(){
           className="rowReset"
           onSubmit={(e) => {
             e.preventDefault();
-            buscarEmail();
+            loginEmail();
           }}
         >
           <input required
             id="email-input"
-            onChange={(e) => setEmai(e.currentTarget.value)}
+            onChange={(e) => setEmail(e.currentTarget.value)}
             placeholder="Seu email..." 
           />
         <p id="mensagemReset">{mensagemReset}</p>

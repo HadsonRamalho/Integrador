@@ -1,17 +1,39 @@
 use mysql_async::{Pool, prelude::*};
 use dotenv::dotenv;
 use std::env;
+use crate::controller;
 
-use crate::dec_senha; // borrow::Borrow,
+pub struct Usuario{ // Objeto de usuário para unificar dados
+    nome:String, email:String, senha:String,
+}
+
+impl Usuario{
+    pub fn novo_usuario(nome: String, email: String, senha: String) -> Self{
+        Usuario {nome, email, senha}
+    }
+    pub fn get_nome(&mut self) -> &str{
+        return &self.nome;
+    }
+    pub fn get_email(&mut self) -> &str{
+        return &self.email;
+    }
+    pub fn get_hash(&mut self) -> &str{
+        return &self.senha;
+    }
+    
+}
 
 // Carregando as credenciais do arquivo .env
 pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
     dotenv().ok();
-    let db_host = env::var("DB_HOST").expect("DB_HOST não definido no arquivo .env");
-    let db_user = env::var("DB_USER").expect("DB_USER não definido no arquivo .env");
-    let db_password = env::var("DB_PASSWORD").expect("DB_PASSWORD não definido no arquivo .env");
-    let db_name = env::var("DB_NAME").expect("DB_NAME não definido no arquivo .env");
-    println!("{db_host}, {db_user}, {db_password}, {db_name}");
+    let db_host = env::var("DB_HOST")
+        .expect("DB_HOST não definido no arquivo .env");
+    let db_user = env::var("DB_USER")
+        .expect("DB_USER não definido no arquivo .env");
+    let db_password = env::var("DB_PASSWORD")
+        .expect("DB_PASSWORD não definido no arquivo .env");
+    let db_name = env::var("DB_NAME")
+        .expect("DB_NAME não definido no arquivo .env");
     
     let url = format!("mysql://{}:{}@{}/{}", db_user, db_password, db_host, db_name);
     let pool = Pool::from_url(url);
@@ -50,7 +72,7 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
 }
 
 // O parâmetro repetido:&mut u32 é um inteiro que deve aumentar caso um email igual ao buscado seja encontrado
-pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Result<(), mysql_async::Error>{
+pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Result<String, mysql_async::Error>{
     let mut conn = pool.get_conn().await?; // Conectando no banco
     let mut emails_db = conn.exec_map( // emails_db é um vetor de emails que é adquirido do banco de dados
         "SELECT email FROM usuarios",
@@ -60,10 +82,10 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Resul
         let email_db = u.as_mut(); // agora, email_db será a variável referente a cada elemento (sim, esse passo é necessário)
         if email_db == email{ 
             *repetido += 1; // Aumenta em 1 o iterador responsável por sinalizar emails repetidos
-            return Ok(())
+            return Ok(email.to_string())
         }
     }
-    Ok(())
+    Ok("Encontrado".to_string())
 }
 
 // Essa função 'autentica' os dados inseridos pelo usuário
@@ -93,7 +115,7 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&
     ).await?;
     for u in senhas_db.iter_mut(){ // Percorrendo o vetor de senhas
         let senha_db = u.as_mut();
-        let hash_dec = dec_senha(senha, senha_db.to_string()); // Verificando o hash da senha
+        let hash_dec = controller::dec_senha(senha, senha_db.to_string()); // Verificando o hash da senha
         if hash_dec{ // Se o hash estiver correto, valida o login
             *senha_correta += 1; // Quando a senha é encontrada, aumenta em 1 a variável referente ao sucesso da busca
             break;
