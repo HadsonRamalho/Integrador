@@ -3,6 +3,7 @@ import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 //import "./App.css";
 
+
 function SignUp(){
 
   const [mensagemCriarConta, setMensagemCriarConta] = useState("");
@@ -26,7 +27,11 @@ function SignUp(){
 
     return (
   
-      <div className="formSignUp">
+      <div 
+      className="formSignUp">
+        <div>
+        <p className="subtitulo">Cadastre-se</p>
+        </div>
         <form
           className="rowSignUp"
           onSubmit={(e) => {
@@ -35,31 +40,36 @@ function SignUp(){
           }}
         >
           <input required
-            id="nome-input"
+            className="user-input"
             onChange={(e) => setNomeCompleto(e.currentTarget.value)}
             placeholder="Nome completo"
             />
           <input required
-            id="email-input"
+            className="user-input"
             onChange={(e) => setEmail(e.currentTarget.value)}
             placeholder="E-mail " 
           />
           <input required
-            id="senha-input"
+            className="user-input"
+            
             onChange={(e) => setSenha1(e.currentTarget.value)}
             placeholder="Sua senha"
             type="password"
           />
           <input required
-            id="senha-input"
+            className="user-input"
             onChange={(e) => setSenha2(e.currentTarget.value)}
             placeholder="Confirme sua senha"
             type="password"
           />
-          <p id="mensagemLogin"> {mensagemCriarConta} </p>
-        <button type="submit">Criar</button>
+          <p id="mensagemLogin"> {mensagemCriarConta} </p>  
+        <button className="user-inpu" type="submit">Criar</button>
+        <div>
+          <br />
+        </div>
       
-    
+        <button className="botaovoltar" type="button" onClick={() => window.location.href = "App.jsx"}>ja tenho conta</button>
+
         </form>
       </div>
     );

@@ -18,6 +18,7 @@ function Login(){
     const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
     if(retorno_conta_encontrada){
       setMensagemSenha("Entrando na conta!");
+      window.location.href = "menu.html";
     } 
     if (!retorno_conta_encontrada){
       setMensagemSenha("Login mal-sucedido");
@@ -26,6 +27,7 @@ function Login(){
   
   return (
     <div className="formLogin">
+       <p className="subtitulo">conecte-se</p>
       <form
         className="row"
         onSubmit={(e) => {
@@ -47,7 +49,8 @@ function Login(){
         />
       <p id="mensagemLogin"> {mensagemEmail} <br></br >{mensagemSenha} </p>
   
-      <button type="submit">Entrar</button>
+      <button className="row"
+       type="submit">Entrar</button>
       </form>
     </div>
   );

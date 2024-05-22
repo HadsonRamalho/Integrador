@@ -37,6 +37,8 @@ function ResetSenha(){
           />
         <p id="mensagemReset">{mensagemReset}</p>
         <button type="submit">Enviar</button>
+        <br />
+        <button className="botao" type="button" onClick={() => window.location.href = "App.jsx"}>voltar</button>
         </form>
       </div>
     );

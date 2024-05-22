@@ -4,8 +4,8 @@
   line-height: 24px;
   font-weight: 400;
 
-  color: #0f0f0f;
-  background-color: #f6f6f6;
+ /* color: #0f0f0f;
+  background-color: #f6f6f6;*/
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,44 +26,52 @@
 }
 
 .formLogin {
-  margin: 0;
-  padding-top: 15vh;
+ /* margin: 0px;*/
+  padding-top: 9vh;/*15vh*/
   display: flex;
   flex-direction: column; /* Alteração para alinhar na vertical */
-  align-items: center; /* Centralizar os itens na vertical */
-  justify-content: center;
-  text-align: center;
-  font-weight: bold;
   line-height: 20px;
+
   
+   /*  align-items: center; Centralizar os itens na vertical 
+  justify-content: center;
+  text-align: center;*/
   
 }
 
 .rowSignUp{
-  line-height: 20px;
+  line-height: 30px;
   position: fixed;
-  top: 20%;
+  top: 20%; /* "caixas"criar conta*/
+  
+}
+.user-input{
+  font-family: serif;
+  margin-right: 6px;
+  margin-top: 15px;/*parte da caixa (criar conta)de nome ,email e tal*/
+  color: #ffffff;
+    background-color: #111;
+}
+.botaovoltar{
+  margin-top: 9%;
+ font-family: serif;
+ text-decoration: underline;
+}
+.botao{
+  margin-top: 9%;
+ font-family: serif;
+
 }
 
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #be0b0b);
-}
 
 .row input {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 10px; /*caixinha de email e senha*/
+  
 }
 
 
-a {
+/*a {
   font-weight: 500;
   color: #ff6464;
   text-decoration: inherit;
@@ -75,7 +83,9 @@ a:hover {
 
 h1 {
   text-align: center;
+  color: #070c0a;
 }
+*/
 
 input,
 button {
@@ -85,18 +95,19 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
+  color: #ffffff;
+  background-color: #111;
   transition: border-color 0.25s;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
 
 button {
-  cursor: pointer;
+  cursor: pointer; /* o cursor do mouse fica umaq maozinha apontando*/
 }
 
 button:hover {
-  border-color: #21d5ec;
+  border-color: #21d5ec; /*deixa a borda com corzinha , e o houver serve para aplicar estilos quando o usuario passa a mao sobre o botao*/
+
 }
 button:active {
   border-color: #d83939;
@@ -108,15 +119,6 @@ button {
   outline: none;
 }
 
-#email-input {
-  margin-right: 5px;
-  margin-top: 10px;
-}
-
-#senha-input{
-  margin-right: 6px;
-  margin-top: 15px;
-}
 
 #box{
   background-color: #169e69;
@@ -132,12 +134,13 @@ button {
   border-radius: 25px;
 }
 
-#subtituloForm{
+.subtitulo{
   font-family: serif;
-  font-size: 20px; /*subtitulo*/
+  font-size: 20px; 
   text-align: center;
   text-transform: uppercase;
 }
+
 
 #camposLoginForm{
   position: fixed; 
@@ -151,24 +154,17 @@ button {
 
 #campoSenhaForm{
   position: fixed; 
-  top: 65%; /*84 esqueci a senha*/
+  top: 67%; /*84 esqueci a senha*/
   left: 38%; /*50*/
   transform:translate(-55%, -55%);
   line-height: 26px;
   
 }
 
-#botaoConfirmarForm{
-  position: fixed; 
-  top: 82%; /*82 desconhecido*/
-  left: 50%; /*50*/
-  transform:translate(-50%, -50%);
-  
-}
 
 #botaoCriarContaForm{
   background-color: #111;
-  top: 86%;/*90 criar conta*/
+  top: 86%;/*90 botao criar conta*/
   font-size: 12px;
   left: 39%;
   position: fixed;
@@ -192,15 +188,4 @@ button {
 
   a:hover {
     color: #db2424;
-  }
-  
-  input,
-  button {
-    color: #ffffff;
-    background-color: #111;
-    /*filter: drop-shadow(0 0 20px #000404);*/
-  }
-  button:active {
-    background-color: #160d0d69;
-  }
-}
+  }}
