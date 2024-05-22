@@ -26,17 +26,13 @@
 }
 
 .formLogin {
- /* margin: 0px;*/
-  padding-top: 9vh;/*15vh*/
+  margin: 0px;
+  padding-top: 9vh;
+   line-height: 20px; 
   display: flex;
-  flex-direction: column; /* Alteração para alinhar na vertical */
-  line-height: 20px;
+  flex-direction: column; /*Alteração para alinhar na vertical*/
+/*parte inicial do login*/ 
 
-  
-   /*  align-items: center; Centralizar os itens na vertical 
-  justify-content: center;
-  text-align: center;*/
-  
 }
 
 .rowSignUp{
@@ -66,8 +62,14 @@
 
 .row input {
   display: block;
-  margin-bottom: 10px; /*caixinha de email e senha*/
-  
+  margin-bottom: 13px; /*10 px ,caixinha de email e senha*/
+  font-family: serif;
+
+}
+.row{
+  margin-bottom: 10px;
+  font-family: Arial; /*botao entrar*/
+  text-align: center;
 }
 
 
@@ -170,7 +172,7 @@ button {
   position: fixed;
 }
 
-#mensagemLogin{
+.mensagemLogin{
   font-size: 10px;
   text-align: center;
   top: 10%;

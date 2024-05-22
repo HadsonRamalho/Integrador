@@ -1,7 +1,6 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
-//import "./App.css";
+
 
 function Login(){
   const [mensagemEmail, setMensagemEmail] = useState("");
@@ -37,17 +36,15 @@ function Login(){
         }}
       >
         <input required
-          id="email-input"
           onChange={(e) => setEmail(e.currentTarget.value)}
           placeholder="E-mail " 
         />  
         <input required
-          id="senha-input"
           onChange={(e) => setSenha(e.currentTarget.value)}
           placeholder="Senha"
           type="password"
         />
-      <p id="mensagemLogin"> {mensagemEmail} <br></br >{mensagemSenha} </p>
+      <p className="mensagemLogin"> {mensagemEmail} <br></br >{mensagemSenha} </p>
   
       <button className="row"
        type="submit">Entrar</button>
