@@ -18,8 +18,6 @@ function ResetSenha(){
     }
     console.log(r);
   }
-  
-
     return (
       <div className="formReset">
 

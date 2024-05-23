@@ -4,8 +4,8 @@
   line-height: 24px;
   font-weight: 400;
 
- /* color: #0f0f0f;
-  background-color: #f6f6f6;*/
+  color: #0f0f0f;
+  background-color: #f6f6f6;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -31,12 +31,13 @@
    line-height: 20px; 
   display: flex;
   flex-direction: column; /*Alteração para alinhar na vertical*/
-/*parte inicial do login*/ 
+/*parte inicial do login*/
+ 
 
 }
 
 .rowSignUp{
-  line-height: 30px;
+  line-height: 20px;
   position: fixed;
   top: 20%; /* "caixas"criar conta*/
   
@@ -44,14 +45,15 @@
 .user-input{
   font-family: serif;
   margin-right: 6px;
-  margin-top: 15px;/*parte da caixa (criar conta)de nome ,email e tal*/
+  margin-top: 10px;/*parte da caixa (criar conta)de nome ,email e tal*/
   color: #ffffff;
     background-color: #111;
 }
 .botaovoltar{
-  margin-top: 9%;
+  margin-top: 5%;
  font-family: serif;
  text-decoration: underline;
+ 
 }
 .botao{
   margin-top: 9%;
@@ -64,12 +66,17 @@
   display: block;
   margin-bottom: 13px; /*10 px ,caixinha de email e senha*/
   font-family: serif;
+  color: #ffffff;
+  background-color: #111;
 
 }
 .row{
   margin-bottom: 10px;
   font-family: Arial; /*botao entrar*/
   text-align: center;
+  
+ 
+ 
 }
 
 
@@ -95,12 +102,9 @@ button {
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #ffffff;
-  background-color: #111;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  
+  
+ 
 }
 
 button {
@@ -144,15 +148,7 @@ button {
 }
 
 
-#camposLoginForm{
-  position: fixed; 
-  top: 30%; /* parte do login,entrar , email esenha*/
-  left: 50%; 
-  transform:translate(-55%, -55%);
-  line-height: 26px;
- 
-  
-}
+
 
 #campoSenhaForm{
   position: fixed; 
@@ -163,9 +159,17 @@ button {
   
 }
 
+#camposLoginForm{
+  position: fixed; 
+  top: 30%; /* parte do login,entrar , email esenha*/
+  left: 50%; 
+  transform:translate(-55%, -55%);
+  line-height: 26px;
+}
 
 #botaoCriarContaForm{
   background-color: #111;
+  color: #f6f6f6;
   top: 86%;/*90 botao criar conta*/
   font-size: 12px;
   left: 39%;

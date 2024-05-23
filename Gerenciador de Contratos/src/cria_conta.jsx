@@ -27,8 +27,7 @@ function SignUp(){
 
     return (
   
-      <div 
-      className="formSignUp">
+      <div>
         <div>
         <p className="subtitulo">Cadastre-se</p>
         </div>
@@ -62,8 +61,8 @@ function SignUp(){
             placeholder="Confirme sua senha"
             type="password"
           />
-          <p id="mensagemLogin"> {mensagemCriarConta} </p>  
-        <button className="user-inpu" type="submit">Criar</button>
+          <p className="mensagemLogin"> {mensagemCriarConta} </p>  
+        <button className="user-input" type="submit">Criar</button>
         <div>
           <br />
         </div>
