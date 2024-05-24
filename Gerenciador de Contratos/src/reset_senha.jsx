@@ -1,8 +1,5 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
-//npmimport "./App.css";
-
 
 
 function ResetSenha(){
@@ -19,22 +16,21 @@ function ResetSenha(){
     console.log(r);
   }
     return (
-      <div className="formReset">
-
+      <div>
         <form
-          className="rowReset"
           onSubmit={(e) => {
             e.preventDefault();
             loginEmail();
           }}
         >
           <input required
-            id="email-input"
+          
+            className="rowReset"
             onChange={(e) => setEmail(e.currentTarget.value)}
             placeholder="Seu email..." 
           />
-        <p id="mensagemReset">{mensagemReset}</p>
-        <button type="submit">Enviar</button>
+        <p className="mensagemLogin">{mensagemReset}</p>
+        <button type="submit" >Enviar</button>
         <br />
         <button className="botao" type="button" onClick={() => window.location.href = "App.jsx"}>voltar</button>
         </form>

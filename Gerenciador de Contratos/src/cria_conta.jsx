@@ -65,10 +65,8 @@ function SignUp(){
         <button className="user-input" type="submit">Criar</button>
         <div>
           <br />
+          <button className="botaovoltar" type="button" onClick={() => window.location.href = "App.jsx"}>ja tenho conta</button>
         </div>
-      
-        <button className="botaovoltar" type="button" onClick={() => window.location.href = "App.jsx"}>ja tenho conta</button>
-
         </form>
       </div>
     );

@@ -16,3 +16,4 @@ document.getElementById("botaoCriarContaForm").addEventListener("click", functio
 document.getElementById("resetSenha").addEventListener("click", function() {
   window.location.href = "reseta_senha.html";
 });
+
