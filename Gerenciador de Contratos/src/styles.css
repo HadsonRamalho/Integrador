@@ -3,10 +3,6 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -15,39 +11,34 @@
   
 }
 
-.container {
-  margin: 0;
-  padding-top: 16vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  font-weight: bold ;
-}
-
-.formLogin {
+/*parte inicial do login*/
+#camposLoginForm {
   margin: 0px;
-  padding-top: 9vh;
+  padding-top: 8vh;
    line-height: 20px; 
   display: flex;
   flex-direction: column; /*Alteração para alinhar na vertical*/
-/*parte inicial do login*/
- 
-
+  position: fixed;
+  top: 30%;
+  left: 50%; 
+  transform:translate(-55%, -55%);
+  line-height: 26px; 
 }
 
+/* "caixas"criar conta*/
 .rowSignUp{
   line-height: 20px;
   position: fixed;
-  top: 20%; /* "caixas"criar conta*/
-  
+  top: 20%; 
 }
+
+/*parte da caixa (criar conta)de nome ,email e tal*/
 .user-input{
   font-family: serif;
   margin-right: 6px;
-  margin-top: 10px;/*parte da caixa (criar conta)de nome ,email e tal*/
+  margin-top: 10px;
   color: #ffffff;
-    background-color: #111;
+  background-color: #111;
 }
 .botaovoltar{
   margin-top: 5%;
@@ -58,10 +49,14 @@
 .botao{
   margin-top: 9%;
  font-family: serif;
+ text-decoration: underline;
+ transform: translate(50%, 50%); 
+ background-color: transparent;
+ border: none;
+
+
 
 }
-
-
 .row input {
   display: block;
   margin-bottom: 13px; /*10 px ,caixinha de email e senha*/
@@ -74,9 +69,11 @@
   margin-bottom: 10px;
   font-family: Arial; /*botao entrar*/
   text-align: center;
-  
- 
- 
+
+}
+.rowReset{
+  background-color: #111;
+  color: #f6f6f6;
 }
 
 
@@ -106,9 +103,14 @@ button {
   
  
 }
+.reset{
+text-decoration: underline;
+}
 
 button {
   cursor: pointer; /* o cursor do mouse fica umaq maozinha apontando*/
+  background-color: #111;
+  color: #f6f6f6;
 }
 
 button:hover {
@@ -116,8 +118,7 @@ button:hover {
 
 }
 button:active {
-  border-color: #d83939;
-  background-color: #e8e8e8;
+  border-color: #4cd839;
 }
 
 input,
@@ -148,29 +149,19 @@ button {
 }
 
 
+.resetSenha{
+  background-color: transparent;
+  color: cornsilk;
+  border: none;
+  transform: translate(-55%, -55%) ;
+  text-decoration: underline;
+ 
 
-
-#campoSenhaForm{
-  position: fixed; 
-  top: 67%; /*84 esqueci a senha*/
-  left: 38%; /*50*/
-  transform:translate(-55%, -55%);
-  line-height: 26px;
-  
 }
 
-#camposLoginForm{
-  position: fixed; 
-  top: 30%; /* parte do login,entrar , email esenha*/
-  left: 50%; 
-  transform:translate(-55%, -55%);
-  line-height: 26px;
-}
 
 #botaoCriarContaForm{
-  background-color: #111;
-  color: #f6f6f6;
-  top: 86%;/*90 botao criar conta*/
+  top: 140%;/*90 botao criar conta*/
   font-size: 12px;
   left: 39%;
   position: fixed;
