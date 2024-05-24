@@ -12,6 +12,7 @@ function Login(){
   async function loginEmail() {
     setMensagemEmail(await invoke("login_email", { email }));
   }
+  
 
   async function loginSenha(){
     const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
@@ -22,6 +23,7 @@ function Login(){
     if (!retorno_conta_encontrada){
       setMensagemSenha("Login mal-sucedido");
     }
+    console.log(retorno_conta_encontrada);
   }
   
   return (

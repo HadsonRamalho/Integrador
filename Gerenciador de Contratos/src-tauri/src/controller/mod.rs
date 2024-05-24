@@ -1,4 +1,5 @@
 use crate::model;
+use crate::model::Usuario;
 use pwhash::bcrypt;
 use pwhash::unix;
 
@@ -77,7 +78,10 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Ret
         return Ok(false)
     }
     let mut senha_correta:u32 = 0;
-    let _x = _verifica_senha(email, senha, &mut senha_correta).await;
+    let usuario_autenticado: Result<Usuario, String> = _verifica_senha(email, senha, &mut senha_correta).await;
+    let mut usuario_autenticado = usuario_autenticado.unwrap();
+    let usuario_autenticado = usuario_autenticado.get_all();
+    println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
     if senha_correta != 0 {
         return Ok(true)
     } else{
@@ -118,10 +122,10 @@ pub async fn save_data(nome: &str, email: &str, senha: &str, email_repetido: &mu
 /// # Retornos
 /// - Result<u32, String>: Retorna Ok(senha_correta) se a operação for bem-sucedida,
 ///   Err(erro) se ocorrer um erro ao verificar a senha.
-pub async fn _verifica_senha(email: &str, senha: &str, senha_correta: &mut u32) -> Result<u32, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
+pub async fn _verifica_senha(email: &str, senha: &str, senha_correta: &mut u32) -> Result<Usuario, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
     let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
-    model::verifica_senha(&pool, &email, senha,senha_correta).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
-    Ok(*(senha_correta))
+    let usuario_autenticado = model::verifica_senha(&pool, &email, senha,senha_correta).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
+    Ok(usuario_autenticado)
 }
 
 /// Função para validar o formato do endereço de email.
@@ -137,6 +141,28 @@ pub fn valida_email(email: &str) -> bool{
         verificador = true;
     }
     verificador
+}
+
+/// Função Tauri para verificar a existência de um e-mail no banco de dados e enviar um e-mail de verificação se existir.
+///
+/// # Parâmetros
+/// - email: Endereço de e-mail a ser verificado.
+///
+/// # Retornos
+/// - Result<bool, bool>: Retorna Ok(true) se o e-mail for encontrado e o e-mail de verificação enviado com sucesso,
+///   Ok(false) se o e-mail não for encontrado.
+#[tauri::command]
+pub async fn encontra_email(email: &str) -> Result<bool, bool>{
+    let mut repetido = 0;
+    let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
+    let _consome_result = model::email_repetido(&pool, email, &mut repetido).await;
+    println!("{repetido}");
+    if repetido != 0 {
+        model::envia_email(_consome_result.unwrap());
+        Ok(true)}
+    else {
+        Ok(false)
+    }
 }
 
 /// Função para criptografar uma senha usando o algoritmo bcrypt.

@@ -1,7 +1,11 @@
-use mysql_async::{Pool, prelude::*};
+use mysql_async::{binlog::events::DefaultCharset, prelude::*, Pool};
 use dotenv::dotenv;
 use std::env;
 use crate::controller;
+
+// crates para envio de email
+use lettre::transport::smtp::authentication::{Credentials, Mechanism};
+use lettre::{Message, SmtpTransport, Transport};
 
 /// Estrutura que representa um usuário.
 ///
@@ -51,7 +55,10 @@ impl Usuario{
     pub fn get_hash(&mut self) -> &str{
         return &self.senha;
     }
-    
+
+    pub fn get_all(&mut self) -> (&String, &String, &String){
+        return (&self.nome, &self.email, &self.senha)
+    }    
 }
 
 /// Cria uma pool de conexões com o banco de dados usando as credenciais do arquivo .env.
@@ -103,6 +110,7 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
     email_repetido(pool, email, &mut repetido).await?; // Entra na função que faz a busca nos emails
     *email_rep = repetido; // Atribuindo ao parâmetro email_rep o valor do inteiro passado para a função email_repetido
     if repetido != 0{ // Se o email for repetido, não faça nada (Uma mensagem de erro é exibida no front)
+        println!("!Insert");
        return Ok(())
     }
     else { // Se o email não for repetido, crie uma conta nova
@@ -110,6 +118,7 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
             "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)", // Interrogações são substituídas pelos parâmetros
             (email, nome, senha, qtd) // Parâmetros a serem substituídos na query
         ).await?;
+        println!("Insert!");
      
         Ok(())
     }
@@ -154,7 +163,7 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Resul
 /// # Retornos
 /// - Result<(), mysql_async::Error>: Retorna Ok(()) se a senha for verificada com sucesso,
 ///   ou Err(mysql_async::Error) se houver um erro na verificação.
-pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&mut u32) -> Result<(), mysql_async::Error>{
+pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&mut u32) -> Result<Usuario, mysql_async::Error>{
     // Esse trecho de código vai virar uma função separada posteriormente 
     ///////////
     let mut conn = pool.get_conn().await?; 
@@ -171,26 +180,85 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&
         }
     } 
     ///////////    
-
     let mut senhas_db = conn.exec_map( // senhas_db é um vetor que armazena as senhas dos usuários
         "SELECT senha FROM usuarios WHERE email = (?)", // Carrega a senha atual do email selecionado
         (email_encontrado,), |senha:String| senha , // Parâmetro email_encontrado é utilizado para selecionar o email
     ).await?;
+    let mut hash_senha:&mut str = Default::default();
     for u in senhas_db.iter_mut(){ // Percorrendo o vetor de senhas
         let senha_db = u.as_mut();
         let hash_dec = controller::dec_senha(senha, senha_db.to_string()); // Verificando o hash da senha
         if hash_dec{ // Se o hash estiver correto, valida o login
             *senha_correta += 1; // Quando a senha é encontrada, aumenta em 1 a variável referente ao sucesso da busca
+            hash_senha = senha_db;
             break;
         }
     }
-
+// pegando nome
+    let mut nome_db = conn.exec_map(
+        "SELECT nome_completo FROM usuarios WHERE email = (?)",
+        (email,), |nome:String | nome,
+    ).await?;
+    let mut nome = Default::default();
+    for u in nome_db.iter_mut(){
+        nome = u.as_mut();
+        break;
+    };
+    let mut usuario = Usuario::novo_usuario(nome.to_string(), email.to_string(), hash_senha.to_string());
     // Seção de teste
+    let mut user = usuario.get_all();
+    let user_no = user.0;
+    let user_em = user.1;
+    let user_ha = user.2;
+    let usuario_autenticado = Usuario::novo_usuario(
+        user_no.to_string(), 
+        user_em.to_string(), 
+        user_ha.to_string());
+    //
     if *senha_correta != 0 as u32{ 
         println!("CONTA ENCONTRADA");
     } else{
         *senha_correta = 0;
         println!("Conta não encontrada?");
     }
-    Ok(())
+    Ok(usuario_autenticado)
+}
+
+/// Envia um e-mail de verificação.
+///
+/// # Parâmetros
+/// - email: Endereço de e-mail para onde o e-mail será enviado.
+///
+/// Esta função configura e utiliza o servidor SMTP do Gmail para enviar um e-mail de verificação com um código.
+pub fn envia_email(email: String){
+    // as credenciais SMTP
+    let smtp_username = "gerenciadordecontratosgdc@gmail.com";
+      let smtp_password = "qeaa rzhm inlt bcyh";
+
+    // o servidor SMTP e porta
+    let smtp_server = "smtp.gmail.com";
+    let smtp_port = 587;
+    // credenciais de autenticação SMTP
+    let smtp_credentials = Credentials::new(smtp_username.to_string(), smtp_password.to_string());
+
+    // transporte SMTP
+    let smtp_transport = SmtpTransport::starttls_relay(&smtp_server)
+        .unwrap()
+        .credentials(smtp_credentials)
+        .authentication(vec![Mechanism::Plain])
+        .build();
+
+    // conteúdo do e-mail
+    let email = Message::builder()
+        .from("gerenciadordecontratosgdc@gmail.com".parse().unwrap())
+        .to(email.parse().unwrap())
+        .subject("Gerenciador de Contratos | Reset de senha")
+        .body("Seu código de verificação é: {XXXX}".to_string())
+        .unwrap();
+
+    // enviar o e-mail usando o transporte SMTP
+    match smtp_transport.send(&email) {
+        Ok(_) => println!("E-mail enviado com sucesso!"),
+        Err(err) => eprintln!("Erro ao enviar e-mail: {:?}", err),
+    }
 }
