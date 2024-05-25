@@ -132,7 +132,7 @@ button {
 
 
 #box{
-  background-color:   #2469ffcb;
+  background-color:   #8797AF;
   position: fixed;
   top:50%;
   left: 50%;
@@ -184,7 +184,7 @@ button {
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
-    background-color: #000000
+    background-color: #56667A
     ;
     
   }
