@@ -52,8 +52,8 @@ pub async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &
 ///   Ok(false) se o email não cumprir algum dos critérios de validação
 #[tauri::command]
 pub fn login_email(email: &str) -> Result<bool, bool> { // Retorna um bool para o front, representando sucesso na validação do e-mail
-    let vazio = ""; // String vazia a ser comparada caso a verificação no front falhe
-    if email == vazio{
+    let email = email.trim(); // Removendo espaços em branco
+    if email.is_empty(){
         return Err(false)
     }
     if valida_email(email){
@@ -73,8 +73,8 @@ pub fn login_email(email: &str) -> Result<bool, bool> { // Retorna um bool para 
 ///   Ok(false) se a senha estiver vazia ou o login não for bem-sucedido.
 #[tauri::command]
 pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna uma mensagem para o front e um booleano
-    let vazio = ""; 
-    if senha == vazio{ // Verificação caso o campo do front falhe
+    let senha = senha.trim(); // Removendo espaços em branco
+    if senha.is_empty(){ // Verificação caso o campo do front falhe
         return Ok(false)
     }
     let mut senha_correta:u32 = 0;
@@ -163,6 +163,16 @@ pub async fn encontra_email(email: &str) -> Result<bool, bool>{
     else {
         Ok(false)
     }
+}
+
+#[tauri::command]
+pub async fn altera_email(email: &str) -> Result<bool, bool>{
+    let email = email.trim();
+    if email.is_empty() || !valida_email(email){
+        return Ok(false)
+    }
+    // chamada à função no model
+    Ok(true)
 }
 
 /// Função para criptografar uma senha usando o algoritmo bcrypt.
