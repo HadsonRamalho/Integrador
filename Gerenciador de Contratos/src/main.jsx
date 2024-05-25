@@ -17,3 +17,7 @@ document.getElementById("resetSenha").addEventListener("click", function() {
   window.location.href = "reseta_senha.html";
 });
 
+document.getElementById("menu").addEventListener("click", function() {
+  window.location.href = "menu.html";
+});
+

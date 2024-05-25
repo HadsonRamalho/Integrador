@@ -30,6 +30,7 @@
   line-height: 20px;
   position: fixed;
   top: 20%; 
+ 
 }
 
 /*parte da caixa (criar conta)de nome ,email e tal*/
@@ -37,13 +38,14 @@
   font-family: serif;
   margin-right: 6px;
   margin-top: 10px;
-  color: #ffffff;
-  background-color: #111;
+
 }
 .botaovoltar{
   margin-top: 5%;
  font-family: serif;
  text-decoration: underline;
+ background: transparent;
+ border: none;
  
 }
 .botao{
@@ -61,8 +63,7 @@
   display: block;
   margin-bottom: 13px; /*10 px ,caixinha de email e senha*/
   font-family: serif;
-  color: #ffffff;
-  background-color: #111;
+
 
 }
 .row{
@@ -72,8 +73,8 @@
 
 }
 .rowReset{
-  background-color: #111;
-  color: #f6f6f6;
+  background-color: #ffffff;
+  color: #000000;
 }
 
 
@@ -104,13 +105,16 @@ button {
  
 }
 .reset{
-text-decoration: underline;
+text-decoration: none;
+
 }
 
 button {
   cursor: pointer; /* o cursor do mouse fica umaq maozinha apontando*/
-  background-color: #111;
-  color: #f6f6f6;
+  background-color: beige;
+  color: #111;
+ 
+
 }
 
 button:hover {
@@ -128,7 +132,7 @@ button {
 
 
 #box{
-  background-color: #169e69;
+  background-color:   #2469ffcb;
   position: fixed;
   top:50%;
   left: 50%;
@@ -180,7 +184,9 @@ button {
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
-    background-color: #234934;
+    background-color: #000000
+    ;
+    
   }
 
   a:hover {
