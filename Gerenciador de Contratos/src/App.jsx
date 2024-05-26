@@ -52,7 +52,7 @@ function Login(){
        type="submit">Entrar</button>
       
        <button className="resetSenha" type="button" onClick={() => window.location.href = "reseta_senha.html"}>Esqueci a senha</button>
-        
+    
        <button id="botaoCriarContaForm" type="button"onClick={()=> window.location.href= "criar_conta.html"}>Criar conta</button>
     
       </form>
