@@ -115,8 +115,8 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
     }
     else { // Se o email não for repetido, crie uma conta nova
         conn.exec_drop(
-            "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)", // Interrogações são substituídas pelos parâmetros
-            (email, nome, senha, qtd) // Parâmetros a serem substituídos na query
+            "INSERT INTO usuarios (email, nome_completo, senha) VALUES (?, ?, ?)", // Interrogações são substituídas pelos parâmetros
+            (email, nome, senha) // Parâmetros a serem substituídos na query
         ).await?;
         println!("Insert!");
      
