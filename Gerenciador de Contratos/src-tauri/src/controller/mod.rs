@@ -1,5 +1,7 @@
 use crate::model;
+use crate::model::email_repetido;
 use crate::model::Usuario;
+use mysql_async::Pool;
 use pwhash::bcrypt;
 use pwhash::unix;
 
@@ -52,14 +54,10 @@ pub async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &
 ///   Ok(false) se o email não cumprir algum dos critérios de validação
 #[tauri::command]
 pub fn login_email(email: &str) -> Result<bool, bool> { // Retorna um bool para o front, representando sucesso na validação do e-mail
-    let email = email.trim(); // Removendo espaços em branco
-    if email.is_empty(){
-        return Err(false)
+    if !valida_email(email){
+        return Ok(false)
     }
-    if valida_email(email){
-        return Ok(true)
-    }
-    return Ok(false)
+    return Ok(true)
 }
 
 /// Função para realizar login com email e senha.
@@ -73,12 +71,12 @@ pub fn login_email(email: &str) -> Result<bool, bool> { // Retorna um bool para 
 ///   Ok(false) se a senha estiver vazia ou o login não for bem-sucedido.
 #[tauri::command]
 pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna uma mensagem para o front e um booleano
-    let senha = senha.trim(); // Removendo espaços em branco
+    let senha:String = senha.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco da senha
     if senha.is_empty(){ // Verificação caso o campo do front falhe
         return Ok(false)
     }
     let mut senha_correta:u32 = 0;
-    let usuario_autenticado: Result<Usuario, String> = _verifica_senha(email, senha, &mut senha_correta).await;
+    let usuario_autenticado: Result<Usuario, String> = _verifica_senha(email, &senha, &mut senha_correta).await;
     let mut usuario_autenticado = usuario_autenticado.unwrap();
     let usuario_autenticado = usuario_autenticado.get_all();
     println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
@@ -137,7 +135,8 @@ pub async fn _verifica_senha(email: &str, senha: &str, senha_correta: &mut u32) 
 /// - bool: Retorna true se o email tiver o formato válido (contém '@' e '.'), caso contrário, retorna false.
 pub fn valida_email(email: &str) -> bool{
     let mut verificador = false;
-    if email.contains("@") && email.contains(".") {
+    let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
+    if email.contains("@") && email.contains(".") && !email.is_empty() {
         verificador = true;
     }
     verificador
@@ -152,7 +151,10 @@ pub fn valida_email(email: &str) -> bool{
 /// - Result<bool, bool>: Retorna Ok(true) se o e-mail for encontrado e o e-mail de verificação enviado com sucesso,
 ///   Ok(false) se o e-mail não for encontrado.
 #[tauri::command]
-pub async fn encontra_email(email: &str) -> Result<bool, bool>{
+pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
+    if !valida_email(email){
+        return Ok(false)
+    }
     let mut repetido = 0;
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
     let _consome_result = model::email_repetido(&pool, email, &mut repetido).await;
@@ -168,11 +170,20 @@ pub async fn encontra_email(email: &str) -> Result<bool, bool>{
 #[tauri::command]
 pub async fn altera_email(email: &str) -> Result<bool, bool>{
     let email = email.trim();
-    if email.is_empty() || !valida_email(email){
+    let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
+    let mut repetido = 0;
+    let _consome_result = model::email_repetido(&pool, email, &mut repetido).await;
+    if email.is_empty() || !valida_email(email) || repetido != 0{
         return Ok(false)
     }
     // chamada à função no model
     Ok(true)
+}
+
+#[tauri::command]
+pub async fn gera_token(email: &str) -> Result<String, ()>{
+    let token = enc_senha(email);
+    Ok(token)
 }
 
 /// Função para criptografar uma senha usando o algoritmo bcrypt.

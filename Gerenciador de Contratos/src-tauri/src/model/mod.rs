@@ -146,6 +146,7 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Resul
         let email_db = u.as_mut(); // agora, email_db será a variável referente a cada elemento (sim, esse passo é necessário)
         if email_db == email{ 
             *repetido += 1; // Aumenta em 1 o iterador responsável por sinalizar emails repetidos
+            println!("email_db");
             return Ok(email.to_string())
         }
     }

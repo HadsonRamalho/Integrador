@@ -7,7 +7,7 @@ function ResetSenha(){
   const [email, setEmail] = useState("");
 
   async function loginEmail() {
-    const r = await invoke("encontra_email", { email });
+    const r = await invoke("encontra_email_smtp", { email }); // Renomeando função
     if (r){
       setMensagemReset("Email enviado");
     } else{

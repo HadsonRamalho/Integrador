@@ -17,10 +17,6 @@ use std::env;
 mod model;
 mod controller;
 
-
-
-
-
 /// Função principal que inicia a aplicação Tauri.
 ///
 /// Esta função configura o manipulador de invocação do Tauri, registrando as funções disponíveis para chamadas do front-end.
@@ -30,7 +26,8 @@ fn main() {
         controller::cria_conta,
         controller::login_senha, 
         controller::login_email,
-        controller::encontra_email]) // Registra funções do Tauri
+        controller::encontra_email_smtp,
+        controller::gera_token]) // Registra funções do Tauri
        .run(tauri::generate_context!())
         .expect("erro ao tentar executar a aplicação Tauri");
 }

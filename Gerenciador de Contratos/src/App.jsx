@@ -12,18 +12,21 @@ function Login(){
   async function loginEmail() {
     setMensagemEmail(await invoke("login_email", { email }));
   }
-  
+  if (localStorage.getItem('token')){ // Se tiver um token definido, faz login direto no menu
+    window.location.href = "menu.html";
+  }
 
   async function loginSenha(){
     const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
     if(retorno_conta_encontrada){
       setMensagemSenha("Entrando na conta!");
+      const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
+      localStorage.setItem('token', novo_token); // Armazenando token
       window.location.href = "menu.html";
     } 
     if (!retorno_conta_encontrada){
       setMensagemSenha("Login mal-sucedido");
     }
-    console.log(retorno_conta_encontrada);
   }
   
   return (
