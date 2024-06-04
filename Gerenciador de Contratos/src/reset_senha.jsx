@@ -17,6 +17,9 @@ function ResetSenha(){
   }
     return (
       <div>
+        <div>
+        <p className="subtitulo">redefinir senha</p>
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
