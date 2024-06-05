@@ -104,7 +104,7 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
     ).await?;
     let qtd; // Variável que vai armazenar o retorno do vetor qtd_users
     qtd = qtd_users.pop(); // qtd agora é um inteiro, e é utilizado para atribuir o UUID do usuário
-    
+    let qtd = qtd.unwrap();
 
     let mut repetido = 0; // Um iterador que aumenta quando um email repetido é encontrado (Tive problemas pra usar bool)
     email_repetido(pool, email, &mut repetido).await?; // Entra na função que faz a busca nos emails
@@ -115,8 +115,8 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
     }
     else { // Se o email não for repetido, crie uma conta nova
         conn.exec_drop(
-            "INSERT INTO usuarios (email, nome_completo, senha) VALUES (?, ?, ?)", // Interrogações são substituídas pelos parâmetros
-            (email, nome, senha) // Parâmetros a serem substituídos na query
+            "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)", // Interrogações são substituídas pelos parâmetros
+            (email, nome, senha, qtd) // Parâmetros a serem substituídos na query
         ).await?;
         println!("Insert!");
      
