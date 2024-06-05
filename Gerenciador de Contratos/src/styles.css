@@ -63,20 +63,11 @@
 }
 
  /*botao entrar*/
-.row{
-  margin-bottom: 10px;
-  font-family: Arial;
-  text-align: center;
-
-}
 
 /*caixa de email do esqueci a senha*/
 .rowReset{
   background-color: #111;
   color: #ffffff;
- 
-
-  
 
 }
 
@@ -123,10 +114,41 @@ button {
   transform: translate(-50%, -50%); 
   text-align: center; 
   height: 500px; 
-  width: 440px; /*450pcx*/
+  width: 400px; /*450pcx*/
+  line-height: 60px;
+  filter: blur(0 0 50px);
+  border-radius: 10px;
+
+}
+
+/*box do esqueci a senha*/
+#boxreset{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  min-height: 300px; 
+  width: 500px; /*450pcx*/
   line-height: 60px;
   filter: blur(0 0 50px);
   border-radius: 25px;
+
+}
+/* box do criar conta*/
+#boxcriar{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  height: 500px; 
+  width: 400px; /*450pcx*/
+  line-height: 60px;
+  border-radius: 10px;
+
 }
 
 
@@ -137,17 +159,13 @@ button {
   text-transform: uppercase;
 }
 
-
+/*esqueci a senha */
 .resetSenha{
   background-color: transparent;
   color: rgba(14, 14, 14, 0.916);
   border: none;
   transform: translate(-31%, -230%) ;
   text-decoration: underline;
- 
-
- 
-
 }
 
 
