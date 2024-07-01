@@ -38,7 +38,6 @@
   margin-right: 6px;
   margin-top: 10px;
   background-color: #111;
-  color: #ffffff;
 
 }
 
@@ -60,6 +59,7 @@
   font-family: serif;
   background-color: #111;
   color: #ffffff;
+ 
 }
 
  /*botao entrar*/
@@ -67,7 +67,7 @@
 /*caixa de email do esqueci a senha*/
 .rowReset{
   background-color: #111;
-  color: #ffffff;
+
 
 }
 
@@ -148,6 +148,7 @@ button {
   width: 400px; /*450pcx*/
   line-height: 60px;
   border-radius: 10px;
+
 
 }
 
