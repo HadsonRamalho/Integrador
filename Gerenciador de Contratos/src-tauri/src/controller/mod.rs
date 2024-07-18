@@ -73,8 +73,14 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Ret
         return Ok(false)
     }
     let mut senha_correta:u32 = 0;
-    let usuario_autenticado: Result<Usuario, String> = _verifica_senha(email, &senha, &mut senha_correta).await;
-    let mut usuario_autenticado = usuario_autenticado.unwrap();
+    let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha, &mut senha_correta).await;
+    let mut usuario_autenticado= Default::default();
+    match resultado_verificacao{
+        Ok(_) => {
+            usuario_autenticado = resultado_verificacao.unwrap();
+        },
+        _ => println!("Erro: Conta não cadastrada")
+    }
     let usuario_autenticado = usuario_autenticado.get_all();
     println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
     if senha_correta != 0 {
