@@ -1,7 +1,5 @@
 use crate::model;
-use crate::model::email_repetido;
 use crate::model::Usuario;
-use mysql_async::Pool;
 use pwhash::bcrypt;
 use pwhash::unix;
 
@@ -17,7 +15,7 @@ use pwhash::unix;
 /// - Result<bool, bool>: Retorna Ok(true) se a conta for criada com sucesso, 
 ///   Ok(false) se houver um erro na criação da conta
 #[tauri::command] 
-pub async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
+pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
     let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
     let validacao_email = valida_email(&email);
     if validacao_email == false{
@@ -27,18 +25,17 @@ pub async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &
         return Ok(false); // Conta não criada
     }
     let hash = enc_senha(senha1); // Criptografando a senha (Standard *BSD hash)
-    let mut email_repetido:u32 = 0;
     let mut usuario = model::Usuario::novo_usuario(
-        nomeCompleto.to_string(),
+        nome_completo.to_string(),
         email.to_string(), 
         hash); // Cria um novo usuário
 
     let _consome_result = save_data(
-        nomeCompleto, 
+        nome_completo, 
         &email, 
-        usuario.get_hash(), 
-        &mut email_repetido).await;
-    if email_repetido == 0{   
+        usuario.get_hash()
+        ).await;
+    if _consome_result.unwrap(){   
         return Ok(true); // Conta criada   
     }
     return Ok(false); // Conta não foi criada
@@ -76,8 +73,14 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Ret
         return Ok(false)
     }
     let mut senha_correta:u32 = 0;
-    let usuario_autenticado: Result<Usuario, String> = _verifica_senha(email, &senha, &mut senha_correta).await;
-    let mut usuario_autenticado = usuario_autenticado.unwrap();
+    let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha, &mut senha_correta).await;
+    let mut usuario_autenticado= Default::default();
+    match resultado_verificacao{
+        Ok(_) => {
+            usuario_autenticado = resultado_verificacao.unwrap();
+        },
+        _ => println!("Erro: Conta não cadastrada")
+    }
     let usuario_autenticado = usuario_autenticado.get_all();
     println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
     if senha_correta != 0 {
@@ -99,15 +102,15 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Ret
 /// # Retornos
 /// - Result<u32, String>: Retorna Ok(email_repetido) se a operação for bem-sucedida,
 ///   Err(erro) se ocorrer um erro ao salvar os dados.
-pub async fn save_data(nome: &str, email: &str, senha: &str, email_repetido: &mut u32) -> Result<u32, String> {
+pub async fn save_data(nome: &str, email: &str, senha: &str) -> Result<bool, String> {
     let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
-    model::save_data(
+    let resultado_criacao = model::save_data(
         &pool, 
         nome, 
         &email, 
-        senha, 
-        email_repetido).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
-    Ok(*(email_repetido))
+        senha
+        ).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
+    Ok(resultado_criacao)
 }
 
 /// Função para verificar a senha do usuário.
@@ -155,11 +158,10 @@ pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
     if !valida_email(email){
         return Ok(false)
     }
-    let mut repetido = 0;
+    let repetido = 0;
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
-    let _consome_result = model::email_repetido(&pool, email, &mut repetido).await;
-    println!("{repetido}");
-    if repetido != 0 {
+    let _consome_result = model::busca_email(&pool, email).await;
+    if repetido != 0 {       
         model::envia_email(_consome_result.unwrap());
         Ok(true)}
     else {
@@ -168,12 +170,11 @@ pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
 }
 
 #[tauri::command]
-pub async fn altera_email(email: &str) -> Result<bool, bool>{
+pub async fn _altera_email(email: &str) -> Result<bool, bool>{
     let email = email.trim();
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
-    let mut repetido = 0;
-    let _consome_result = model::email_repetido(&pool, email, &mut repetido).await;
-    if email.is_empty() || !valida_email(email) || repetido != 0{
+    let _consome_result = model::busca_email(&pool, email).await;
+    if email.is_empty() || !valida_email(email) || _consome_result.unwrap() == ""{
         return Ok(false)
     }
     // chamada à função no model

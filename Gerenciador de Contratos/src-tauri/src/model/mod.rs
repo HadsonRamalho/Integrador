@@ -1,4 +1,4 @@
-use mysql_async::{binlog::events::DefaultCharset, prelude::*, Pool};
+use mysql_async::{prelude::*, Pool};
 use dotenv::dotenv;
 use std::env;
 use crate::controller;
@@ -13,6 +13,7 @@ use lettre::{Message, SmtpTransport, Transport};
 /// - nome: Nome completo do usuário.
 /// - email: Endereço de email do usuário.
 /// - senha: Senha do usuário.
+#[derive(Default)]
 pub struct Usuario{ // Objeto de usuário para unificar dados
     nome:String, email:String, senha:String,
 }
@@ -36,7 +37,7 @@ impl Usuario{
     ///
     /// # Retornos
     /// - &str: Retorna uma referência para o nome do usuário.
-    pub fn get_nome(&mut self) -> &str{
+    pub fn _get_nome(&mut self) -> &str{
         return &self.nome;
     }
 
@@ -44,7 +45,7 @@ impl Usuario{
     ///
     /// # Retornos
     /// - &str: Retorna uma referência para o email do usuário.
-    pub fn get_email(&mut self) -> &str{
+    pub fn _get_email(&mut self) -> &str{
         return &self.email;
     }
 
@@ -94,33 +95,23 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
 /// # Retornos
 /// - Result<(), mysql_async::Error>: Retorna Ok(()) se o usuário for inserido com sucesso,
 ///   ou Err(mysql_async::Error) se houver um erro na inserção dos dados.
-pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_rep: &mut u32) -> Result<(), mysql_async::Error> {
+pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str) -> Result<bool, mysql_async::Error> {
     let mut conn = pool.get_conn().await?;
     
-    let mut qtd_users = conn.exec_map( // exec_map retorna um vetor do tipo definido no parâmetro f:
-        "SELECT COUNT(UUID) FROM usuarios",
-        (),
-        |qtd_usuarios:u32| qtd_usuarios , // Um vetor com um único elemento (aqui, ele contém um inteiro)
-    ).await?;
-    let qtd; // Variável que vai armazenar o retorno do vetor qtd_users
-    qtd = qtd_users.pop(); // qtd agora é um inteiro, e é utilizado para atribuir o UUID do usuário
-    
-
-    let mut repetido = 0; // Um iterador que aumenta quando um email repetido é encontrado (Tive problemas pra usar bool)
-    email_repetido(pool, email, &mut repetido).await?; // Entra na função que faz a busca nos emails
-    *email_rep = repetido; // Atribuindo ao parâmetro email_rep o valor do inteiro passado para a função email_repetido
-    if repetido != 0{ // Se o email for repetido, não faça nada (Uma mensagem de erro é exibida no front)
+    let uuid = controller::enc_senha(&email);
+    let resultado_busca = busca_email(pool, email).await?; // Entra na função que faz a busca nos emails
+    if resultado_busca != "".to_string(){ // Se o email for repetido, não faça nada (Uma mensagem de erro é exibida no front)
         println!("!Insert");
-       return Ok(())
+       return Ok(false)
     }
     else { // Se o email não for repetido, crie uma conta nova
         conn.exec_drop(
-            "INSERT INTO usuarios (email, nome_completo, senha) VALUES (?, ?, ?)", // Interrogações são substituídas pelos parâmetros
-            (email, nome, senha) // Parâmetros a serem substituídos na query
+            "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)", // Interrogações são substituídas pelos parâmetros
+            (email, nome, senha, uuid) // Parâmetros a serem substituídos na query
         ).await?;
         println!("Insert!");
      
-        Ok(())
+        Ok(true)
     }
     
 }
@@ -136,21 +127,19 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str, email_r
 /// - Result<String, mysql_async::Error>: Retorna Ok("Encontrado") se o email for encontrado,
 ///   ou Err(mysql_async::Error) se houver um erro na verificação.
 
-pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Result<String, mysql_async::Error>{
+pub async fn busca_email(pool: &Pool, email:&str) -> Result<String, mysql_async::Error>{
     let mut conn = pool.get_conn().await?; // Conectando no banco
     let mut emails_db = conn.exec_map( // emails_db é um vetor de emails que é adquirido do banco de dados
-        "SELECT email FROM usuarios",
-        (), |email:String| email ,
+        "SELECT email FROM usuarios WHERE email = (?)",
+        (email,), |email:String| email ,
     ).await?;
     for u in emails_db.iter_mut(){ // u  será a variável referente a cada elemento do vetor
         let email_db = u.as_mut(); // agora, email_db será a variável referente a cada elemento (sim, esse passo é necessário)
         if email_db == email{ 
-            *repetido += 1; // Aumenta em 1 o iterador responsável por sinalizar emails repetidos
-            println!("email_db");
             return Ok(email.to_string())
         }
     }
-    Ok("Encontrado".to_string())
+    Ok("".to_string())
 }
 
 /// Verifica a senha de um usuário.
@@ -165,35 +154,33 @@ pub async fn email_repetido(pool: &Pool, email:&str, repetido:&mut u32) -> Resul
 /// - Result<(), mysql_async::Error>: Retorna Ok(()) se a senha for verificada com sucesso,
 ///   ou Err(mysql_async::Error) se houver um erro na verificação.
 pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&mut u32) -> Result<Usuario, mysql_async::Error>{
-    // Esse trecho de código vai virar uma função separada posteriormente 
-    ///////////
-    let mut conn = pool.get_conn().await?; 
-    let mut emails_db = conn.exec_map( 
-        "SELECT email FROM usuarios", 
-        (), |email:String| email ,
-    ).await?;
-    let mut email_encontrado:&str = Default::default();
-    for u in emails_db.iter_mut(){
-        let email_db = u.as_mut();
-        if email_db == email{
-            email_encontrado = email_db;
-            break;
-        }
-    } 
-    ///////////    
-    let mut senhas_db = conn.exec_map( // senhas_db é um vetor que armazena as senhas dos usuários
+
+    let mut conn = pool.get_conn().await?;     
+    let email_encontrado;
+    let server_error = mysql_async::ServerError{
+        code: 1045,  // Código de erro (ex: acesso negado)
+        message: "Email não encontrado".to_string(), // Mensagem de erro
+        state: "28000".to_string(), // Estado SQL
+    };
+    match busca_email(pool, email).await {
+        Ok(data) => {
+            if data == "".to_string(){
+                return Err(mysql_async::Error::Server(server_error))
+            } else{
+                email_encontrado = data;
+            }
+        },
+        Err(_e) => return Err(mysql_async::Error::Server(server_error)),        
+    }
+    let senhas_db = conn.exec_map( // senhas_db é um vetor que armazena as senhas dos usuários
         "SELECT senha FROM usuarios WHERE email = (?)", // Carrega a senha atual do email selecionado
         (email_encontrado,), |senha:String| senha , // Parâmetro email_encontrado é utilizado para selecionar o email
     ).await?;
-    let mut hash_senha:&mut str = Default::default();
-    for u in senhas_db.iter_mut(){ // Percorrendo o vetor de senhas
-        let senha_db = u.as_mut();
-        let hash_dec = controller::dec_senha(senha, senha_db.to_string()); // Verificando o hash da senha
-        if hash_dec{ // Se o hash estiver correto, valida o login
-            *senha_correta += 1; // Quando a senha é encontrada, aumenta em 1 a variável referente ao sucesso da busca
-            hash_senha = senha_db;
-            break;
-        }
+    let hash_senha:&mut str = Default::default();
+    let x = senhas_db.first().unwrap();
+    let hash_dec = controller::dec_senha(senha, x.to_string()); // Verificando o hash da senha
+    if hash_dec{ // Se o hash estiver correto, valida o login
+        *senha_correta += 1; // Quando a senha é encontrada, aumenta em 1 a variável referente ao sucesso da busca  
     }
 // pegando nome
     let mut nome_db = conn.exec_map(
@@ -207,7 +194,7 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&
     };
     let mut usuario = Usuario::novo_usuario(nome.to_string(), email.to_string(), hash_senha.to_string());
     // Seção de teste
-    let mut user = usuario.get_all();
+    let user = usuario.get_all();
     let user_no = user.0;
     let user_em = user.1;
     let user_ha = user.2;
@@ -238,7 +225,7 @@ pub fn envia_email(email: String){
 
     // o servidor SMTP e porta
     let smtp_server = "smtp.gmail.com";
-    let smtp_port = 587;
+    //let smtp_port = 587;
     // credenciais de autenticação SMTP
     let smtp_credentials = Credentials::new(smtp_username.to_string(), smtp_password.to_string());
 
