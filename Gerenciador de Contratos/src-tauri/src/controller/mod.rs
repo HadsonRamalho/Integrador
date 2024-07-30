@@ -1,5 +1,6 @@
 use crate::model;
 use crate::model::Usuario;
+use bincode::Error;
 use pwhash::bcrypt;
 use pwhash::unix;
 
@@ -67,7 +68,7 @@ pub fn login_email(email: &str) -> Result<bool, bool> { // Retorna um bool para 
 /// - Result<bool, bool>: Retorna Ok(true) se o login for bem-sucedido,
 ///   Ok(false) se a senha estiver vazia ou o login não for bem-sucedido.
 #[tauri::command]
-pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna uma mensagem para o front e um booleano
+pub async fn login_senha(email: &str, senha: &str) -> Result<bool, String>{ // Retorna uma mensagem para o front e um booleano
     let senha:String = senha.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco da senha
     if senha.is_empty(){ // Verificação caso o campo do front falhe
         return Ok(false)
@@ -79,14 +80,20 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Ret
         Ok(_) => {
             usuario_autenticado = resultado_verificacao.unwrap();
         },
-        _ => println!("Erro: Conta não cadastrada")
+        _ => {
+            let erro =  resultado_verificacao.unwrap_err();
+            println!("{erro}");
+            let separacao = erro.find(")");
+            let (primeira_parte, segunda_parte) = erro.split_at(separacao.unwrap()+2);
+            return Err(segunda_parte.to_string())
+        }
     }
     let usuario_autenticado = usuario_autenticado.get_all();
     println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
     if senha_correta != 0 {
         return Ok(true)
     } else{
-        return Ok(false)
+        return Err("Senha não autenticada".to_string())
     }
     
 }
@@ -169,6 +176,8 @@ pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
     }
 }
 
+
+// !!!! Funções a serem implementadas posteriormente !!!!
 #[tauri::command]
 pub async fn _altera_email(email: &str) -> Result<bool, bool>{
     let email = email.trim();
@@ -180,6 +189,13 @@ pub async fn _altera_email(email: &str) -> Result<bool, bool>{
     // chamada à função no model
     Ok(true)
 }
+
+#[tauri::command]
+pub async fn _joga_erro() -> Result<String, String>{
+    return Err("ok".to_string())
+}
+
+// !!!!
 
 #[tauri::command]
 pub async fn gera_token(email: &str) -> Result<String, ()>{

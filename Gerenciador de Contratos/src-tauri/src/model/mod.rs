@@ -13,7 +13,7 @@ use lettre::{Message, SmtpTransport, Transport};
 /// - nome: Nome completo do usuário.
 /// - email: Endereço de email do usuário.
 /// - senha: Senha do usuário.
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Usuario{ // Objeto de usuário para unificar dados
     nome:String, email:String, senha:String,
 }
