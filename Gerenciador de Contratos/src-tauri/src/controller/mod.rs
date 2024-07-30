@@ -189,12 +189,6 @@ pub async fn _altera_email(email: &str) -> Result<bool, bool>{
     // chamada à função no model
     Ok(true)
 }
-
-#[tauri::command]
-pub async fn _joga_erro() -> Result<String, String>{
-    return Err("ok".to_string())
-}
-
 // !!!!
 
 #[tauri::command]
