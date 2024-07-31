@@ -1,6 +1,5 @@
 use crate::model;
 use crate::model::Usuario;
-use bincode::Error;
 use pwhash::bcrypt;
 use pwhash::unix;
 
@@ -75,26 +74,25 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, String>{ // R
     }
     let mut senha_correta:u32 = 0;
     let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha, &mut senha_correta).await;
-    let mut usuario_autenticado= Default::default();
+    let mut _usuario_autenticado= Default::default();
     match resultado_verificacao{
         Ok(_) => {
-            usuario_autenticado = resultado_verificacao.unwrap();
+            _usuario_autenticado = resultado_verificacao.unwrap();
         },
         _ => {
             let erro =  resultado_verificacao.unwrap_err();
             println!("{erro}");
             let separacao = erro.find(")");
-            let (primeira_parte, segunda_parte) = erro.split_at(separacao.unwrap()+2);
+            let (_primeira_parte, segunda_parte) = erro.split_at(separacao.unwrap()+2);
             return Err(segunda_parte.to_string())
         }
     }
-    let usuario_autenticado = usuario_autenticado.get_all();
+    let usuario_autenticado = _usuario_autenticado.get_all();
     println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
     if senha_correta != 0 {
         return Ok(true)
-    } else{
-        return Err("Senha não autenticada".to_string())
     }
+    return Err("Senha inválida".to_string())
     
 }
 
@@ -170,10 +168,9 @@ pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
     let _consome_result = model::busca_email(&pool, email).await;
     if repetido != 0 {       
         model::envia_email(_consome_result.unwrap());
-        Ok(true)}
-    else {
-        Ok(false)
+        return Ok(true)
     }
+    return Ok(false)    
 }
 
 

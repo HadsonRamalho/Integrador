@@ -17,16 +17,16 @@ function Login(){
   }
 
   async function loginSenha(){
-    const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
-    if(retorno_conta_encontrada){
-      setMensagemSenha("Entrando na conta!");
-      const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
-      localStorage.setItem('token', novo_token); // Armazenando token
-      window.location.href = "menu.html";
-    } 
-    if (!retorno_conta_encontrada){
-      setMensagemSenha("Login mal-sucedido");
+    try{
+      const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
+    } catch (error){
+      setMensagemSenha(error);
+      return;
     }
+    setMensagemSenha("Entrando na conta!");
+    const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
+    localStorage.setItem('token', novo_token); // Armazenando token
+    window.location.href = "menu.html";
   }
   
   return (
