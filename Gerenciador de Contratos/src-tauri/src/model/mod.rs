@@ -105,15 +105,12 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str) -> Resu
        return Ok(false)
     }
     // Se o email não for repetido, crie uma conta nova
-        conn.exec_drop(
-            "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)", // Interrogações são substituídas pelos parâmetros
-            (email, nome, senha, uuid) // Parâmetros a serem substituídos na query
-        ).await?;
-        println!("Insert!");
-     
-        Ok(true)
-   
-    
+    conn.exec_drop(
+        "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)", // Interrogações são substituídas pelos parâmetros
+        (email, nome, senha, uuid) // Parâmetros a serem substituídos na query
+    ).await?;
+    println!("Insert!");
+    Ok(true)
 }
 
 /// Verifica se um email já está cadastrado no banco de dados.
@@ -219,9 +216,12 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&
 ///
 /// Esta função configura e utiliza o servidor SMTP do Gmail para enviar um e-mail de verificação com um código.
 pub fn envia_email(email: String){
-    // as credenciais SMTP
-    let smtp_username = "gerenciadordecontratosgdc@gmail.com";
-      let smtp_password = "qeaa rzhm inlt bcyh";
+    // carregando as credenciais SMTP
+    dotenv().ok();
+    let smtp_username = env::var("smtp_username")
+        .expect("smtp_username não definido no arquivo .env");
+    let smtp_password = env::var("smtp_password")
+        .expect("smtp_password não definido no arquivo .env");
 
     // o servidor SMTP e porta
     let smtp_server = "smtp.gmail.com";

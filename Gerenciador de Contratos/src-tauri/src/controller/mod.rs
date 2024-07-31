@@ -163,14 +163,15 @@ pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
     if !valida_email(email){
         return Ok(false)
     }
-    let repetido = 0;
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
     let _consome_result = model::busca_email(&pool, email).await;
-    if repetido != 0 {       
-        model::envia_email(_consome_result.unwrap());
-        return Ok(true)
+    match _consome_result{
+        Ok(_) => {
+            model::envia_email(_consome_result.unwrap());
+            return Ok(true)
+        },
+        _ => return Ok(false)
     }
-    return Ok(false)    
 }
 
 
