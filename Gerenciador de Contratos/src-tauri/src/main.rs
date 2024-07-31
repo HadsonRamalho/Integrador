@@ -25,7 +25,7 @@ fn main() {
        .invoke_handler(tauri::generate_handler![
         controller::cria_conta,
         controller::login_senha, 
-        controller::login_email,
+        controller::checa_email,
         controller::encontra_email_smtp,
         controller::gera_token]) // Registra funções do Tauri
        .run(tauri::generate_context!())

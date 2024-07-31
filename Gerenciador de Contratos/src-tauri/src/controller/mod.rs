@@ -50,7 +50,7 @@ pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: 
 /// - Result<bool, bool>: Retorna Ok(true) se: o email não está vazio E possui os caracteres '@' e '.'
 ///   Ok(false) se o email não cumprir algum dos critérios de validação
 #[tauri::command]
-pub fn login_email(email: &str) -> Result<bool, bool> { // Retorna um bool para o front, representando sucesso na validação do e-mail
+pub fn checa_email(email: &str) -> Result<bool, bool> { // Retorna um bool para o front, representando sucesso na validação do e-mail
     if !valida_email(email){
         return Ok(false)
     }

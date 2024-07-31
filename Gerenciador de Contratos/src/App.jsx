@@ -9,8 +9,8 @@ function Login(){
   const [mensagemSenha, setMensagemSenha] = useState("");
   const [senha, setSenha] = useState("");
 
-  async function loginEmail() {
-    setMensagemEmail(await invoke("login_email", { email }));
+  async function checaEmail() {
+    setMensagemEmail(await invoke("checa_email", { email }));
   }
   if (localStorage.getItem('token')){ // Se tiver um token definido, faz login direto no menu
     window.location.href = "menu.html";
@@ -36,7 +36,7 @@ function Login(){
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          loginEmail();
+          checaEmail();
           loginSenha();
         }}
       >
