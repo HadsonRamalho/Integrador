@@ -59,7 +59,20 @@ impl Usuario{
 
     pub fn get_all(&mut self) -> (&String, &String, &String){
         return (&self.nome, &self.email, &self.senha)
-    }    
+    }
+
+    pub async fn ja_cadastrado(&self) -> bool{
+        let pool = controller::cria_pool().await.unwrap();
+        let email = busca_email(&pool, &self.email).await;
+        match email{
+            Ok(_ok) => {
+                return true
+            },
+            Err(_e) => {
+                return false
+            }
+        }
+    }
 }
 
 /// Cria uma pool de conexões com o banco de dados usando as credenciais do arquivo .env.
@@ -99,11 +112,6 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str) -> Resu
     let mut conn = pool.get_conn().await?;
     
     let uuid = controller::enc_senha(&email);
-    let resultado_busca = busca_email(pool, email).await?; // Entra na função que faz a busca nos emails
-    if resultado_busca != "".to_string(){ // Se o email for repetido, não faça nada (Uma mensagem de erro é exibida no front)
-        println!("!Insert");
-       return Ok(false)
-    }
     // Se o email não for repetido, crie uma conta nova
     conn.exec_drop(
         "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)", // Interrogações são substituídas pelos parâmetros
@@ -136,7 +144,12 @@ pub async fn busca_email(pool: &Pool, email:&str) -> Result<String, mysql_async:
             return Ok(email.to_string())
         }
     }
-    Ok("".to_string())
+    let server_error = mysql_async::ServerError{
+        code: 1045,  // Código de erro (ex: acesso negado)
+        message: "Email não encontrado".to_string(), // Mensagem de erro
+        state: "28000".to_string(), // Estado SQL
+    };
+    return Err(mysql_async::Error::Server(server_error))
 }
 
 /// Verifica a senha de um usuário.
@@ -150,7 +163,7 @@ pub async fn busca_email(pool: &Pool, email:&str) -> Result<String, mysql_async:
 /// # Retornos
 /// - Result<(), mysql_async::Error>: Retorna Ok(()) se a senha for verificada com sucesso,
 ///   ou Err(mysql_async::Error) se houver um erro na verificação.
-pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&mut u32) -> Result<Usuario, mysql_async::Error>{
+pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str) -> Result<Usuario, mysql_async::Error>{
 
     let mut conn = pool.get_conn().await?;     
     let email_encontrado;
@@ -161,11 +174,7 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&
     };
     match busca_email(pool, email).await {
         Ok(data) => {
-            if data == "".to_string(){
-                return Err(mysql_async::Error::Server(server_error))
-            } else{
-                email_encontrado = data;
-            }
+            email_encontrado = data;
         },
         Err(_e) => return Err(mysql_async::Error::Server(server_error)),        
     }
@@ -173,40 +182,19 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str, senha_correta:&
         "SELECT senha FROM usuarios WHERE email = (?)", // Carrega a senha atual do email selecionado
         (email_encontrado,), |senha:String| senha , // Parâmetro email_encontrado é utilizado para selecionar o email
     ).await?;
-    let hash_senha:&mut str = Default::default();
-    let x = senhas_db.first().unwrap();
-    let hash_dec = controller::dec_senha(senha, x.to_string()); // Verificando o hash da senha
+    let hash_senha: &String = senhas_db.first().unwrap();
+    let hash_dec = controller::dec_senha(senha, hash_senha.to_string()); // Verificando o hash da senha
+    let usuario_autenticado = Usuario::novo_usuario("".to_string(), email.to_string(), hash_senha.to_string());
     if hash_dec{ // Se o hash estiver correto, valida o login
-        *senha_correta += 1; // Quando a senha é encontrada, aumenta em 1 a variável referente ao sucesso da busca  
+        return Ok(usuario_autenticado);
     }
-// pegando nome
-    let mut nome_db = conn.exec_map(
-        "SELECT nome_completo FROM usuarios WHERE email = (?)",
-        (email,), |nome:String | nome,
-    ).await?;
-    let mut nome = Default::default();
-    for u in nome_db.iter_mut(){
-        nome = u.as_mut();
-        break;
+    let senha_error = mysql_async::ServerError{
+        code: 1049,  // Código de erro (ex: acesso negado)
+        message: "Senha incorreta".to_string(), // Mensagem de erro
+        state: "28000".to_string(), // Estado SQL
     };
-    let mut usuario = Usuario::novo_usuario(nome.to_string(), email.to_string(), hash_senha.to_string());
-    // Seção de teste
-    let user = usuario.get_all();
-    let user_no = user.0;
-    let user_em = user.1;
-    let user_ha = user.2;
-    let usuario_autenticado = Usuario::novo_usuario(
-        user_no.to_string(), 
-        user_em.to_string(), 
-        user_ha.to_string());
-    //
-    if *senha_correta != 0 as u32{ 
-        println!("CONTA ENCONTRADA");
-    } else{
-        *senha_correta = 0;
-        println!("Conta não encontrada?");
-    }
-    Ok(usuario_autenticado)
+    Err(mysql_async::Error::Server(senha_error))
+    
 }
 
 /// Envia um e-mail de verificação.

@@ -29,7 +29,10 @@ pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: 
         nome_completo.to_string(),
         email.to_string(), 
         hash); // Cria um novo usuário
-
+    if usuario.ja_cadastrado().await{
+        println!("!Insert");
+        return Ok(false);
+    }
     let _consome_result = save_data(
         nome_completo, 
         &email, 
@@ -72,8 +75,7 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, String>{ // R
     if senha.is_empty(){ // Verificação caso o campo do front falhe
         return Ok(false)
     }
-    let mut senha_correta:u32 = 0;
-    let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha, &mut senha_correta).await;
+    let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha).await;
     let mut _usuario_autenticado= Default::default();
     match resultado_verificacao{
         Ok(_) => {
@@ -89,7 +91,7 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, String>{ // R
     }
     let usuario_autenticado = _usuario_autenticado.get_all();
     println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
-    if senha_correta != 0 {
+    if usuario_autenticado.2 != "" {
         return Ok(true)
     }
     return Err("Senha inválida".to_string())
@@ -118,6 +120,11 @@ pub async fn save_data(nome: &str, email: &str, senha: &str) -> Result<bool, Str
     Ok(resultado_criacao)
 }
 
+pub async fn cria_pool()-> Result<mysql_async::Pool, String>{
+    let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
+    Ok(pool)
+}
+
 /// Função para verificar a senha do usuário.
 ///
 /// # Parâmetros
@@ -128,9 +135,9 @@ pub async fn save_data(nome: &str, email: &str, senha: &str) -> Result<bool, Str
 /// # Retornos
 /// - Result<u32, String>: Retorna Ok(senha_correta) se a operação for bem-sucedida,
 ///   Err(erro) se ocorrer um erro ao verificar a senha.
-pub async fn _verifica_senha(email: &str, senha: &str, senha_correta: &mut u32) -> Result<Usuario, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
+pub async fn _verifica_senha(email: &str, senha: &str) -> Result<Usuario, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
     let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
-    let usuario_autenticado = model::verifica_senha(&pool, &email, senha,senha_correta).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
+    let usuario_autenticado = model::verifica_senha(&pool, &email, senha).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
     Ok(usuario_autenticado)
 }
 
