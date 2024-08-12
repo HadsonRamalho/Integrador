@@ -1,6 +1,6 @@
 use mysql_async::prelude::*;
 use crate::model;
-use crate::controller::endereco::{self, Endereco};
+use crate::controller::endereco::Endereco;
 
 pub async fn salva_endereco(endereco: serde_json::Value) -> Result<bool, mysql_async::Error> {
     let pool = model::create_pool().await?;

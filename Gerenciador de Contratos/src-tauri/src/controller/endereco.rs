@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{enc_senha, gera_token};
-use crate::model::endereco::salva_endereco;
+use super::enc_senha;
 
 #[derive(Serialize, Deserialize)]
 pub struct Endereco{
