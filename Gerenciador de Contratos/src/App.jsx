@@ -44,10 +44,9 @@ function Login(){
   } catch (error) {
       console.error('Erro ao salvar o endereço:', error);
   }
-  
     const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
     localStorage.setItem('token', novo_token); // Armazenando token
-    //window.location.href = "menu.html";
+    window.location.href = "menu.html";
   }
   
   return (
