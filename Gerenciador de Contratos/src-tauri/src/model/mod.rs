@@ -2,7 +2,7 @@ use mysql_async::{prelude::*, Pool};
 use dotenv::dotenv;
 use std::env;
 use crate::controller;
-
+pub mod endereco;
 // crates para envio de email
 use lettre::transport::smtp::authentication::{Credentials, Mechanism};
 use lettre::{Message, SmtpTransport, Transport};

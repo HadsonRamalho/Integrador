@@ -24,9 +24,30 @@ function Login(){
       return;
     }
     setMensagemSenha("Entrando na conta!");
+    const logradouro = 'Rua das Ruas';
+    const cep = '12345-678';
+    const complemento = 'Complemento Tal';
+    const numeroendereco = '123';
+    const cidade = 'Cidade das Cidades';
+    const uf = 'NO';
+    try {
+      const endereco = await invoke("estrutura_endereco", {
+          logradouro, 
+          cep, 
+          complemento, 
+          numeroendereco, 
+          cidade, 
+          uf
+      });      
+      const salva = await invoke("_salva_endereco", {endereco});
+      console.log('Endereço salvo com sucesso:', salva);
+  } catch (error) {
+      console.error('Erro ao salvar o endereço:', error);
+  }
+  
     const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
     localStorage.setItem('token', novo_token); // Armazenando token
-    window.location.href = "menu.html";
+    //window.location.href = "menu.html";
   }
   
   return (

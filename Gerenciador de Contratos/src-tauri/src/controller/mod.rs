@@ -2,6 +2,7 @@ use crate::model;
 use crate::model::Usuario;
 use pwhash::bcrypt;
 use pwhash::unix;
+pub mod endereco;
 
 /// Função para criar uma conta de usuário.
 ///
