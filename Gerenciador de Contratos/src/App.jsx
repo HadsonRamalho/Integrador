@@ -20,7 +20,7 @@ function Login(){
     try{
       const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
     } catch (error){
-      setMensagemSenha(error);
+      setMensagemSenha(error); // Alterar para mensagem de erro personalizada
       return;
     }
     setMensagemSenha("Entrando na conta!");

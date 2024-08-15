@@ -3,6 +3,7 @@ use crate::model::Usuario;
 use pwhash::bcrypt;
 use pwhash::unix;
 pub mod endereco;
+pub mod locadora;
 
 /// Função para criar uma conta de usuário.
 ///
@@ -18,8 +19,7 @@ pub mod endereco;
 #[tauri::command] 
 pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
     let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
-    let validacao_email = valida_email(&email);
-    if validacao_email == false{
+    if !valida_email(&email){
         return Ok(false); // Conta não criada
     }
     if senha1 != senha2 {
@@ -84,10 +84,7 @@ pub async fn login_senha(email: &str, senha: &str) -> Result<bool, String>{ // R
         },
         _ => {
             let erro =  resultado_verificacao.unwrap_err();
-            println!("{erro}");
-            let separacao = erro.find(")");
-            let (_primeira_parte, segunda_parte) = erro.split_at(separacao.unwrap()+2);
-            return Err(segunda_parte.to_string())
+            return Err(erro.to_string())
         }
     }
     let usuario_autenticado = _usuario_autenticado.get_all();
@@ -185,7 +182,7 @@ pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
 
 // !!!! Funções a serem implementadas posteriormente !!!!
 #[tauri::command]
-pub async fn _altera_email(email: &str) -> Result<bool, bool>{
+pub async fn atualiza_email(email: &str) -> Result<bool, bool>{
     let email = email.trim();
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
     let _consome_result = model::busca_email(&pool, email).await;

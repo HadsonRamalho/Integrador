@@ -16,7 +16,7 @@ pub struct Endereco{
 #[tauri::command]
 pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, numeroendereco: String, cidade: String, uf: String) -> Result<serde_json::Value, bool>{
     let id = enc_senha(&cep);
-    return Ok(serde_json::json!({
+    let endereco = serde_json::json!({
         "id": id,
         "logradouro": logradouro,
         "cep": cep,
@@ -24,7 +24,8 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
         "numeroendereco": numeroendereco,
         "cidade": cidade,
         "uf": uf,
-    }))
+    });
+    return Ok(endereco)
 }
 
 #[tauri::command]
@@ -39,4 +40,8 @@ pub async fn _salva_endereco(endereco: serde_json::Value){
             eprintln!("Erro ao salvar o endereço: {:?}", e);
         }
     }
+}
+
+fn atualiza_endereco(endereco: serde_json::Value){
+
 }

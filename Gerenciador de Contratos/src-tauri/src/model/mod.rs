@@ -114,8 +114,8 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str) -> Resu
     let uuid = controller::enc_senha(&email);
     // Se o email não for repetido, crie uma conta nova
     conn.exec_drop(
-        "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (?, ?, ?, ?)", // Interrogações são substituídas pelos parâmetros
-        (email, nome, senha, uuid) // Parâmetros a serem substituídos na query
+        "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (:email, :nome_completo, :senha, :uuid)", // Interrogações são substituídas pelos parâmetros
+        params! {"email" => email, "nome_completo" => nome, "senha" => senha, "uuid" => uuid} // Parâmetros a serem substituídos na query
     ).await?;
     println!("Insert!");
     Ok(true)
@@ -134,22 +134,24 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str) -> Resu
 
 pub async fn busca_email(pool: &Pool, email:&str) -> Result<String, mysql_async::Error>{
     let mut conn = pool.get_conn().await?; // Conectando no banco
-    let mut emails_db = conn.exec_map( // emails_db é um vetor de emails que é adquirido do banco de dados
-        "SELECT email FROM usuarios WHERE email = (?)",
-        (email,), |email:String| email ,
+    let email_db: Option<String> = conn.exec_first( // emails_db é um vetor de emails que é adquirido do banco de dados
+        "SELECT email FROM usuarios WHERE email = :email",
+        params! {"email" => email},
     ).await?;
-    for u in emails_db.iter_mut(){ // u  será a variável referente a cada elemento do vetor
-        let email_db = u.as_mut(); // agora, email_db será a variável referente a cada elemento (sim, esse passo é necessário)
-        if email_db == email{ 
-            return Ok(email.to_string())
-        }
-    }
     let server_error = mysql_async::ServerError{
         code: 1045,  // Código de erro (ex: acesso negado)
         message: "Email não encontrado".to_string(), // Mensagem de erro
         state: "28000".to_string(), // Estado SQL
     };
-    return Err(mysql_async::Error::Server(server_error))
+    match email_db{
+        None => {
+            return Err(mysql_async::Error::Server(server_error))
+        },
+        Some(_) => {
+            return  Ok(email.to_string());
+        }
+    }
+    
 }
 
 /// Verifica a senha de um usuário.
@@ -164,11 +166,10 @@ pub async fn busca_email(pool: &Pool, email:&str) -> Result<String, mysql_async:
 /// - Result<(), mysql_async::Error>: Retorna Ok(()) se a senha for verificada com sucesso,
 ///   ou Err(mysql_async::Error) se houver um erro na verificação.
 pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str) -> Result<Usuario, mysql_async::Error>{
-
     let mut conn = pool.get_conn().await?;     
     let email_encontrado;
     let server_error = mysql_async::ServerError{
-        code: 1045,  // Código de erro (ex: acesso negado)
+        code: 1045,  // Código de erro
         message: "Email não encontrado".to_string(), // Mensagem de erro
         state: "28000".to_string(), // Estado SQL
     };
@@ -178,11 +179,11 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str) -> Result<Usuar
         },
         Err(_e) => return Err(mysql_async::Error::Server(server_error)),        
     }
-    let senhas_db = conn.exec_map( // senhas_db é um vetor que armazena as senhas dos usuários
-        "SELECT senha FROM usuarios WHERE email = (?)", // Carrega a senha atual do email selecionado
-        (email_encontrado,), |senha:String| senha , // Parâmetro email_encontrado é utilizado para selecionar o email
+    let senhas_db : Option<String> = conn.exec_first( // senhas_db é um vetor que armazena as senhas dos usuários
+        "SELECT senha FROM usuarios WHERE email = :email", // Carrega a senha atual do email selecionado
+        params! {"email" => email_encontrado}, // Parâmetro email_encontrado é utilizado para selecionar o email
     ).await?;
-    let hash_senha: &String = senhas_db.first().unwrap();
+    let hash_senha: String = senhas_db.unwrap();
     let hash_dec = controller::dec_senha(senha, hash_senha.to_string()); // Verificando o hash da senha
     let usuario_autenticado = Usuario::novo_usuario("".to_string(), email.to_string(), hash_senha.to_string());
     if hash_dec{ // Se o hash estiver correto, valida o login
@@ -194,7 +195,6 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str) -> Result<Usuar
         state: "28000".to_string(), // Estado SQL
     };
     Err(mysql_async::Error::Server(senha_error))
-    
 }
 
 /// Envia um e-mail de verificação.
