@@ -5,17 +5,28 @@ use pwhash::unix;
 pub mod endereco;
 pub mod locadora;
 
-/// Função para criar uma conta de usuário.
+/// Função para criar uma nova conta de usuário.
 ///
 /// # Parâmetros
 /// - nome_completo: Nome completo do usuário.
-/// - email: Endereço de email do usuário.
-/// - senha1: Primeira senha digitada.
-/// - senha2: Segunda senha digitada para confirmação.
+/// - email: Endereço de e-mail do usuário.
+/// - senha1: Primeira senha digitada pelo usuário.
+/// - senha2: Segunda senha digitada pelo usuário para confirmação.
+///
+/// # Processo
+/// 1. Remove espaços em branco do e-mail para garantir a consistência.
+/// 2. Valida o formato do e-mail. Se o e-mail for inválido, retorna `Ok(false)`.
+/// 3. Verifica se as duas senhas digitadas coincidem. Se não coincidirem, retorna `Ok(false)`.
+/// 4. Criptografa a senha usando uma função de hash padrão (BSD).
+/// 5. Cria um novo usuário com os dados fornecidos.
+/// 6. Verifica se o usuário já está cadastrado. Se estiver, retorna `Ok(false)`.
+/// 7. Se o usuário não estiver cadastrado, salva os dados do usuário no banco de dados.
+/// 8. Retorna `Ok(true)` se a conta for criada com sucesso, ou `Ok(false)` se houver qualquer falha no processo.
 ///
 /// # Retornos
-/// - Result<bool, bool>: Retorna Ok(true) se a conta for criada com sucesso, 
-///   Ok(false) se houver um erro na criação da conta
+/// - Result<bool, bool>: Retorna `Ok(true)` se a conta for criada com sucesso, 
+///   `Ok(false)` caso contrário (se houver falha na validação, na confirmação da senha, ou se o usuário já estiver cadastrado).
+
 #[tauri::command] 
 pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
     let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email

@@ -16,11 +16,12 @@ function SignUp(){
   const [senha2, setSenha2] = useState("");
 
   async function criarConta() {
-    const retorno_conta_criada = await invoke("cria_conta", {nomeCompleto, email, senha1, senha2});
-    if (retorno_conta_criada){
+    try{
+      await invoke("cria_conta", {nomeCompleto, email, senha1, senha2});
       setMensagemCriarConta("Conta criada");
-    } else{
-      setMensagemCriarConta("Conta não foi criada");
+    }
+    catch(error){
+      setMensagemCriarConta(error);
     }
   }
 
