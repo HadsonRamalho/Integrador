@@ -28,13 +28,13 @@ pub mod locadora;
 ///   `Ok(false)` caso contrário (se houver falha na validação, na confirmação da senha, ou se o usuário já estiver cadastrado).
 
 #[tauri::command] 
-pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
+pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, String> { 
     let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
     if !valida_email(&email){
-        return Ok(false); // Conta não criada
+        return Err("E-mail inválido".to_string()); // Conta não criada
     }
     if senha1 != senha2 {
-        return Ok(false); // Conta não criada
+        return Err("As senhas são diferentes".to_string()); // Conta não criada
     }
     let hash = enc_senha(senha1); // Criptografando a senha (Standard *BSD hash)
     let mut usuario = model::Usuario::novo_usuario(
@@ -43,7 +43,7 @@ pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: 
         hash); // Cria um novo usuário
     if usuario.ja_cadastrado().await{
         println!("!Insert");
-        return Ok(false);
+        return Err("Usuário já cadastrado".to_string());
     }
     let _consome_result = save_data(
         nome_completo, 
@@ -53,7 +53,7 @@ pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: 
     if _consome_result.unwrap(){   
         return Ok(true); // Conta criada   
     }
-    return Ok(false); // Conta não foi criada
+    return Err("Erro na criação da conta".to_string()); // Conta não foi criada
 }
 
 /// Função para verificar o email inserido
