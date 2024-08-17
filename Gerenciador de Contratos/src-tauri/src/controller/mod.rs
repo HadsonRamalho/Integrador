@@ -1,3 +1,5 @@
+use std::f32::consts::E;
+
 use crate::model;
 use crate::model::Usuario;
 use pwhash::bcrypt;
@@ -196,9 +198,17 @@ pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
 pub async fn atualiza_email(email: &str) -> Result<bool, bool>{
     let email = email.trim();
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
-    let _consome_result = model::busca_email(&pool, email).await;
-    if email.is_empty() || !valida_email(email) || _consome_result.unwrap() == ""{
-        return Ok(false)
+    let resultado_busca = model::busca_email(&pool, email).await;
+    match resultado_busca{
+        Ok(o) => {
+            if o.is_empty() || !valida_email(&o) || o == ""{
+                return Ok(false)
+            }
+        },
+        Err(_e) => {
+            println!("{:?}", _e);
+            return Err(false);
+        }
     }
     // chamada à função no model
     Ok(true)
