@@ -1,4 +1,6 @@
-use mysql_async::prelude::Queryable;
+use std::ops::Deref;
+
+use mysql_async::{params, prelude::Queryable};
 
 use crate::controller;
 
@@ -39,9 +41,31 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
     return Ok(locadora)
 }
 
-pub async fn busca_id_locadora(cnpj: String) -> Result<String, mysql_async::Error>{
+#[tauri::command]
+pub async fn busca_id_locadora() -> Result<String, bool>{
+    let resultado = _busca_id_locadora("123456").await;
+    match resultado{
+        Ok(id) =>{
+            return Ok(id);
+        },
+        Err(e) => {
+            return Err(false); //Alterar para myqsl_async::Error
+        }
+    }
+}
+
+// mover para model
+pub async fn _busca_id_locadora(cnpj: &str) -> Result<String, mysql_async::Error>{
     let pool = controller::cria_pool().await.unwrap();
-    let conn = pool.get_conn().await?;
-  //  let mut resultado_busca = conn.exec_drop(stmt, params);
-    return Ok("x".to_string())
+    let mut conn = pool.get_conn().await?;
+    let mut resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocadora FROM locadora WHERE cnpj = :cnpj",
+     params!{"cnpj" => cnpj}).await;
+    match resultado_busca{
+        Ok(id) => {
+            return Ok(id.unwrap());
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    }
 }
