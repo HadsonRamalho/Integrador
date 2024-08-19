@@ -1,11 +1,12 @@
 use mysql_async::{prelude::*, Pool};
 use dotenv::dotenv;
 use std::env;
-use crate::controller;
+use crate::controller::{self, enc_senha};
 pub mod endereco;
 // crates para envio de email
 use lettre::transport::smtp::authentication::{Credentials, Mechanism};
 use lettre::{Message, SmtpTransport, Transport};
+use lettre::message::{header::ContentType, MessageBuilder};
 
 /// Estrutura que representa um usuário.
 ///
@@ -224,12 +225,64 @@ pub fn envia_email(email: String){
         .authentication(vec![Mechanism::Plain])
         .build();
 
+
+    let mut id = enc_senha(&email);
+    let id = id.get(8..12).unwrap().to_string();
     // conteúdo do e-mail
+    let code = format!("Seu código de verificação é {}", id);
     let email = Message::builder()
         .from("gerenciadordecontratosgdc@gmail.com".parse().unwrap())
         .to(email.parse().unwrap())
         .subject("Gerenciador de Contratos | Reset de senha")
-        .body("Seu código de verificação é: {XXXX}".to_string())
+        .header(ContentType::parse("text/html").unwrap()) // Define o tipo de conteúdo como HTML
+        .body(
+            format!(
+                r#"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            margin: 20px;
+                        }}
+                        .container {{
+                            padding: 20px;
+                            border: 1px solid #ddd;
+                            border-radius: 5px;
+                            background-color: #f9f9f9;
+                        }}
+                        .header {{
+                            font-size: 24px;
+                            font-weight: bold;
+                            color: #333;
+                        }}
+                        .code {{
+                            font-size: 18px;
+                            font-weight: bold;
+                            color: #007bff;
+                            padding: 10px;
+                            border: 1px solid #007bff;
+                            border-radius: 5px;
+                            display: inline-block;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">Reset de Senha</div>
+                        <p>Olá,</p>
+                        <p>Você solicitou a redefinição da sua senha. Use o código abaixo para redefinir sua senha:</p>
+                        <div class="code">{code}</div>
+                        <p>Se você não solicitou isso, por favor ignore este email.</p>
+                        <p>Atenciosamente,<br>Equipe do Gerenciador de Contratos</p>
+                    </div>
+                </body>
+                </html>
+                "#,
+                code = code
+            )
+        )
         .unwrap();
 
     // enviar o e-mail usando o transporte SMTP
