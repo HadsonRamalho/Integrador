@@ -16,7 +16,7 @@ use crate::controller::endereco::Endereco;
 ///
 /// # Exceções
 /// - Pode retornar um erro se houver problemas ao conectar ao banco de dados ou ao executar a query.
-pub async fn salva_endereco(endereco: serde_json::Value) -> Result<bool, mysql_async::Error> {
+pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql_async::Error> {
     // Cria uma conexão com o pool do banco de dados
     let pool = model::create_pool().await?;
     let mut conn = pool.get_conn().await?; 
@@ -31,7 +31,7 @@ pub async fn salva_endereco(endereco: serde_json::Value) -> Result<bool, mysql_a
         cidade: endereco["cidade"].as_str().unwrap_or("").to_string(),
         uf: endereco["uf"].as_str().unwrap_or("").to_string(),
     };
-
+    let id_retorno = endereco.id.to_string();
     // Insere o endereço na tabela `endereco`
     conn.exec_drop(
         "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -48,5 +48,5 @@ pub async fn salva_endereco(endereco: serde_json::Value) -> Result<bool, mysql_a
 
     println!("Endereço salvo com sucesso");
 
-    Ok(true)
+    return Ok(id_retorno)
 }

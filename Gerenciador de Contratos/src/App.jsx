@@ -16,6 +16,54 @@ function Login(){
     window.location.href = "menu.html";
   }
 
+  async function estruturaLocadora(idendereco){
+    const cnpj = "123456";
+    const numerocontabanco = "21345";
+    const numeroagenciabanco = "2123";
+    const nomebanco = "Banco Ruim";
+    const nomelocadora = "DesLocadora";
+    const locadora = await invoke("estrutura_locadora", {idendereco, cnpj, numerocontabanco, numeroagenciabanco, nomebanco, nomelocadora});
+    return locadora;
+  }
+
+  async function cadastraLocadora(idendereco){
+    try{
+      const locadora = await estruturaLocadora(idendereco);
+      console.log(locadora);
+      await invoke("cadastra_locadora", {locadora});
+    } catch (error){
+      console.log(error);
+    }
+  }
+
+  async function estruturaEndereco(){
+    const logradouro = 'Rua das Ruas';
+    const cep = '12345-678';
+    const complemento = 'Complemento Tal';
+    const numeroendereco = '123';
+    const cidade = 'Cidade das Cidades';
+    const uf = 'NO';
+    const endereco = await invoke("estrutura_endereco", {
+          logradouro, 
+          cep, 
+          complemento, 
+          numeroendereco, 
+          cidade, 
+          uf
+      });
+    return endereco;
+  }
+
+  async function cadastraEndereco(){
+    const endereco = await estruturaEndereco();
+    try{
+      const idendereco = await invoke("_salva_endereco", {endereco});
+      return idendereco;
+    } catch(error){
+      console.log('Erro ao salvar o endereço: ', error);
+    }
+  }
+
   async function loginSenha(){
     try{
       const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
@@ -23,30 +71,9 @@ function Login(){
       setMensagemSenha(error); // Alterar para mensagem de erro personalizada
       return;
     }
-    setMensagemSenha("Entrando na conta!");
-    const logradouro = 'Rua das Ruas';
-    const cep = '12345-678';
-    const complemento = 'Complemento Tal';
-    const numeroendereco = '123';
-    const cidade = 'Cidade das Cidades';
-    const uf = 'NO';
-    try {
-      const endereco = await invoke("estrutura_endereco", {
-          logradouro, 
-          cep, 
-          complemento, 
-          numeroendereco, 
-          cidade, 
-          uf
-      });      
-      const salva = await invoke("_salva_endereco", {endereco});
-      console.log('Endereço salvo com sucesso:', salva);
-  } catch (error) {
-      console.error('Erro ao salvar o endereço:', error);
-  }
+    setMensagemSenha("Entrando na conta!");    
     const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
     localStorage.setItem('token', novo_token); // Armazenando token
-    window.location.href = "menu.html";
   }
   
   return (
@@ -54,10 +81,12 @@ function Login(){
        <p className="subtitulo">conecte-se</p>
       <form
         className="row"
-        onSubmit={(e) => {
+        onSubmit={async(e) => {
           e.preventDefault();
           checaEmail();
           loginSenha();
+          const idendereco = await cadastraEndereco();
+          cadastraLocadora(idendereco);
         }}
       >
         <input required

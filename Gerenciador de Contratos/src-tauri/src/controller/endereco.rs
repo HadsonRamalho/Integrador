@@ -80,15 +80,15 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
 /// - Result<serde_json::Value, bool>: Retorna um objeto JSON com os dados do endereço e um ID criptografado,
 ///   ou um erro booleano indicando falha na criação da estrutura.
 #[tauri::command]
-pub async fn _salva_endereco(endereco: serde_json::Value){
+pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, String>{
     println!("salva?");
     let x = crate::model::endereco::salva_endereco(endereco).await;
     match x{
-        Ok(_) => {
-            println!("Salvou");
+        Ok(id) => {
+            return Ok(id)
         }
         Err(e) => {
-            eprintln!("Erro ao salvar o endereço: {:?}", e);
+            return Err(e.to_string());
         }
     }
 }

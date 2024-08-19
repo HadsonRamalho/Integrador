@@ -23,6 +23,7 @@ mod controller;
 fn main() {
     tauri::Builder::default()
        .invoke_handler(tauri::generate_handler![
+        controller::locadora::cadastra_locadora,
         controller::locadora::busca_id_locadora,
         controller::locadora::estrutura_locadora,
         controller::endereco::estrutura_endereco,
