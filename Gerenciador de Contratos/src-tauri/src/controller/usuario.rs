@@ -1,7 +1,6 @@
 use crate::model;
 use crate::controller::valida_email;
 
-// !!!! Funções a serem implementadas posteriormente !!!!
 #[tauri::command]
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
     let email = email.trim();
@@ -18,7 +17,7 @@ pub async fn atualiza_email(email: &str) -> Result<(), String>{
             return Err("Erro ao atualizar o email".to_string());
         }
     }
-    // chamada à função no model
+ 
     let r = model::usuario::atualiza_email(&pool, email, email).await;
     match r{
         Ok(()) => {
@@ -30,4 +29,3 @@ pub async fn atualiza_email(email: &str) -> Result<(), String>{
         }
     }
 }
-// !!!!
