@@ -31,7 +31,7 @@ pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql
         cidade: endereco["cidade"].as_str().unwrap_or("").to_string(),
         uf: endereco["uf"].as_str().unwrap_or("").to_string(),
     };
-    let id_retorno = endereco.id.to_string();
+    let id_retorno = endereco.id.to_string(); // faz uma cópia do id do endereço
     // Insere o endereço na tabela `endereco`
     conn.exec_drop(
         "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -43,5 +43,5 @@ pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql
 
     println!("Endereço salvo com sucesso");
 
-    return Ok(id_retorno)
+    return Ok(id_retorno) // retorna o id do endereço
 }
