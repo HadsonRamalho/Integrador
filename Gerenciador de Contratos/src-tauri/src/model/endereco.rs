@@ -34,7 +34,7 @@ pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql
     let id_retorno = endereco.id.to_string(); // faz uma cópia do id do endereço
     // Insere o endereço na tabela `endereco`
     conn.exec_drop(
-        "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf) VALUES (:idendereco, :logradouro, :cep, :complemento, :numeroendereco, :cidade, :uf)",
         params! {"idendereco" => endereco.id, "logradouro" => endereco.logradouro,
         "cep" => endereco.cep, "complemento" => endereco.complemento,
         "numeroendereco" => endereco.numeroendereco, "cidade" => endereco.cidade,
