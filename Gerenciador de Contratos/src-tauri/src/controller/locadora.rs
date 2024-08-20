@@ -1,5 +1,3 @@
-use std::{ops::Deref, result};
-
 use mysql_async::{params, prelude::Queryable};
 
 use crate::controller;
@@ -72,7 +70,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
     match resultado_busca{
         Ok(resultado) => {
             if resultado == ""{
-                let resultado_cadastro = _cadastra_locadora(locadora).await;
+                let _resultado_cadastro = _cadastra_locadora(locadora).await;
                 return Ok("Locadora cadastrada com sucesso".to_string());
             }
             return Err("Erro: Locadora já cadastrada".to_string());
@@ -119,16 +117,9 @@ pub async fn busca_id_locadora() -> Result<String, String>{
 // mover para model
 pub async fn _busca_id_locadora(cnpj: &str) -> Result<String, mysql_async::Error>{
 
-    let server_error = mysql_async::Error::Other(
-        Box::new(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "CNPJ não cadastrado",
-        ))
-    );
-
     let pool = controller::cria_pool().await.unwrap();
     let mut conn = pool.get_conn().await?;
-    let mut resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocadora FROM locadora WHERE cnpj = :cnpj",
+    let resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocadora FROM locadora WHERE cnpj = :cnpj",
      params!{"cnpj" => cnpj}).await;
     match resultado_busca{
         Ok(id) => {

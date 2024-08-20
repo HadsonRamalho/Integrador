@@ -6,7 +6,7 @@ pub mod endereco;
 // crates para envio de email
 use lettre::transport::smtp::authentication::{Credentials, Mechanism};
 use lettre::{Message, SmtpTransport, Transport};
-use lettre::message::{header::ContentType, MessageBuilder};
+use lettre::message::header::ContentType;
 
 /// Estrutura que representa um usuário.
 ///
@@ -226,7 +226,7 @@ pub fn envia_email(email: String){
         .build();
 
 
-    let mut id = enc_senha(&email);
+    let id = enc_senha(&email);
     let id = id.get(8..12).unwrap().to_string();
     // conteúdo do e-mail
     let code = format!("Seu código de verificação é {}", id);

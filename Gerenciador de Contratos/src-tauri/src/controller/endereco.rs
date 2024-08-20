@@ -93,6 +93,6 @@ pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, Stri
     }
 }
 
-fn atualiza_endereco(endereco: serde_json::Value){
+fn _atualiza_endereco(_endereco: serde_json::Value){
 
 }
