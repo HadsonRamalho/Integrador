@@ -20,7 +20,6 @@ pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql
     // Cria uma conexão com o pool do banco de dados
     let pool = model::create_pool().await?;
     let mut conn = pool.get_conn().await?; 
-
     // Converte os dados recebidos em um objeto `Endereco`
     let endereco = Endereco {
         id: endereco["id"].as_str().unwrap_or("").to_string().split_off(15 as usize),
@@ -34,7 +33,8 @@ pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql
     let id_retorno = endereco.id.to_string(); // faz uma cópia do id do endereço
     // Insere o endereço na tabela `endereco`
     conn.exec_drop(
-        "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf) VALUES (:idendereco, :logradouro, :cep, :complemento, :numeroendereco, :cidade, :uf)",
+        "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf)
+         VALUES (:idendereco, :logradouro, :cep, :complemento, :numeroendereco, :cidade, :uf)",
         params! {"idendereco" => endereco.id, "logradouro" => endereco.logradouro,
         "cep" => endereco.cep, "complemento" => endereco.complemento,
         "numeroendereco" => endereco.numeroendereco, "cidade" => endereco.cidade,

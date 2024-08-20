@@ -4,6 +4,7 @@ use pwhash::bcrypt;
 use pwhash::unix;
 pub mod endereco;
 pub mod locadora;
+pub mod usuario;
 
 /// Função para criar uma nova conta de usuário.
 ///
@@ -85,7 +86,7 @@ pub fn checa_email(email: &str) -> Result<bool, bool> { // Retorna um bool para 
 pub async fn login_senha(email: &str, senha: &str) -> Result<bool, String>{ // Retorna uma mensagem para o front e um booleano
     let senha:String = senha.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco da senha
     if senha.is_empty(){ // Verificação caso o campo do front falhe
-        return Ok(false)
+        return Err("A senha não pode estar vazia".to_string())
     }
     let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha).await;
     let mut _usuario_autenticado= Default::default();
@@ -189,29 +190,6 @@ pub async fn encontra_email_smtp(email: &str) -> Result<bool, bool>{
         _ => return Ok(false)
     }
 }
-
-
-// !!!! Funções a serem implementadas posteriormente !!!!
-#[tauri::command]
-pub async fn atualiza_email(email: &str) -> Result<bool, bool>{
-    let email = email.trim();
-    let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
-    let resultado_busca = model::busca_email(&pool, email).await;
-    match resultado_busca{
-        Ok(o) => {
-            if o.is_empty() || !valida_email(&o) || o == ""{
-                return Ok(false)
-            }
-        },
-        Err(_e) => {
-            println!("{:?}", _e);
-            return Err(false);
-        }
-    }
-    // chamada à função no model
-    Ok(true)
-}
-// !!!!
 
 #[tauri::command]
 pub async fn gera_token(email: &str) -> Result<String, ()>{

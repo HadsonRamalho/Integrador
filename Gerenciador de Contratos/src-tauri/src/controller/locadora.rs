@@ -81,7 +81,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
     }
 }
 
-pub async fn _cadastra_locadora(locadora: Locadora) -> Result<String, mysql_async::Error>{
+pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::Error>{
     let pool = controller::cria_pool().await.unwrap();
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
@@ -98,7 +98,7 @@ pub async fn _cadastra_locadora(locadora: Locadora) -> Result<String, mysql_asyn
             return Err(e);
         }
     }
-    return Ok("er".to_string());
+    return Ok(());
 }
 
 #[tauri::command]
