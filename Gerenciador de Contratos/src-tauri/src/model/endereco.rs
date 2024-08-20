@@ -35,15 +35,10 @@ pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql
     // Insere o endereço na tabela `endereco`
     conn.exec_drop(
         "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (
-            endereco.id,
-            endereco.logradouro,
-            endereco.cep,
-            endereco.complemento,
-            endereco.numeroendereco,
-            endereco.cidade,
-            endereco.uf,
-        ),
+        params! {"idendereco" => endereco.id, "logradouro" => endereco.logradouro,
+        "cep" => endereco.cep, "complemento" => endereco.complemento,
+        "numeroendereco" => endereco.numeroendereco, "cidade" => endereco.cidade,
+        "uf" => endereco.uf},
     ).await?;
 
     println!("Endereço salvo com sucesso");
