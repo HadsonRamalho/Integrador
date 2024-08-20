@@ -64,6 +64,15 @@ function Login(){
     }
   }
 
+  async function atualizaEmail(){
+    const email = "user1000@u.com";
+    try{
+      await invoke("atualiza_email", {email});
+    } catch(error){
+      console.log(error);
+    }
+  }
+
   async function loginSenha(){
     try{
       const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
@@ -85,8 +94,9 @@ function Login(){
           e.preventDefault();
           checaEmail();
           loginSenha();
-          const idendereco = await cadastraEndereco();
-          cadastraLocadora(idendereco);
+          //const idendereco = await cadastraEndereco();
+          //cadastraLocadora(idendereco);
+          //atualizaEmail();
         }}
       >
         <input required

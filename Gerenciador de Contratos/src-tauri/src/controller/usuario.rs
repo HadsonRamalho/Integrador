@@ -5,7 +5,7 @@ use crate::controller::valida_email;
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
     let email = email.trim();
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
-    let resultado_busca = model::busca_email(&pool, email).await;
+    let resultado_busca = model::busca_email(&pool, "user1@u.com").await;
     match resultado_busca{
         Ok(o) => {
             if o.is_empty() || !valida_email(&o) || o == ""{
@@ -18,7 +18,7 @@ pub async fn atualiza_email(email: &str) -> Result<(), String>{
         }
     }
  
-    let r = model::usuario::atualiza_email(&pool, email, email).await;
+    let r = model::usuario::atualiza_email(&pool, "user1@u.com", email).await;
     match r{
         Ok(()) => {
             return Ok(())
