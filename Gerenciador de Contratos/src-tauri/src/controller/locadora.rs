@@ -74,9 +74,8 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
             if resultado == ""{
                 let resultado_cadastro = _cadastra_locadora(locadora).await;
                 return Ok("Locadora cadastrada com sucesso".to_string());
-            } else{
-                return Err("Erro: Locadora já cadastrada".to_string());
             }
+            return Err("Erro: Locadora já cadastrada".to_string());
         },
         Err(erro) => {
             return Err(erro.to_string());
