@@ -46,7 +46,7 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
         },
         Err(_e) => {
             println!("{:?}", _e);
-            return Err("Erro ao atualizar o email".to_string());
+            return Err("Erro ao atualizar a senha".to_string());
         }
     }
     let resultado_atualizacao: Result<(), mysql_async::Error> = model::usuario::atualiza_senha(&pool, email, &nova_senha).await;
@@ -55,8 +55,8 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
             return Ok(())
         },
         Err(_e) => {
-            println!("Erro ao atualizar o email");
-            return Err("Erro ao atualizar o email".to_string());
+            println!("Erro ao atualizar a senha");
+            return Err("Erro ao atualizar a senha".to_string());
         }
     }
 }
