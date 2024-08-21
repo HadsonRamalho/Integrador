@@ -72,17 +72,38 @@ function Login(){
       console.log(error);
     }
   }
-
-  async function loginSenha(){
+  
+  async function atualizaSenha(){
     try{
-      const retorno_conta_encontrada = await invoke("login_senha", {email, senha});
+      const novaSenha = "novasenha";
+      await invoke("atualiza_senha", {email, novaSenha});
     } catch (error){
-      setMensagemSenha(error); // Alterar para mensagem de erro personalizada
+      console.log(error);
+    }
+  }
+
+  async function verificaToken(){
+    try{
+      const token = localStorage.getItem('token');
+      console.log('Token na verificação:', typeof token, token);
+      await invoke("verifica_token", {email, token});
+    } catch(error){
+      console.log(error);
+    }
+  }
+
+  async function realizaLogin(){
+    try{
+      await invoke("realiza_login", {email, senha});
+      setMensagemSenha("Entrando na conta!");    
+      const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
+      localStorage.setItem('token', novo_token); // Armazenando token
+      console.log('Token gerado ao entrar:', novo_token);
+    } catch (error){
+      setMensagemSenha("Erro ao entrar na conta. Verifique sua senha."); // Alterar para mensagem de erro personalizada
       return;
     }
-    setMensagemSenha("Entrando na conta!");    
-    const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
-    localStorage.setItem('token', novo_token); // Armazenando token
+    
   }
   
   return (
@@ -93,10 +114,13 @@ function Login(){
         onSubmit={async(e) => {
           e.preventDefault();
           checaEmail();
-          loginSenha();
+          await realizaLogin();          
+          verificaToken();
+          
           //const idendereco = await cadastraEndereco();
           //cadastraLocadora(idendereco);
           //atualizaEmail();
+          //atualizaSenha();
         }}
       >
         <input required

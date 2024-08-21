@@ -4,9 +4,7 @@ import App from "./App";
 import "./styles.css";
 
 ReactDOM.createRoot(document.getElementById("camposLoginForm")).render(
-  <React.StrictMode>
     <App />
-  </React.StrictMode>
 );
 
 document.getElementById("botaoCriarContaForm").addEventListener("click", function() {

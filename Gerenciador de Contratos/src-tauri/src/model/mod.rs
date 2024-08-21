@@ -4,6 +4,7 @@ use std::env;
 use crate::controller::{self, enc_senha};
 pub mod endereco;
 pub mod usuario;
+pub mod locadora;
 // crates para envio de email
 use lettre::transport::smtp::authentication::{Credentials, Mechanism};
 use lettre::{Message, SmtpTransport, Transport};
@@ -131,7 +132,7 @@ pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str) -> Resu
 /// - repetido: Referência mutável para um contador que será incrementado se o email já estiver cadastrado.
 ///
 /// # Retornos
-/// - Result<String, mysql_async::Error>: Retorna Ok("Encontrado") se o email for encontrado,
+/// - Result<String, mysql_async::Error>: Retorna Ok(email) se o email for encontrado,
 ///   ou Err(mysql_async::Error) se houver um erro na verificação.
 
 pub async fn busca_email(pool: &Pool, email:&str) -> Result<String, mysql_async::Error>{

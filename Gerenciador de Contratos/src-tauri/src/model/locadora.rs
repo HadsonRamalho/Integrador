@@ -1,5 +1,6 @@
-use crate::model;
-use crate::controller::locadora::locadora;
+use mysql_async::prelude::Queryable;
+use crate::model::params;
+use crate::controller;
 
 pub struct Locadora{
     pub idlocadora: String,

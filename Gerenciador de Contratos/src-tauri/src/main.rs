@@ -23,6 +23,8 @@ mod controller;
 fn main() {
     tauri::Builder::default()
        .invoke_handler(tauri::generate_handler![
+        controller::usuario::verifica_token,
+        controller::usuario::atualiza_senha,
         controller::usuario::atualiza_email,
         controller::locadora::cadastra_locadora,
         controller::locadora::busca_id_locadora,
@@ -30,10 +32,11 @@ fn main() {
         controller::endereco::estrutura_endereco,
         controller::endereco::_salva_endereco,
         controller::cria_conta,
-        controller::login_senha, 
+        controller::realiza_login, 
         controller::checa_email,
         controller::encontra_email_smtp,
-        controller::gera_token]) // Registra funções do Tauri
+        controller::gera_token,
+        ]) // Registra funções do Tauri
        .run(tauri::generate_context!())
         .expect("erro ao tentar executar a aplicação Tauri");
 }

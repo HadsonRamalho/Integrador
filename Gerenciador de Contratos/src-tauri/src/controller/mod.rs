@@ -83,7 +83,7 @@ pub fn checa_email(email: &str) -> Result<bool, bool> { // Retorna um bool para 
 /// - Result<bool, bool>: Retorna Ok(true) se o login for bem-sucedido,
 ///   Ok(false) se a senha estiver vazia ou o login não for bem-sucedido.
 #[tauri::command]
-pub async fn login_senha(email: &str, senha: &str) -> Result<bool, String>{ // Retorna uma mensagem para o front e um booleano
+pub async fn realiza_login(email: &str, senha: &str) -> Result<bool, String>{ // Retorna uma mensagem para o front e um booleano
     let senha:String = senha.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco da senha
     if senha.is_empty(){ // Verificação caso o campo do front falhe
         return Err("A senha não pode estar vazia".to_string())
