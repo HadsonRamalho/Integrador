@@ -1,5 +1,6 @@
-use crate::model;
+use crate::model::{self, usuario};
 use crate::controller::valida_email;
+use crate::controller;
 
 use super::{dec_senha, enc_senha};
 
@@ -81,8 +82,20 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<String, ()>{
 }
 
 #[tauri::command]
-pub async fn busca_id() -> Result<String, String>{
-    return Ok("$2b$10$nEmaaQ8g53SKbGmdF7vltej675xjgCKN0tMBWYpaWj8KxZWrUkoFi".to_string());
+pub async fn busca_id(email: &str) -> Result<String, String>{ //recebe email, retorna ID
+    let pool: mysql_async::Pool = controller::cria_pool().await?;
+    let resultado_busca = usuario::busca_id_usuario(&pool, email).await;
+    match resultado_busca{
+        Ok(id) =>{
+            if id.is_empty(){
+                return Err("Erro: ID não encontrado. Verifique o e-mail.".to_string());
+            }
+            return Ok(id);
+        },
+        Err(e) =>{
+            return Err(e.to_string());
+        }
+    }
 }
 
 pub fn valida_senha(senha: &str) -> Result<(), String>{
@@ -92,5 +105,5 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     if senha.is_empty() || senha == ""{
         return Err("Erro: A senha não pode estar vazia".to_string())
     }
-    Ok(())
+    Ok(()) // Dar Ok após verificar se existe ao menos um número e um caractere especial
 }

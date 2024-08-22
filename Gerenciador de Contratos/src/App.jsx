@@ -90,7 +90,7 @@ function Login(){
   }
 
   async function buscaID(){
-    const id = await invoke("busca_id", {});
+    const id = await invoke("busca_id", {email});
     console.log("ID resultante da busca: ", id);
   }
 
@@ -98,7 +98,7 @@ function Login(){
     try{
       await invoke("realiza_login", {email, senha});
       setMensagemSenha("Entrando na conta!");    
-      const novo_token = await invoke("busca_id", {}); //Preparando autenticação
+      const novo_token = await invoke("busca_id", {email}); //Preparando autenticação
       localStorage.setItem('token', novo_token); // Armazenando token
       console.log('Token gerado ao entrar:', novo_token);    
     } catch (error){
