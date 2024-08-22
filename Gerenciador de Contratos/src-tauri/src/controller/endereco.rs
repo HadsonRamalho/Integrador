@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::enc_senha;
+use super::gera_hash;
 
 #[derive(Serialize, Deserialize)]
 pub struct Endereco{
@@ -45,7 +45,7 @@ pub struct Endereco{
 #[tauri::command]
 pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, numeroendereco: String, cidade: String, uf: String) -> Result<serde_json::Value, String>{
     // Gera um ID único para o endereço com base no CEP
-    let id = enc_senha(&cep);
+    let id = gera_hash(&cep);
     if logradouro.is_empty() || cep.is_empty() || complemento.is_empty()
         || numeroendereco.is_empty() ||
         cidade.is_empty() || uf.is_empty(){

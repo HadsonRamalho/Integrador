@@ -1,7 +1,7 @@
 use mysql_async::{prelude::*, Pool};
 use dotenv::dotenv;
 use std::env;
-use crate::controller::{self, enc_senha};
+use crate::controller::{self, gera_hash};
 pub mod endereco;
 pub mod usuario;
 pub mod locadora;
@@ -115,7 +115,7 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
 pub async fn save_data(pool: &Pool, nome:&str, email: &str, senha: &str) -> Result<bool, mysql_async::Error> {
     let mut conn = pool.get_conn().await?;
     
-    let uuid = controller::enc_senha(&email);
+    let uuid = controller::gera_hash(&email);
     // Se o email não for repetido, crie uma conta nova
     conn.exec_drop(
         "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (:email, :nome_completo, :senha, :uuid)", // Interrogações são substituídas pelos parâmetros
@@ -188,7 +188,7 @@ pub async fn verifica_senha(pool: &Pool, email:&str, senha:&str) -> Result<Usuar
         params! {"email" => email_encontrado}, // Parâmetro email_encontrado é utilizado para selecionar o email
     ).await?;
     let hash_senha: String = senhas_db.unwrap();
-    let hash_dec = controller::dec_senha(senha, hash_senha.to_string()); // Verificando o hash da senha
+    let hash_dec = controller::verifica_hash(senha, hash_senha.to_string()); // Verificando o hash da senha
     let usuario_autenticado = Usuario::novo_usuario("".to_string(), email.to_string(), hash_senha.to_string());
     if hash_dec{ // Se o hash estiver correto, valida o login
         return Ok(usuario_autenticado);
@@ -229,7 +229,7 @@ pub fn envia_email(email: String){
         .build();
 
 
-    let id = enc_senha(&email);
+    let id = gera_hash(&email);
     let id = id.get(8..12).unwrap().to_string();
     // conteúdo do e-mail
     let code = format!("Seu código de verificação é {}", id);

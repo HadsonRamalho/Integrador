@@ -29,7 +29,7 @@ use crate::controller;
 
 #[tauri::command]
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, bool>{
-    let id: String = controller::enc_senha(&cnpj);
+    let id: String = controller::gera_hash(&cnpj);
     let locadora: serde_json::Value = serde_json::json!({
         "idlocadora": id,
         "idendereco": idendereco,
@@ -74,8 +74,9 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
 }
 
 #[tauri::command]
-pub async fn busca_id_locadora() -> Result<String, String>{
-    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora("000123").await;
+pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
+    let cnpj = cnpj.trim(); // remover traços e pontos
+    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(cnpj).await;
     match resultado{
         Ok(id) =>{
             return Ok(id);

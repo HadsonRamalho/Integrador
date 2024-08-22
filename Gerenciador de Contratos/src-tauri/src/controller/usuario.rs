@@ -1,8 +1,11 @@
+use mysql_async::Pool;
+
+use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
 use crate::controller;
 
-use super::{dec_senha, enc_senha};
+use super::{gera_hash, verifica_hash};
 
 #[tauri::command]
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
@@ -41,7 +44,7 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
             return Err(e)
         }
     }
-    let nova_senha = enc_senha(nova_senha.trim());
+    let nova_senha = gera_hash(nova_senha.trim());
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;// [Cod. 601]
     match resultado_busca{
@@ -68,15 +71,18 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
 }
 
 #[tauri::command]
-pub async fn verifica_token(email: &str, token: &str) -> Result<String, ()>{
-    match dec_senha(email, token.to_string()){
-        true =>{
-            println!("Token verificado");
-            return Ok(token.to_string())
+pub async fn verifica_token(email: &str, token: &str) -> Result<String, String>{
+    let pool = controller::cria_pool().await?;
+    let id = busca_id_usuario(&pool, email).await;
+    match id{
+        Ok(id) =>{
+            if id.is_empty(){
+                return Err("Erro ao validar o token: Verifique o email.".to_string())
+            }
+            return Ok(id)
         },
-        false => {
-            println!("Falha na verificação do token");
-            return Err(())
+        Err(e) =>{
+            return Err(e.to_string())
         }
     }
 }
