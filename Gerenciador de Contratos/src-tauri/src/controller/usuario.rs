@@ -74,3 +74,8 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<(), ()>{
         }
     }
 }
+
+#[tauri::command]
+pub async fn busca_id() -> Result<String, String>{
+    return Ok("$2b$10$nEmaaQ8g53SKbGmdF7vltej675xjgCKN0tMBWYpaWj8KxZWrUkoFi".to_string());
+}

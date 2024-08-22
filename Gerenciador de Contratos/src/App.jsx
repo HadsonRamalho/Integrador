@@ -92,11 +92,16 @@ function Login(){
     }
   }
 
+  async function buscaID(){
+    const id = await invoke("busca_id", {});
+    console.log("ID resultante da busca: ", id);
+  }
+
   async function realizaLogin(){
     try{
       await invoke("realiza_login", {email, senha});
       setMensagemSenha("Entrando na conta!");    
-      const novo_token = await invoke("gera_token", {email}); //Preparando autenticação
+      const novo_token = await invoke("busca_id", {}); //Preparando autenticação
       localStorage.setItem('token', novo_token); // Armazenando token
       console.log('Token gerado ao entrar:', novo_token);
     } catch (error){
@@ -116,7 +121,7 @@ function Login(){
           checaEmail();
           await realizaLogin();          
           verificaToken();
-          
+          buscaID();
           //const idendereco = await cadastraEndereco();
           //cadastraLocadora(idendereco);
           //atualizaEmail();
