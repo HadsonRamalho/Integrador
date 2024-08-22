@@ -34,8 +34,7 @@ pub async fn atualiza_email(email: &str) -> Result<(), String>{
 
 #[tauri::command]
 pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>{
-    let _nova_senha = nova_senha.trim();//Usar senha do parametro [Cod. 602]
-    let nova_senha = enc_senha(nova_senha);//[Cod. 602]
+    let nova_senha = enc_senha(nova_senha.trim());
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;// [Cod. 601]
     match resultado_busca{
