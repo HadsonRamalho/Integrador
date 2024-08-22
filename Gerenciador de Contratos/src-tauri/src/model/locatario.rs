@@ -1,0 +1,29 @@
+use mysql_async::prelude::Queryable;
+use crate::model::params;
+use crate::controller;
+
+pub struct Locatario{
+    pub idlocatario: String,
+    pub idendereco: String,
+    pub cnpj: String,
+    pub nomelocatario: String
+}
+
+pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{
+    let pool = controller::cria_pool().await.unwrap();
+    let mut conn = pool.get_conn().await?;
+    let resultado_insert =
+         conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, nomelocatario)
+          VALUES (:idlocatario, :idendereco, :cnpj, :nomelocatario);", 
+         params! {"idlocatario" =>  locatario.idlocatario, "idendereco" => locatario.idendereco, "cnpj" => locatario.cnpj, "nomelocatario" => locatario.nomelocatario}).await;
+    match resultado_insert{
+        Ok(_) => {
+            println!("Locatario cadastrado");
+        }, 
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(e);
+        }
+    }
+    return Ok(());
+}

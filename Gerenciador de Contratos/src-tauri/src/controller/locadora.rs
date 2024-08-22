@@ -1,5 +1,6 @@
+use mysql_async::{params, prelude::Queryable};
+
 use crate::controller;
-use crate::model;
 
 /// Função para criar uma estrutura de dados para uma locadora.
 ///
@@ -44,7 +45,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
     let idlocadora = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora = idlocadora.split_at(45 as usize);
     let idlocadora = idlocadora.0.to_string();
-    let locadora = model::locadora::Locadora {
+    let locadora = Locadora {
         idlocadora: idlocadora,
         idendereco: locadora["idendereco"].as_str().unwrap_or("").to_string(),
         cnpj: locadora["cnpj"].as_str().unwrap_or("").to_string(),
@@ -54,12 +55,12 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
         nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
     };
 
-    let resultado_busca = model::locadora::_busca_id_locadora(&locadora.cnpj).await;
+    let resultado_busca = _busca_id_locadora(&locadora.cnpj).await;
 
     match resultado_busca{
         Ok(resultado) => {
             if resultado == ""{
-                let _resultado_cadastro = model::locadora::_cadastra_locadora(locadora).await;
+                let _resultado_cadastro = _cadastra_locadora(locadora).await;
                 return Ok("Locadora cadastrada com sucesso".to_string());
             }
             return Err("Erro: Locadora já cadastrada".to_string());
@@ -72,7 +73,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
 
 #[tauri::command]
 pub async fn busca_id_locadora() -> Result<String, String>{
-    let resultado = model::locadora::_busca_id_locadora("000123").await;
+    let resultado = _busca_id_locadora("000123").await;
     match resultado{
         Ok(id) =>{
             return Ok(id);
