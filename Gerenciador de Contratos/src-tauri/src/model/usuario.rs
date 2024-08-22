@@ -32,3 +32,24 @@ pub async fn atualiza_senha(pool: &Pool, email: &str, senha_nova: &str) -> Resul
 
     }
 }
+
+pub async fn busca_id_usuario(pool: &Pool, email: &str) -> Result<(String), mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    let id_usuario: Option<String> = conn.exec_first("SELECT idusuario FROM usuario WHERE email = :email;", 
+    params!{"email" => email}).await?;
+    let server_error = mysql_async::ServerError{
+        code: 1045, //Código de erro
+        message: "ID não encontrado".to_string(),
+        state: "28000".to_string()
+    };
+    match id_usuario{
+        None => {
+            return Err(mysql_async::Error::Server(server_error));
+        },
+        Some(_) => {
+            return Ok(id_usuario.unwrap());
+
+        }
+
+    }
+}
