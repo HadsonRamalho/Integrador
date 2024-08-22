@@ -12,9 +12,6 @@ function Login(){
   async function checaEmail() {
     setMensagemEmail(await invoke("checa_email", { email }));
   }
-  if (localStorage.getItem('token')){ // Se tiver um token definido, faz login direto no menu
-    window.location.href = "menu.html";
-  }
 
   async function estruturaLocadora(idendereco){
     const cnpj = "123456";
@@ -103,10 +100,14 @@ function Login(){
       setMensagemSenha("Entrando na conta!");    
       const novo_token = await invoke("busca_id", {}); //Preparando autenticação
       localStorage.setItem('token', novo_token); // Armazenando token
-      console.log('Token gerado ao entrar:', novo_token);
+      console.log('Token gerado ao entrar:', novo_token);    
     } catch (error){
       setMensagemSenha("Erro ao entrar na conta. Verifique sua senha."); // Alterar para mensagem de erro personalizada
       return;
+    } finally{
+      if (localStorage.getItem('token')){ // Se tiver um token definido, faz login direto no menu
+        window.location.href = "menu.html";
+      }
     }
     
   }
@@ -118,10 +119,10 @@ function Login(){
         className="row"
         onSubmit={async(e) => {
           e.preventDefault();
-          checaEmail();
+          await checaEmail();
           await realizaLogin();          
-          verificaToken();
-          buscaID();
+          await verificaToken();
+          await buscaID();
           //const idendereco = await cadastraEndereco();
           //cadastraLocadora(idendereco);
           //atualizaEmail();

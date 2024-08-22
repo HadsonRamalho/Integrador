@@ -15,6 +15,10 @@ pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: 
     if senha1 != senha2 {
         return Err("As senhas são diferentes".to_string()); // Conta não criada
     }
+    match usuario::valida_senha(senha1){
+        Ok(_) =>{},
+        Err(e) => {return Err(e);}
+    }
     let hash = enc_senha(senha1); // Criptografando a senha (Standard *BSD hash)
     let mut usuario = model::Usuario::novo_usuario(
         nome_completo.to_string(),
