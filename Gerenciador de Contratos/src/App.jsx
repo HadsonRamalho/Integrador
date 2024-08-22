@@ -19,14 +19,20 @@ function Login(){
     const numeroagenciabanco = "2123";
     const nomebanco = "Banco Ruim";
     const nomelocadora = "DesLocadora";
-    const locadora = await invoke("estrutura_locadora", {idendereco, cnpj, numerocontabanco, numeroagenciabanco, nomebanco, nomelocadora});
-    return locadora;
+    try{
+      const locadora = await invoke("estrutura_locadora", {idendereco, cnpj, numerocontabanco, numeroagenciabanco, nomebanco, nomelocadora});
+    }
+    catch(error){
+      console.log(error);
+    }
+    finally{
+      return locadora;
+    }    
   }
 
   async function cadastraLocadora(idendereco){
     try{
       const locadora = await estruturaLocadora(idendereco);
-      console.log(locadora);
       await invoke("cadastra_locadora", {locadora});
     } catch (error){
       console.log(error);
@@ -40,15 +46,22 @@ function Login(){
     const numeroendereco = '123';
     const cidade = 'Cidade das Cidades';
     const uf = 'NO';
-    const endereco = await invoke("estrutura_endereco", {
-          logradouro, 
-          cep, 
-          complemento, 
-          numeroendereco, 
-          cidade, 
-          uf
-      });
-    return endereco;
+    try{
+      const endereco = await invoke("estrutura_endereco", {
+        logradouro, 
+        cep, 
+        complemento, 
+        numeroendereco, 
+        cidade, 
+        uf
+    });
+    }
+    catch(error){
+      console.log(error);
+    }
+    finally{
+      return endereco;
+    }
   }
 
   async function cadastraEndereco(){
@@ -75,6 +88,29 @@ function Login(){
       const novaSenha = "novasenha";
       await invoke("atualiza_senha", {email, novaSenha});
     } catch (error){
+      console.log(error);
+    }
+  }
+
+  async function estruturaLocatario(idendereco){
+    const cnpj = "52123";
+    const nomelocatario = "SeuLocatario";
+    try{
+      const locatario = await invoke("estrutura_locatario", {idendereco, cnpj, nomelocatario});
+    }
+    catch(error){
+      console.log(error);
+    }
+    finally{
+      return locatario;
+    }
+  }
+
+  async function cadastraLocatario(idendereco){
+    try{
+      await estruturaLocatario(idendereco);
+
+    } catch(error){
       console.log(error);
     }
   }
@@ -125,6 +161,7 @@ function Login(){
           await buscaID();
           //const idendereco = await cadastraEndereco();
           //cadastraLocadora(idendereco);
+
           //atualizaEmail();
           //atualizaSenha();
         }}
