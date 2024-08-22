@@ -37,6 +37,9 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
     let nova_senha = enc_senha(nova_senha.trim());
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;// [Cod. 601]
+    if nova_senha.is_empty() || nova_senha == ""{
+        return Err("Erro: sua nova senha não pode estar vazia.".to_string());
+    }
     match resultado_busca{
         Ok(o) => {
             if o.is_empty() || !valida_email(&o) || o == ""{ // [Cod. 601] 
@@ -77,4 +80,17 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<(), ()>{
 #[tauri::command]
 pub async fn busca_id() -> Result<String, String>{
     return Ok("$2b$10$nEmaaQ8g53SKbGmdF7vltej675xjgCKN0tMBWYpaWj8KxZWrUkoFi".to_string());
+}
+
+#[tauri::command]
+pub async fn verifica_senha(){
+
+}
+
+pub fn valida_senha(senha: &str) -> bool{
+    if senha.len() < 8 || senha.is_empty()
+    || senha == ""{
+        return false;
+    }
+    return true;
 }
