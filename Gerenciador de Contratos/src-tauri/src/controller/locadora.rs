@@ -1,4 +1,6 @@
 use mysql_async::{params, prelude::Queryable};
+use crate::model::locadora::_cadastra_locadora;
+use crate::model::{self, locadora};
 
 use crate::controller;
 
