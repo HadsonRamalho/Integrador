@@ -27,8 +27,8 @@ use crate::controller;
 
 #[tauri::command]
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, bool>{
-    let id = controller::enc_senha(&cnpj);
-    let locadora = serde_json::json!({
+    let id: String = controller::enc_senha(&cnpj);
+    let locadora: serde_json::Value = serde_json::json!({
         "idlocadora": id,
         "idendereco": idendereco,
         "cnpj": cnpj,
@@ -42,10 +42,10 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
 
 #[tauri::command]
 pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, String>{
-    let idlocadora = locadora["idlocadora"].as_str().unwrap_or("").to_string();
-    let idlocadora = idlocadora.split_at(45 as usize);
-    let idlocadora = idlocadora.0.to_string();
-    let locadora = Locadora {
+    let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
+    let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
+    let idlocadora: String = idlocadora.0.to_string();
+    let locadora: model::locadora::Locadora = model::locadora::Locadora {
         idlocadora: idlocadora,
         idendereco: locadora["idendereco"].as_str().unwrap_or("").to_string(),
         cnpj: locadora["cnpj"].as_str().unwrap_or("").to_string(),
@@ -55,7 +55,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
         nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
     };
 
-    let resultado_busca = _busca_id_locadora(&locadora.cnpj).await;
+    let resultado_busca: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(&locadora.cnpj).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -73,7 +73,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
 
 #[tauri::command]
 pub async fn busca_id_locadora() -> Result<String, String>{
-    let resultado = _busca_id_locadora("000123").await;
+    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora("000123").await;
     match resultado{
         Ok(id) =>{
             return Ok(id);
