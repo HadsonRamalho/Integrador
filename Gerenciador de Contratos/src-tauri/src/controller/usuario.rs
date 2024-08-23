@@ -73,6 +73,11 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
 
 #[tauri::command]
 pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
+    let email = email.trim();
+    let token = token.trim();
+    if !valida_email(email){
+        return Err("Erro ao validar o token: E-mail vazio.".to_string());
+    }
     let pool = controller::cria_pool().await?;
     let id = busca_id_usuario(&pool, email).await;
     let uid;
