@@ -7,7 +7,6 @@ use crate::controller::valida_email;
 use crate::controller;
 
 use super::{gera_hash, verifica_hash};
-
 #[tauri::command]
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
     let email: &str = email.trim(); // Utilizar email do usuário atual [Cod. 601]
