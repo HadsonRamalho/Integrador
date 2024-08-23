@@ -15,16 +15,16 @@ body {
 .conteudo{
     background-color: #f6f6f6;
     text-align: center ;
-    padding: 30px;
+    padding: 0px;
     width: 600px;
     height: 600px;
-    border-radius: 10px;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     
 }
 
-h1{
+h1, p{
     text-align: center;
 }
 
