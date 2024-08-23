@@ -115,7 +115,7 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
         s.chars().any(|c| c.is_digit(10))
     }
     if !contem_numero(senha){
-        return Err(("Erro: A senha deve conter ao menos um número".to_string()))
+        return Err("Erro: A senha deve conter ao menos um número".to_string())
     }
     return Ok(()) // Dar Ok após verificar se existe ao menos um número e um caractere especial
 }
