@@ -119,7 +119,7 @@ function Login(){
     try{
       const token = localStorage.getItem('token');
       console.log('Token na verificação:', typeof token, token);
-      await invoke("verifica_token", {email, token});
+      await invoke("verifica_token", {email});
     } catch(error){
       console.log(error);
     }

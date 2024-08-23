@@ -1,11 +1,9 @@
-use mysql_async::Pool;
-
 use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
 use crate::controller;
 
-use super::{gera_hash, verifica_hash};
+use super::gera_hash;
 
 #[tauri::command]
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
@@ -71,7 +69,7 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
 }
 
 #[tauri::command]
-pub async fn verifica_token(email: &str, token: &str) -> Result<String, String>{
+pub async fn verifica_token(email: &str) -> Result<String, String>{
     let pool = controller::cria_pool().await?;
     let id = busca_id_usuario(&pool, email).await;
     match id{

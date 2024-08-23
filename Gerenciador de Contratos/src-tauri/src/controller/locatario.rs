@@ -1,4 +1,4 @@
-use crate::{controller, model::{self, locatario::_cadastra_locatario}};
+use crate::{controller, model};
 
 #[tauri::command]
 pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String) -> Result<serde_json::Value, bool>{
@@ -17,7 +17,7 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
     let idlocatario: String = locatario["idlocatario"].as_str().unwrap_or("").to_string();
     let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
     let idlocatario: String = idlocatario.0.to_string();
-    let locatario: model::locatario::Locatario = model::locatario::Locatario {
+    let _locatario: model::locatario::Locatario = model::locatario::Locatario {
         idlocatario: idlocatario,
         idendereco: locatario["idendereco"].as_str().unwrap_or("").to_string(),
         cnpj: locatario["cnpj"].as_str().unwrap_or("").to_string(),
