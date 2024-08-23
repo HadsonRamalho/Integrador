@@ -4,9 +4,7 @@ import App from "./App";
 import "./styles.css";
 
 ReactDOM.createRoot(document.getElementById("camposLoginForm")).render(
-  <React.StrictMode>
     <App />
-  </React.StrictMode>
 );
 
 document.getElementById("botaoCriarContaForm").addEventListener("click", function() {
@@ -16,3 +14,8 @@ document.getElementById("botaoCriarContaForm").addEventListener("click", functio
 document.getElementById("resetSenha").addEventListener("click", function() {
   window.location.href = "reseta_senha.html";
 });
+
+document.getElementById("menu").addEventListener("click", function() {
+  window.location.href = "menu.html";
+});
+

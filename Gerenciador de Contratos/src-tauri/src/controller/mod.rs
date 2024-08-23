@@ -1,165 +1,142 @@
 use crate::model;
+use crate::model::Usuario;
 use pwhash::bcrypt;
 use pwhash::unix;
+pub mod endereco;
+pub mod locadora;
+pub mod usuario;
+pub mod locatario;
 
-/// Função para criar uma conta de usuário.
-///
-/// # Parâmetros
-/// - nome_completo: Nome completo do usuário.
-/// - email: Endereço de email do usuário.
-/// - senha1: Primeira senha digitada.
-/// - senha2: Segunda senha digitada para confirmação.
-///
-/// # Retornos
-/// - Result<bool, bool>: Retorna Ok(true) se a conta for criada com sucesso, 
-///   Ok(false) se houver um erro na criação da conta
 #[tauri::command] 
-pub async fn cria_conta(nomeCompleto: &str, email: &str, senha1: &str, senha2: &str) -> Result<bool, bool> { 
+pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<(), String> { 
     let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
-    let validacao_email = valida_email(&email);
-    if validacao_email == false{
-        return Ok(false); // Conta não criada
+    if !valida_email(&email){
+        return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
     }
     if senha1 != senha2 {
-        return Ok(false); // Conta não criada
+        return Err("As senhas são diferentes".to_string()); // Conta não criada
     }
-    let hash = enc_senha(senha1); // Criptografando a senha (Standard *BSD hash)
-    let mut email_repetido:u32 = 0;
+    match usuario::valida_senha(senha1){
+        Ok(_) =>{},
+        Err(e) => {return Err(e);}
+    }
+    let hash = gera_hash(senha1); // Criptografando a senha (Standard *BSD hash)
     let mut usuario = model::Usuario::novo_usuario(
-        nomeCompleto.to_string(),
+        nome_completo.to_string(),
         email.to_string(), 
         hash); // Cria um novo usuário
-
-    let _consome_result = save_data(
-        nomeCompleto, 
+    if usuario.ja_cadastrado().await{
+        println!("!Insert");
+        return Err("Usuário já cadastrado".to_string());
+    }
+    let resultado_cadastro = save_data(
+        nome_completo, 
         &email, 
-        usuario.get_hash(), 
-        &mut email_repetido).await;
-    if email_repetido == 0{   
-        return Ok(true); // Conta criada   
+        usuario.get_hash()
+        ).await;
+    match resultado_cadastro{
+        Ok(_) => {
+            return Ok(())
+        },
+        Err(_) => {
+            return Err("Erro no cadastro do usuário.".to_string())
+        }
     }
-    return Ok(false); // Conta não foi criada
 }
 
-/// Função para verificar o email inserido
-///
-/// # Parâmetros
-/// - email: Endereço de email do usuário.
-///
-/// # Retornos
-/// - Result<bool, bool>: Retorna Ok(true) se: o email não está vazio E possui os caracteres '@' e '.'
-///   Ok(false) se o email não cumprir algum dos critérios de validação
 #[tauri::command]
-pub fn login_email(email: &str) -> Result<bool, bool> { // Retorna uma mensagem de sucesso ou falha para o front
-    let vazio = ""; // String vazia a ser comparada caso a verificação no front falhe
-    if email == vazio{
-        return Err(false)
+pub fn checa_email(email: &str) -> Result<(), String> {
+    if !valida_email(email){
+        return Err("E-mail inválido. Deve conter '@' e '.'".to_string())
     }
-    if valida_email(email){
-        return Ok(true)
-    }
-    return Ok(false)
+    return Ok(())
 }
 
-/// Função para realizar login com email e senha.
-///
-/// # Parâmetros
-/// - email: Endereço de email do usuário.
-/// - senha: Senha do usuário.
-///
-/// # Retornos
-/// - Result<bool, bool>: Retorna Ok(true) se o login for bem-sucedido,
-///   Ok(false) se a senha estiver vazia ou o login não for bem-sucedido.
 #[tauri::command]
-pub async fn login_senha(email: &str, senha: &str) -> Result<bool, bool>{ // Retorna uma mensagem para o front e um booleano
-    let vazio = ""; 
-    if senha == vazio{ // Verificação caso o campo do front falhe
-        return Ok(false)
+pub async fn realiza_login(email: &str, senha: &str) -> Result<(), String>{ // Retorna uma mensagem para o front e um booleano
+    let senha:String = senha.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco da senha
+    if senha.is_empty(){ // Verificação caso o campo do front falhe
+        return Err("A senha não pode estar vazia".to_string())
     }
-    let mut senha_correta:u32 = 0;
-    let _x = _verifica_senha(email, senha, &mut senha_correta).await;
-    if senha_correta != 0 {
-        return Ok(true)
-    } else{
-        return Ok(false)
+    let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha).await;
+    let mut _usuario_autenticado= Default::default();
+    match resultado_verificacao{
+        Ok(_) => {
+            _usuario_autenticado = resultado_verificacao.unwrap();
+        },
+        _ => {
+            let erro =  resultado_verificacao.unwrap_err();
+            return Err(erro.to_string())
+        }
     }
+    let usuario_autenticado = _usuario_autenticado.get_all();
+    println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
+    if usuario_autenticado.2 != "" {
+        return Ok(())
+    }
+    return Err("Senha inválida".to_string())
     
 }
 
-/// Função para salvar dados do usuário no banco de dados.
-///
-/// # Parâmetros
-/// - nome: Nome do usuário.
-/// - email: Endereço de email do usuário.
-/// - senha: Senha do usuário.
-/// - email_repetido: Referência mutável para o contador de emails repetidos.
-///
-/// # Retornos
-/// - Result<u32, String>: Retorna Ok(email_repetido) se a operação for bem-sucedida,
-///   Err(erro) se ocorrer um erro ao salvar os dados.
-pub async fn save_data(nome: &str, email: &str, senha: &str, email_repetido: &mut u32) -> Result<u32, String> {
+pub async fn save_data(nome: &str, email: &str, senha: &str) -> Result<(), String> {
     let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
-    model::save_data(
+    let _resultado_criacao = model::save_data(
         &pool, 
         nome, 
         &email, 
-        senha, 
-        email_repetido).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
-    Ok(*(email_repetido))
+        senha
+        ).await.map_err(|e| format!("{}", e))?;
+    Ok(())
 }
 
-/// Função para verificar a senha do usuário.
-///
-/// # Parâmetros
-/// - email: Endereço de email do usuário.
-/// - senha: Senha do usuário.
-/// - senha_correta: Referência mutável para o contador de senhas corretas.
-///
-/// # Retornos
-/// - Result<u32, String>: Retorna Ok(senha_correta) se a operação for bem-sucedida,
-///   Err(erro) se ocorrer um erro ao verificar a senha.
-pub async fn _verifica_senha(email: &str, senha: &str, senha_correta: &mut u32) -> Result<u32, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
+pub async fn cria_pool()-> Result<mysql_async::Pool, String>{
     let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
-    model::verifica_senha(&pool, &email, senha,senha_correta).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
-    Ok(*(senha_correta))
+    Ok(pool)
 }
 
-/// Função para validar o formato do endereço de email.
-///
-/// # Parâmetros
-/// - email: Endereço de email a ser validado.
-///
-/// # Retorno
-/// - bool: Retorna true se o email tiver o formato válido (contém '@' e '.'), caso contrário, retorna false.
+pub async fn _verifica_senha(email: &str, senha: &str) -> Result<Usuario, String> { // Parâmetros devem ser alterados conforme a necessidade posterior
+    let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
+    let usuario_autenticado = model::verifica_senha(&pool, &email, senha).await.map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
+    Ok(usuario_autenticado)
+}
+
 pub fn valida_email(email: &str) -> bool{
     let mut verificador = false;
-    if email.contains("@") && email.contains(".") {
+    let email:String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
+    if email.contains("@") && email.contains(".") && !email.is_empty() {
         verificador = true;
     }
     verificador
 }
 
-/// Função para criptografar uma senha usando o algoritmo bcrypt.
-///
-/// # Parâmetros
-/// - senha: Senha a ser criptografada.
-///
-/// # Retorno
-/// - String: Retorna a senha criptografada.
-pub fn enc_senha(senha: &str) -> String{
+#[tauri::command]
+pub async fn encontra_email_smtp(email: &str) -> Result<(), String>{
+    if !valida_email(email){
+        return Err("E-mail inválido. Deve conter '@' e '.'".to_string())
+    }
+    let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
+    let _consome_result = model::busca_email(&pool, email).await;
+    match _consome_result{
+        Ok(_) => {
+            model::envia_email(_consome_result.unwrap());
+            return Ok(())
+        },
+        _ => return Err("Erro, o e-mail não foi enviado.".to_string())
+    }
+}
+
+#[tauri::command]
+pub async fn gera_token(email: &str) -> Result<String, ()>{
+    let token = gera_hash(email);
+    Ok(token)
+}
+
+pub fn gera_hash(senha: &str) -> String{
     let enc = bcrypt::hash(senha).unwrap();
     return enc
 }
 
-/// Função para verificar se uma senha digitada corresponde a um hash de senha.
-///
-/// # Parâmetros
-/// - senha_digitada: Senha digitada pelo usuário.
-/// - hash: Hash da senha armazenada no banco de dados.
-///
-/// # Retorno
-/// - bool: Retorna true se a senha digitada corresponder ao hash fornecido, caso contrário, retorna false.
-pub fn dec_senha(senha_digitada: &str, hash: String) -> bool{
+pub fn verifica_hash(senha_digitada: &str, hash: String) -> bool{
     let dec = unix::verify(senha_digitada, &hash);
     return dec
 }

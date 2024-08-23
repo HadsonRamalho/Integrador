@@ -2,105 +2,101 @@
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
+  font-weight: 40;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  
 }
 
-.container {
-  margin: 0;
-  padding-top: 16vh;
+/*parte inicial do login*/
+#camposLoginForm {
+  margin: 0px;
+  padding-top: 8vh;
+   line-height: 20px; 
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  font-weight: bold ;
-}
-
-.formLogin {
-  margin: 0;
-  padding-top: 15vh;
-  display: flex;
-  flex-direction: column; /* Alteração para alinhar na vertical */
-  align-items: center; /* Centralizar os itens na vertical */
-  justify-content: center;
-  text-align: center;
-  font-weight: bold;
-  line-height: 20px;
-  
+  flex-direction: column; /*Alteração para alinhar na vertical*/
+  position: fixed;
+  top: 30%;
+  left: 50%; 
+  transform:translate(-55%, -55%);
+  line-height: 26px; 
   
 }
 
+/* "caixas"criar conta*/
 .rowSignUp{
   line-height: 20px;
   position: fixed;
-  top: 20%;
+  top: 20%; 
 }
 
+/*parte da caixa (criar conta)de nome ,email e tal*/
+.user-input{
+  font-family: serif;
+  margin-right: 6px;
+  margin-top: 10px;
+  background-color: #111;
+  
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
 }
 
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #be0b0b);
+/*  botoes voltar (esqueci senha e criar conta)*/
+.botaovoltar{
+  margin-top: 5%;
+ font-family: serif;
+ text-decoration: underline;
+ background: transparent;
+ border: none;
+ transform: translate(-50%, -50%);
+ 
 }
 
+/*caixinha de email e senha do login*/
 .row input {
   display: block;
-  margin-bottom: 10px;
-}
-
-
-a {
-  font-weight: 500;
-  color: #ff6464;
-  text-decoration: inherit;
-}
+  margin-bottom: 13px; 
+  font-family: serif;
+  background-color: #111;
+  color: #ffffff;
  
-a:hover {
-  color: #a01818;
 }
 
-h1 {
-  text-align: center;
+ /*botao entrar*/
+
+/*caixa de email do esqueci a senha*/
+.rowReset{
+  background-color: #111;
+
+
 }
 
+/* borda e padding das caixas, email etc(todas)*/
 input,
 button {
   border-radius: 4px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+ 
+ 
 }
 
+/* o cursor do mouse fica umaq maozinha apontando e pinta corzinha dos button*/
 button {
-  cursor: pointer;
+  cursor: pointer; 
+  background-color: #111;
+  color: #ffffff;
 }
 
+/*deixa a borda com corzinha , e o houver serve para aplicar estilos quando o usuario passa a mao sobre o botao*/
 button:hover {
-  border-color: #21d5ec;
+  border-color: #21d5ec; 
+
 }
 button:active {
-  border-color: #d83939;
-  background-color: #e8e8e8;
+  border-color: #4cd839;
 }
 
 input,
@@ -108,73 +104,79 @@ button {
   outline: none;
 }
 
-#email-input {
-  margin-right: 5px;
-  margin-top: 10px;
-}
-
-#senha-input{
-  margin-right: 6px;
-  margin-top: 15px;
-}
-
+/*caixa box :)*/
 #box{
-  background-color: #169e69;
+  background-color:   #8797AF;
   position: fixed;
   top:50%;
   left: 50%;
   transform: translate(-50%, -50%); 
   text-align: center; 
   height: 500px; 
-  width: 450px; 
+  width: 400px; /*450pcx*/
+  line-height: 60px;
+  filter: blur(0 0 50px);
+  border-radius: 10px;
+
+}
+
+/*box do esqueci a senha*/
+#boxreset{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  min-height: 300px; 
+  width: 500px; /*450pcx*/
   line-height: 60px;
   filter: blur(0 0 50px);
   border-radius: 25px;
+
+}
+/* box do criar conta*/
+#boxcriar{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  height: 500px; 
+  width: 400px; /*450pcx*/
+  line-height: 60px;
+  border-radius: 10px;
+
+
 }
 
-#subtituloForm{
+
+.subtitulo{
   font-family: serif;
-  font-size: 20px; /*subtitulo*/
+  font-size: 20px; 
   text-align: center;
   text-transform: uppercase;
 }
 
-#camposLoginForm{
-  position: fixed; 
-  top: 30%; /* parte do login,entrar , email esenha*/
-  left: 50%; 
-  transform:translate(-55%, -55%);
-  line-height: 26px;
- 
-  
+/*esqueci a senha */
+.resetSenha{
+  background-color: transparent;
+  color: rgba(14, 14, 14, 0.916);
+  border: none;
+  transform: translate(-31%, -230%) ;
+  text-decoration: underline;
 }
 
-#campoSenhaForm{
-  position: fixed; 
-  top: 65%; /*84 esqueci a senha*/
-  left: 38%; /*50*/
-  transform:translate(-55%, -55%);
-  line-height: 26px;
-  
-}
-
-#botaoConfirmarForm{
-  position: fixed; 
-  top: 82%; /*82 desconhecido*/
-  left: 50%; /*50*/
-  transform:translate(-50%, -50%);
-  
-}
 
 #botaoCriarContaForm{
-  background-color: #111;
-  top: 86%;/*90 criar conta*/
+  top: 140%;/*90 botao criar conta*/
   font-size: 12px;
   left: 39%;
   position: fixed;
 }
 
-#mensagemLogin{
+.mensagemLogin{
   font-size: 10px;
   text-align: center;
   top: 10%;
@@ -187,20 +189,11 @@ button {
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
-    background-color: #234934;
+    background-color: #56667A
+    ;
+    
   }
 
   a:hover {
     color: #db2424;
-  }
-  
-  input,
-  button {
-    color: #ffffff;
-    background-color: #111;
-    /*filter: drop-shadow(0 0 20px #000404);*/
-  }
-  button:active {
-    background-color: #160d0d69;
-  }
-}
+  }}
