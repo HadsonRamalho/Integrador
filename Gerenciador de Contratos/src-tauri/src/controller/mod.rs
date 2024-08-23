@@ -5,6 +5,7 @@ use pwhash::unix;
 pub mod endereco;
 pub mod locadora;
 pub mod usuario;
+pub mod locatario;
 
 #[tauri::command] 
 pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<(), String> { 
@@ -19,7 +20,7 @@ pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: 
         Ok(_) =>{},
         Err(e) => {return Err(e);}
     }
-    let hash = enc_senha(senha1); // Criptografando a senha (Standard *BSD hash)
+    let hash = gera_hash(senha1); // Criptografando a senha (Standard *BSD hash)
     let mut usuario = model::Usuario::novo_usuario(
         nome_completo.to_string(),
         email.to_string(), 
@@ -126,16 +127,16 @@ pub async fn encontra_email_smtp(email: &str) -> Result<(), String>{
 
 #[tauri::command]
 pub async fn gera_token(email: &str) -> Result<String, ()>{
-    let token = enc_senha(email);
+    let token = gera_hash(email);
     Ok(token)
 }
 
-pub fn enc_senha(senha: &str) -> String{
+pub fn gera_hash(senha: &str) -> String{
     let enc = bcrypt::hash(senha).unwrap();
     return enc
 }
 
-pub fn dec_senha(senha_digitada: &str, hash: String) -> bool{
+pub fn verifica_hash(senha_digitada: &str, hash: String) -> bool{
     let dec = unix::verify(senha_digitada, &hash);
     return dec
 }

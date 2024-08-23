@@ -23,6 +23,8 @@ mod controller;
 fn main() {
     tauri::Builder::default()
        .invoke_handler(tauri::generate_handler![
+        controller::locatario::cadastra_locatario,
+        controller::locatario::estrutura_locatario,
         controller::usuario::busca_id,
         controller::usuario::verifica_token,
         controller::usuario::atualiza_senha,

@@ -26,7 +26,7 @@ pub async fn atualiza_senha(pool: &Pool, email: &str, senha_nova: &str) -> Resul
             return Ok(());
         },
         Err(e ) => {
-            return Err(e)
+            return Err(e);
 
         }
 
@@ -35,7 +35,7 @@ pub async fn atualiza_senha(pool: &Pool, email: &str, senha_nova: &str) -> Resul
 
 pub async fn busca_id_usuario(pool: &Pool, email: &str) -> Result<(String), mysql_async::Error>{
     let mut conn = pool.get_conn().await?;
-    let id_usuario: Option<String> = conn.exec_first("SELECT idusuario FROM usuario WHERE email = :email;", 
+    let id_usuario: Option<String> = conn.exec_first("SELECT UUID FROM usuarios WHERE email = :email;", 
     params!{"email" => email}).await?;
     let server_error = mysql_async::ServerError{
         code: 1045, //Código de erro
@@ -52,4 +52,21 @@ pub async fn busca_id_usuario(pool: &Pool, email: &str) -> Result<(String), mysq
         }
 
     }
+}
+
+pub async fn verifica_id_usuario(pool: &Pool, id: &str) -> Result<(), mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    let resultado_conexao = conn.exec_drop("SELECT UUID FROM usuarios WHERE UUID = :id",
+    params! {"id" => id}).await;
+    match resultado_conexao{
+        Ok(())=>{
+            return Ok(());
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    }
+
+
+
 }
