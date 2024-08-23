@@ -1,6 +1,6 @@
-use mysql_async::{params, prelude::Queryable};
 use crate::model::locadora::_cadastra_locadora;
 use crate::model::{self, locadora};
+use mysql_async::{params, prelude::Queryable};
 
 use crate::controller;
 
@@ -28,7 +28,14 @@ use crate::controller;
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
 
 #[tauri::command]
-pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, bool>{
+pub fn estrutura_locadora(
+    idendereco: String,
+    cnpj: String,
+    numerocontabanco: String,
+    numeroagenciabanco: String,
+    nomebanco: String,
+    nomelocadora: String,
+) -> Result<serde_json::Value, bool> {
     let id: String = controller::enc_senha(&cnpj);
     let locadora: serde_json::Value = serde_json::json!({
         "idlocadora": id,
@@ -39,11 +46,11 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
         "nomebanco": nomebanco,
         "nomelocadora": nomelocadora
     });
-    return Ok(locadora)
+    return Ok(locadora);
 }
 
 #[tauri::command]
-pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, String>{
+pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, String> {
     let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
     let idlocadora: String = idlocadora.0.to_string();
@@ -51,22 +58,29 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
         idlocadora: idlocadora,
         idendereco: locadora["idendereco"].as_str().unwrap_or("").to_string(),
         cnpj: locadora["cnpj"].as_str().unwrap_or("").to_string(),
-        numerocontabanco: locadora["numerocontabanco"].as_str().unwrap_or("").to_string(),
-        numeroagenciabanco: locadora["numeroagenciabanco"].as_str().unwrap_or("").to_string(),
+        numerocontabanco: locadora["numerocontabanco"]
+            .as_str()
+            .unwrap_or("")
+            .to_string(),
+        numeroagenciabanco: locadora["numeroagenciabanco"]
+            .as_str()
+            .unwrap_or("")
+            .to_string(),
         nomebanco: locadora["nomebanco"].as_str().unwrap_or("").to_string(),
         nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
     };
 
-    let resultado_busca: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(&locadora.cnpj).await;
+    let resultado_busca: Result<String, mysql_async::Error> =
+        model::locadora::_busca_id_locadora(&locadora.cnpj).await;
 
-    match resultado_busca{
+    match resultado_busca {
         Ok(resultado) => {
-            if resultado == ""{
+            if resultado == "" {
                 let _resultado_cadastro = _cadastra_locadora(locadora).await;
                 return Ok("Locadora cadastrada com sucesso".to_string());
             }
             return Err("Erro: Locadora já cadastrada".to_string());
-        },
+        }
         Err(erro) => {
             return Err(erro.to_string());
         }
@@ -74,12 +88,13 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
 }
 
 #[tauri::command]
-pub async fn busca_id_locadora() -> Result<String, String>{
-    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora("000123").await;
-    match resultado{
-        Ok(id) =>{
+pub async fn busca_id_locadora() -> Result<String, String> {
+    let resultado: Result<String, mysql_async::Error> =
+        model::locadora::_busca_id_locadora("000123").await;
+    match resultado {
+        Ok(id) => {
             return Ok(id);
-        },
+        }
         Err(e) => {
             return Err(e.to_string());
         }
