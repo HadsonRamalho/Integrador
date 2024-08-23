@@ -1,10 +1,7 @@
 use crate::model::locadora::_cadastra_locadora;
-<<<<<<< HEAD
+
 use crate::model::{self, locadora};
 use mysql_async::{params, prelude::Queryable};
-=======
-use crate::model::{self};
->>>>>>> 32343269d12eeea6248d26110ae837139def5f1b
 
 use crate::controller;
 
@@ -32,20 +29,9 @@ use crate::controller;
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
 
 #[tauri::command]
-<<<<<<< HEAD
-pub fn estrutura_locadora(
-    idendereco: String,
-    cnpj: String,
-    numerocontabanco: String,
-    numeroagenciabanco: String,
-    nomebanco: String,
-    nomelocadora: String,
-) -> Result<serde_json::Value, bool> {
-    let id: String = controller::enc_senha(&cnpj);
-=======
+
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, bool>{
     let id: String = controller::gera_hash(&cnpj);
->>>>>>> 32343269d12eeea6248d26110ae837139def5f1b
     let locadora: serde_json::Value = serde_json::json!({
         "idlocadora": id,
         "idendereco": idendereco,
@@ -97,19 +83,11 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
 }
 
 #[tauri::command]
-<<<<<<< HEAD
-pub async fn busca_id_locadora() -> Result<String, String> {
-    let resultado: Result<String, mysql_async::Error> =
-        model::locadora::_busca_id_locadora("000123").await;
-    match resultado {
-        Ok(id) => {
-=======
 pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
     let cnpj = cnpj.trim(); // remover traços e pontos
     let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(cnpj).await;
     match resultado{
         Ok(id) =>{
->>>>>>> 32343269d12eeea6248d26110ae837139def5f1b
             return Ok(id);
         }
         Err(e) => {
