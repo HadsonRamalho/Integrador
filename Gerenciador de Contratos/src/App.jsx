@@ -119,15 +119,11 @@ function Login(){
     try{
       const token = localStorage.getItem('token');
       console.log('Token na verificação:', typeof token, token);
-      await invoke("verifica_token", {email});
+      const validatoken = await invoke("verifica_token", {email, token});
+      console.log(validatoken);
     } catch(error){
       console.log(error);
     }
-  }
-
-  async function buscaID(){
-    const id = await invoke("busca_id", {email});
-    console.log("ID resultante da busca: ", id);
   }
 
   async function realizaLogin(){
@@ -142,7 +138,7 @@ function Login(){
       return;
     } finally{
       if (localStorage.getItem('token')){ // Se tiver um token definido, faz login direto no menu
-        window.location.href = "menu.html";
+        //window.location.href = "menu.html";
       }
     }
     

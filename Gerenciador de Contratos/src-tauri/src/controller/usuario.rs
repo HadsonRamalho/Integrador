@@ -1,9 +1,12 @@
+use mysql_async::prelude::Queryable;
+use mysql_async::{params, Pool};
+
 use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
 use crate::controller;
 
-use super::gera_hash;
+use super::{gera_hash, verifica_hash};
 
 #[tauri::command]
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
@@ -69,18 +72,32 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
 }
 
 #[tauri::command]
-pub async fn verifica_token(email: &str) -> Result<String, String>{
+pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
     let pool = controller::cria_pool().await?;
     let id = busca_id_usuario(&pool, email).await;
+    let uid;
     match id{
         Ok(id) =>{
             if id.is_empty(){
                 return Err("Erro ao validar o token: Verifique o email.".to_string())
             }
-            return Ok(id)
+            uid = id;
         },
         Err(e) =>{
             return Err(e.to_string())
+        }
+    }
+    
+    let email = busca_email_usuario(&pool, token).await;
+    match email{
+        Ok(_) =>{
+            if verifica_hash(&email.unwrap(), uid){
+                return Ok(true);
+            }
+            return Err("Token inválido".to_string());
+        },
+        Err(e) => {
+            return Err(e.to_string())            
         }
     }
 }
@@ -116,4 +133,23 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
         return Err("Erro: A senha deve conter ao menos um número".to_string())
     }
     return Ok(()) // Dar Ok após verificar se existe ao menos um número e um caractere especial
+}
+
+pub async fn busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    let email_usuario: Option<String> = conn.exec_first("SELECT email FROM usuarios WHERE UUID = :id;", 
+    params!{"id" => id}).await?;
+    let server_error = mysql_async::ServerError{
+        code: 1045, //Código de erro
+        message: "ID inválido.".to_string(),
+        state: "28000".to_string()
+    };
+    match email_usuario{
+        None => {
+            return Err(mysql_async::Error::Server(server_error));
+        },
+        Some(_) => {
+            return Ok(email_usuario.unwrap());
+        }
+    }
 }
