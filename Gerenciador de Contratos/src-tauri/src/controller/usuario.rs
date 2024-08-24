@@ -133,8 +133,14 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     fn contem_numero(s: &str) -> bool {
         s.chars().any(|c| c.is_digit(10))
     }
+    fn contem_simbolo(s: &str) -> bool{
+        s.chars().any(|c| c.is_ascii_punctuation())
+    }
     if !contem_numero(senha){
         return Err("Erro: A senha deve conter ao menos um número".to_string())
+    }
+    if !contem_simbolo(senha){
+        return Err("Erro: A senha deve conter ao menos um símbolo".to_string())
     }
     return Ok(()) // Dar Ok após verificar se existe ao menos um número e um caractere especial
 }
