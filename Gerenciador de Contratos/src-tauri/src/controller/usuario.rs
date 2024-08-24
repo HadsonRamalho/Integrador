@@ -5,8 +5,8 @@ use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
 use crate::controller;
-
 use super::{gera_hash, verifica_hash};
+
 #[tauri::command]
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
     let email: &str = email.trim(); // Utilizar email do usuário atual [Cod. 601]
@@ -130,16 +130,10 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     if senha.is_empty() || senha == ""{
         return Err("Erro: A senha não pode estar vazia".to_string())
     }
-    fn contem_numero(s: &str) -> bool {
-        s.chars().any(|c| c.is_digit(10))
-    }
-    fn contem_simbolo(s: &str) -> bool{
-        s.chars().any(|c| c.is_ascii_punctuation())
-    }
-    if !contem_numero(senha){
+    if !senha.chars().any(|c| c.is_ascii_punctuation()){
         return Err("Erro: A senha deve conter ao menos um número".to_string())
     }
-    if !contem_simbolo(senha){
+    if !senha.chars().any(|c| c.is_ascii_punctuation()){
         return Err("Erro: A senha deve conter ao menos um símbolo".to_string())
     }
     return Ok(())
