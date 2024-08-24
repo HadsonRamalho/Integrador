@@ -59,23 +59,14 @@ pub async fn realiza_login(email: &str, senha: &str) -> Result<(), String>{ // R
         return Err("A senha não pode estar vazia".to_string())
     }
     let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha).await;
-    let mut _usuario_autenticado= Default::default();
     match resultado_verificacao{
         Ok(_) => {
-            _usuario_autenticado = resultado_verificacao.unwrap();
+            return Ok(())
         },
-        _ => {
-            let erro =  resultado_verificacao.unwrap_err();
-            return Err(erro.to_string())
+        Err(e) =>{
+            return Err(e.to_string());
         }
-    }
-    let usuario_autenticado = _usuario_autenticado.get_all();
-    println!("{}, {}, {}", usuario_autenticado.0, usuario_autenticado.1, usuario_autenticado.2);
-    if usuario_autenticado.2 != "" {
-        return Ok(())
-    }
-    return Err("Senha inválida".to_string())
-    
+    }    
 }
 
 pub async fn save_data(nome: &str, email: &str, senha: &str) -> Result<(), String> {

@@ -138,7 +138,7 @@ function Login(){
       return;
     } finally{
       if (localStorage.getItem('token')){ // Se tiver um token definido, faz login direto no menu
-        window.location.href = "menu.html";
+        //window.location.href = "menu.html";
       }
     }
     
