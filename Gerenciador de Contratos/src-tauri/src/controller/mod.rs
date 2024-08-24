@@ -26,7 +26,6 @@ pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: 
         email.to_string(), 
         hash); // Cria um novo usuário
     if usuario.ja_cadastrado().await{
-        println!("!Insert");
         return Err("Usuário já cadastrado".to_string());
     }
     let resultado_cadastro = save_data(

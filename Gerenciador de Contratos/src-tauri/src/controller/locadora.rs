@@ -1,8 +1,5 @@
 use crate::model::locadora::_cadastra_locadora;
-
-use crate::model::{self, locadora};
-use mysql_async::{params, prelude::Queryable};
-
+use crate::model;
 use crate::controller;
 
 /// Função para criar uma estrutura de dados para uma locadora.
