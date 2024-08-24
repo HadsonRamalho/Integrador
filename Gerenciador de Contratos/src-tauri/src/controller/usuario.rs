@@ -142,7 +142,7 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     if !contem_simbolo(senha){
         return Err("Erro: A senha deve conter ao menos um símbolo".to_string())
     }
-    return Ok(()) // Dar Ok após verificar se existe ao menos um número e um caractere especial
+    return Ok(())
 }
 
 pub async fn busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
