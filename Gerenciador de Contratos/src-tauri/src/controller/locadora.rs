@@ -97,19 +97,11 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
 }
 
 #[tauri::command]
-<<<<<<< HEAD
 pub async fn busca_id_locadora() -> Result<String, String> {
     let resultado: Result<String, mysql_async::Error> =
         model::locadora::_busca_id_locadora("000123").await;
     match resultado {
         Ok(id) => {
-=======
-pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
-    let cnpj = cnpj.trim(); // remover traços e pontos
-    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(cnpj).await;
-    match resultado{
-        Ok(id) =>{
->>>>>>> 32343269d12eeea6248d26110ae837139def5f1b
             return Ok(id);
         }
         Err(e) => {
