@@ -5,7 +5,6 @@ use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
 use crate::controller;
-
 use super::{gera_hash, verifica_hash};
 
 #[tauri::command]
@@ -73,6 +72,11 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
 
 #[tauri::command]
 pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
+    let email = email.trim();
+    let token = token.trim();
+    if !valida_email(email){
+        return Err("Erro ao validar o token: E-mail vazio.".to_string());
+    }
     let pool = controller::cria_pool().await?;
     let id = busca_id_usuario(&pool, email).await;
     let uid;
@@ -126,13 +130,13 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     if senha.is_empty() || senha == ""{
         return Err("Erro: A senha não pode estar vazia".to_string())
     }
-    fn contem_numero(s: &str) -> bool {
-        s.chars().any(|c| c.is_digit(10))
-    }
-    if !contem_numero(senha){
+    if !senha.chars().any(|c| c.is_ascii_punctuation()){
         return Err("Erro: A senha deve conter ao menos um número".to_string())
     }
-    return Ok(()) // Dar Ok após verificar se existe ao menos um número e um caractere especial
+    if !senha.chars().any(|c| c.is_ascii_punctuation()){
+        return Err("Erro: A senha deve conter ao menos um símbolo".to_string())
+    }
+    return Ok(())
 }
 
 pub async fn busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{

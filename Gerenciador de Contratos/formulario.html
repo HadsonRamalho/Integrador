@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário</title>
+
+    <link rel="stylesheet" href="../Gerenciador de Contratos/src/formulario.css">
+</head>
+<body>
+    <div class= "conteudo">
+        <h1>Locadora</h1>
+        <div class="input-group">
+            <div class= "input-box">
+                <label for= "nomeLocadora"> Nome da Locadora: </label>
+                <input id= "nomeLocadora" type= "text" name= "nomeLocadora"  required aria-label= "Nome da locadora">
+            </div>
+
+            <div class= "input-box">
+                <label for= "cnpj"> CNPJ: </label>
+                <input id= "cnpj" type= "text" name= "cnpj" required aria-label= "CNPJ da locadora">
+            </div>
+
+            <div class= "input-box">
+                <label for= "endereco"> Endereço: </label>
+                <input id= "endereco" type= "text" name= "endereco" required aria-label= "Endereço da locadora">
+            </div>
+
+            <div class= "input-box">
+                <label for= "cidade"> Cidade: </label>
+                <input id= "cidade" type= "text" name= "cidade" required aria-label= "Cidade da locadora ">
+            </div>
+
+            <div class= "input-box">
+                <label for= "estado"> Estado(UF) </label>
+                <select id= "estado" name= "estado" required aria-label= "Selecione seu estado">
+                    <option value= "" disabled selected> Selecione seu estado </option>
+                    <option value = "AC"> AC </option>
+                    <option value = "AL"> AL </option>
+                    <option value = "AP"> AP </option>
+                    <option value = "AM"> AM </option>
+                    <option value = "BA"> BA </option>
+                    <option value = "CE"> CE </option>
+                    <option value = "ES"> ES </option>
+                    <option value = "GO"> GO </option>
+                    <option value = "MA"> MA </option>
+                    <option value = "MT"> MT </option>
+                    <option value = "MS"> MS </option>
+                    <option value = "MG"> MG </option>
+                    <option value = "PA"> PA </option>
+                    <option value = "PB"> PB </option>
+                    <option value = "PR"> PR </option>
+                    <option value = "PE"> PE </option>
+                    <option value = "PI"> PI </option>
+                    <option value = "RJ"> RJ </option>
+                    <option value = "RN"> RN </option>
+                    <option value = "RS"> RS </option>
+                    <option value = "RO"> RO </option>
+                    <option value = "RR"> RR </option>
+                    <option value = "SC"> SC </option>
+                    <option value = "SP"> SP </option>
+                    <option value = "SE"> SE </option>
+                    <option value = "TO"> TO </option>
+                </select>
+
+            </div>
+
+        <p> Sócio Administrador da Locadora: </p>
+
+
+
+        <div class= "input-box">
+            <label for= "name"> Nome: </label>
+            <input id= "name" type= "text" name= "name" required aria-label= "Nome do sócio Administrativo">
+        </div>
+
+
+        <div class= "input-box">
+            <label for= "nacionalidade"> Nacionalidade </label>
+            <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo">
+                <option value="" disabled selected> Selecione sua nacionalidade </option>
+                <option value = "Brasil"> Brasi </option>
+                <option value = "EUA"> Estados Unidos </option>
+                <option value = "Argentina"> Argentina </option>
+                <option value = "Chile"> Chile </option>
+            </select>
+        </div>
+
+        <div class= "input-box">
+            <label for= "estadoCivil"> Estado Civil </label>
+            <select id= "estadoCivil" name= "estadoCivil" required aria-label= "Estado civil do socio Administrativo">
+                <option value="" disabled selected> Selecione seu estado civil </option>
+                <option value = "Solteiro"> Solteiro(a) </option>
+                <option value = "Casado"> Casado(a) </option>
+                <option value = "Viuvo"> Viuvo(a) </option>
+                <option value = "Divorciado"> Divorciado(a) </option>
+            </select>
+        </div>
+
+        <div class= "input-box">
+            <label for= "cpf"> CPF: </label>
+            <input id= "cpf" type= "text" name= "cpf" required aria-label= "CPF do socio Administrativo">
+        </div>
+
+        <div class= "input-box">
+            <label for= "orgaoEmissor"> Órgão Emissor do CPF</label>
+            <input id= "orgaoEmissor" type= "text" name= "orgaoEmissor" required aria-label= "Orgão emissor do CPF do socio Administrativo">
+        </div>
+
+        <div class= "input-box">
+            <label for= "enderecoSocio"> Endereço: </label>
+            <input id= "enderecoSocio" type= "text" name= "enderecoSocio" required aria-label= "Endereço do socio Administrativo">
+        </div>
+
+        <div class="input-box">
+            <label for= "cidadeSocio"> Cidade: </label>
+            <input id= "cidadeSocio" type= "text" name= "cidadeSocio" required aria-label= "Cidade do socio Administrativo">
+        </div>
+
+        <div class= "input-box">
+            <label for= "estadoSocio"> Estado(UF): </label>
+            <input id= "estadoSocio" type= "text" name= "estadoSocio" required aria-label= "Estado do socio Administrativo">
+        </div>
+    </div>
+
+    <button type="submit" class="button">Continuar</button>
+
+    </div>    
+</body>
+
+</html>
