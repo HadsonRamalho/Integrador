@@ -1,7 +1,11 @@
-use crate::model;
-use crate::controller::valida_email;
+use mysql_async::prelude::Queryable;
+use mysql_async::{params, Pool};
 
-use super::{dec_senha, enc_senha};
+use crate::model::usuario::busca_id_usuario;
+use crate::model::{self, usuario};
+use crate::controller::valida_email;
+use crate::controller;
+use super::{gera_hash, verifica_hash};
 
 #[tauri::command]
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
@@ -40,7 +44,7 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
             return Err(e)
         }
     }
-    let nova_senha = enc_senha(nova_senha.trim());
+    let nova_senha = gera_hash(nova_senha.trim());
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;// [Cod. 601]
     match resultado_busca{
@@ -67,22 +71,56 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
 }
 
 #[tauri::command]
-pub async fn verifica_token(email: &str, token: &str) -> Result<String, ()>{
-    match dec_senha(email, token.to_string()){
-        true =>{
-            println!("Token verificado");
-            return Ok(token.to_string())
+pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
+    let email = email.trim();
+    let token = token.trim();
+    if !valida_email(email){
+        return Err("Erro ao validar o token: E-mail vazio.".to_string());
+    }
+    let pool = controller::cria_pool().await?;
+    let id = busca_id_usuario(&pool, email).await;
+    let uid;
+    match id{
+        Ok(id) =>{
+            if id.is_empty(){
+                return Err("Erro ao validar o token: Verifique o email.".to_string())
+            }
+            uid = id;
         },
-        false => {
-            println!("Falha na verificação do token");
-            return Err(())
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    }
+    
+    let email = busca_email_usuario(&pool, token).await;
+    match email{
+        Ok(_) =>{
+            if verifica_hash(&email.unwrap(), uid){
+                return Ok(true);
+            }
+            return Err("Token inválido".to_string());
+        },
+        Err(e) => {
+            return Err(e.to_string())            
         }
     }
 }
 
 #[tauri::command]
-pub async fn busca_id() -> Result<String, String>{
-    return Ok("$2b$10$nEmaaQ8g53SKbGmdF7vltej675xjgCKN0tMBWYpaWj8KxZWrUkoFi".to_string());
+pub async fn busca_id(email: &str) -> Result<String, String>{ //recebe email, retorna ID
+    let pool: mysql_async::Pool = controller::cria_pool().await?;
+    let resultado_busca = usuario::busca_id_usuario(&pool, email).await;
+    match resultado_busca{
+        Ok(id) =>{
+            if id.is_empty(){
+                return Err("Erro: ID não encontrado. Verifique o e-mail.".to_string());
+            }
+            return Ok(id);
+        },
+        Err(e) =>{
+            return Err(e.to_string());
+        }
+    }
 }
 
 pub fn valida_senha(senha: &str) -> Result<(), String>{
@@ -92,5 +130,30 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     if senha.is_empty() || senha == ""{
         return Err("Erro: A senha não pode estar vazia".to_string())
     }
-    Ok(())
+    if !senha.chars().any(|c| c.is_ascii_punctuation()){
+        return Err("Erro: A senha deve conter ao menos um número".to_string())
+    }
+    if !senha.chars().any(|c| c.is_ascii_punctuation()){
+        return Err("Erro: A senha deve conter ao menos um símbolo".to_string())
+    }
+    return Ok(())
+}
+
+pub async fn busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    let email_usuario: Option<String> = conn.exec_first("SELECT email FROM usuarios WHERE UUID = :id;", 
+    params!{"id" => id}).await?;
+    let server_error = mysql_async::ServerError{
+        code: 1045, //Código de erro
+        message: "ID inválido.".to_string(),
+        state: "28000".to_string()
+    };
+    match email_usuario{
+        None => {
+            return Err(mysql_async::Error::Server(server_error));
+        },
+        Some(_) => {
+            return Ok(email_usuario.unwrap());
+        }
+    }
 }
