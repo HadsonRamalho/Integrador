@@ -6,6 +6,7 @@ pub mod endereco;
 pub mod usuario;
 pub mod locadora;
 pub mod locatario;
+pub mod socioadm;
 // crates para envio de email
 use lettre::transport::smtp::authentication::{Credentials, Mechanism};
 use lettre::{Message, SmtpTransport, Transport};
