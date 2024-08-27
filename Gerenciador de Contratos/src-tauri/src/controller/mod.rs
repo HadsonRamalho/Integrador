@@ -6,6 +6,7 @@ pub mod endereco;
 pub mod locadora;
 pub mod usuario;
 pub mod locatario;
+pub mod socioadm;
 
 #[tauri::command] 
 pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<(), String> { 

@@ -26,7 +26,6 @@ use crate::controller;
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
 
 #[tauri::command]
-
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, bool>{
     let id: String = controller::gera_hash(&cnpj);
     let locadora: serde_json::Value = serde_json::json!({
