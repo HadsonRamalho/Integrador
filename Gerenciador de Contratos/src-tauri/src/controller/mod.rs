@@ -112,7 +112,7 @@ pub async fn encontra_email_smtp(email: &str) -> Result<(), String>{
             model::envia_email(_consome_result.unwrap());
             return Ok(())
         },
-        _ => return Err("Erro, o e-mail não foi enviado.".to_string())
+        _ => return Err("Erro: O e-mail não é válido ou pode não estar cadastrado.".to_string())
     }
 }
 
