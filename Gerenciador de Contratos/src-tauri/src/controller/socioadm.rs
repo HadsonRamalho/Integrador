@@ -1,7 +1,7 @@
 use crate::{controller, model::{self, socioadm::_cadastra_socio_adm}};
 
 #[tauri::command]
-pub fn estrutura_socio_adm(idendereco: String, nomesocio: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, bool>{
+pub fn estrutura_socio_adm(idendereco: String, nomesocio: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, String>{
     
     if idendereco.is_empty() || nomesocio.is_empty() || cpf.is_empty()
         || orgaoemissor.is_empty() || estadocivil.is_empty() 
@@ -44,6 +44,8 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<(), Strin
     };
 
     // buscar o id do socio para não permitir entrada duplicada
+    // let resultado_busca: Result<String, mysql_async::Error> =
+    // model::socioadm::_busca_id_socio_adm(&socioadm.cpf).await;
 
     let resultado_cadastro = _cadastra_socio_adm(socioadm).await;
     match resultado_cadastro{
