@@ -1,4 +1,4 @@
-use crate::{controller, model::{self, socioadm::{self, _cadastra_socio_adm}}};
+use crate::{controller, model::{self, socioadm::_cadastra_socio_adm}};
 
 #[tauri::command]
 pub fn estrutura_socio_adm(idendereco: String, nomesocio: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, bool>{
