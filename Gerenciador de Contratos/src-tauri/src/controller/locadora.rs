@@ -25,7 +25,6 @@ use crate::controller;
 /// # Retornos
 /// - Result<serde_json::Value, bool>: Retorna `Ok(locadora)` contendo os dados da locadora em formato JSON.
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
-
 #[tauri::command]
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, String>{
     if idendereco.is_empty() || cnpj.is_empty() || numerocontabanco.is_empty()
@@ -45,6 +44,17 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
     return Ok(locadora);
 }
 
+/// Função para cadastrar uma locadora no banco de dados.
+///
+/// Esta função valida os dados da locadora fornecidos em formato JSON e tenta cadastrar
+/// a locadora no banco de dados, se ainda não existir um registro com o mesmo CNPJ.
+///
+/// # Parâmetros
+/// - `locadora`: Um objeto `serde_json::Value` contendo as informações da locadora a ser cadastrada.
+///
+/// # Retornos
+/// - `Ok(())`: Se a locadora for cadastrada com sucesso ou já existir.
+/// - `Err(String)`: Se ocorrer um erro durante a validação ou no processo de busca/cadastro.
 #[tauri::command]
 pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String> {
     let locadora = valida_locadora(locadora);
@@ -70,6 +80,17 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String
     }
 }
 
+/// Função assíncrona para buscar o ID de uma locadora pelo seu CNPJ.
+///
+/// Esta função verifica se o CNPJ fornecido não está vazio e, em seguida,
+/// realiza uma busca no banco de dados para encontrar o ID da locadora correspondente.
+///
+/// # Parâmetros
+/// - `cnpj`: Uma referência para uma string que representa o CNPJ da locadora.
+///
+/// # Retornos
+/// - `Ok(String)`: O ID da locadora se encontrado.
+/// - `Err(String)`: Uma mensagem de erro se o CNPJ estiver vazio ou se ocorrer um erro durante a busca.
 #[tauri::command]
 pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
     if cnpj.is_empty(){
@@ -87,6 +108,17 @@ pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
     }
 }
 
+/// Função para validar e criar uma instância de `Locadora` a partir de um JSON.
+///
+/// A função extrai e verifica os campos necessários de um objeto JSON para criar uma instância
+/// de `Locadora`. Se algum dos campos obrigatórios estiver vazio, retorna um erro.
+///
+/// # Parâmetros
+/// - `locadora`: Um objeto JSON contendo os dados da locadora.
+///
+/// # Retornos
+/// - `Ok(Locadora)`: Retorna uma instância válida de `Locadora` se todos os campos estiverem preenchidos.
+/// - `Err(String)`: Retorna uma mensagem de erro se um ou mais campos obrigatórios estiverem vazios.
 fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
