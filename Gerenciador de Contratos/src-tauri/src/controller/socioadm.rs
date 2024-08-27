@@ -1,10 +1,10 @@
 use crate::{controller, model::{self, socioadm::{self, _cadastra_socio_adm}}};
 
 #[tauri::command]
-pub fn estrutura_socio_adm(idendereco: String, idsocio: String, nomesocio: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, bool>{
+pub fn estrutura_socio_adm(idendereco: String, nomesocio: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, bool>{
     let id: String = controller::gera_hash(&cpf);
     let socioadm: serde_json::Value = serde_json::json!({
-        "idsocio": idsocio,
+        "idsocio": id,
         "idendereco": idendereco,
         "nomesocio": nomesocio,
         "cpf": cpf,
@@ -15,6 +15,7 @@ pub fn estrutura_socio_adm(idendereco: String, idsocio: String, nomesocio: Strin
     return Ok(socioadm);
 }
 
+#[tauri::command]
 pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<(), String> {
     let idsocio: String = socioadm["idsocio"].as_str().unwrap_or("").to_string();
     let idsocio: (&str, &str) = idsocio.split_at(45 as usize);
