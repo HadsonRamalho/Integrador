@@ -2,6 +2,13 @@ use crate::{controller, model::{self, socioadm::_cadastra_socio_adm}};
 
 #[tauri::command]
 pub fn estrutura_socio_adm(idendereco: String, nomesocio: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, bool>{
+    
+    if idendereco.is_empty() || nomesocio.is_empty() || cpf.is_empty()
+        || orgaoemissor.is_empty() || estadocivil.is_empty() 
+        || nacionalidade.is_empty(){
+            return Err("Erro: Um ou mais campos estão vazios.".to_string());
+    }
+    
     let id: String = controller::gera_hash(&cpf);
     let socioadm: serde_json::Value = serde_json::json!({
         "idsocio": id,
