@@ -1,3 +1,4 @@
+use crate::model::locadora::Locadora;
 use crate::model::locadora::_cadastra_locadora;
 use crate::model;
 use crate::controller;
@@ -24,10 +25,12 @@ use crate::controller;
 /// # Retornos
 /// - Result<serde_json::Value, bool>: Retorna `Ok(locadora)` contendo os dados da locadora em formato JSON.
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
-
 #[tauri::command]
-
-pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, bool>{
+pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, String>{
+    if idendereco.is_empty() || cnpj.is_empty() || numerocontabanco.is_empty()
+        || numeroagenciabanco.is_empty() || nomebanco.is_empty() || nomelocadora.is_empty(){
+            return Err("Erro: Um ou mais campos estão vazios.".to_string());
+    }
     let id: String = controller::gera_hash(&cnpj);
     let locadora: serde_json::Value = serde_json::json!({
         "idlocadora": id,
@@ -41,8 +44,82 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
     return Ok(locadora);
 }
 
+/// Função para cadastrar uma locadora no banco de dados.
+///
+/// Esta função valida os dados da locadora fornecidos em formato JSON e tenta cadastrar
+/// a locadora no banco de dados, se ainda não existir um registro com o mesmo CNPJ.
+///
+/// # Parâmetros
+/// - `locadora`: Um objeto `serde_json::Value` contendo as informações da locadora a ser cadastrada.
+///
+/// # Retornos
+/// - `Ok(())`: Se a locadora for cadastrada com sucesso ou já existir.
+/// - `Err(String)`: Se ocorrer um erro durante a validação ou no processo de busca/cadastro.
 #[tauri::command]
-pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, String> {
+pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String> {
+    let locadora = valida_locadora(locadora);
+    match locadora{
+        Ok(_) => {},
+        Err(e) => {return Err(e)}
+    }
+    let locadora = locadora.unwrap();
+    let resultado_busca: Result<String, mysql_async::Error> =
+        model::locadora::_busca_id_locadora(&locadora.cnpj).await;
+
+    match resultado_busca {
+        Ok(resultado) => {
+            if resultado == "" {
+                let _resultado_cadastro = _cadastra_locadora(locadora).await;
+                return Ok(());
+            }
+            return Err("Erro: Locadora já cadastrada".to_string());
+        }
+        Err(erro) => {
+            return Err(erro.to_string());
+        }
+    }
+}
+
+/// Função assíncrona para buscar o ID de uma locadora pelo seu CNPJ.
+///
+/// Esta função verifica se o CNPJ fornecido não está vazio e, em seguida,
+/// realiza uma busca no banco de dados para encontrar o ID da locadora correspondente.
+///
+/// # Parâmetros
+/// - `cnpj`: Uma referência para uma string que representa o CNPJ da locadora.
+///
+/// # Retornos
+/// - `Ok(String)`: O ID da locadora se encontrado.
+/// - `Err(String)`: Uma mensagem de erro se o CNPJ estiver vazio ou se ocorrer um erro durante a busca.
+#[tauri::command]
+pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
+    if cnpj.is_empty(){
+        return Err("Erro: O parâmetro CNPJ está vazio".to_string())
+    }
+    let cnpj = cnpj.trim(); // remover traços e pontos
+    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(cnpj).await;
+    match resultado{
+        Ok(id) =>{
+            return Ok(id);
+        }
+        Err(e) => {
+            return Err(e.to_string());
+        }
+    }
+}
+
+/// Função para validar e criar uma instância de `Locadora` a partir de um JSON.
+///
+/// A função extrai e verifica os campos necessários de um objeto JSON para criar uma instância
+/// de `Locadora`. Se algum dos campos obrigatórios estiver vazio, retorna um erro.
+///
+/// # Parâmetros
+/// - `locadora`: Um objeto JSON contendo os dados da locadora.
+///
+/// # Retornos
+/// - `Ok(Locadora)`: Retorna uma instância válida de `Locadora` se todos os campos estiverem preenchidos.
+/// - `Err(String)`: Retorna uma mensagem de erro se um ou mais campos obrigatórios estiverem vazios.
+fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
     let idlocadora: String = idlocadora.0.to_string();
@@ -61,34 +138,9 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
         nomebanco: locadora["nomebanco"].as_str().unwrap_or("").to_string(),
         nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
     };
-
-    let resultado_busca: Result<String, mysql_async::Error> =
-        model::locadora::_busca_id_locadora(&locadora.cnpj).await;
-
-    match resultado_busca {
-        Ok(resultado) => {
-            if resultado == "" {
-                let _resultado_cadastro = _cadastra_locadora(locadora).await;
-                return Ok("Locadora cadastrada com sucesso".to_string());
-            }
-            return Err("Erro: Locadora já cadastrada".to_string());
-        }
-        Err(erro) => {
-            return Err(erro.to_string());
-        }
+    if locadora.idendereco.is_empty() || locadora.cnpj.is_empty() || locadora.numerocontabanco.is_empty()
+        || locadora.numeroagenciabanco.is_empty() || locadora.nomebanco.is_empty() || locadora.nomelocadora.is_empty(){
+            return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
-}
-
-#[tauri::command]
-pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
-    let cnpj = cnpj.trim(); // remover traços e pontos
-    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(cnpj).await;
-    match resultado{
-        Ok(id) =>{
-            return Ok(id);
-        }
-        Err(e) => {
-            return Err(e.to_string());
-        }
-    }
+    return Ok(locadora);
 }

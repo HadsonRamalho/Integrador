@@ -19,9 +19,10 @@
     },
     "windows": [
       {
-        "title": "gerenciador-de-contratos",
+        "title": "Gerenciador de Contratos",
         "width": 1366,
-        "height": 768
+        "height": 768,
+        "theme":"Dark"
       }
     ],
     "security": {

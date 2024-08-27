@@ -45,12 +45,12 @@ pub struct Endereco{
 #[tauri::command]
 pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, numeroendereco: String, cidade: String, uf: String) -> Result<serde_json::Value, String>{
     // Gera um ID único para o endereço com base no CEP
-    let id = gera_hash(&cep);
-    if logradouro.is_empty() || cep.is_empty() || complemento.is_empty()
+    if logradouro.is_empty() || cep.is_empty()
         || numeroendereco.is_empty() ||
         cidade.is_empty() || uf.is_empty(){
             return Err("Preencha todos os campos".to_string())
     }
+    let id = gera_hash(&cep);
     // Estrutura os dados do endereço em formato JSON
     let endereco = serde_json::json!({
         "id": id,
@@ -81,9 +81,8 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
 ///   ou um erro booleano indicando falha na criação da estrutura.
 #[tauri::command]
 pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, String>{
-    println!("salva?");
-    let x = crate::model::endereco::salva_endereco(endereco).await;
-    match x{
+    let resultado_insert = crate::model::endereco::salva_endereco(endereco).await;
+    match resultado_insert{
         Ok(id) => {
             return Ok(id)
         }
@@ -91,8 +90,4 @@ pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, Stri
             return Err(e.to_string());
         }
     }
-}
-
-fn _atualiza_endereco(_endereco: serde_json::Value){
-
 }

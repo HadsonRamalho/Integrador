@@ -11,7 +11,7 @@ function ResetSenha(){
       await invoke("encontra_email_smtp", { email });
       setMensagemReset("Email enviado");
     } catch(error){
-      setMensagemReset("Email não enviado");
+      setMensagemReset(error);
       console.log(error);
     }
   }

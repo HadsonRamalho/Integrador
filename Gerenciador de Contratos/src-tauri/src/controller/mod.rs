@@ -6,6 +6,7 @@ pub mod endereco;
 pub mod locadora;
 pub mod usuario;
 pub mod locatario;
+pub mod socioadm;
 
 #[tauri::command] 
 pub async fn cria_conta(nome_completo: &str, email: &str, senha1: &str, senha2: &str) -> Result<(), String> { 
@@ -111,7 +112,7 @@ pub async fn encontra_email_smtp(email: &str) -> Result<(), String>{
             model::envia_email(_consome_result.unwrap());
             return Ok(())
         },
-        _ => return Err("Erro, o e-mail não foi enviado.".to_string())
+        _ => return Err("Erro: O e-mail não é válido ou pode não estar cadastrado.".to_string())
     }
 }
 
