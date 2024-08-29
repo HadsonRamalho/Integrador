@@ -5,7 +5,7 @@ body {
     font-weight: 400;
   
     color: #0f0f0f;
-    background-color:rgb(169, 163, 163);
+    background-color:#56667A;
     display: flex;
     justify-content: center;
 
@@ -13,15 +13,15 @@ body {
     
 }
 .conteudo{
-    background-color: #f6f6f6;
+    background-color: #8797AF;
     text-align: center ;
     padding: 0px;
     width: 600px;
-    height: 600px;
+    height:auto;
     border-radius: 5px;
     display: flex;
     justify-content: center;
-    
+    flex-direction:row;
 }
 
 h1, p{

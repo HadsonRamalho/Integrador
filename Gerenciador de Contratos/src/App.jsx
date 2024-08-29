@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-
+import FormularioP1 from "./formulario_p1";
 
 function Login(){
   const [mensagemEmail, setMensagemEmail] = useState("");
@@ -138,11 +138,16 @@ function Login(){
       return;
     } finally{
       if (localStorage.getItem('token')){ // Se tiver um token definido, faz login direto no menu
-        window.location.href = "menu.html";
+        window.location.href = "formulario.html";
+        return (FormularioP1);
       }
     }
     
   }
+
+  const formp1 = () => {
+    return <FormularioP1 />;
+  };
   
   return (
     <div id="camposLoginForm">
@@ -154,7 +159,8 @@ function Login(){
           await checaEmail();
           await realizaLogin();          
           await verificaToken();
-          await buscaID();
+          {formp1()}
+          //await buscaID();
           //const idendereco = await cadastraEndereco();
           //cadastraLocadora(idendereco);
 
