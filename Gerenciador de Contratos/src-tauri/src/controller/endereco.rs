@@ -42,24 +42,25 @@ pub struct Endereco{
 ///     "SP".to_string()
 /// ).unwrap();
 /// ```
+
 #[tauri::command]
-pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, numeroendereco: String, cidade: String, uf: String) -> Result<serde_json::Value, String>{
+pub fn estrutura_endereco(logradouroLocadora: String, cepLocadora: String, complementoLocadora: String, numeroLocadora: String, cidadeLocadora: String, ufLocadora: String) -> Result<serde_json::Value, String>{
     // Gera um ID único para o endereço com base no CEP
-    if logradouro.is_empty() || cep.is_empty()
-        || numeroendereco.is_empty() ||
-        cidade.is_empty() || uf.is_empty(){
+    if logradouroLocadora.is_empty() || cepLocadora.is_empty()
+        || numeroLocadora.is_empty() ||
+        cidadeLocadora.is_empty() || ufLocadora.is_empty(){
             return Err("Preencha todos os campos".to_string())
     }
-    let id = gera_hash(&cep);
+    let id = gera_hash(&cepLocadora);
     // Estrutura os dados do endereço em formato JSON
     let endereco = serde_json::json!({
         "id": id,
-        "logradouro": logradouro,
-        "cep": cep,
-        "complemento": complemento,
-        "numeroendereco": numeroendereco,
-        "cidade": cidade,
-        "uf": uf,
+        "logradouro": logradouroLocadora,
+        "cep": cepLocadora,
+        "complemento": complementoLocadora,
+        "numeroendereco": numeroLocadora,
+        "cidade": cidadeLocadora,
+        "uf": ufLocadora,
     });
 
     // Retorna o JSON do endereço

@@ -3,15 +3,66 @@ import { invoke } from "@tauri-apps/api/tauri";
 
 
 function FormularioP1(){
+    // Locadora
   const [nomeLocadora, setNomeLocadora] = useState("");
   const [cnpj, setCnpj] = useState("");
-  const [numero, setNumero] = useState("");
-  const [endereco, setEndereco] = useState("");
-  const [cidade, setCidade] = useState("");
+  
+    // Endereço Locadora
+  const [numeroLocadora, setNumeroLocadora] = useState("");
+  const [logradouroLocadora, setLogradouroLocadora] = useState("");
+  const [cidadeLocadora, setCidadeLocadora] = useState("");
+  const [cepLocadora, setCepLocadora] = useState("");
+  const [complementoLocadora, setComplementoLocadora] = useState("");
+  const [ufLocadora , setUfLocadora] = useState("");
+
+  const capturaUfLocadora = (e) => {
+    setUfLocadora(e.currentTarget.value); // Atualiza o estado com o valor selecionado
+  };
+
+
+  async function estruturaEndereco(){
+    try{
+      const endereco = await invoke("estrutura_endereco", {
+        logradouroLocadora, 
+        cepLocadora, 
+        complementoLocadora, 
+        numeroLocadora, 
+        cidadeLocadora, 
+        ufLocadora
+    });
+    return endereco;
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+
+  async function cadastraEndereco(){
+    const endereco = await estruturaEndereco();
+    try{
+      const idendereco = await invoke("_salva_endereco", {endereco});
+      return idendereco;
+    } catch(error){
+      console.log('Erro ao salvar o endereço: ', error);
+    }
+  }
+
+  /*estrutura_locadora(idendereco: String,
+   cnpj: String, 
+   numerocontabanco: String,
+    numeroagenciabanco: String,
+     nomebanco: String,
+      nomelocadora: String) -> Result<serde_json::Value, String>{
+*/
+
     return (
         <div class= "conteudo">
         <h1>Locadora</h1>
-        <form class="conteudo">
+        <form class="conteudo"
+        onSubmit={async(e) => {
+            e.preventDefault();
+            await cadastraEndereco();
+          }}>
         <div class="input-group">
             <div class= "input-box">
                 <label for= "nomeLocadora"> Nome da Locadora: </label>
@@ -31,32 +82,54 @@ function FormularioP1(){
 
             <div class= "input-box">
             <label for= "logradouro"> Logradouro: </label>
-            <input id= "logradouro" type= "text" name= "logradouro" required aria-label= "Logradouro da locadora">
-            </input></div>
+            <input required
+                onChange={(e) => setLogradouroLocadora(e.currentTarget.value)}
+                placeholder="Logradouro da Locadora" 
+            />
+            </div>
 
             <div class= "input-box">
             <label for= "numero"> Numero: </label>
-            <input id= "numero" type= "text" name= "numero" required aria-label= "Numero da locadora">
-            </input></div>
+            <input required
+                onChange={(e) => setNumeroLocadora(e.currentTarget.value)}
+                placeholder="Numero da Locadora" 
+            />
+            </div>
 
             <div class= "input-box">
-            <label for= "bairro"> Bairro: </label>
-            <input id= "bairro" type= "text" name= "bairro" required aria-label= "Bairro da locadora">
-            </input></div>
+            <label for= "complemento"> Complemento: </label>
+            <input required
+                onChange={(e) => setComplementoLocadora(e.currentTarget.value)}
+                placeholder="Complemento da Locadora" 
+            />
+            </div>
 
             <div class= "input-box">
                 <label for= "cep"> CEP: </label>
-                <input id= "cep" type= "text" name= "cep" required aria-label= "CEP da locadora ">
-                </input></div>
+                <input required
+                onChange={(e) => setCepLocadora(e.currentTarget.value)}
+                placeholder="CEP da Locadora" 
+            />
+            </div>
 
             <div class= "input-box">
                 <label for= "cidade"> Cidade: </label>
-                <input id= "cidade" type= "text" name= "cidade" required aria-label= "Cidade da locadora ">
-                </input></div>
+                <input required
+                onChange={(e) => setCidadeLocadora(e.currentTarget.value)}
+                placeholder="Cidade da Locadora" 
+            />
+            </div>
 
                 <div class="input-box">
                     <label for="estadoLocadora">Estado (UF)</label>
-                    <select id="estadoLocadora" name="estadoLocadora" required aria-label="Selecione o estado da Locadora">
+                    <select id="estadoLocadora" 
+                        name="estadoLocadora" 
+                        value={ufLocadora} // Valor controlado pelo estado
+                        onChange={capturaUfLocadora}
+                        required 
+                        aria-label="Selecione o estado da Locadora"
+                        
+                    >
                         <option value="" disabled selected>Selecione o estado da Locadora</option>
                         <option value="AC">AC</option>
                         <option value="AL">AL</option>
@@ -85,6 +158,7 @@ function FormularioP1(){
                         <option value="SE">SE</option>
                         <option value="TO">TO</option>
       </select>
+      
     </div>
 
         <p> Sócio Administrador da Locadora: </p>
@@ -101,7 +175,7 @@ function FormularioP1(){
             <label for= "nacionalidade"> Nacionalidade </label>
             <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo">
                 <option value="" disabled selected> Selecione sua nacionalidade </option>
-                <option value = "Brasil"> Brasi </option>
+                <option value = "Brasil"> Brasil </option>
                 <option value = "EUA"> Estados Unidos </option>
                 <option value = "Argentina"> Argentina </option>
                 <option value = "Chile"> Chile </option>
@@ -155,8 +229,8 @@ function FormularioP1(){
                 </input></div>
 
                 <div class="input-box">
-                    <label for="estado">Estado (UF)</label>
-                    <select id="estado" name="estado" required aria-label="Selecione seu estado">
+                    <label for="estadoSocioLocadora">Estado (UF)</label>
+                    <select id="estadoSocioLocadora" name="estadoSocioLocadora" required aria-label="Selecione seu estado">
                         <option value="" disabled selected>Selecione seu estado</option>
                         <option value="AC">AC</option>
                         <option value="AL">AL</option>
@@ -188,7 +262,7 @@ function FormularioP1(){
     </div>
     </div>
 
-    <button type="submit" class="button">Continuar</button>
+    <button type="submit" class="button" onClick={() => console.log(cnpj)}>Continuar</button>
     </form>
     </div> 
     );

@@ -39,40 +39,8 @@ function Login(){
     }
   }
 
-  async function estruturaEndereco(){
-    const logradouro = 'Rua das Ruas';
-    const cep = '12345-678';
-    const complemento = 'Complemento Tal';
-    const numeroendereco = '123';
-    const cidade = 'Cidade das Cidades';
-    const uf = 'NO';
-    try{
-      const endereco = await invoke("estrutura_endereco", {
-        logradouro, 
-        cep, 
-        complemento, 
-        numeroendereco, 
-        cidade, 
-        uf
-    });
-    }
-    catch(error){
-      console.log(error);
-    }
-    finally{
-      return endereco;
-    }
-  }
 
-  async function cadastraEndereco(){
-    const endereco = await estruturaEndereco();
-    try{
-      const idendereco = await invoke("_salva_endereco", {endereco});
-      return idendereco;
-    } catch(error){
-      console.log('Erro ao salvar o endereço: ', error);
-    }
-  }
+  
 
   async function atualizaEmail(){
     const email = "user1000@u.com";

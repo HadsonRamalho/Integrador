@@ -6,3 +6,13 @@ import "./formulario.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
     <FormularioP1 />
 );
+
+document.getElementById('estadoForm').addEventListener('submit', function(event) {
+    // Captura os valores dos dois selects
+    const estadoSocioLocadora = document.getElementById('estadoSocioLocadora').value;
+
+    // Chama a função com os dois estados selecionados
+ 
+    console.log(estadoLocadora);
+
+});
