@@ -130,7 +130,7 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     if senha.is_empty() || senha == ""{
         return Err("Erro: A senha não pode estar vazia".to_string())
     }
-    if !senha.chars().any(|c| c.is_ascii_punctuation()){
+    if !senha.chars().any(|c| c.is_ascii_digit()){
         return Err("Erro: A senha deve conter ao menos um número".to_string())
     }
     if !senha.chars().any(|c| c.is_ascii_punctuation()){
