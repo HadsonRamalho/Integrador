@@ -142,7 +142,12 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
 #[tauri::command]
 pub async fn busca_email_usuario(id: String) -> Result<String, String>{
     let pool = cria_pool().unwrap();
-    _busca_email_usuario()
+    _busca_email_usuario().await;
+    let email = _busca_email_usuario(&Pool, id).await;
+    match email{
+        Ok() => { return email;
+    }, Err(e) => return Err(e);
+    }
 }
 
 pub async fn _busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
