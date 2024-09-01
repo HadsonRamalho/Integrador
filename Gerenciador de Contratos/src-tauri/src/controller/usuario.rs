@@ -92,7 +92,7 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
         }
     }
     
-    let email = busca_email_usuario(&pool, token).await;
+    let email = _busca_email_usuario(&pool, token).await;
     match email{
         Ok(_) =>{
             if verifica_hash(&email.unwrap(), uid){
@@ -141,12 +141,13 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
 
 #[tauri::command]
 pub async fn busca_email_usuario(id: String) -> Result<String, String>{
-    let pool = cria_pool().unwrap();
-    _busca_email_usuario().await;
-    let email = _busca_email_usuario(&Pool, id).await;
+    let pool = cria_pool().await?;
+    let email = _busca_email_usuario(&pool, &id).await;
     match email{
-        Ok() => { return email;
-    }, Err(e) => return Err(e);
+        Ok(_) => { return Ok(email.unwrap());
+    }, Err(e) => {
+        return Err(e.to_string());
+    }
     }
 }
 

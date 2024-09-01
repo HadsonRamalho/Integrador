@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
+import { useNavigate } from "react-router-dom";
 
 
 function ResetSenha(){
@@ -15,6 +16,12 @@ function ResetSenha(){
       console.log(error);
     }
   }
+
+  const navigate = useNavigate();
+
+  const login = () => {
+    navigate('/');
+  };
     return (
       <div id="boxreset">
         <div>
@@ -35,7 +42,7 @@ function ResetSenha(){
         <p className="mensagemLogin">{mensagemReset}</p>
         <button type="submit" >Enviar</button>
         <br />
-        <button className="botaovoltar" type="button" onClick={() => window.location.href = "App.jsx"}>voltar</button>
+        <button className="botaovoltar" type="button" onClick={login}>voltar</button>
         </form>
       </div>
     );

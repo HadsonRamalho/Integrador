@@ -4,7 +4,7 @@ import Home from "./home";
 import { useNavigate } from 'react-router-dom';
 import CriaConta from "./cria_conta";
 
-localStorage.removeItem('token');
+//localStorage.removeItem('token');
 
 
 function Login(){
