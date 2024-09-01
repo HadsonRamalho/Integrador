@@ -1,10 +1,11 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
+import { useNavigate } from "react-router-dom";
 //import "./App.css";
 
 
-function SignUp(){
+function CriaConta(){
 
   const [mensagemCriarConta, setMensagemCriarConta] = useState("");
   const [email, setEmail] = useState("");
@@ -25,10 +26,15 @@ function SignUp(){
     }
   }
 
+  const navigate = useNavigate();
+
+  const login = () => {
+    navigate('/');
+  };
 
     return (
-  
-      <div>
+      <div id="boxcriar">
+        <p id="subtituloForm"></p>
         <div>
         <p className="subtitulo">Cadastre-se</p>
         </div>
@@ -66,11 +72,11 @@ function SignUp(){
         <button className="user-input" type="submit">Criar</button>
         <div>
           <br />
-          <button className="botaovoltar" type="button" onClick={() => window.location.href = "App.jsx"}>ja tenho conta</button>
+          <button className="botaovoltar" type="button" onClick={login}>Ja tenho conta</button>
         </div>
         </form>
       </div>
     );
   }
 
-  export default SignUp;
+  export default CriaConta;

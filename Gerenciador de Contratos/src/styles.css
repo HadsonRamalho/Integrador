@@ -197,3 +197,39 @@ button {
   a:hover {
     color: #db2424;
   }}
+
+#boxHome{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  height: calc(100vh - 30px);  
+  width: calc(100vw - 30px); /*450pcx*/
+  line-height: 60px;
+  filter: blur(0 0 50px);
+  border-radius: 10px;
+
+}
+
+.botoesHome{
+  position: relative;
+  text-align: center;
+  top: 30%;
+}
+
+#boxDadosUsuario{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  height: calc(100vh - 100px);  
+  width: calc(100vw - 100px); /*450pcx*/
+  line-height: 60px;
+  filter: blur(0 0 50px);
+  border-radius: 10px;
+
+}

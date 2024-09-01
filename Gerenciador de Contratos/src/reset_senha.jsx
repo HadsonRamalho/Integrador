@@ -16,7 +16,7 @@ function ResetSenha(){
     }
   }
     return (
-      <div>
+      <div id="boxreset">
         <div>
         <p className="subtitulo">redefinir senha</p>
         </div>

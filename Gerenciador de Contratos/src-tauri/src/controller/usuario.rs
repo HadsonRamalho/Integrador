@@ -5,7 +5,7 @@ use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
 use crate::controller;
-use super::{gera_hash, verifica_hash};
+use super::{cria_pool, gera_hash, verifica_hash};
 
 #[tauri::command]
 pub async fn atualiza_email(email: &str) -> Result<(), String>{
@@ -139,7 +139,13 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     return Ok(())
 }
 
-pub async fn busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
+#[tauri::command]
+pub async fn busca_email_usuario(id: String) -> Result<String, String>{
+    let pool = cria_pool().unwrap();
+    _busca_email_usuario()
+}
+
+pub async fn _busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
     let mut conn = pool.get_conn().await?;
     let email_usuario: Option<String> = conn.exec_first("SELECT email FROM usuarios WHERE UUID = :id;", 
     params!{"id" => id}).await?;
