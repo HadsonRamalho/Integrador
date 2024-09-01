@@ -169,3 +169,34 @@ pub async fn _busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql
         }
     }
 }
+
+#[tauri::command]
+pub async fn busca_nome_usuario(id: String) -> Result<String, String>{
+    let pool = cria_pool().await?;
+    let nome = _busca_nome_usuario(&pool, &id).await;
+    match nome{
+        Ok(_) => { return Ok(nome.unwrap());
+    }, Err(e) => {
+        return Err(e.to_string());
+    }
+    }
+}
+
+pub async fn _busca_nome_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    let nome_usuario: Option<String> = conn.exec_first("SELECT nome_completo FROM usuarios WHERE UUID = :id;", 
+    params!{"id" => id}).await?;
+    let server_error = mysql_async::ServerError{
+        code: 1045, //Código de erro
+        message: "ID inválido.".to_string(),
+        state: "28000".to_string()
+    };
+    match nome_usuario{
+        None => {
+            return Err(mysql_async::Error::Server(server_error));
+        },
+        Some(_) => {
+            return Ok(nome_usuario.unwrap());
+        }
+    }
+}
