@@ -122,6 +122,7 @@ pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
 fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
+    let idsocio = idlocadora.0.to_string();
     let idlocadora: String = idlocadora.0.to_string();
     let locadora: model::locadora::Locadora = model::locadora::Locadora {
         idlocadora: idlocadora,
@@ -137,6 +138,7 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
             .to_string(),
         nomebanco: locadora["nomebanco"].as_str().unwrap_or("").to_string(),
         nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
+        idsocio: idsocio
     };
     if locadora.idendereco.is_empty() || locadora.cnpj.is_empty() || locadora.numerocontabanco.is_empty()
         || locadora.numeroagenciabanco.is_empty() || locadora.nomebanco.is_empty() || locadora.nomelocadora.is_empty(){

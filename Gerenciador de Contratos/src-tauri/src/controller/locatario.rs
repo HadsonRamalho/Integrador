@@ -16,12 +16,14 @@ pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: Stri
 pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, String>{
     let idlocatario: String = locatario["idlocatario"].as_str().unwrap_or("").to_string();
     let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
+    let idsocio = idlocatario.0.to_string();
     let idlocatario: String = idlocatario.0.to_string();
     let _locatario: model::locatario::Locatario = model::locatario::Locatario {
         idlocatario: idlocatario,
         idendereco: locatario["idendereco"].as_str().unwrap_or("").to_string(),
         cnpj: locatario["cnpj"].as_str().unwrap_or("").to_string(),
         nomelocatario: locatario["nomelocatario"].as_str().unwrap_or("").to_string(),
+        idsocio: idsocio
     };
 
     return Ok("".to_string())
