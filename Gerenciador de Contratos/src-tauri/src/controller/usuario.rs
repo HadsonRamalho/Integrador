@@ -8,10 +8,13 @@ use crate::controller;
 use super::{cria_pool, gera_hash, verifica_hash};
 
 #[tauri::command]
-pub async fn atualiza_email(email: &str) -> Result<(), String>{
+pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), String>{
     let email: &str = email.trim(); // Utilizar email do usuário atual [Cod. 601]
+    if !valida_email(email){
+        return Err("Erro: Novo email inválido".to_string())
+    }
     let pool: mysql_async::Pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();    
-    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, "user1@u.com").await;// [Cod. 601]
+    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, &email_antigo).await;// [Cod. 601]
     match resultado_busca{
         Ok(o) => {
             if o.is_empty() || !valida_email(&o) || o == ""{
@@ -24,7 +27,7 @@ pub async fn atualiza_email(email: &str) -> Result<(), String>{
         }
     }
  
-    let r: Result<(), mysql_async::Error> = model::usuario::atualiza_email(&pool, "user1@u.com", email).await;
+    let r: Result<(), mysql_async::Error> = model::usuario::atualiza_email(&pool, &email_antigo, email).await;
     match r{
         Ok(()) => {
             return Ok(())
