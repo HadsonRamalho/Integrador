@@ -77,6 +77,9 @@ function DadosUsuario() {
         <button>Atualizar Senha</button>
       </div>
       <button onClick={home}>Voltar</button>
+      <div>
+        <button> Apagar minha conta </button>
+      </div>
     </div>
   );
 }
