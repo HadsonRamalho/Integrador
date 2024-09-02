@@ -3,6 +3,25 @@ use crate::model::locadora::_cadastra_locadora;
 use crate::model;
 use crate::controller;
 
+fn formata_cnpj(cnpj: &str){
+    println!("{}", cnpj.len());
+    let cnpj_numeros: Vec<char> = cnpj
+        .chars()
+        .filter(|c| c.is_digit(10))
+        .collect();
+    let mut cnpj = cnpj_numeros;
+    cnpj.insert(2, '.');
+    cnpj.insert(6, '.');
+    cnpj.insert(10, '/');
+    cnpj.insert(15, '-');
+    println!("{:?}", cnpj);
+    let mut cnpjc: String = "".to_string();
+    for u in cnpj{
+        cnpjc.push(u);
+    }
+    println!("{}", cnpjc);
+}
+
 /// Função para criar uma estrutura de dados para uma locadora.
 ///
 /// # Parâmetros
@@ -31,6 +50,7 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
         || numeroagenciabanco.is_empty() || nomebanco.is_empty() || nomelocadora.is_empty(){
             return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
+    // 11.385.485/000103-
     let id: String = controller::gera_hash(&cnpj);
     let locadora: serde_json::Value = serde_json::json!({
         "idlocadora": id,
@@ -57,12 +77,12 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
 /// - `Err(String)`: Se ocorrer um erro durante a validação ou no processo de busca/cadastro.
 #[tauri::command]
 pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String> {
-    let locadora = valida_locadora(locadora);
+    let locadora: Result<Locadora, String> = valida_locadora(locadora);
     match locadora{
         Ok(_) => {},
         Err(e) => {return Err(e)}
     }
-    let locadora = locadora.unwrap();
+    let locadora: Locadora = locadora.unwrap();
     let resultado_busca: Result<String, mysql_async::Error> =
         model::locadora::_busca_id_locadora(&locadora.cnpj).await;
 
@@ -96,7 +116,7 @@ pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
     if cnpj.is_empty(){
         return Err("Erro: O parâmetro CNPJ está vazio".to_string())
     }
-    let cnpj = cnpj.trim(); // remover traços e pontos
+    let cnpj: &str = cnpj.trim(); // remover traços e pontos
     let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(cnpj).await;
     match resultado{
         Ok(id) =>{
@@ -122,7 +142,7 @@ pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
 fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
-    let idsocio = idlocadora.0.to_string();
+    let idsocio: String = idlocadora.0.to_string();
     let idlocadora: String = idlocadora.0.to_string();
     let locadora: model::locadora::Locadora = model::locadora::Locadora {
         idlocadora: idlocadora,
