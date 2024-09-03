@@ -34,16 +34,23 @@ pub async fn busca_nome_maquina(nome_maquina: String) -> Result<String, String>{
     }
 }
 
+// Recebe nome da maquina, busca o valor mensal do aluguel e retorna o primeiro registro encontrado
 pub async fn _busca_nome_maquina(nome_maquina: String) -> Result<String, mysql_async::Error>{
     let pool = controller::cria_pool().await.unwrap();
     let mut conn = pool.get_conn().await?;
-    let resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT nomemaquina FROM maquina WHERE nomemaquina = :nome_maquina",
-        params!{"nome_maquina" => nome_maquina}).await;
+    let resultado_busca: Result<Option<f32>, mysql_async::Error> = conn.exec_first(
+        "SELECT contrato_aluguel.valormensal FROM contrato_aluguel 
+                INNER JOIN maquina 
+                    ON contrato_aluguel.idaluguelmaquina = maquina.idmaquina
+                WHERE maquina.nomemaquina = :nome_maquina",
+        params! { "nome_maquina" => nome_maquina }
+    ).await;    
     match resultado_busca{
-        Ok(nome_maquina) => {
-            match nome_maquina {
-                Some(nome_maquina) => {
-                    return Ok(nome_maquina);
+        Ok(valor_mensal) => {
+            match valor_mensal {
+                Some(valor_mensal) => {
+                    let valor_mensal = valor_mensal.to_string();
+                    return Ok(format!("Valor mensal do aluguel: R${}", valor_mensal));
                 }, None =>{
                     return Ok("Máquina não encontrada".to_string());
                 }
