@@ -39,6 +39,7 @@ fn main() {
             controller::locadora::estrutura_locadora,
 
             controller::maquina::estrutura_maquina,
+            controller::maquina::busca_nome_maquina,
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm,            
