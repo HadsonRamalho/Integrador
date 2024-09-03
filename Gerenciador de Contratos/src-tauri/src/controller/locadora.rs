@@ -3,23 +3,24 @@ use crate::model::locadora::_cadastra_locadora;
 use crate::model;
 use crate::controller;
 
-fn formata_cnpj(cnpj: &str){
-    println!("{}", cnpj.len());
+fn formata_cnpj(cnpj: &str) -> Result<String, String>{
     let cnpj_numeros: Vec<char> = cnpj
         .chars()
-        .filter(|c| c.is_digit(10))
+        .filter(|c: &char| c.is_digit(10))
         .collect();
-    let mut cnpj = cnpj_numeros;
+    if cnpj_numeros.len() < 14{
+        return Err("Erro: CNPJ muito curto ou inválido.".to_string())
+    }
+    let mut cnpj: Vec<char> = cnpj_numeros;
     cnpj.insert(2, '.');
     cnpj.insert(6, '.');
     cnpj.insert(10, '/');
     cnpj.insert(15, '-');
-    println!("{:?}", cnpj);
-    let mut cnpjc: String = "".to_string();
+    let mut cnpjfinal: String = "".to_string();
     for u in cnpj{
-        cnpjc.push(u);
+        cnpjfinal.push(u);
     }
-    println!("{}", cnpjc);
+    return Ok(cnpjfinal);
 }
 
 /// Função para criar uma estrutura de dados para uma locadora.
@@ -48,9 +49,21 @@ fn formata_cnpj(cnpj: &str){
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, String>{
     if idendereco.is_empty() || cnpj.is_empty() || numerocontabanco.is_empty()
         || numeroagenciabanco.is_empty() || nomebanco.is_empty() || nomelocadora.is_empty(){
-            return Err("Erro: Um ou mais campos estão vazios.".to_string());
+        return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
-    // 11.385.485/000103-
+    let nomebanco = nomebanco.trim();
+    if nomebanco.len() < 4{
+        return Err("Erro: Nome do banco é inválido.".to_string());
+    }
+    let cnpj = formata_cnpj(&cnpj);
+    let cnpj = match cnpj{
+        Ok(_) =>{
+            cnpj.unwrap()
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    };
     let id: String = controller::gera_hash(&cnpj);
     let locadora: serde_json::Value = serde_json::json!({
         "idlocadora": id,

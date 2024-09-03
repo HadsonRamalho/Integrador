@@ -9,16 +9,16 @@ use super::{cria_pool, gera_hash, verifica_hash};
 
 #[tauri::command]
 pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), String>{
-    let email: &str = email.trim(); // Utilizar email do usuário atual [Cod. 601]
+    let email: &str = email.trim();
     if !valida_email(email){
         return Err("Erro: Novo email inválido".to_string())
     }
     let pool: mysql_async::Pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();    
-    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, &email_antigo).await;// [Cod. 601]
+    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, &email_antigo).await;
     match resultado_busca{
         Ok(o) => {
             if o.is_empty() || !valida_email(&o) || o == ""{
-                return Err("Email antigo inválido.".to_string()) // [Cod. 601]
+                return Err("Email antigo inválido.".to_string()) 
             }
         },
         Err(_e) => {
@@ -49,10 +49,10 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
     }
     let nova_senha = gera_hash(nova_senha.trim());
     let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
-    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;// [Cod. 601]
+    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;
     match resultado_busca{
         Ok(o) => {
-            if o.is_empty() || !valida_email(&o) || o == ""{ // [Cod. 601] 
+            if o.is_empty() || !valida_email(&o) || o == ""{
                 return Ok(())
             }
         },
@@ -110,7 +110,7 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
 }
 
 #[tauri::command]
-pub async fn busca_id(email: &str) -> Result<String, String>{ //recebe email, retorna ID
+pub async fn busca_id(email: &str) -> Result<String, String>{
     let pool: mysql_async::Pool = controller::cria_pool().await?;
     let resultado_busca = usuario::busca_id_usuario(&pool, email).await;
     match resultado_busca{
@@ -190,7 +190,7 @@ pub async fn _busca_nome_usuario(pool: &Pool, id: &str) -> Result<String, mysql_
     let nome_usuario: Option<String> = conn.exec_first("SELECT nome_completo FROM usuarios WHERE UUID = :id;", 
     params!{"id" => id}).await?;
     let server_error = mysql_async::ServerError{
-        code: 1045, //Código de erro
+        code: 1045, 
         message: "ID inválido.".to_string(),
         state: "28000".to_string()
     };
