@@ -3,26 +3,6 @@ use crate::model::locadora::_cadastra_locadora;
 use crate::model;
 use crate::controller;
 
-fn formata_cnpj(cnpj: &str) -> Result<String, String>{
-    let cnpj_numeros: Vec<char> = cnpj
-        .chars()
-        .filter(|c: &char| c.is_digit(10))
-        .collect();
-    if cnpj_numeros.len() < 14{
-        return Err("Erro: CNPJ muito curto ou inválido.".to_string())
-    }
-    let mut cnpj: Vec<char> = cnpj_numeros;
-    cnpj.insert(2, '.');
-    cnpj.insert(6, '.');
-    cnpj.insert(10, '/');
-    cnpj.insert(15, '-');
-    let mut cnpjfinal: String = "".to_string();
-    for u in cnpj{
-        cnpjfinal.push(u);
-    }
-    return Ok(cnpjfinal);
-}
-
 /// Função para criar uma estrutura de dados para uma locadora.
 ///
 /// # Parâmetros
@@ -47,13 +27,13 @@ fn formata_cnpj(cnpj: &str) -> Result<String, String>{
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
 #[tauri::command]
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, String>{
-    if idendereco.is_empty() || cnpj.is_empty() || numerocontabanco.is_empty()
-        || numeroagenciabanco.is_empty() || nomebanco.is_empty() || nomelocadora.is_empty(){
-        return Err("Erro: Um ou mais campos estão vazios.".to_string());
-    }
     let nomebanco = nomebanco.trim();
     if nomebanco.len() < 4{
         return Err("Erro: Nome do banco é inválido.".to_string());
+    }
+    if idendereco.is_empty() || cnpj.is_empty() || numerocontabanco.is_empty()
+        || numeroagenciabanco.is_empty() || nomebanco.is_empty() || nomelocadora.is_empty(){
+        return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
     let cnpj = formata_cnpj(&cnpj);
     let cnpj = match cnpj{
@@ -126,11 +106,16 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String
 /// - `Err(String)`: Uma mensagem de erro se o CNPJ estiver vazio ou se ocorrer um erro durante a busca.
 #[tauri::command]
 pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
-    if cnpj.is_empty(){
-        return Err("Erro: O parâmetro CNPJ está vazio".to_string())
-    }
-    let cnpj: &str = cnpj.trim(); // remover traços e pontos
-    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(cnpj).await;
+    let cnpj = formata_cnpj(cnpj);
+    let cnpj = match cnpj{
+        Ok(_) => {
+            cnpj.unwrap()
+        },
+         Err(e) => {
+            return Err(e);
+        }
+    };
+    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(&cnpj).await;
     match resultado{
         Ok(id) =>{
             return Ok(id);
@@ -178,4 +163,25 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
             return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
     return Ok(locadora);
+}
+
+
+fn formata_cnpj(cnpj: &str) -> Result<String, String>{
+    let cnpj_numeros: Vec<char> = cnpj
+        .chars()
+        .filter(|c: &char| c.is_digit(10))
+        .collect();
+    if cnpj_numeros.len() < 14{
+        return Err("Erro: CNPJ muito curto ou inválido.".to_string())
+    }
+    let mut cnpj: Vec<char> = cnpj_numeros;
+    cnpj.insert(2, '.');
+    cnpj.insert(6, '.');
+    cnpj.insert(10, '/');
+    cnpj.insert(15, '-');
+    let mut cnpjfinal: String = "".to_string();
+    for u in cnpj{
+        cnpjfinal.push(u);
+    }
+    return Ok(cnpjfinal);
 }
