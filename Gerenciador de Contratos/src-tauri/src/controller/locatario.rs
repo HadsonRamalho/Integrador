@@ -1,13 +1,29 @@
-use crate::{controller, model};
+use mysql_async::{params, prelude::Queryable};
+
+use crate::{controller, model::{self, locatario::Locatario}};
 
 #[tauri::command]
-pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String) -> Result<serde_json::Value, bool>{
+pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String) -> Result<serde_json::Value, String>{
+    let cnpj = controller::locadora::formata_cnpj(&cnpj);
+    let cnpj = match cnpj{
+        Ok(_) => {
+            cnpj.unwrap()
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    };
     let id: String = controller::gera_hash(&cnpj);
+
+    if nomelocatario.trim().len() < 5{
+        return Err("Erro: Nome do locatário é muito curto.".to_string());
+    }
+
     let locatario: serde_json::Value = serde_json::json!({
         "idlocatario": id,
         "idendereco": idendereco,
         "cnpj": cnpj,
-        "nomelocadora": nomelocatario
+        "nomelocatario": nomelocatario
     });
     return Ok(locatario)
 }
@@ -18,7 +34,7 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
     let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
     let idsocio = idlocatario.0.to_string();
     let idlocatario: String = idlocatario.0.to_string();
-    let _locatario: model::locatario::Locatario = model::locatario::Locatario {
+    let locatario: model::locatario::Locatario = model::locatario::Locatario {
         idlocatario: idlocatario,
         idendereco: locatario["idendereco"].as_str().unwrap_or("").to_string(),
         cnpj: locatario["cnpj"].as_str().unwrap_or("").to_string(),
@@ -26,9 +42,7 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
         idsocio: idsocio
     };
 
-    return Ok("".to_string())
-
-    /*let resultado_busca: Result<String, mysql_async::Error> = model::locatario::_busca_id_locatario(&locatario.cnpj).await;
+    let resultado_busca: Result<String, mysql_async::Error> = _busca_id_locatario(&locatario.cnpj).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -41,13 +55,13 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
         Err(erro) => {
             return Err(erro.to_string());
         }
-    }*/
+    }
 }
 
-/*
+
 #[tauri::command]
-pub async fn busca_id_locatario() -> Result<String, String>{
-    let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locatario("000123").await;
+pub async fn busca_id_locatario(cnpj: &str) -> Result<String, String>{
+    let resultado: Result<String, mysql_async::Error> = _busca_id_locatario(cnpj).await;
     match resultado{
         Ok(id) =>{
             return Ok(id);
@@ -56,4 +70,46 @@ pub async fn busca_id_locatario() -> Result<String, String>{
             return Err(e.to_string());
         }
     }
-}*/
+}
+
+pub async fn _busca_id_locatario(cnpj: &str) -> Result<String, mysql_async::Error>{
+    let pool = controller::cria_pool().await.unwrap();
+    let mut conn = pool.get_conn().await?;
+    let resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocatario FROM locatario WHERE cnpj = :cnpj",
+        params!{"cnpj" => cnpj}).await;
+    match resultado_busca{
+        Ok(id) => {
+            match id {
+                Some(id) => {
+                    return Ok(id);
+                }, None =>{
+                    return Ok("".to_string());
+                }
+            }
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    }
+}
+
+pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{
+    let pool = controller::cria_pool().await.unwrap();
+    let mut conn = pool.get_conn().await?;
+    let resultado_insert =
+         conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, 
+         numerocontabanco, numeroagenciabanco, nomebanco, nomelocatario, idsocio)
+          VALUES (:idlocatario, :idendereco, :cnpj, :numerocontabanco, :numeroagenciabanco, :nomebanco, :nomelocatario, :idsocio);", 
+         params! {"idlocatario" =>  locatario.idlocatario, "idendereco" => locatario.idendereco, "cnpj" => locatario.cnpj,
+            "nomelocatario" => locatario.nomelocatario, "idsocio" => locatario.idsocio}).await;
+    match resultado_insert{
+        Ok(_) => {
+            println!("Locatario cadastrado");
+        }, 
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(e);
+        }
+    }
+    return Ok(());
+}

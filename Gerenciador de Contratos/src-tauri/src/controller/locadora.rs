@@ -166,7 +166,7 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
 }
 
 
-fn formata_cnpj(cnpj: &str) -> Result<String, String>{
+pub fn formata_cnpj(cnpj: &str) -> Result<String, String>{
     let cnpj_numeros: Vec<char> = cnpj
         .chars()
         .filter(|c: &char| c.is_digit(10))
