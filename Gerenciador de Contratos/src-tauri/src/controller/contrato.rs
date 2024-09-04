@@ -28,17 +28,17 @@ pub async fn filtra_contrato_nome_maquina(nome_maquina: String) -> Result<Vec<mo
 
 fn formata_data(value: Value) -> String {
     match value {
-        Value::Date(year, month, day, hour, minute, second, _microsecond) => {
-            if hour == 0 && minute == 0 && second == 0 {
+        Value::Date(ano, mes, dia, hora, minuto, segundo, microsegundo) => {
+            if hora == 0 && minuto == 0 && segundo == 0 {
                 // se o horário for 00:00:00, trata como Date
-                NaiveDate::from_ymd_opt(year as i32, month as u32, day as u32).unwrap()
+                NaiveDate::from_ymd_opt(ano as i32, mes as u32, dia as u32).unwrap()
                     .format("%Y-%m-%d")
                     .to_string()
             } else {
                 // trata como DateTime
                 NaiveDateTime::new(
-                    NaiveDate::from_ymd_opt(year as i32, month as u32, day as u32).unwrap(),
-                    NaiveTime::from_hms_opt(hour as u32, minute as u32, second as u32).unwrap()
+                    NaiveDate::from_ymd_opt(ano as i32, mes as u32, dia as u32).unwrap(),
+                    NaiveTime::from_hms_opt(hora as u32, minuto as u32, segundo as u32).unwrap()
                 )
                 .format("%Y-%m-%d %H:%M:%S")
                 .to_string()
