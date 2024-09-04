@@ -26,7 +26,7 @@ function Home(){
 
   return (
     <div>
-      <div id="boxHome">
+      <div id="boxBuscaContrato">
         <input
           required          
           className="rowReset"
