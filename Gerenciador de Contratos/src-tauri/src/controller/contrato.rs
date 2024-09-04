@@ -26,7 +26,7 @@ pub async fn filtra_contrato_nome_maquina(nome_maquina: String) -> Result<Vec<mo
     }
 }
 
-fn format_date(value: Value) -> String {
+fn formata_data(value: Value) -> String {
     match value {
         Value::Date(year, month, day, hour, minute, second, _microsecond) => {
             if hour == 0 && minute == 0 && second == 0 {
@@ -63,15 +63,15 @@ pub async fn _filtra_contrato_nome_maquina(nome_maquina: String) -> Result<Vec<C
     let contratos: Vec<Contrato> = rows.into_iter().map(|row| {
         let idcontrato = row.get::<String, _>("idcontrato").unwrap_or_default();
         let prazolocacao = row.get::<f32, _>("prazolocacao").unwrap_or_default();
-        let dataretirada = format_date(row.get::<Value, _>("dataretirada").unwrap());
+        let dataretirada = formata_data(row.get::<Value, _>("dataretirada").unwrap());
         let valormensal = row.get::<f32, _>("valormensal").unwrap_or_default();
-        let vencimento = format_date(row.get::<Value, _>("vencimento").unwrap());
+        let vencimento = formata_data(row.get::<Value, _>("vencimento").unwrap());
         let multaatraso = row.get::<f32, _>("multaatraso").unwrap_or_default();
         let jurosatraso = row.get::<f32, _>("jurosatraso").unwrap_or_default();
         let avisotransferencia = row.get::<String, _>("avisotransferencia").unwrap();
-        let prazodevolucao = format_date(row.get::<Value, _>("prazodevolucao").unwrap());
+        let prazodevolucao = formata_data(row.get::<Value, _>("prazodevolucao").unwrap());
         let cidadeforo = row.get::<String, _>("cidadeforo").unwrap_or_default();
-        let datacontrato = format_date(row.get::<Value, _>("datacontrato").unwrap());
+        let datacontrato = formata_data(row.get::<Value, _>("datacontrato").unwrap());
         let idlocatario = row.get::<String, _>("idlocatario").unwrap_or_default();
         let idlocador = row.get::<String, _>("idlocador").unwrap_or_default();
         let idmaquina = row.get::<String, _>("idmaquina").unwrap_or_default();
