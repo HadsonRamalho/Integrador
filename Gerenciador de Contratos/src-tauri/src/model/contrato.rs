@@ -1,24 +1,28 @@
 use mysql_async::prelude::Queryable;
+use serde::Serialize;
 use crate::model::params;
 use crate::controller;
 
+#[derive(Serialize)]
 pub struct Contrato{
     pub idcontrato: String,
-    pub prazolocacao: Float,
-    pub dataretirada: Date,
-    pub valormensal: Float,
-    pub vencimento: Date,
-    pub multaatraso: Float,
-    pub jurosatraso: Float,
+    pub prazolocacao: f32,
+    pub dataretirada: String,
+    pub valormensal: f32,
+    pub vencimento: String,
+    pub multaatraso: f32,
+    pub jurosatraso: f32,
     pub avisotransferencia: String,
-    pub prazodevolucao: Date,
+    pub prazodevolucao: String,
     pub cidadeforo: String,
-    pub datacontrato: Date,
+    pub datacontrato: String,
     pub idlocatario: String,
     pub idlocador: String,
-    pub idaluguelmaquina: String,
-    pub idenderecoretirada: String
+    pub idmaquina: String,
+    pub enderecoretirada: String
 }
+
+
 
 pub async fn registra_contrato(contrato: Contrato) -> Result<(), mysql_async::Error>{
     let pool = controller::cria_pool().await.unwrap();
@@ -34,9 +38,9 @@ pub async fn registra_contrato(contrato: Contrato) -> Result<(), mysql_async::Er
         "valormensal" => contrato.valormensal,
         "vencimento" => contrato.vencimento, "multaattraso" => contrato.multaatraso, 
         "jurosatraso" => contrato.jurosatraso, "avisotransferencia" => contrato.avisotransferencia,
-        "prazodevolucao" => contrato.prazodevolucao, "cidadeforo" => contrato.cidadeforo, "datacontrato" => contrato.datacontrato,
-        "idlocatario" => contrato.idlocatario, "idlocador" => contrato.idlocador, "idaluguelmaquina" => contrato.idaluguelmaquina,
-        "idenderecoretirada" => contrato.idenderecoretirada}).await;
+        "prazodevolucao" =>contrato.prazodevolucao, "cidadeforo" => contrato.cidadeforo, "datacontrato" => contrato.datacontrato,
+        "idlocatario" => contrato.idlocatario, "idlocador" => contrato.idlocador, "idmaquina" => contrato.idmaquina, "enderecoretirada" => contrato.enderecoretirada,
+    }).await;
     match resultado_insert{
         Ok(_) => {
             println!("Contrato cadastrado");

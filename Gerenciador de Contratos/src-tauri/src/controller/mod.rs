@@ -8,6 +8,7 @@ pub mod locatario;
 pub mod maquina;
 pub mod socioadm;
 pub mod usuario;
+pub mod contrato;
 
 #[tauri::command]
 pub async fn cria_conta(

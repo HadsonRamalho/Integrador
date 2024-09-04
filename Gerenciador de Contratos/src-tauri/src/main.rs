@@ -39,13 +39,15 @@ fn main() {
             controller::locadora::estrutura_locadora,
 
             controller::maquina::estrutura_maquina,
-            controller::maquina::busca_nome_maquina,
+            controller::maquina::filtra_maquina_nome,
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm,            
 
             controller::endereco::estrutura_endereco,
             controller::endereco::_salva_endereco,
+
+            controller::contrato::filtra_contrato_nome_maquina,
 
             controller::cria_conta,
             controller::realiza_login,

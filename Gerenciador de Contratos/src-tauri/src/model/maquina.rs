@@ -1,7 +1,9 @@
 use mysql_async::{params, prelude::Queryable};
+use serde::Serialize;
 
 use crate::controller;
 
+#[derive(Serialize)]
 pub struct Maquina {
     pub idmaquina: String,
     pub nomemaquina: String,
