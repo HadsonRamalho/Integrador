@@ -78,7 +78,7 @@ function DadosUsuario() {
       </div>
       <button onClick={home}>Voltar</button>
       <div>
-        <button> Apagar minha conta </button>
+      <button onClick={apagaConta}> Apagar minha conta </button>
       </div>
     </div>
   );
