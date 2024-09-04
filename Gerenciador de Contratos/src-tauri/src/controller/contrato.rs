@@ -31,18 +31,20 @@ fn formata_data(value: Value) -> String {
         Value::Date(ano, mes, dia, hora, minuto, segundo, microsegundo) => {
             if hora == 0 && minuto == 0 && segundo == 0 {
                 // se o horário for 00:00:00, trata como Date
-                NaiveDate::from_ymd_opt(ano as i32, mes as u32, dia as u32).unwrap()
+                let data = NaiveDate::from_ymd_opt(ano as i32, mes as u32, dia as u32).unwrap()
                     .format("%Y-%m-%d")
-                    .to_string()
-            } else {
-                // trata como DateTime
-                NaiveDateTime::new(
+                    .to_string();
+                return data;
+            }
+            // trata como DateTime
+            let data_precisa = NaiveDateTime::new(
                     NaiveDate::from_ymd_opt(ano as i32, mes as u32, dia as u32).unwrap(),
                     NaiveTime::from_hms_opt(hora as u32, minuto as u32, segundo as u32).unwrap()
                 )
                 .format("%Y-%m-%d %H:%M:%S")
-                .to_string()
-            }
+                .to_string();
+            return data_precisa;
+            
         },
         _ => "".to_string(),
     }
