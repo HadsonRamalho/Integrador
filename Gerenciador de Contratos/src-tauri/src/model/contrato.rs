@@ -25,7 +25,14 @@ pub struct Contrato{
 
 
 pub async fn registra_contrato(contrato: Contrato) -> Result<(), mysql_async::Error>{
-    let pool = controller::cria_pool().await.unwrap();
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO contrato_aluguel (idcontrato, prazolocacao, dataretirada, 

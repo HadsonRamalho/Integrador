@@ -1,5 +1,5 @@
 use mysql_async::prelude::*;
-use crate::model;
+use crate::{controller, model};
 use crate::controller::endereco::Endereco;
 
 /// Função para salvar um endereço no banco de dados.
@@ -18,7 +18,14 @@ use crate::controller::endereco::Endereco;
 /// - Pode retornar um erro se houver problemas ao conectar ao banco de dados ou ao executar a query.
 pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql_async::Error> {
     // Cria uma conexão com o pool do banco de dados
-    let pool = model::create_pool().await?;
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
     let mut conn = pool.get_conn().await?; 
     // Converte os dados recebidos em um objeto `Endereco`
     let endereco = Endereco {

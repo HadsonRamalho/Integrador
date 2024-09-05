@@ -73,7 +73,14 @@ pub async fn busca_id_locatario(cnpj: &str) -> Result<String, String>{
 }
 
 pub async fn _busca_id_locatario(cnpj: &str) -> Result<String, mysql_async::Error>{
-    let pool = controller::cria_pool().await.unwrap();
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
     let mut conn = pool.get_conn().await?;
     let resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocatario FROM locatario WHERE cnpj = :cnpj",
         params!{"cnpj" => cnpj}).await;
@@ -94,7 +101,14 @@ pub async fn _busca_id_locatario(cnpj: &str) -> Result<String, mysql_async::Erro
 }
 
 pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{
-    let pool = controller::cria_pool().await.unwrap();
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, 

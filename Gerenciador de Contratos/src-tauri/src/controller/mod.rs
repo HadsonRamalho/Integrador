@@ -80,21 +80,42 @@ pub async fn realiza_login(email: &str, senha: &str) -> Result<(), String> {
 }
 
 pub async fn save_data(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
-    let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
+    let pool = match cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let _resultado_criacao = model::save_data(&pool, nome, &email, senha, cpf, cnpj)
         .await
         .map_err(|e| format!("{}", e))?;
     Ok(())
 }
 
-pub async fn cria_pool() -> Result<mysql_async::Pool, String> {
-    let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
-    Ok(pool)
+pub async fn cria_pool() -> Result<mysql_async::Pool, mysql_async::Error> {
+    let pool = model::create_pool().await;
+    match pool{
+        Ok(pool) =>{
+            return Ok(pool)
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    }
 }
 
 pub async fn _verifica_senha(email: &str, senha: &str) -> Result<Usuario, String> {
     // Parâmetros devem ser alterados conforme a necessidade posterior
-    let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
+    let pool = match cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let usuario_autenticado = model::verifica_senha(&pool, &email, senha)
         .await
         .map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
@@ -115,10 +136,14 @@ pub async fn encontra_email_smtp(email: &str) -> Result<(), String> {
     if !valida_email(email) {
         return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
     }
-    let pool = model::create_pool()
-        .await
-        .map_err(|e| format!("{}", e))
-        .unwrap();
+    let pool = match cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let _consome_result = model::busca_email(&pool, email).await;
     match _consome_result {
         Ok(_) => {

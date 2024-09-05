@@ -11,7 +11,14 @@ use crate::controller;
 
 #[tauri::command]
 pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
-    let pool = controller::cria_pool().await?;
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let cnpj = controller::usuario::_busca_cnpj_usuario(&pool, &idusuario).await;
     let cnpj = match cnpj{
         Ok(cnpj) => {
@@ -60,7 +67,14 @@ fn formata_data(value: Value) -> String {
 }
 
 pub async fn _filtra_contrato_nome_maquina(nome_maquina: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error> {
-    let pool = controller::cria_pool().await.unwrap();
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
     let mut conn = pool.get_conn().await?;
     let cnpj = cnpj.trim();
 

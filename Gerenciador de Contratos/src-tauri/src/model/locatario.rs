@@ -11,7 +11,14 @@ pub struct Locatario{
 }
 
 pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{
-    let pool = controller::cria_pool().await.unwrap();
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, nomelocatario, idsocio)

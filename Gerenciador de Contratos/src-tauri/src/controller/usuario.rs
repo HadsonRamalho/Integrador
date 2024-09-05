@@ -13,7 +13,14 @@ pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), S
     if !valida_email(email){
         return Err("Erro: Novo email inválido".to_string())
     }
-    let pool: mysql_async::Pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();    
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };    
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, &email_antigo).await;
     match resultado_busca{
         Ok(o) => {
@@ -48,7 +55,14 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
         }
     }
     let nova_senha = gera_hash(nova_senha.trim());
-    let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;
     match resultado_busca{
         Ok(o) => {
@@ -80,7 +94,14 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
     if !valida_email(email){
         return Err("Erro ao validar o token: E-mail vazio.".to_string());
     }
-    let pool = controller::cria_pool().await?;
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let id = busca_id_usuario(&pool, email).await;
     let uid;
     match id{
@@ -111,7 +132,14 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
 
 #[tauri::command]
 pub async fn busca_id(email: &str) -> Result<String, String>{
-    let pool: mysql_async::Pool = controller::cria_pool().await?;
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let resultado_busca = usuario::busca_id_usuario(&pool, email).await;
     match resultado_busca{
         Ok(id) =>{
@@ -144,7 +172,14 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
 
 #[tauri::command]
 pub async fn busca_email_usuario(id: String) -> Result<String, String>{
-    let pool = cria_pool().await?;
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let email = _busca_email_usuario(&pool, &id).await;
     match email{
         Ok(_) => { return Ok(email.unwrap());
@@ -175,7 +210,14 @@ pub async fn _busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql
 
 #[tauri::command]
 pub async fn busca_nome_usuario(id: String) -> Result<String, String>{
-    let pool = cria_pool().await?;
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let nome = _busca_nome_usuario(&pool, &id).await;
     match nome{
         Ok(_) => { return Ok(nome.unwrap());
@@ -206,13 +248,22 @@ pub async fn _busca_nome_usuario(pool: &Pool, id: &str) -> Result<String, mysql_
 
 #[tauri::command]
 pub async fn busca_cnpj_usuario(id: String) -> Result<String, String>{
-    let pool = cria_pool().await?;
-    let nome = _busca_cnpj_usuario(&pool, &id).await;
-    match nome{
-        Ok(_) => { return Ok(nome.unwrap());
-    }, Err(e) => {
-        return Err(e.to_string());
-    }
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
+    let cnpj = _busca_cnpj_usuario(&pool, &id).await;
+    match cnpj{
+        Ok(_) => { 
+            return Ok(cnpj.unwrap());
+        }, 
+        Err(e) => {
+            return Err(e.to_string());
+        }
     }
 }
 

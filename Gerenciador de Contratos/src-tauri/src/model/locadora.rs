@@ -14,7 +14,14 @@ pub struct Locadora{
 }
 
 pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::Error>{
-    let pool = controller::cria_pool().await.unwrap();
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO locadora (idlocadora, idendereco, cnpj, 
@@ -38,7 +45,14 @@ pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::E
 
 pub async fn _busca_id_locadora(cnpj: &str) -> Result<String, mysql_async::Error>{
 
-    let pool = controller::cria_pool().await.unwrap();
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
     let mut conn = pool.get_conn().await?;
     let resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocadora FROM locadora WHERE cnpj = :cnpj",
      params!{"cnpj" => cnpj}).await;
