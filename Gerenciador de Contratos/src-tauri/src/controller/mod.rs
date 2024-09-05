@@ -1,5 +1,6 @@
 use crate::model;
 use crate::model::Usuario;
+use locadora::formata_cnpj;
 use pwhash::bcrypt;
 use pwhash::unix;
 pub mod endereco;
@@ -16,6 +17,8 @@ pub async fn cria_conta(
     email: &str,
     senha1: &str,
     senha2: &str,
+    cpf: &str,
+    cnpj: &str
 ) -> Result<(), String> {
     let email: String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
     if !valida_email(&email) {
@@ -24,6 +27,14 @@ pub async fn cria_conta(
     if senha1 != senha2 {
         return Err("As senhas são diferentes".to_string()); // Conta não criada
     }
+    let cnpj = match formata_cnpj(cnpj){
+        Ok(cnpj) => {
+            cnpj
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    };
     match usuario::valida_senha(senha1) {
         Ok(_) => {}
         Err(e) => {
@@ -36,7 +47,7 @@ pub async fn cria_conta(
     if usuario.ja_cadastrado().await {
         return Err("Usuário já cadastrado".to_string());
     }
-    let resultado_cadastro = save_data(nome_completo, &email, usuario.get_hash()).await;
+    let resultado_cadastro = save_data(nome_completo, &email, usuario.get_hash(), cpf, &cnpj).await;
     match resultado_cadastro {
         Ok(_) => return Ok(()),
         Err(_) => return Err("Erro no cadastro do usuário.".to_string()),
@@ -68,9 +79,9 @@ pub async fn realiza_login(email: &str, senha: &str) -> Result<(), String> {
     }
 }
 
-pub async fn save_data(nome: &str, email: &str, senha: &str) -> Result<(), String> {
+pub async fn save_data(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
     let pool = model::create_pool().await.map_err(|e| format!("{}", e))?;
-    let _resultado_criacao = model::save_data(&pool, nome, &email, senha)
+    let _resultado_criacao = model::save_data(&pool, nome, &email, senha, cpf, cnpj)
         .await
         .map_err(|e| format!("{}", e))?;
     Ok(())
