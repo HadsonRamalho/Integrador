@@ -72,10 +72,11 @@ pub async fn _filtra_contrato_nome_maquina(nome_maquina: String, cnpj: String) -
        ca.multaatraso, ca.jurosatraso, ca.avisotransferencia, ca.prazodevolucao, 
        ca.cidadeforo, ca.datacontrato, ca.idlocatario, ca.idlocador, ca.idmaquina, 
        ca.enderecoretirada
-FROM contrato_aluguel ca
-JOIN locadora l ON ca.idlocador = l.idlocadora
-WHERE ca.avisotransferencia = :nome_maquina AND l.cnpj = :cnpj
-ORDER BY ca.valormensal DESC;",
+        FROM contrato_aluguel ca
+        JOIN locadora ld ON ca.idlocador = ld.idlocadora
+        JOIN maquina ma ON ca.idmaquina = ma.idmaquina
+        WHERE ma.nomemaquina = :nome_maquina AND ld.cnpj = :cnpj
+        ORDER BY ca.valormensal DESC;",
         params! { "nome_maquina" => nome_maquina, "cnpj" => cnpj }
     ).await?;
 

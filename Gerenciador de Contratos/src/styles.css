@@ -247,3 +247,43 @@ button {
   border-radius: 10px;
   font-size: 1.5vh;
 }
+
+.contract-list {
+  list-style-type: none;
+  padding: 20px;
+}
+
+.contract-item {
+  border: 1px solid #bbe9f7;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  background-color: #45749b;
+}
+
+.contract-header {
+  background-color: #2d5279;
+  color: white;
+  padding: 8px;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #bbe9f7;
+  border-radius: 8px 8px 0 0;
+}
+
+.contract-fields {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 8px;
+}
+
+.contract-fields strong {
+  width: 150px;
+  margin-right: 10px;
+}
+
+.contract-fields div {
+  margin-bottom: 10px;
+}

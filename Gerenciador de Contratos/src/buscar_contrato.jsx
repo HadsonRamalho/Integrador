@@ -37,24 +37,25 @@ function Home(){
         <button className="botoesHome" type="button" onClick={buscaContrato}>Buscar</button>
         <button className="botoesHome" type="button" onClick={home}>Voltar</button>
         <div>
-        <ul>
-          {vetor.map((contrato, index) => (
-            <li key={index}>
-              <strong>idcontrato:</strong> {contrato.idcontrato} <br />
-              <strong>prazolocacao:</strong> {contrato.prazolocacao} <br />
-              <strong>dataretirada:</strong> {contrato.dataretirada} <br />
-              <strong>valormensal:</strong> {contrato.valormensal} <br />
-              <strong>vencimento:</strong> {contrato.vencimento} <br />
-              <strong>multaatraso:</strong> {contrato.multaatraso} <br />
-              <strong>jurosatraso:</strong> {contrato.jurosatraso} <br />
-              <strong>avisotransferencia:</strong> {contrato.avisotransferencia} <br />
-              <strong>prazodevolucao:</strong> {contrato.prazodevolucao} <br />
-              <strong>cidadeforo:</strong> {contrato.cidadeforo} <br />
-              <strong>datacontrato:</strong> {contrato.datacontrato} <br />
-              <strong>dataretirada:</strong> {contrato.dataretirada} <br />
-            </li>
-          ))}
-        </ul>
+          <ul className="contract-list">
+            {vetor.map((contrato, index) => (
+              <li key={index} className="contract-item">
+                <div className="contract-header">ID DO CONTRATO: {contrato.idcontrato}</div>
+                <div className="contract-fields">
+                  <strong>Prazo Locação:</strong> {contrato.prazolocacao} MESES <br />
+                  <strong>Data Retirada:</strong> {contrato.dataretirada} <br />
+                  <strong>Valor Mensal: </strong> R$ {contrato.valormensal} <br />
+                  <strong>Vencimento:</strong> {contrato.vencimento} <br />
+                  <strong>Multa Atraso:</strong> {contrato.multaatraso} <br />
+                  <strong>Juros Atraso:</strong> {contrato.jurosatraso} <br />
+                  <strong>Aviso Transferência:</strong> {contrato.avisotransferencia} <br />
+                  <strong>Prazo Devolução:</strong> {contrato.prazodevolucao} <br />
+                  <strong>Cidade Foro:</strong> {contrato.cidadeforo} <br />
+                  <strong>Data Contrato:</strong> {contrato.datacontrato} <br />
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
