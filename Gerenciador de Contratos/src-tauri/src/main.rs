@@ -29,6 +29,7 @@ fn main() {
             controller::usuario::atualiza_senha,
             controller::usuario::atualiza_email,
             controller::usuario::busca_email_usuario,
+            controller::usuario::busca_cnpj_usuario,
 
             controller::locatario::busca_id_locatario,
             controller::locatario::cadastra_locatario,

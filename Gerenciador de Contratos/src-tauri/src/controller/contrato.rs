@@ -9,8 +9,6 @@ use mysql_async::Value;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
-use super::usuario::busca_cnpj_usuario;
-
 #[tauri::command]
 pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
     let pool = controller::cria_pool().await?;
@@ -18,7 +16,7 @@ pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: Strin
     let cnpj = match cnpj{
         Ok(cnpj) => {
             cnpj
-        }, Err(e) => {
+        }, Err(_) => {
             return Err("Erro: O usuário não tem um CNPJ cadastrado.".to_string())
         }
     };
