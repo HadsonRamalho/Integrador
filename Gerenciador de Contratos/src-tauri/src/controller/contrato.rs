@@ -9,9 +9,20 @@ use mysql_async::Value;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
+use super::usuario::busca_cnpj_usuario;
+
 #[tauri::command]
-pub async fn filtra_contrato_nome_maquina(nome_maquina: String) -> Result<Vec<model::contrato::Contrato>, String>{
-    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = _filtra_contrato_nome_maquina(nome_maquina).await;
+pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
+    let pool = controller::cria_pool().await?;
+    let cnpj = controller::usuario::_busca_cnpj_usuario(&pool, &idusuario).await;
+    let cnpj = match cnpj{
+        Ok(cnpj) => {
+            cnpj
+        }, Err(e) => {
+            return Err("Erro: O usuário não tem um CNPJ cadastrado.".to_string())
+        }
+    };
+    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = _filtra_contrato_nome_maquina(nome_maquina, cnpj).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -50,16 +61,22 @@ fn formata_data(value: Value) -> String {
     }
 }
 
-pub async fn _filtra_contrato_nome_maquina(nome_maquina: String) -> Result<Vec<Contrato>, mysql_async::Error> {
+pub async fn _filtra_contrato_nome_maquina(nome_maquina: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error> {
     let pool = controller::cria_pool().await.unwrap();
     let mut conn = pool.get_conn().await?;
+    let cnpj = cnpj.trim();
+
 
     let rows: Vec<Row> = conn.exec(
-        "SELECT idcontrato, prazolocacao, dataretirada, valormensal, vencimento,
-                multaatraso, jurosatraso, avisotransferencia, prazodevolucao, cidadeforo,
-                datacontrato, idlocatario, idlocador, idmaquina, enderecoretirada
-         FROM contrato_aluguel WHERE avisotransferencia = :nome_maquina ORDER BY valormensal DESC",
-        params! { "nome_maquina" => nome_maquina }
+        "SELECT ca.idcontrato, ca.prazolocacao, ca.dataretirada, ca.valormensal, ca.vencimento,
+       ca.multaatraso, ca.jurosatraso, ca.avisotransferencia, ca.prazodevolucao, 
+       ca.cidadeforo, ca.datacontrato, ca.idlocatario, ca.idlocador, ca.idmaquina, 
+       ca.enderecoretirada
+FROM contrato_aluguel ca
+JOIN locadora l ON ca.idlocador = l.idlocadora
+WHERE ca.avisotransferencia = :nome_maquina AND l.cnpj = :cnpj
+ORDER BY ca.valormensal DESC;",
+        params! { "nome_maquina" => nome_maquina, "cnpj" => cnpj }
     ).await?;
 
     let contratos: Vec<Contrato> = rows.into_iter().map(|row| {

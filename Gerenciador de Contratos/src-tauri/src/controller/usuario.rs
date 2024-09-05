@@ -203,3 +203,38 @@ pub async fn _busca_nome_usuario(pool: &Pool, id: &str) -> Result<String, mysql_
         }
     }
 }
+
+#[tauri::command]
+pub async fn busca_cnpj_usuario(id: String) -> Result<String, String>{
+    let pool = cria_pool().await?;
+    let nome = _busca_cnpj_usuario(&pool, &id).await;
+    match nome{
+        Ok(_) => { return Ok(nome.unwrap());
+    }, Err(e) => {
+        return Err(e.to_string());
+    }
+    }
+}
+
+pub async fn _busca_cnpj_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    let cnpj: Option<String> = conn.exec_first("SELECT cnpj FROM usuarios WHERE UUID = :id;", 
+    params!{"id" => id}).await?;
+    let server_error = mysql_async::ServerError{
+        code: 1045, 
+        message: "ID inválido.".to_string(),
+        state: "28000".to_string()
+    };
+    println!("{:?}", cnpj);
+    match cnpj{
+        None => {
+            return Err(mysql_async::Error::Server(server_error));
+        },
+        Some(cnpj) => {
+            if cnpj.is_empty(){
+                return Err(mysql_async::Error::Server(server_error));
+            }
+            return Ok(cnpj);
+        }
+    }
+}

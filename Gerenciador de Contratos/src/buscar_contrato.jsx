@@ -6,10 +6,10 @@ function Home(){
   const [mensagem, setMensagem] = useState("");
   const [nomeMaquina, setNomeMaquina] = useState("");
   const [vetor, setVetor] = useState([]);
-
+  const idusuario = localStorage.getItem('token');
   async function buscaContrato(){
     try{
-        const contrato = await invoke("filtra_contrato_nome_maquina", {nomeMaquina});
+        const contrato = await invoke("filtra_contrato_nome_maquina", {nomeMaquina, idusuario});
         setVetor(contrato);  
         setMensagem(""); 
     } catch(error){
