@@ -7,10 +7,9 @@ use super::{cria_pool, locadora::formata_cnpj};
 
 #[tauri::command]
 pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String) -> Result<serde_json::Value, String>{
-    let cnpj = controller::locadora::formata_cnpj(&cnpj);
-    let cnpj = match cnpj{
+    let cnpj = match controller::locadora::formata_cnpj(&cnpj){
         Ok(_) => {
-            cnpj.unwrap()
+            cnpj
         },
         Err(e) => {
             return Err(e);

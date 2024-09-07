@@ -35,10 +35,9 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
         || numeroagenciabanco.is_empty() || nomebanco.is_empty() || nomelocadora.is_empty(){
         return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
-    let cnpj = formata_cnpj(&cnpj);
-    let cnpj = match cnpj{
+    let cnpj = match formata_cnpj(&cnpj){
         Ok(_) =>{
-            cnpj.unwrap()
+            cnpj
         },
         Err(e) => {
             return Err(e);
