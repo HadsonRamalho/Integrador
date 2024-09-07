@@ -8,6 +8,7 @@ pub mod locatario;
 pub mod maquina;
 pub mod socioadm;
 pub mod usuario;
+pub mod contrato;
 // crates para envio de email
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::{Credentials, Mechanism};
