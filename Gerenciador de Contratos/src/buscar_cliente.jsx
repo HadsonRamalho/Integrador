@@ -32,9 +32,9 @@ function BuscarCliente(){
           onChange={(e) => setCnpj(e.currentTarget.value)}
           placeholder="Buscar por CNPJ do cliente"
         />
-        <p>{mensagem}</p>
         <button className="botoesHome" type="button" onClick={buscaCliente}>Buscar</button>
         <button className="botoesHome" type="button" onClick={home}>Voltar</button>        
+        <p>{mensagem}</p>
       </div>
     </div>
   );

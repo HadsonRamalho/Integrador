@@ -1,3 +1,4 @@
+use chrono::format;
 use mysql_async::{params, prelude::Queryable, Pool, ServerError};
 
 use crate::{controller, model::{self, locatario::Locatario}};
@@ -132,7 +133,14 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
 
 #[tauri::command]
 pub async fn busca_nome_locatario(cnpjlocatario: String) -> Result<String, String>{
-    let cnpjlocatario = formata_cnpj(&cnpjlocatario).unwrap();
+    let cnpjlocatario = match formata_cnpj(&cnpjlocatario){
+        Ok(cnpjlocatario) => {
+            cnpjlocatario
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    };
     let resultado_busca = _busca_nome_locatario(cnpjlocatario).await;
     match resultado_busca {
         Ok(cnpj) =>{

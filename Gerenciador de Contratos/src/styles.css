@@ -295,10 +295,10 @@ button {
   left: 50%;
   transform: translate(-50%, -50%); 
   text-align: center; 
-  height: calc(100vh - 30px);  
-  width: calc(100vw - 30px); /*450pcx*/
+  height: calc(100vh - 50vh);  
+  width: calc(90vh); /*450pcx*/
   line-height: 60px;
   filter: blur(0 0 50px);
   border-radius: 10px;
-  font-size: 2vh;
+  font-size: 2.2vh;
 }
