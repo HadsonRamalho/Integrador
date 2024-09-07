@@ -24,6 +24,10 @@ function Home(){
     navigate('/buscar_cliente');
   };
 
+  const buscar_maquina = () => {
+    navigate('/buscar_maquina');
+  };
+
     return (
       <div>
         
@@ -32,6 +36,7 @@ function Home(){
        <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
        <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
        <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente</button>
+       <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
        <button className="botoesHome" type="button" onClick={login}>Voltar</button>
        </div>
         

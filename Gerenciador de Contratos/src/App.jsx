@@ -6,6 +6,7 @@ import CriaConta from "./cria_conta";
 import DadosUsuario from './dados_usuario';
 import BuscarContrato from './buscar_contrato';
 import BuscarCliente from "./buscar_cliente";
+import BuscarMaquina from './buscar_maquina';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/dados_usuario" element={<DadosUsuario/>} />
         <Route path="/buscar_contrato" element={<BuscarContrato/>} />
         <Route path="/buscar_cliente" element={<BuscarCliente/>} />
+        <Route path="/buscar_maquina" element={<BuscarMaquina/>} />
       </Routes>
     </Router>
   );
