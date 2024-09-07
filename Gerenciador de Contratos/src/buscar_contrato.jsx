@@ -2,7 +2,7 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 
-function Home(){
+function BuscarContrato(){
   const [mensagem, setMensagem] = useState("");
   const [nomeMaquina, setNomeMaquina] = useState("");
   const [vetor, setVetor] = useState([]);
@@ -62,4 +62,4 @@ function Home(){
   );
 }
 
-export default Home;
+export default BuscarContrato;
