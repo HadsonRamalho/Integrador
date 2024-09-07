@@ -8,14 +8,24 @@ use crate::controller;
 use super::{cria_pool, gera_hash, verifica_hash};
 
 #[tauri::command]
-pub async fn atualiza_email(email: &str) -> Result<(), String>{
-    let email: &str = email.trim(); // Utilizar email do usuário atual [Cod. 601]
-    let pool: mysql_async::Pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();    
-    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, "user1@u.com").await;// [Cod. 601]
+pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), String>{
+    let email: &str = email.trim();
+    if !valida_email(email){
+        return Err("Erro: Novo email inválido".to_string())
+    }
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };    
+    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, &email_antigo).await;
     match resultado_busca{
         Ok(o) => {
             if o.is_empty() || !valida_email(&o) || o == ""{
-                return Err("Email antigo inválido.".to_string()) // [Cod. 601]
+                return Err("Email antigo inválido.".to_string()) 
             }
         },
         Err(_e) => {
@@ -24,7 +34,7 @@ pub async fn atualiza_email(email: &str) -> Result<(), String>{
         }
     }
  
-    let r: Result<(), mysql_async::Error> = model::usuario::atualiza_email(&pool, "user1@u.com", email).await;
+    let r: Result<(), mysql_async::Error> = model::usuario::atualiza_email(&pool, &email_antigo, email).await;
     match r{
         Ok(()) => {
             return Ok(())
@@ -45,11 +55,18 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
         }
     }
     let nova_senha = gera_hash(nova_senha.trim());
-    let pool = model::create_pool().await.map_err(|e| format!("{}", e)).unwrap();
-    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;// [Cod. 601]
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
+    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;
     match resultado_busca{
         Ok(o) => {
-            if o.is_empty() || !valida_email(&o) || o == ""{ // [Cod. 601] 
+            if o.is_empty() || !valida_email(&o) || o == ""{
                 return Ok(())
             }
         },
@@ -77,7 +94,14 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
     if !valida_email(email){
         return Err("Erro ao validar o token: E-mail vazio.".to_string());
     }
-    let pool = controller::cria_pool().await?;
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let id = busca_id_usuario(&pool, email).await;
     let uid;
     match id{
@@ -92,7 +116,7 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
         }
     }
     
-    let email = busca_email_usuario(&pool, token).await;
+    let email = _busca_email_usuario(&pool, token).await;
     match email{
         Ok(_) =>{
             if verifica_hash(&email.unwrap(), uid){
@@ -107,8 +131,15 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
 }
 
 #[tauri::command]
-pub async fn busca_id(email: &str) -> Result<String, String>{ //recebe email, retorna ID
-    let pool: mysql_async::Pool = controller::cria_pool().await?;
+pub async fn busca_id(email: &str) -> Result<String, String>{
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
     let resultado_busca = usuario::busca_id_usuario(&pool, email).await;
     match resultado_busca{
         Ok(id) =>{
@@ -141,12 +172,20 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
 
 #[tauri::command]
 pub async fn busca_email_usuario(id: String) -> Result<String, String>{
-    let pool = cria_pool().unwrap();
-    _busca_email_usuario().await;
-    let email = _busca_email_usuario(&Pool, id).await;
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
+    let email = _busca_email_usuario(&pool, &id).await;
     match email{
-        Ok() => { return email;
-    }, Err(e) => return Err(e);
+        Ok(_) => { return Ok(email.unwrap());
+    }, Err(e) => {
+        return Err(e.to_string());
+    }
     }
 }
 
@@ -165,6 +204,88 @@ pub async fn _busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql
         },
         Some(_) => {
             return Ok(email_usuario.unwrap());
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn busca_nome_usuario(id: String) -> Result<String, String>{
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
+    let nome = _busca_nome_usuario(&pool, &id).await;
+    match nome{
+        Ok(_) => { return Ok(nome.unwrap());
+    }, Err(e) => {
+        return Err(e.to_string());
+    }
+    }
+}
+
+pub async fn _busca_nome_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    let nome_usuario: Option<String> = conn.exec_first("SELECT nome_completo FROM usuarios WHERE UUID = :id;", 
+    params!{"id" => id}).await?;
+    let server_error = mysql_async::ServerError{
+        code: 1045, 
+        message: "ID inválido.".to_string(),
+        state: "28000".to_string()
+    };
+    match nome_usuario{
+        None => {
+            return Err(mysql_async::Error::Server(server_error));
+        },
+        Some(_) => {
+            return Ok(nome_usuario.unwrap());
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn busca_cnpj_usuario(id: String) -> Result<String, String>{
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
+    let cnpj = _busca_cnpj_usuario(&pool, &id).await;
+    match cnpj{
+        Ok(_) => { 
+            return Ok(cnpj.unwrap());
+        }, 
+        Err(e) => {
+            return Err(e.to_string());
+        }
+    }
+}
+
+pub async fn _busca_cnpj_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
+    let mut conn = pool.get_conn().await?;
+    let cnpj: Option<String> = conn.exec_first("SELECT cnpj FROM usuarios WHERE UUID = :id;", 
+    params!{"id" => id}).await?;
+    let server_error = mysql_async::ServerError{
+        code: 1045, 
+        message: "ID inválido.".to_string(),
+        state: "28000".to_string()
+    };
+    println!("{:?}", cnpj);
+    match cnpj{
+        None => {
+            return Err(mysql_async::Error::Server(server_error));
+        },
+        Some(cnpj) => {
+            if cnpj.is_empty(){
+                return Err(mysql_async::Error::Server(server_error));
+            }
+            return Ok(cnpj);
         }
     }
 }

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 
 function Home(){
-  const [mensagemReset, setMensagemReset] = useState("");
+  const [mensagem, setMensagem] = useState("");
 
   const navigate = useNavigate();
 
@@ -16,12 +16,17 @@ function Home(){
     navigate('/dados_usuario');
   };
 
+  const buscar_contrato = () => {
+    navigate('/buscar_contrato');
+  };
+
     return (
       <div>
         
         <div id="boxHome">
        <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>Criar novo contrato</button>
        <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
+       <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
        <button className="botoesHome" type="button" onClick={login}>Voltar</button>
        </div>
         

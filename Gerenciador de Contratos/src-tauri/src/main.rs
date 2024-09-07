@@ -23,20 +23,33 @@ mod model;
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            controller::maquina::estrutura_maquina,
-            controller::socioadm::estrutura_socio_adm,
-            controller::socioadm::cadastra_socio_adm,
-            controller::locatario::cadastra_locatario,
-            controller::locatario::estrutura_locatario,
+            controller::usuario::busca_nome_usuario,
             controller::usuario::busca_id,
             controller::usuario::verifica_token,
             controller::usuario::atualiza_senha,
             controller::usuario::atualiza_email,
+            controller::usuario::busca_email_usuario,
+            controller::usuario::busca_cnpj_usuario,
+
+            controller::locatario::busca_id_locatario,
+            controller::locatario::cadastra_locatario,
+            controller::locatario::estrutura_locatario,
+
             controller::locadora::cadastra_locadora,
             controller::locadora::busca_id_locadora,
             controller::locadora::estrutura_locadora,
+
+            controller::maquina::estrutura_maquina,
+            controller::maquina::filtra_maquina_nome,
+
+            controller::socioadm::estrutura_socio_adm,
+            controller::socioadm::cadastra_socio_adm,            
+
             controller::endereco::estrutura_endereco,
             controller::endereco::_salva_endereco,
+
+            controller::contrato::filtra_contrato_nome_maquina,
+
             controller::cria_conta,
             controller::realiza_login,
             controller::checa_email,
