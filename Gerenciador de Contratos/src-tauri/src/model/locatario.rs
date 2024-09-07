@@ -23,7 +23,9 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
     let resultado_insert =
          conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, nomelocatario, idsocio)
           VALUES (:idlocatario, :idendereco, :cnpj, :nomelocatario, :idsocio);", 
-         params! {"idlocatario" =>  locatario.idlocatario, "idendereco" => locatario.idendereco, "cnpj" => locatario.cnpj, "nomelocatario" => locatario.nomelocatario, "idsocio" =>locatario.idsocio}).await;
+         params! {"idlocatario" =>  locatario.idlocatario, "idendereco" => locatario.idendereco, 
+         "cnpj" => locatario.cnpj, "nomelocatario" => locatario.nomelocatario, 
+         "idsocio" =>locatario.idsocio}).await;
     match resultado_insert{
         Ok(_) => {
             println!("Locatario cadastrado");
