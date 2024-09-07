@@ -2,7 +2,7 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 
-function Home(){
+function BuscarContrato(){
   const [mensagem, setMensagem] = useState("");
   const [nomeMaquina, setNomeMaquina] = useState("");
   const [vetor, setVetor] = useState([]);
@@ -33,9 +33,9 @@ function Home(){
           onChange={(e) => setNomeMaquina(e.currentTarget.value)}
           placeholder="Buscar por nome da máquina"
         />
-        <p>{mensagem}</p>
         <button className="botoesHome" type="button" onClick={buscaContrato}>Buscar</button>
         <button className="botoesHome" type="button" onClick={home}>Voltar</button>
+        <p>{mensagem}</p>
         <div>
           <ul className="contract-list">
             {vetor.map((contrato, index) => (
@@ -62,4 +62,4 @@ function Home(){
   );
 }
 
-export default Home;
+export default BuscarContrato;

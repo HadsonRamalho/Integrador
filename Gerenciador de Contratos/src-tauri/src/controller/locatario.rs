@@ -1,13 +1,15 @@
-use mysql_async::{params, prelude::Queryable};
+use chrono::format;
+use mysql_async::{params, prelude::Queryable, Pool, ServerError};
 
 use crate::{controller, model::{self, locatario::Locatario}};
 
+use super::{cria_pool, locadora::formata_cnpj};
+
 #[tauri::command]
 pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String) -> Result<serde_json::Value, String>{
-    let cnpj = controller::locadora::formata_cnpj(&cnpj);
-    let cnpj = match cnpj{
+    let cnpj = match controller::locadora::formata_cnpj(&cnpj){
         Ok(_) => {
-            cnpj.unwrap()
+            cnpj
         },
         Err(e) => {
             return Err(e);
@@ -126,4 +128,57 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
         }
     }
     return Ok(());
+}
+
+#[tauri::command]
+pub async fn busca_nome_locatario(cnpjlocatario: String) -> Result<String, String>{
+    let cnpjlocatario = match formata_cnpj(&cnpjlocatario){
+        Ok(cnpjlocatario) => {
+            cnpjlocatario
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    };
+    let resultado_busca = _busca_nome_locatario(cnpjlocatario).await;
+    match resultado_busca {
+        Ok(cnpj) =>{
+            return Ok(cnpj);
+        },
+        Err(e) => {
+            return Err(e.to_string());
+        }
+    }
+}
+
+pub async fn _busca_nome_locatario(cnpjlocatario: String) ->Result<String, mysql_async::Error>{
+
+    let server_error = mysql_async::ServerError{
+        code: 1045, //Código de erro
+        message: "Erro: Não foi encontado um cliente com este CNPJ.".to_string(),
+        state: "28000".to_string()
+    };
+
+    let pool = match cria_pool().await{
+        Ok(pool) => {
+            pool
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    };
+    let mut conn = pool.get_conn().await?;
+
+    let resultado_busca: Option<String> = 
+        conn.exec_first("SELECT nomelocatario FROM locatario WHERE cnpj = :cnpjlocatario;", 
+        params! {"cnpjlocatario" => cnpjlocatario}).await?;
+
+    match resultado_busca{
+        Some(nomelocatario) => {
+            return Ok(nomelocatario);
+        }, 
+        None => {
+            return Err(mysql_async::Error::Server(server_error))
+        }
+    }
 }

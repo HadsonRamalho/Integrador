@@ -130,3 +130,8 @@ pub async fn _filtra_contrato_nome_maquina(nome_maquina: String, cnpj: String) -
 
     Ok(contratos)
 }
+
+#[tauri::command]
+pub async fn estrutura_contrato(idlocatario: String, idlocador: String, idmaquina: String, enderecoretirada: String){
+    
+}

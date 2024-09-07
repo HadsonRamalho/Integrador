@@ -48,7 +48,7 @@ pub async fn _filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maq
     };
     let mut conn = pool.get_conn().await?;
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = conn.exec_map(
-        "SELECT idmaquina, nomemaquina, numserie, valoraluguel FROM maquina WHERE nomemaquina = :nome_maquina ORDER BY valoraluguel DESC",
+        "SELECT idmaquina, nomemaquina, numserie, valoraluguel FROM maquina WHERE nomemaquina = :nome_maquina ORDER BY valoraluguel ".to_owned() + "DESC",
         params! { "nome_maquina" => nome_maquina },
         |(idmaquina, nomemaquina, numserie, valoraluguel)| model::maquina::Maquina {
             idmaquina,
