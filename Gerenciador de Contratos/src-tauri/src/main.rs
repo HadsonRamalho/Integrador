@@ -50,6 +50,7 @@ fn main() {
             controller::endereco::_salva_endereco,
 
             controller::contrato::filtra_contrato_nome_maquina,
+            controller::contrato::estrutura_contrato,
 
             controller::cria_conta,
             controller::realiza_login,

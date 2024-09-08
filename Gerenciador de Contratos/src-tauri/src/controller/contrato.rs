@@ -6,8 +6,11 @@ use mysql_async::prelude::*;
 use mysql_async::Row;
 use mysql_async::Value;
 
+use crate::model::contrato;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
+
+use super::gera_hash;
 
 #[tauri::command]
 pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
@@ -132,6 +135,66 @@ pub async fn _filtra_contrato_nome_maquina(nome_maquina: String, cnpj: String) -
 }
 
 #[tauri::command]
-pub async fn estrutura_contrato(idlocatario: String, idlocador: String, idmaquina: String, enderecoretirada: String){
-    
+pub async fn estrutura_contrato(
+        idlocatario: String, 
+        idlocador: String, 
+        idmaquina: String, 
+        enderecoretirada: String,
+        prazolocacao: String,
+        avisotransferencia: String,
+        cidadeforo: String,
+        datacontrato: String,
+        dataretirada: String,
+        valormensal: String,
+        vencimento: String,
+        multaatraso: String,
+        jurosatraso: String,
+        prazodevolucao: String) -> Result<model::contrato::Contrato, String>{
+
+    let idlocatario = idlocatario.trim().to_string();
+    let idlocador = idlocador.trim().to_string();
+    let idmaquina = idmaquina.trim().to_string();
+    let enderecoretirada = enderecoretirada.trim().to_string();
+
+    let prazolocacao = match prazolocacao.trim().parse(){
+        Ok(prazolocacao) => prazolocacao,
+        Err(e) => {
+            let erro = format!("Erro ao converter prazo de locação do contrato: {e}");
+            return Err(erro)
+        }
+    };
+
+    let valormensal = match valormensal.trim().parse(){
+        Ok(valormensal) => valormensal,
+        Err(e) => {
+            let erro = format!("Erro ao converter valor mensal do contrato: {e}");
+            return Err(erro)
+        }
+    };
+
+    let multaatraso = match multaatraso.trim().parse(){
+        Ok(multaatraso) => multaatraso,
+        Err(e) => {
+            let erro = format!("Erro ao converter multa de atraso do contrato: {e}");
+            return Err(erro)
+        }
+    };
+
+    let jurosatraso = match jurosatraso.trim().parse(){
+        Ok(jurosatraso) => jurosatraso,
+        Err(e) => {
+            let erro = format!("Erro ao converter juros de atraso do contrato: {e}");
+            return Err(erro)
+        }
+    };
+
+    let idcontrato = gera_hash(&enderecoretirada);
+
+    let contrato: model::contrato::Contrato = model::contrato::Contrato{
+       idcontrato, idlocador, idlocatario, idmaquina, enderecoretirada,
+       prazolocacao, avisotransferencia, cidadeforo, datacontrato, dataretirada,
+       valormensal, vencimento, multaatraso, jurosatraso, prazodevolucao
+    };
+
+    return Ok(contrato)
 }
