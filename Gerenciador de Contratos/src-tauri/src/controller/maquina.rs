@@ -47,9 +47,10 @@ pub async fn _filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maq
         }
     };
     let mut conn = pool.get_conn().await?;
+    let nome_like = format!("%{}%", nome_maquina);
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = conn.exec_map(
-        "SELECT idmaquina, nomemaquina, numserie, valoraluguel FROM maquina WHERE nomemaquina = :nome_maquina ORDER BY valoraluguel ".to_owned() + "DESC",
-        params! { "nome_maquina" => nome_maquina },
+        "SELECT idmaquina, nomemaquina, numserie, valoraluguel FROM maquina WHERE nomemaquina LIKE :nome_maquina ORDER BY valoraluguel ".to_owned() + "DESC",
+        params! { "nome_maquina" => nome_like },
         |(idmaquina, nomemaquina, numserie, valoraluguel)| model::maquina::Maquina {
             idmaquina,
             nomemaquina,
