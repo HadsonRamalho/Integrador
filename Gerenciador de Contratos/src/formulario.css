@@ -15,9 +15,9 @@ body {
 .conteudo{
     background-color: #f6f6f6;
     text-align: center ;
-    padding: 0px;
-    width: 600px;
-    height: 600px;
+    padding: 300px;
+    width: 300px;
+    height: 300px;
     border-radius: 5px;
     display: flex;
     justify-content: center;
@@ -32,16 +32,15 @@ h1, p{
     
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content:center;
     box-shadow: black;
-    align-items: center;
 }
 
 
 
 .input-box{
     display:flex;
-    flex-direction: column;
+    flex-direction:column;
 }
 
 label{
