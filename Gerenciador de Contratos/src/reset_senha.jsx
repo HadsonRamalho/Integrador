@@ -22,6 +22,11 @@ function ResetSenha(){
   const login = () => {
     navigate('/');
   };
+
+  const redefinicao_senha = () => {
+    navigate ('/redefinicao_senha');
+  };
+  
     return (
       <div id="boxreset">
         <div>
@@ -31,6 +36,7 @@ function ResetSenha(){
           onSubmit={(e) => {
             e.preventDefault();
             loginEmail();
+            redefinicao_senha();
           }}
         >
           <input required
