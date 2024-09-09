@@ -7,6 +7,7 @@ import DadosUsuario from './dados_usuario';
 import BuscarContrato from './buscar_contrato';
 import BuscarCliente from "./buscar_cliente";
 import BuscarMaquina from './buscar_maquina';
+import RelatorioContratos from './relatorio_contratos';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/buscar_contrato" element={<BuscarContrato/>} />
         <Route path="/buscar_cliente" element={<BuscarCliente/>} />
         <Route path="/buscar_maquina" element={<BuscarMaquina/>} />
+        <Route path="/relatorio_contratos" element={<RelatorioContratos/>} />
       </Routes>
     </Router>
   );

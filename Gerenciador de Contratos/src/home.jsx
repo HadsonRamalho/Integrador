@@ -28,6 +28,10 @@ function Home(){
     navigate('/buscar_maquina');
   };
 
+  const relatorio_contratos = () => {
+    navigate('/relatorio_contratos');
+  };
+    
     return (
       <div>
         
@@ -37,8 +41,12 @@ function Home(){
        <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
        <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente</button>
        <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
+       <div>
+       <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
        <button className="botoesHome" type="button" onClick={login}>Voltar</button>
        </div>
+       </div>
+       
         
         
       </div>
