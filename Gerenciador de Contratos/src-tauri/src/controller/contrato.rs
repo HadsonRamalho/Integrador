@@ -14,6 +14,10 @@ use super::gera_hash;
 
 #[tauri::command]
 pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
+    let idusuario = idusuario.trim();
+    if nome_maquina.trim().is_empty() || idusuario.is_empty(){
+        return Err("Erro: Um ou mais campos estão vazios".to_string())
+    }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -150,6 +154,15 @@ pub async fn estrutura_contrato(
         multaatraso: String,
         jurosatraso: String,
         prazodevolucao: String) -> Result<model::contrato::Contrato, String>{
+
+    if idlocatario.trim().is_empty() || idlocador.trim().is_empty()
+     || idlocatario.trim().is_empty() || idmaquina.trim().is_empty() || enderecoretirada.trim().is_empty() ||
+    prazolocacao.trim().is_empty() || avisotransferencia.trim().is_empty() || cidadeforo.trim().is_empty() || 
+    datacontrato.trim().is_empty() || dataretirada.trim().is_empty() ||
+    valormensal.trim().is_empty() || vencimento.trim().is_empty() || multaatraso.trim().is_empty()
+     || jurosatraso.trim().is_empty() || prazodevolucao.trim().is_empty(){
+        return Err("Erro: Um ou mais campos estão vazios.".to_string())
+    }
 
     let idlocatario = idlocatario.trim().to_string();
     let idlocador = idlocador.trim().to_string();
