@@ -27,12 +27,11 @@ use crate::controller;
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
 #[tauri::command]
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, String>{
-    let nomebanco = nomebanco.trim();
-    if nomebanco.len() < 4{
+    if nomebanco.trim().len() < 4{
         return Err("Erro: Nome do banco é inválido.".to_string());
     }
-    if idendereco.is_empty() || cnpj.is_empty() || numerocontabanco.is_empty()
-        || numeroagenciabanco.is_empty() || nomebanco.is_empty() || nomelocadora.is_empty(){
+    if idendereco.trim().is_empty() || cnpj.trim().is_empty() || numerocontabanco.trim().is_empty()
+        || numeroagenciabanco.trim().is_empty() || nomebanco.trim().is_empty() || nomelocadora.trim().is_empty(){
         return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
     let cnpj = match formata_cnpj(&cnpj){
@@ -105,6 +104,9 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String
 /// - `Err(String)`: Uma mensagem de erro se o CNPJ estiver vazio ou se ocorrer um erro durante a busca.
 #[tauri::command]
 pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
+    if cnpj.trim().is_empty(){
+        return Err("Erro: O campo CNPJ está vazio.".to_string());
+    }
     let cnpj = formata_cnpj(cnpj);
     let cnpj = match cnpj{
         Ok(_) => {
@@ -157,8 +159,10 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
         nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
         idsocio: idsocio
     };
-    if locadora.idendereco.is_empty() || locadora.cnpj.is_empty() || locadora.numerocontabanco.is_empty()
-        || locadora.numeroagenciabanco.is_empty() || locadora.nomebanco.is_empty() || locadora.nomelocadora.is_empty(){
+    if locadora.idendereco.trim().is_empty() || locadora.cnpj.trim().is_empty() || 
+        locadora.numerocontabanco.trim().is_empty()
+        || locadora.numeroagenciabanco.trim().is_empty() || 
+        locadora.nomebanco.trim().is_empty() || locadora.nomelocadora.trim().is_empty(){
             return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
     return Ok(locadora);
