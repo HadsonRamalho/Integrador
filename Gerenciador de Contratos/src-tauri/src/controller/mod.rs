@@ -181,3 +181,33 @@ pub async fn verifica_codigo_email(codigo_usuario: String, codigo_banco: String)
     }
     return Err("Erro: Codigo incorreto".to_string())
 }
+
+#[tauri::command]
+pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<String, String>{
+    let senha1 = senha1.trim();
+    let senha2 = senha2.trim();
+    if senha1.is_empty() || senha2.is_empty(){
+        return Err("Erro: Preencha todos os campos.".to_string())
+    }
+    if senha1 != senha2 {
+        return Err("Erro: As senhas são diferentes".to_string())
+    }
+    match usuario::valida_senha(senha1){
+        Ok(_) => {
+            
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    }
+    match usuario::valida_senha(senha2){
+        Ok(_) => {
+
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    }
+    return Ok("Senha alterada!".to_string())
+    
+}

@@ -9,9 +9,18 @@ function RedefinicaoSenha(){
 
     async function verifica(){
         const codigoBanco = localStorage.getItem('codigoReset');
-        const mensagem = await invoke("verifica_codigo_email", {codigoUsuario, codigoBanco});
-        console.log(mensagem);
+        try{
+            const mensagem = await invoke("verifica_codigo_email", {codigoUsuario, codigoBanco});
+            console.log(mensagem);
+        } catch(error){
+            console.log(error);
+        }
     }
+    const navigate = useNavigate();
+
+  const alteraSenha = () => {
+    navigate('/altera_senha');
+  };
    return(
 
     <div className="reset-password">
@@ -20,6 +29,7 @@ function RedefinicaoSenha(){
         <form action="post" onSubmit={async (e) => {
             e.preventDefault();
             await verifica();
+            alteraSenha();
           }}>
             <input required
 
