@@ -57,6 +57,7 @@ fn main() {
             controller::checa_email,
             controller::encontra_email_smtp,
             controller::gera_token,
+            controller::verifica_codigo_email,
         ]) // Registra funções do Tauri
         .run(tauri::generate_context!())
         .expect("erro ao tentar executar a aplicação Tauri");

@@ -4,13 +4,29 @@ import { useNavigate } from "react-router-dom";
 import './redefinicao_senha.css';
 
 function RedefinicaoSenha(){
+    console.log(localStorage.getItem('codigoReset'));
+    const [codigoUsuario, setcodigoUsuario] = useState("");
+
+    async function verifica(){
+        const codigoBanco = localStorage.getItem('codigoReset');
+        const mensagem = await invoke("verifica_codigo_email", {codigoUsuario, codigoBanco});
+        console.log(mensagem);
+    }
    return(
 
     <div className="reset-password">
         <h1>Redefinir Senha</h1>
 
-        <form action="post">
-            <input id="reset-password" type="text" name="reset-password" placeholder="Insira o código recebido" />
+        <form action="post" onSubmit={async (e) => {
+            e.preventDefault();
+            await verifica();
+          }}>
+            <input required
+
+          id="reset-password"
+          onChange={(e) => setcodigoUsuario(e.currentTarget.value)}
+          placeholder="Digite o código" 
+        />
             <button type="submit">Verificar Código </button>
         </form>
         <p className="info">Um código foi enviado para o seu e-mail. Verifique sua caixa de entrada e insira o código acima para redefinir sua senha.</p>
