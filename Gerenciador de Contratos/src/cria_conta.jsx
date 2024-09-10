@@ -44,9 +44,9 @@ function CriaConta(){
         </div>
         <form
           className="rowSignUp"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            criarConta();
+            await criarConta();
           }}
         >
           <input required

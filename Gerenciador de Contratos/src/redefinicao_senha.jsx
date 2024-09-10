@@ -12,6 +12,7 @@ function RedefinicaoSenha(){
         try{
             const mensagem = await invoke("verifica_codigo_email", {codigoUsuario, codigoBanco});
             console.log(mensagem);
+            alteraSenha();
         } catch(error){
             console.log(error);
         }
@@ -29,7 +30,7 @@ function RedefinicaoSenha(){
         <form action="post" onSubmit={async (e) => {
             e.preventDefault();
             await verifica();
-            alteraSenha();
+            
           }}>
             <input required
 

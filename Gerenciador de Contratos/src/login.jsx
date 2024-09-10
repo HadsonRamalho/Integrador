@@ -4,13 +4,13 @@ import Home from "./home";
 import { useNavigate } from 'react-router-dom';
 import CriaConta from "./cria_conta";
 
-//localStorage.removeItem('token');
+
 
 
 function Login(){
     const [mensagemEmail, setMensagemEmail] = useState("");
     const [email, setEmail] = useState("");
-  
+    localStorage.removeItem('token');
     const [mensagemSenha, setMensagemSenha] = useState("");
     const [senha, setSenha] = useState("");
   
@@ -126,6 +126,7 @@ function Login(){
         console.log('Token na verificação:', typeof token, token);
         const validatoken = await invoke("verifica_token", {email, token});
         console.log(validatoken);
+        home();
       } catch(error){
         console.log(error);
       }
@@ -176,7 +177,7 @@ function Login(){
             await checaEmail();
             await realizaLogin();          
             await verificaToken();
-            home();
+            
   
             //await buscaID();
             //const idendereco = await cadastraEndereco();

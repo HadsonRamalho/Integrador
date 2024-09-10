@@ -10,6 +10,9 @@ function AlteraSenha(){
     try{
       const codigo = await invoke("compara_novas_senhas", { senha1, senha2 });
       localStorage.setItem('codigoReset', codigo);
+      const email = localStorage.getItem('emailReset');
+      const novaSenha = senha1;
+      await invoke("atualiza_senha", {email, novaSenha});
       setMensagemAlteracao("Senha alterada!");
     } catch(error){
       setMensagemAlteracao(error);

@@ -11,6 +11,8 @@ function ResetSenha(){
     try{
       const codigo = await invoke("encontra_email_smtp", { email });
       localStorage.setItem('codigoReset', codigo);
+      localStorage.setItem('emailReset', email);
+      redefinicao_senha();
     } catch(error){
       setMensagemReset(error);
       console.log(error);
@@ -35,12 +37,10 @@ function ResetSenha(){
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await loginEmail();
-            redefinicao_senha();
+            await loginEmail();            
           }}
         >
-          <input required
-          
+          <input required          
             className="rowReset"
             onChange={(e) => setEmail(e.currentTarget.value)}
             placeholder="Seu email..." 

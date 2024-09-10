@@ -1,3 +1,5 @@
+use std::result;
+
 use crate::model;
 use crate::model::Usuario;
 use locadora::formata_cnpj;
@@ -208,6 +210,5 @@ pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<Strin
             return Err(e);
         }
     }
-    return Ok("Senha alterada!".to_string())
-
+    return Ok("Senhas válidas!".to_string())
 }

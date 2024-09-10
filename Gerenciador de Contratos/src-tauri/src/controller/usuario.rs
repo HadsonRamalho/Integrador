@@ -47,7 +47,7 @@ pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), S
 }
 
 #[tauri::command]
-pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>{
+pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<String, String>{
     match valida_senha(nova_senha){
         Ok(_) => {},
         Err(e) => {
@@ -65,20 +65,19 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<(), String>
     };
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;
     match resultado_busca{
-        Ok(o) => {
-            if o.is_empty() || !valida_email(&o) || o == ""{
-                return Ok(())
+        Ok(email) => {
+            if email.is_empty() || !valida_email(&email) || email == ""{
+                return Err("Erro: Email inválido".to_string())
             }
         },
-        Err(_e) => {
-            println!("{:?}", _e);
-            return Err("Erro ao atualizar a senha".to_string());
+        Err(e) => {
+            return Err(e.to_string());
         }
     }
     let resultado_atualizacao: Result<(), mysql_async::Error> = model::usuario::atualiza_senha(&pool, email, &nova_senha).await;
     match resultado_atualizacao{
         Ok(()) => {
-            return Ok(())
+            return Ok("Senha atualizada com sucesso!".to_string())
         },
         Err(_e) => {
             println!("Erro ao atualizar a senha");
