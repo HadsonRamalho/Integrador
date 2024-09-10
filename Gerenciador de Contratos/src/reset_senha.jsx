@@ -9,8 +9,8 @@ function ResetSenha(){
 
   async function loginEmail() {
     try{
-      await invoke("encontra_email_smtp", { email });
-      setMensagemReset("Email enviado");
+      const codigo = await invoke("encontra_email_smtp", { email });
+      localStorage.setItem('codigoReset', codigo);
     } catch(error){
       setMensagemReset(error);
       console.log(error);

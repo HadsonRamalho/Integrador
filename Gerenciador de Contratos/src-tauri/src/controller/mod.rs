@@ -132,7 +132,7 @@ pub fn valida_email(email: &str) -> bool {
 }
 
 #[tauri::command]
-pub async fn encontra_email_smtp(email: &str) -> Result<(), String> {
+pub async fn encontra_email_smtp(email: &str) -> Result<String, String> {
     if !valida_email(email) {
         return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
     }
@@ -147,8 +147,8 @@ pub async fn encontra_email_smtp(email: &str) -> Result<(), String> {
     let _consome_result = model::busca_email(&pool, email).await;
     match _consome_result {
         Ok(_) => {
-            model::envia_email(_consome_result.unwrap());
-            return Ok(());
+            let codigo = model::envia_email(_consome_result.unwrap());
+            return Ok(codigo);
         }
         _ => return Err("Erro: O e-mail não é válido ou pode não estar cadastrado.".to_string()),
     }
@@ -168,4 +168,46 @@ pub fn gera_hash(senha: &str) -> String {
 pub fn verifica_hash(senha_digitada: &str, hash: String) -> bool {
     let dec = unix::verify(senha_digitada, &hash);
     return dec;
+}
+
+#[tauri::command]
+pub async fn verifica_codigo_email(codigo_usuario: String, codigo_banco: String) -> Result<String, String> {
+    if codigo_usuario.trim().is_empty(){
+        return Err("Erro: Preencha o código.".to_string())
+    }
+    let eq = codigo_banco == codigo_usuario;
+    if eq{
+        return Ok("Codigo correto".to_string())
+    }
+    return Err("Erro: Codigo incorreto".to_string())
+}
+
+#[tauri::command]
+pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<String, String>{
+    let senha1 = senha1.trim();
+    let senha2 = senha2.trim();
+    if senha1.is_empty() || senha2.is_empty(){
+        return Err("Erro: Preencha todos os campos.".to_string())
+    }
+    if senha1 != senha2 {
+        return Err("Erro: As senhas são diferentes".to_string())
+    }
+    match usuario::valida_senha(senha1){
+        Ok(_) => {
+
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    }
+    match usuario::valida_senha(senha2){
+        Ok(_) => {
+
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    }
+    return Ok("Senha alterada!".to_string())
+
 }

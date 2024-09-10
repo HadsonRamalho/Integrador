@@ -205,7 +205,7 @@ pub async fn verifica_senha(
 /// - email: Endereço de e-mail para onde o e-mail será enviado.
 ///
 /// Esta função configura e utiliza o servidor SMTP do Gmail para enviar um e-mail de verificação com um código.
-pub fn envia_email(email: String) {
+pub fn envia_email(email: String) -> String{
     // carregando as credenciais SMTP
     dotenv().ok();
     let smtp_username =
@@ -290,4 +290,5 @@ pub fn envia_email(email: String) {
         Ok(_) => println!("E-mail enviado com sucesso!"),
         Err(err) => eprintln!("Erro ao enviar e-mail: {:?}", err),
     }
+    return id
 }
