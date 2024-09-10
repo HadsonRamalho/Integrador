@@ -33,9 +33,9 @@ function ResetSenha(){
         <p className="subtitulo">redefinir senha</p>
         </div>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            loginEmail();
+            await loginEmail();
             redefinicao_senha();
           }}
         >
