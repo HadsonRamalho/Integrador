@@ -128,11 +128,27 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
 }
 
 #[tauri::command]
-pub async fn busca_nome_locatario(nomelocatario: String) -> Result<Vec<Locatario>, String>{
+pub async fn busca_locatario_nome(nomelocatario: String) -> Result<Vec<Locatario>, String>{
     if nomelocatario.trim().is_empty(){
         return Err("Erro: O nome do locatário não pode estar vazio.".to_string())
     }
     let resultado_busca = model::locatario::busca_locatario_nome(&nomelocatario).await;
+    match resultado_busca {
+        Ok(locatario) =>{
+            return Ok(locatario);
+        },
+        Err(e) => {
+            return Err(e.to_string());
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn busca_locatario_cnpj(cnpj: String) -> Result<Locatario, String>{
+    if cnpj.trim().is_empty(){
+        return Err("Erro: O nome do locatário não pode estar vazio.".to_string())
+    }
+    let resultado_busca = model::locatario::busca_locatario_cnpj(&cnpj).await;
     match resultado_busca {
         Ok(locatario) =>{
             return Ok(locatario);

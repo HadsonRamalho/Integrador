@@ -9,7 +9,7 @@ function BuscarCliente(){
   const idusuario = localStorage.getItem('token');
   async function buscaCliente(){
     try{
-        const locatario = await invoke("busca_nome_locatario", {nomelocatario});
+        const locatario = await invoke("busca_locatario_nome", {nomelocatario});
         setVetor(locatario);
     } catch(error){
         console.log(error);

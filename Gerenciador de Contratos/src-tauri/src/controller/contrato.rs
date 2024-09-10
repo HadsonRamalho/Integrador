@@ -210,3 +210,8 @@ pub async fn estrutura_contrato(
 
     return Ok(contrato)
 }
+
+#[tauri::command]
+pub async fn cadastra_contrato(contrato: serde_json::Value){
+
+}
