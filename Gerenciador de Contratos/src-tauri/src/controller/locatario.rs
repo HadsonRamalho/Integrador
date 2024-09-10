@@ -1,9 +1,6 @@
-use chrono::format;
-use mysql_async::{params, prelude::Queryable, Pool, ServerError};
+use mysql_async::{params, prelude::Queryable};
 
 use crate::{controller, model::{self, locatario::Locatario}};
-
-use super::{cria_pool, locadora::formata_cnpj};
 
 #[tauri::command]
 pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String) -> Result<serde_json::Value, String>{

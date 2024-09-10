@@ -1,5 +1,5 @@
 use mysql_async::prelude::*;
-use crate::{controller, model};
+use crate::controller;
 use crate::controller::endereco::Endereco;
 
 /// Função para salvar um endereço no banco de dados.

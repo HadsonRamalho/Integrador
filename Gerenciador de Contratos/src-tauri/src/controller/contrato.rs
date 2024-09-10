@@ -6,7 +6,6 @@ use mysql_async::prelude::*;
 use mysql_async::Row;
 use mysql_async::Value;
 
-use crate::model::contrato;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
@@ -51,7 +50,7 @@ pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: Strin
 
 fn formata_data(value: Value) -> String {
     match value {
-        Value::Date(ano, mes, dia, hora, minuto, segundo, microsegundo) => {
+        Value::Date(ano, mes, dia, hora, minuto, segundo, _microsegundo) => {
             if hora == 0 && minuto == 0 && segundo == 0 {
                 // se o horário for 00:00:00, trata como Date
                 let data = NaiveDate::from_ymd_opt(ano as i32, mes as u32, dia as u32).unwrap()

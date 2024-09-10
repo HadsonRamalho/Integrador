@@ -46,7 +46,7 @@ pub async fn busca_locatario_nome(nome: &str) -> Result<Vec<Locatario>, mysql_as
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome);
     let locatario = conn.exec("SELECT * FROM locatario WHERE nomelocatario LIKE :nome", params!{"nome" => nome_like}).await;
-    match(locatario){
+    match locatario{
         Ok(locatario) =>{
             println!("Locatarios encontrados");
             return Ok(locatario);
@@ -62,7 +62,7 @@ pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Locatario, mysql_async::
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let locatario: Option<Locatario> = conn.exec_first("SELECT * FROM locatario WHERE cnpj = :cnpj", params!{"cnpj" => cnpj}).await?;
-    match(locatario){
+    match locatario {
         None => {
             return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound,
                 "CNPJ não encontrado"))));

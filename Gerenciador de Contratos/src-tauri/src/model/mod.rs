@@ -43,32 +43,12 @@ impl Usuario {
         Usuario { nome, email, senha }
     }
 
-    /// Obtém o nome do usuário.
-    ///
-    /// # Retornos
-    /// - &str: Retorna uma referência para o nome do usuário.
-    pub fn _get_nome(&mut self) -> &str {
-        return &self.nome;
-    }
-
-    /// Obtém o email do usuário.
-    ///
-    /// # Retornos
-    /// - &str: Retorna uma referência para o email do usuário.
-    pub fn _get_email(&mut self) -> &str {
-        return &self.email;
-    }
-
     /// Obtém a senha (hash) do usuário.
     ///
     /// # Retornos
     /// - &str: Retorna uma referência para a senha (hash) do usuário.
     pub fn get_hash(&mut self) -> &str {
         return &self.senha;
-    }
-
-    pub fn get_all(&mut self) -> (&String, &String, &String) {
-        return (&self.nome, &self.email, &self.senha);
     }
 
     pub async fn ja_cadastrado(&self) -> bool {

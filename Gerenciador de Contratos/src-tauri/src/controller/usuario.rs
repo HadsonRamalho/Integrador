@@ -5,7 +5,7 @@ use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
 use crate::controller;
-use super::{cria_pool, gera_hash, verifica_hash};
+use super::{gera_hash, verifica_hash};
 
 #[tauri::command]
 pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), String>{
