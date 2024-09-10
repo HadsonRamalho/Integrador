@@ -33,7 +33,7 @@ pub async fn atualiza_senha(pool: &Pool, email: &str, senha_nova: &str) -> Resul
     }
 }
 
-pub async fn busca_id_usuario(pool: &Pool, email: &str) -> Result<(String), mysql_async::Error>{
+pub async fn busca_id_usuario(pool: &Pool, email: &str) -> Result<String, mysql_async::Error>{
     let mut conn = pool.get_conn().await?;
     let id_usuario: Option<String> = conn.exec_first("SELECT UUID FROM usuarios WHERE email = :email;", 
     params!{"email" => email}).await?;

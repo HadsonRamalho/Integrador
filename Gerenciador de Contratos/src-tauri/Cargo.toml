@@ -1,7 +1,7 @@
 [package]
 name = "gerenciador-de-contratos"
 version = "0.0.0"
-description = "Um sistema feito para otimizar a criação e gerenciamento de contratos."
+description = "Gerenciador de Contratos"
 authors = ["Hadson Ramalho, ..."]
 edition = "2021"
 
@@ -19,6 +19,7 @@ mysql_async = "0.34.1"
 dotenv = "0.15.0"
 pwhash = "1"
 lettre = "0.11.7"
+chrono = "0.4.38"
 
 
 [features]

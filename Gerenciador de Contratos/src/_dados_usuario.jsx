@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import ResetSenha from "./reset_senha";
 import "./styles.css";
+import DadosUsuario from "./dados_usuario";
 
   ReactDOM.createRoot(document.getElementById("root")).render(
-      <ResetSenha />
+      <DadosUsuario />
   );  

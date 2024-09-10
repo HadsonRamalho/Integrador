@@ -1,0 +1,22 @@
+
+.reset-password{
+    background-color: #8797AF;
+    position: fixed;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    text-align: center; 
+    min-height: 300px; 
+    width: 500px; /*450pcx*/
+    line-height: 30px;
+    filter: blur(0 0 50px);
+    border-radius: 25px;
+
+}
+
+.info{
+    margin-right: 5px;
+    display: inline;
+    padding-bottom: 20px;
+
+}
