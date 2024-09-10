@@ -11,6 +11,7 @@ function BuscarCliente(){
     try{
         const locatario = await invoke("busca_locatario_nome", {nomelocatario});
         setVetor(locatario);
+        setMensagem("");
     } catch(error){
         console.log(error);
         setMensagem(error);
@@ -33,8 +34,10 @@ function BuscarCliente(){
           placeholder="Buscar pelo Nome do cliente"
         />
         <button className="botoesHome" type="button" onClick={buscaCliente}>Buscar</button>
-        <button className="botoesHome" type="button" onClick={home}>Voltar</button>        
+        <button className="botoesHome" type="button" onClick={home}>Voltar</button>     
+        
         <div>
+        {mensagem}   
           <ul className="contract-list">
             {vetor.map((locatario, index) => (
               <li key={index} className="contract-item">

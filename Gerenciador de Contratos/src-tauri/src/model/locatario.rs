@@ -42,30 +42,41 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
 }
 
 pub async fn busca_locatario_nome(nome: &str) -> Result<Vec<Locatario>, mysql_async::Error>{
+    let erro_locatario = mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound,
+        "Erro: Não foi encontrado um locatario com esse nome.")));
+
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome);
     let locatario = conn.exec("SELECT * FROM locatario WHERE nomelocatario LIKE :nome", params!{"nome" => nome_like}).await;
+    let locatarios;
     match locatario{
         Ok(locatario) =>{
             println!("Locatarios encontrados");
-            return Ok(locatario);
+            locatarios = locatario;
         }
         Err(e) => {
             println!("{:?}", e);
             return Err(e);
         }
     }
+    if !locatarios.is_empty(){
+        return Ok(locatarios)
+    }
+    return Err(erro_locatario)
 }
 
+
 pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Locatario, mysql_async::Error>{
+    let erro_locatario = mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound,
+        "Erro: Não foi encontrado um locatario com esse CNPJ.")));
+
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let locatario: Option<Locatario> = conn.exec_first("SELECT * FROM locatario WHERE cnpj = :cnpj", params!{"cnpj" => cnpj}).await?;
     match locatario {
         None => {
-            return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound,
-                "CNPJ não encontrado"))));
+            return Err(erro_locatario);
         }
         Some(locatario) => {
             return Ok(locatario);
