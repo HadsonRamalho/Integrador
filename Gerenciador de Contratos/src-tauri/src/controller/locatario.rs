@@ -131,19 +131,11 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
 }
 
 #[tauri::command]
-pub async fn busca_nome_locatario(cnpjlocatario: String) -> Result<String, String>{
-    let cnpjlocatario = match formata_cnpj(&cnpjlocatario){
-        Ok(cnpjlocatario) => {
-            cnpjlocatario
-        },
-        Err(e) => {
-            return Err(e)
-        }
-    };
-    let resultado_busca = _busca_nome_locatario(cnpjlocatario).await;
+pub async fn busca_nome_locatario(cnpjlocatario: String) -> Result<Vec<Locatario>, String>{
+    let resultado_busca = model::locatario::busca_locatario_nome(&cnpjlocatario).await;
     match resultado_busca {
-        Ok(cnpj) =>{
-            return Ok(cnpj);
+        Ok(locatario) =>{
+            return Ok(locatario);
         },
         Err(e) => {
             return Err(e.to_string());
