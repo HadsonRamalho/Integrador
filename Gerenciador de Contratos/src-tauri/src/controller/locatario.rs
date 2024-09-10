@@ -131,46 +131,17 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
 }
 
 #[tauri::command]
-pub async fn busca_nome_locatario(cnpjlocatario: String) -> Result<Vec<Locatario>, String>{
-    let resultado_busca = model::locatario::busca_locatario_nome(&cnpjlocatario).await;
+pub async fn busca_nome_locatario(nomelocatario: String) -> Result<Vec<Locatario>, String>{
+    if nomelocatario.trim().is_empty(){
+        return Err("Erro: O nome do locatário não pode estar vazio.".to_string())
+    }
+    let resultado_busca = model::locatario::busca_locatario_nome(&nomelocatario).await;
     match resultado_busca {
         Ok(locatario) =>{
             return Ok(locatario);
         },
         Err(e) => {
             return Err(e.to_string());
-        }
-    }
-}
-
-pub async fn _busca_nome_locatario(cnpjlocatario: String) ->Result<String, mysql_async::Error>{
-
-    let server_error = mysql_async::ServerError{
-        code: 1045, //Código de erro
-        message: "Erro: Não foi encontado um cliente com este CNPJ.".to_string(),
-        state: "28000".to_string()
-    };
-
-    let pool = match cria_pool().await{
-        Ok(pool) => {
-            pool
-        },
-        Err(e) => {
-            return Err(e);
-        }
-    };
-    let mut conn = pool.get_conn().await?;
-
-    let resultado_busca: Option<String> = 
-        conn.exec_first("SELECT nomelocatario FROM locatario WHERE cnpj = :cnpjlocatario;", 
-        params! {"cnpjlocatario" => cnpjlocatario}).await?;
-
-    match resultado_busca{
-        Some(nomelocatario) => {
-            return Ok(nomelocatario);
-        }, 
-        None => {
-            return Err(mysql_async::Error::Server(server_error))
         }
     }
 }

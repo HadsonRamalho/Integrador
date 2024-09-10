@@ -4,14 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 function BuscarCliente(){
   const [mensagem, setMensagem] = useState("");
-  const [cnpjlocatario, setCnpj] = useState("");
+  const [nomelocatario, setNomeLocatario] = useState("");
   const [vetor, setVetor] = useState([]);
   const idusuario = localStorage.getItem('token');
   async function buscaCliente(){
     try{
-        const nomelocatario = await invoke("busca_nome_locatario", {cnpjlocatario});
-        setMensagem(nomelocatario); 
-        setVetor(nomelocatario);
+        const locatario = await invoke("busca_nome_locatario", {nomelocatario});
+        setVetor(locatario);
     } catch(error){
         console.log(error);
         setMensagem(error);
@@ -30,20 +29,20 @@ function BuscarCliente(){
         <input
           required          
           className="rowReset"
-          onChange={(e) => setCnpj(e.currentTarget.value)}
-          placeholder="Buscar por CNPJ do cliente"
+          onChange={(e) => setNomeLocatario(e.currentTarget.value)}
+          placeholder="Buscar pelo Nome do cliente"
         />
         <button className="botoesHome" type="button" onClick={buscaCliente}>Buscar</button>
         <button className="botoesHome" type="button" onClick={home}>Voltar</button>        
         <div>
-          <ul>
+          <ul className="contract-list">
             {vetor.map((locatario, index) => (
-              <li key={index}>
-                <div >ID DO CLIENTE: {locatario.idlocatario}</div>
-                <div >
+              <li key={index} className="contract-item">
+                <div className="contract-header">ID DO CLIENTE: {locatario.idlocatario}</div>
+                <div className="contract-fields">
                   <strong>ID do Endereço:</strong> {locatario.idendereco} <br />
                   <strong>CNPJ:</strong> {locatario.cnpj} <br />
-                  <strong>Nome do Locatario: </strong> R$ {locatario.nomelocatario} <br />
+                  <strong>Nome do Locatario: </strong> {locatario.nomelocatario} <br />
                   <strong>ID do Socio:</strong> {locatario.idsocio} <br />
                 </div>
               </li>
