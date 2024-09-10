@@ -45,13 +45,17 @@ pub async fn busca_locatario_nome(nome: &str) -> Result<Vec<Locatario>, mysql_as
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome);
-    let locatario = conn.exec("SELECT * FROM locatario WHERE nomelocatario LIKE :nome", params!{"nome" => nome_like}).await?;
-    if locatario.is_empty(){
-        println!("Locatario vazio :(");
-        return Ok(locatario)
+    let locatario = conn.exec("SELECT * FROM locatario WHERE nomelocatario LIKE :nome", params!{"nome" => nome_like}).await;
+    match(locatario){
+        Ok(locatario) =>{
+            println!("Locatarios encontrados");
+            return Ok(locatario);
+        }
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(e);
+        }
     }
-    println!("Locatario ok");
-    return Ok(locatario)
 }
 
 pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Locatario, mysql_async::Error>{
