@@ -20,11 +20,11 @@ pub async fn cria_conta(
     cpf: &str,
     cnpj: &str
 ) -> Result<(), String> {
-    let email: String = email.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco do email
+    let email = email.trim(); // Removendo todos os espaços em branco do email
     if !valida_email(&email) {
         return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
     }
-    if senha1 != senha2 {
+    if senha1.trim() != senha2.trim() {
         return Err("As senhas são diferentes".to_string()); // Conta não criada
     }
     let cnpj = match formata_cnpj(cnpj){
@@ -56,7 +56,7 @@ pub async fn cria_conta(
 
 #[tauri::command]
 pub fn checa_email(email: &str) -> Result<(), String> {
-    if !valida_email(email) {
+    if !valida_email(email.trim()) {
         return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
     }
     return Ok(());
@@ -65,7 +65,7 @@ pub fn checa_email(email: &str) -> Result<(), String> {
 #[tauri::command]
 pub async fn verifica_senha(email: &str, senha: &str) -> Result<(), String> {
     // Retorna uma mensagem para o front e um booleano
-    let senha: String = senha.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco da senha
+    let senha = senha.trim();
     if senha.is_empty() {
         // Verificação caso o campo do front falhe
         return Err("A senha não pode estar vazia".to_string());
@@ -183,9 +183,7 @@ pub async fn verifica_codigo_email(codigo_usuario: String, codigo_banco: String)
 
 #[tauri::command]
 pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<String, String>{
-    let senha1 = senha1.trim();
-    let senha2 = senha2.trim();
-    if senha1.is_empty() || senha2.is_empty(){
+    if senha1.trim().is_empty() || senha2.trim().is_empty(){
         return Err("Erro: Preencha todos os campos.".to_string())
     }
     if senha1 != senha2 {
