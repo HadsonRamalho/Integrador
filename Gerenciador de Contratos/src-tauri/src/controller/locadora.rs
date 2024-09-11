@@ -174,8 +174,8 @@ pub fn formata_cnpj(cnpj: &str) -> Result<String, String>{
         .chars()
         .filter(|c: &char| c.is_digit(10))
         .collect();
-    if cnpj_numeros.len() < 14{
-        return Err("Erro: CNPJ muito curto ou inválido.".to_string())
+    if cnpj_numeros.len() != 14{
+        return Err("Erro: CNPJ de tamanho inválido.".to_string())
     }
     let mut cnpj: Vec<char> = cnpj_numeros;
     cnpj.insert(2, '.');
