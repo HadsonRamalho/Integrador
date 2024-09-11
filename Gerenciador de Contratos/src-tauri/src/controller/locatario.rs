@@ -44,16 +44,24 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
 
     let resultado_busca: Result<String, mysql_async::Error> = _busca_id_locatario(&locatario.cnpj).await;
 
-    match resultado_busca{
+    let id = match resultado_busca{
         Ok(resultado) => {
-            if resultado == ""{
-                let _resultado_cadastro = _cadastra_locatario(locatario).await;
-                return Ok("Locatario cadastrado com sucesso".to_string());
-            }
-            return Err("Erro: Locatario já cadastrado".to_string());
+            resultado
         },
         Err(erro) => {
             return Err(erro.to_string());
+        }
+    };
+    if !id.is_empty(){
+        return Err("Erro: Locatario já cadastrado".to_string());        
+    }
+    let resultado_cadastro = _cadastra_locatario(locatario).await;
+    match resultado_cadastro{
+        Ok(cadastro) => {
+            return Ok("Locatario cadastrado com sucesso".to_string());
+        },
+        Err(e) => {
+            return Err(e.to_string())
         }
     }
 }
