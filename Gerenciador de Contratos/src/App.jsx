@@ -11,6 +11,7 @@ import RelatorioContratos from './relatorio_contratos';
 import RedefinicaoSenha from './redefinicao_senha';
 import AlteraSenha from './altera_senha';
 import ApagarConta from './apagar_conta';
+import CadastrarLocatario from './cadastrar_locatario';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/redefinicao_senha" element = {<RedefinicaoSenha/>} />
         <Route path="/altera_senha" element = {<AlteraSenha/>} />
         <Route path="/apagar_conta" element = {<ApagarConta/>} />
+        <Route path="/cadastrar_locatario" element = {<CadastrarLocatario/>} />
       </Routes>
     </Router>
   );

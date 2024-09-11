@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
+import { useNavigate } from "react-router-dom";
 
 function AlteraSenha(){
   const [mensagemReset, setMensagemAlteracao] = useState("");
@@ -20,6 +21,12 @@ function AlteraSenha(){
     }
   }
 
+  const navigate = useNavigate();
+
+  const login = () => {
+    navigate('/');
+  };
+
     return (
       <div id="boxreset">
         <div>
@@ -38,6 +45,7 @@ function AlteraSenha(){
           placeholder="Senha nova" 
           type="password"
         />
+        <br></br>
         <input required
 
           className="rowReset"
@@ -48,6 +56,7 @@ function AlteraSenha(){
         <p className="mensagemLogin">{mensagemReset}</p>
         <button type="submit" >Enviar</button>
         <br />
+        <button onClick={login}>Voltar para o login</button>
         </form>
       </div>
     );

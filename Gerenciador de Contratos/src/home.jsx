@@ -31,24 +31,27 @@ function Home(){
   const relatorio_contratos = () => {
     navigate('/relatorio_contratos');
   };
+
+  const cadastrar_locatario = () => {
+    navigate('/cadastrar_locatario');
+  };
     
     return (
-      <div>
-        
+      <div>        
         <div id="boxHome">
-       <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>Criar novo contrato</button>
-       <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
-       <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
-       <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente</button>
-       <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
-       <div>
-       <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
-       <button className="botoesHome" type="button" onClick={login}>Voltar</button>
-       </div>
-       </div>
-       
-        
-        
+          <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>Criar novo contrato</button>
+          <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
+          <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
+          <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente</button>
+          <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
+          <div>
+            <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente</button>
+          </div>
+          <div>
+            <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
+          </div>
+          <button className="botoesHome" type="button" onClick={login}>Voltar</button>
+        </div> 
       </div>
     );
   }
