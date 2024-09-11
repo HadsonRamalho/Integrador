@@ -3,7 +3,7 @@ use mysql_async::{params, prelude::Queryable};
 use crate::{controller, model::{self, locatario::Locatario}};
 
 #[tauri::command]
-pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String) -> Result<serde_json::Value, String>{
+pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String, idsocio: String) -> Result<serde_json::Value, String>{
     let cnpj = match controller::locadora::formata_cnpj(&cnpj){
         Ok(_) => {
             cnpj
@@ -22,7 +22,8 @@ pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: Stri
         "idlocatario": id,
         "idendereco": idendereco,
         "cnpj": cnpj,
-        "nomelocatario": nomelocatario
+        "nomelocatario": nomelocatario,
+        "idoscio": idsocio
     });
     return Ok(locatario)
 }
@@ -31,7 +32,7 @@ pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: Stri
 pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, String>{
     let idlocatario: String = locatario["idlocatario"].as_str().unwrap_or("").to_string();
     let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
-    let idsocio = idlocatario.0.to_string();
+    let idsocio: String = locatario["idsocio"].as_str().unwrap_or("").to_string();
     let idlocatario: String = idlocatario.0.to_string();
     let locatario: model::locatario::Locatario = model::locatario::Locatario {
         idlocatario: idlocatario,

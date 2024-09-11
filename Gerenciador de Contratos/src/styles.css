@@ -327,8 +327,8 @@ button {
   left: 50%;
   transform: translate(-50%, -50%); 
   text-align: center; 
-  height: auto;  
-  width: calc(60vh); /*450pcx*/
+  height: calc(90vh);  
+  width: calc(80vh); /*450pcx*/
   line-height: 60px;
   filter: blur(0 0 50px);
   border-radius: 10px;
