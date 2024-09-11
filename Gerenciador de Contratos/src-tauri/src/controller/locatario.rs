@@ -84,18 +84,20 @@ pub async fn _busca_id_locatario(cnpj: &str) -> Result<String, mysql_async::Erro
     let mut conn = pool.get_conn().await?;
     let resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocatario FROM locatario WHERE cnpj = :cnpj",
         params!{"cnpj" => cnpj}).await;
-    match resultado_busca{
+    let id = match resultado_busca{
         Ok(id) => {
-            match id {
-                Some(id) => {
-                    return Ok(id);
-                }, None =>{
-                    return Ok("".to_string());
-                }
-            }
+            id
         },
         Err(e) => {
             return Err(e);
+        }
+    };
+    match id {
+        Some(id) => {
+            return Ok(id);
+        }, 
+        None =>{
+            return Ok("".to_string());
         }
     }
 }
