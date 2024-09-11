@@ -134,7 +134,7 @@ function Login(){
   
     async function realizaLogin(){
       try{
-        await invoke("realiza_login", {email, senha});
+        await invoke("verifica_senha", {email, senha});
         setMensagemSenha("Entrando na conta!");    
         const novo_token = await invoke("busca_id", {email}); //Preparando autenticação
         localStorage.setItem('token', novo_token); // Armazenando token

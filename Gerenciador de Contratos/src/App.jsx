@@ -10,6 +10,7 @@ import BuscarMaquina from './buscar_maquina';
 import RelatorioContratos from './relatorio_contratos';
 import RedefinicaoSenha from './redefinicao_senha';
 import AlteraSenha from './altera_senha';
+import ApagarConta from './apagar_conta';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/relatorio_contratos" element={<RelatorioContratos/>} />
         <Route path="/redefinicao_senha" element = {<RedefinicaoSenha/>} />
         <Route path="/altera_senha" element = {<AlteraSenha/>} />
+        <Route path="/apagar_conta" element = {<ApagarConta/>} />
       </Routes>
     </Router>
   );

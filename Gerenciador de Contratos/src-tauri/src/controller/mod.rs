@@ -1,5 +1,3 @@
-use std::result;
-
 use crate::model;
 use crate::model::Usuario;
 use locadora::formata_cnpj;
@@ -65,7 +63,7 @@ pub fn checa_email(email: &str) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn realiza_login(email: &str, senha: &str) -> Result<(), String> {
+pub async fn verifica_senha(email: &str, senha: &str) -> Result<(), String> {
     // Retorna uma mensagem para o front e um booleano
     let senha: String = senha.chars().filter(|c| !c.is_whitespace()).collect(); // Removendo todos os espaços em branco da senha
     if senha.is_empty() {
@@ -109,7 +107,6 @@ pub async fn cria_pool() -> Result<mysql_async::Pool, mysql_async::Error> {
 }
 
 pub async fn _verifica_senha(email: &str, senha: &str) -> Result<Usuario, String> {
-    // Parâmetros devem ser alterados conforme a necessidade posterior
     let pool = match cria_pool().await {
         Ok(pool) => {
             pool
@@ -120,7 +117,7 @@ pub async fn _verifica_senha(email: &str, senha: &str) -> Result<Usuario, String
     };
     let usuario_autenticado = model::verifica_senha(&pool, &email, senha)
         .await
-        .map_err(|e| format!("{}", e))?; // Usa o arquivo db.rs para salvar dados no banco
+        .map_err(|e| format!("{}", e))?;
     Ok(usuario_autenticado)
 }
 
