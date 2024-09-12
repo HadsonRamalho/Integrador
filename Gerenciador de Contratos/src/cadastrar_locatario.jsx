@@ -154,6 +154,7 @@ function CadastrarLocatario(){
             const idenderecoLocatario = await cadastraEnderecoLocatario();
             const idsocio = await cadastraSocioAdm(idendereco);
             await cadastraLocatario(idenderecoLocatario, idsocio);
+            setMensagem("Cliente cadastrado!");
           }}
         >
         <p>Cadastro do endereço do sócio administrador</p>
