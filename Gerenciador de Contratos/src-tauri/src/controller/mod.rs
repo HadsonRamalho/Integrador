@@ -189,7 +189,7 @@ pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<Strin
     if senha1 != senha2 {
         return Err("Erro: As senhas são diferentes".to_string())
     }
-    match usuario::valida_senha(senha1){
+    match usuario::valida_senha(&senha1){
         Ok(_) => {
 
         },
@@ -197,7 +197,7 @@ pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<Strin
             return Err(e);
         }
     }
-    match usuario::valida_senha(senha2){
+    match usuario::valida_senha(&senha2){
         Ok(_) => {
 
         },
