@@ -23,10 +23,11 @@ pub fn estrutura_socio_adm(idendereco: String, nomesocio: String, cpf: String, o
 }
 
 #[tauri::command]
-pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<(), String> {
+pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, String> {
     let idsocio: String = socioadm["idsocio"].as_str().unwrap_or("").to_string();
     let idsocio: (&str, &str) = idsocio.split_at(45 as usize);
     let idsocio: String = idsocio.0.to_string();
+    let idsocio_cpy = idsocio.clone();
     let socioadm: model::socioadm::SocioADM = model::socioadm::SocioADM {
         idsocio,
         idendereco: socioadm["idendereco"].as_str().unwrap_or("").to_string(),
@@ -51,7 +52,7 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<(), Strin
     match resultado_cadastro{
         Ok(_) =>{
             println!("Socio cadastrado");
-            return Ok(());
+            return Ok(idsocio_cpy);
         }, 
         Err(e) => {
             println!("Erro ao cadastrar o socio adm: {:?}", e); 

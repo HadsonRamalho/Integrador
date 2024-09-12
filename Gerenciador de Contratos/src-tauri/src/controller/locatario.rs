@@ -14,16 +14,12 @@ pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: Stri
     };
     let id: String = controller::gera_hash(&cnpj);
 
-    if nomelocatario.trim().len() < 5{
-        return Err("Erro: Nome do locatário é muito curto.".to_string());
-    }
-
     let locatario: serde_json::Value = serde_json::json!({
         "idlocatario": id,
         "idendereco": idendereco,
         "cnpj": cnpj,
         "nomelocatario": nomelocatario,
-        "idoscio": idsocio
+        "idsocio": idsocio
     });
     return Ok(locatario)
 }
@@ -122,8 +118,8 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, 
-         numerocontabanco, numeroagenciabanco, nomebanco, nomelocatario, idsocio)
-          VALUES (:idlocatario, :idendereco, :cnpj, :numerocontabanco, :numeroagenciabanco, :nomebanco, :nomelocatario, :idsocio);", 
+         nomelocatario, idsocio)
+          VALUES (:idlocatario, :idendereco, :cnpj, :nomelocatario, :idsocio);", 
          params! {"idlocatario" =>  locatario.idlocatario, "idendereco" => locatario.idendereco, "cnpj" => locatario.cnpj,
             "nomelocatario" => locatario.nomelocatario, "idsocio" => locatario.idsocio}).await;
     match resultado_insert{

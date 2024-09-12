@@ -10,18 +10,23 @@ function CadastrarLocatario(){
   const [logradouro, setLogradouro] = useState("");
   const [numeroendereco, setNumero] = useState("");
   const [complemento, setComplemento] = useState("");
-  const [endereco, setEndereco] = useState();
   const [uf, setUf] = useState("");
 
-  const [nomeSocio, setNomeSocio] = useState("");
+  const [cepLocatario, setCepLocatario] = useState("");
+  const [cidadeLocatario, setCidadeLocatario] = useState("");
+  const [logradouroLocatario, setLogradouroLocatario] = useState("");
+  const [numeroenderecoLocatario, setNumeroLocatario] = useState("");
+  const [complementoLocatario, setComplementoLocatario] = useState("");
+  const [ufLocatario, setUfLocatario] = useState("");
+
+  const [nomesocio, setNomeSocio] = useState("");
   const [cpf, setCpf] = useState("");
-  const [orgaoEmissor, setOrgaoEmissor] = useState("");
-  const [estadoCivil, setEstadoCivil] = useState("");
+  const [orgaoemissor, setOrgaoEmissor] = useState("");
+  const [estadocivil, setEstadoCivil] = useState("");
   const [nacionalidade, setNacionalidade] = useState("");
 
-  const [nomeLocatario, setNomeLocatario] = useState("");
+  const [nomelocatario, setNomeLocatario] = useState("");
   const [cnpj, setCnpj] = useState("");
-  
 
   async function estruturaEndereco(){
     try{
@@ -32,15 +37,57 @@ function CadastrarLocatario(){
         numeroendereco, 
         cidade, 
         uf
-    })
-    setEndereco(endereco);
+      })
+      return endereco;
     }
     catch(error){
       setMensagem(error);
       console.log(error);
     }
-    finally{
+  }
+
+  async function estruturaSocioAdm(idendereco){
+    try{
+      const socio = await invoke("estrutura_socio_adm", {idendereco, nomesocio, cpf, orgaoemissor, estadocivil, nacionalidade});
+      return socio;
+    } catch(error) {
+      setMensagem(error);
+      console.log(error);
+    }
+  }
+
+  async function cadastraSocioAdm(idendereco){
+    try{
+      const socioadm = await estruturaSocioAdm(idendereco);
+      const idsocio = await invoke("cadastra_socio_adm", {socioadm});
+      return idsocio;
+    } catch(error){
+      setMensagem(error);
+      console.log(error);
+    }
+  }
+
+  async function estruturaEnderecoLocatario(){
+    try{
+      const logradouro = logradouroLocatario;
+      const cep = cepLocatario;
+      const complemento = complementoLocatario;
+      const numeroendereco = numeroenderecoLocatario;
+      const cidade = cidadeLocatario;
+      const uf = ufLocatario;
+      const endereco = await invoke("estrutura_endereco", {
+        logradouro, 
+        cep, 
+        complemento, 
+        numeroendereco, 
+        cidade, 
+        uf
+      })
       return endereco;
+    }
+    catch(error){
+      setMensagem(error);
+      console.log(error);
     }
   }
 
@@ -49,6 +96,7 @@ function CadastrarLocatario(){
     try{
       const idendereco = await invoke("_salva_endereco", {endereco});
       localStorage.setItem('idendereco', idendereco);
+      console.log("Endereço do sócio foi cadastrado");
       return idendereco;
     } catch(error){
       console.log('Erro ao salvar o endereço: ', error);
@@ -56,24 +104,33 @@ function CadastrarLocatario(){
     }
   }
 
-  async function estruturaLocatario(idendereco){
-    const cnpj = "52123";
-    const nomelocatario = "SeuLocatario";
+  async function cadastraEnderecoLocatario(){
+    const endereco = await estruturaEnderecoLocatario();
     try{
+      const idendereco = await invoke("_salva_endereco", {endereco});
+      localStorage.setItem('idenderecolocatario', idendereco);
+      console.log("Endereço do locatario foi cadastrado");
+      return idendereco;
+    } catch(error){
+      console.log('Erro ao salvar o endereço do locatario: ', error);
+      setMensagem(error);
+    }
+  }
+
+  async function estruturaLocatario(idendereco, idsocio){
+    try{      
       const locatario = await invoke("estrutura_locatario", {idendereco, cnpj, nomelocatario, idsocio});
+      return locatario;
     }
     catch(error){
       console.log(error);
     }
-    finally{
-      return locatario;
-    }
   } 
 
-  async function cadastraLocatario(idendereco){
+  async function cadastraLocatario(idendereco, idsocio){
     try{
-      await estruturaLocatario(idendereco);
-
+      const locatario = await estruturaLocatario(idendereco, idsocio);
+      await invoke("cadastra_locatario", {locatario});
     } catch(error){
       console.log(error);
     }
@@ -93,7 +150,10 @@ function CadastrarLocatario(){
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await cadastraEndereco();
+            const idendereco = await cadastraEndereco();
+            const idenderecoLocatario = await cadastraEnderecoLocatario();
+            const idsocio = await cadastraSocioAdm(idendereco);
+            await cadastraLocatario(idenderecoLocatario, idsocio);
           }}
         >
         <p>Cadastro do endereço do sócio administrador</p>
@@ -162,6 +222,43 @@ function CadastrarLocatario(){
           className="rowReset"
           onChange={(e) => setNacionalidade(e.currentTarget.value)}
           placeholder="Nacionalidade do Sócio"
+        />
+        <br></br>
+        <p>Cadastro do endereço da empresa</p>
+        <input required
+          className="rowReset"
+          onChange={(e) => setCidadeLocatario(e.currentTarget.value)}
+          placeholder="Cidade" 
+        />
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setUfLocatario(e.currentTarget.value)}
+          placeholder="Estado"
+        />
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setCepLocatario(e.currentTarget.value)}
+          placeholder="CEP" 
+        />
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setLogradouroLocatario(e.currentTarget.value)}
+          placeholder="Logradouro" 
+        />
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setNumeroLocatario(e.currentTarget.value)}
+          placeholder="Numero do endereço"
+        />
+        <br></br>
+        <input
+          className="rowReset"
+          onChange={(e) => setComplementoLocatario(e.currentTarget.value)}
+          placeholder="Complemento do endereço"
         />
         <br></br>
         <p>Cadastro da empresa</p>

@@ -23,7 +23,7 @@ pub async fn _cadastra_socio_adm(socioadm: SocioADM) -> Result<(), mysql_async::
     };
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
-         conn.exec_drop("INSERT INTO socioadm (idsocio, idendereco, cpf, orgaoemissor, estadocivil, nacionalidade, nomesocio)
+         conn.exec_drop("INSERT INTO socioadm (idsocio, idendereco, cpf, orgaoemissor, estadocivil, nacionalidade, nome)
           VALUES (:idsocio, :idendereco, :cpf, :orgaoemissor, :estadocivil, :nacionalidade, :nomesocio);", 
          params! {"idsocio" =>  socioadm.idsocio, "idendereco" => socioadm.idendereco, "cpf" => socioadm.cpf, "orgaoemissor" => socioadm.orgaoemissor,
             "estadocivil" => socioadm.estadocivil, "nacionalidade" => socioadm.nacionalidade, "nomesocio" => socioadm.nomesocio}).await;
