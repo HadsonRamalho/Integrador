@@ -153,7 +153,7 @@ pub async fn busca_locatario_nome(nomelocatario: String) -> Result<Vec<Locatario
 #[tauri::command]
 pub async fn busca_locatario_cnpj(cnpj: String) -> Result<Locatario, String>{
     if cnpj.trim().is_empty(){
-        return Err("Erro: O nome do locatário não pode estar vazio.".to_string())
+        return Err("Erro: O cnpj do locatário não pode estar vazio.".to_string())
     }
     let resultado_busca = model::locatario::busca_locatario_cnpj(&cnpj).await;
     match resultado_busca {

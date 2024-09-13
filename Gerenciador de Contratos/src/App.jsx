@@ -12,6 +12,7 @@ import RedefinicaoSenha from './redefinicao_senha';
 import AlteraSenha from './altera_senha';
 import ApagarConta from './apagar_conta';
 import CadastrarLocatario from './cadastrar_locatario';
+import CPDF from './pdf_call';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/altera_senha" element = {<AlteraSenha/>} />
         <Route path="/apagar_conta" element = {<ApagarConta/>} />
         <Route path="/cadastrar_locatario" element = {<CadastrarLocatario/>} />
+        <Route path="/cpdf" element = {<CPDF/>} />
       </Routes>
     </Router>
   );

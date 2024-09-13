@@ -36,6 +36,10 @@ function Home(){
     navigate('/cadastrar_locatario');
   };
     
+  const cpdf = () => {
+    navigate('/cpdf');
+  };
+
     return (
       <div>        
         <div id="boxHome">
@@ -49,6 +53,7 @@ function Home(){
           </div>
           <div>
             <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
+            <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (pdf-lib)</button>
           </div>
           <button className="botoesHome" type="button" onClick={login}>Voltar</button>
         </div> 
