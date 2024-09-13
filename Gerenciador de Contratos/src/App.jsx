@@ -12,7 +12,7 @@ import RedefinicaoSenha from './redefinicao_senha';
 import AlteraSenha from './altera_senha';
 import ApagarConta from './apagar_conta';
 import CadastrarLocatario from './cadastrar_locatario';
-import CPDF from './pdf_call';
+import CPDF from './pdf_gen';
 
 function App() {
   return (

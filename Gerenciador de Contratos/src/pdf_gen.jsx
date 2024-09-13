@@ -1,12 +1,32 @@
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import React from 'react';
+import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 
-// Função que retorna o texto do contrato formatado
-function gerarTextoContrato({ nomeLocadora, cnpjLocadora, nomeAdmLocadora, cpfAdmLocadora, enderecoAdmLocadora, enderecoLocadora, cidadeLocadora, estadoLocadora }) {
-  return `LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em
-${enderecoLocadora}, ${cidadeLocadora}/${estadoLocadora}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, [nacionalidade], [estado civil], inscrito no CPF sob nº ${cpfAdmLocadora} SSP-MG, com endereço em
-${enderecoAdmLocadora}, Cidade/MG.
+// Estilos
+const styles = StyleSheet.create({
+  page: { flexDirection: 'column', padding: 30 },
+  section: { margin: 10, padding: 10, fontSize: 12 },
+  title: { fontSize: 18, textAlign: 'center', marginBottom: 10 },
+  table: { display: 'table', width: 'auto', margin: '10px 0' },
+  tableRow: { flexDirection: 'row' },
+  tableCol: { width: '25%', borderStyle: 'solid', borderWidth: 1, borderColor: '#000' },
+  tableCell: { margin: 5, fontSize: 10 },
+});
+
+// Função para gerar o contrato com base nos parâmetros fornecidos
+const gerarTextoContratoP1 = ({
+  nomeLocadora,
+  cnpjLocadora,
+  nomeAdmLocadora,
+  cpfAdmLocadora,
+  enderecoAdmLocadora,
+  enderecoLocadora,
+  cidadeLocadora,
+  estadoLocadora
+}) => {
+  return `
+    LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em
+${enderecoLocadora}, ${cidadeLocadora}/${estadoLocadora}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, [nacionalidade], [estado civil], inscrito no CPF sob nº ${cpfAdmLocadora} SSP-MG, com endereço em ${enderecoAdmLocadora}, Cidade/MG.
 LOCATÁRIA: XXXXXXXXXX, inscrita no CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx, Cidade/MG, representada por XXXXXXXXXXXX, brasileiro, casado, CPF XXXXXXXXX, residente na Rua XXXXXXXXXXX, Cidade/MG.
-
 DEFINIÇÕES
 
 As expressões grafadas em “caixa alta” neste contrato têm os seguintes significados:
@@ -19,12 +39,13 @@ PARTE: Refere-se à LOCADORA ou LOCATÁRIA isoladamente.
 CLÁUSULA PRIMEIRA – DO OBJETO, PRAZO E USO
 
 1.1 A LOCADORA cede à LOCATÁRIA os seguintes bens móveis listados abaixo, declarando-se legítima possuidora e/ou proprietária:
-ITEM | QUANT. | EQUIPAMENTO                         | NÚMEROS DE SÉRIE     | LOCAÇÃO
----- | ------ | ----------------------------------- | -------------------- | ------------
-1    | 2      | Máquina a Fio Diamantado 75C        | MF75S20046, MF75D20022 | R$ 30.000,00
-2    | 1      | Gerador Diesel trifásico de 230     | GS2300019            |
+  `;
+};
 
-1.1.1 Os equipamentos serão retirados no endereço especificado pela LOCADORA.
+const gerarTextoContratoP2 = ({
+}) => {
+  return `
+    1.1.1 Os equipamentos serão retirados no endereço especificado pela LOCADORA.
 
 1.1.2 Os equipamentos serão utilizados pela LOCATÁRIA no endereço mencionado, com todas as responsabilidades sobre seu uso, guarda e depósito.
 
@@ -139,99 +160,91 @@ CLÁUSULA DÉCIMA QUINTA – DISPOSIÇÕES GERAIS
 15.3 Contrato irrevogável e irretratável; alterações requerem aditivo por escrito.
 
 15.4 Contrato é título executivo extrajudicial.
-`;
-}
+  `;
+};
 
-async function CreatePdf(params) {
-  try {
-    // Gera o texto do contrato
-    const textoContrato = gerarTextoContrato(params);
 
-    // Criação do documento PDF
-    const pdfDoc = await PDFDocument.create();
-    const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-    const timesRomanBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
-    let page = pdfDoc.addPage();
-    const { width, height } = page.getSize();
-    const fontSize = 12;
+// Documento PDF com o contrato gerado
+const MeuDocumento = (params) => {
+  const contratoTexto = gerarTextoContratoP1(params);
+  const contratoTexto2 = gerarTextoContratoP2(params);
+  
+  return (
+    <Document>
+      <Page style={styles.page}>
+        <Text style={styles.title}>CONTRATO DE LOCAÇÃO DE BENS MÓVEIS</Text>
+        <View style={styles.section}>
+          {contratoTexto.split('\n').map((line, index) => (
+            <Text key={index}>{line.trim()}</Text>
+          ))}
+        </View>
+        {/* Exemplo de uma cláusula específica */}
 
-    page.drawText("CONTRATO DE LOCAÇÃO DE BENS MÓVEIS", {
-      x: 150,
-      y: height - 4 * fontSize,
-      size: fontSize + 2, // Tamanho maior para o título
-      font: timesRomanBoldFont, // Usa a fonte em negrito
-      color: rgb(0.22, 0.158, 0.105),
-    });
+        
+        {/* Tabela */}
+      <View style={styles.table}>
+        <View style={styles.tableRow}>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>ITEM</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>QUANT.</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>EQUIPAMENTO</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>NÚMEROS DE SÉRIE</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>LOCAÇÃO</Text>
+          </View>
+        </View>
 
-    // Adiciona o texto do contrato
-    const lines = textoContrato.split('\n');
-    let currentY = height - 7 * fontSize; // Começa a partir da sétima linha após o título
-    const maxLineWidth = width - 100; // Largura máxima para o texto antes de quebrar linha
+        <View style={styles.tableRow}>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>1</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>2</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>Máquina a Fio Diamantado 75C</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>MF75S20046, MF75D20022</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>R$ 30.000,00</Text>
+          </View>
+        </View>
+      </View>
 
-    for (let line of lines) {
-      // Verifica se a linha ultrapassa a largura máxima
-      while (timesRomanFont.widthOfTextAtSize(line, fontSize) > maxLineWidth) {
-        // Encontra onde quebrar a linha para ajustar ao máximo de largura
-        let splitIndex = 0;
-        for (let i = 0; i < line.length; i++) {
-          if (timesRomanFont.widthOfTextAtSize(line.substring(0, i), fontSize) > maxLineWidth) {
-            splitIndex = i - 1;
-            break;
-          }
-        }
+      <View style={styles.section}>
+          {contratoTexto2.split('\n').map((line, index) => (
+            <Text key={index}>{line.trim()}</Text>
+          ))}
+        </View>
+        
+      </Page>
+    </Document>
+  );
+};
 
-        // Divide a linha em duas partes: uma que cabe na linha e a restante
-        const line1 = line.substring(0, splitIndex);
-        const line2 = line.substring(splitIndex);
+// Componente para exibir o PDF na tela
+const CPDF = () => (
+  <PDFViewer width="100%" height="600px">
+    <MeuDocumento 
+      nomeLocadora="Locadora ABC"
+      cnpjLocadora="00.000.000/0001-00"
+      nomeAdmLocadora="José da Silva"
+      cpfAdmLocadora="000.000.000-00"
+      enderecoAdmLocadora="Rua A, 123"
+      enderecoLocadora="Av. B, 456"
+      cidadeLocadora="São Paulo"
+      estadoLocadora="SP"
+    />
+  </PDFViewer>
+);
 
-        // Adiciona a primeira parte na página atual
-        page.drawText(line1.trim(), {
-          x: 50,
-          y: currentY,
-          size: fontSize,
-          font: timesRomanFont, // Usa a fonte padrão (sem negrito)
-          color: rgb(0.22, 0.158, 0.105),
-        });
-
-        // Move para a próxima linha
-        currentY -= fontSize + 2;
-
-        // Verifica se precisa começar uma nova página
-        if (currentY < 0) {
-          page = pdfDoc.addPage();
-          currentY = height - 4 * fontSize;
-        }
-
-        // A linha restante se torna a próxima linha a ser processada
-        line = line2;
-      }
-
-      // Adiciona a linha final na página atual
-      page.drawText(line.trim(), {
-        x: 50,
-        y: currentY,
-        size: fontSize,
-        font: timesRomanFont, // Usa a fonte padrão (sem negrito)
-        color: rgb(0.22, 0.158, 0.105),
-      });
-
-      // Move para a próxima linha
-      currentY -= fontSize + 2;
-
-      // Verifica se precisa começar uma nova página
-      if (currentY < 0) {
-        page = pdfDoc.addPage();
-        currentY = height - 4 * fontSize;
-      }
-    }
-    
-    // Salva o PDF
-    const pdfBytes = await pdfDoc.save();
-    return pdfBytes;
-  } catch (error) {
-    console.error("Erro ao criar o PDF:", error);
-    throw error;
-  }
-}
-
-export default CreatePdf;
+export default CPDF;

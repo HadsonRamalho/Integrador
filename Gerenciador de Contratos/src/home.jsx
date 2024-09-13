@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
+
+
 
 
 function Home(){
@@ -40,9 +43,25 @@ function Home(){
     navigate('/cpdf');
   };
 
+  const checkNotificationPermission = async () => {
+    let permissionGranted = await isPermissionGranted();
+    if (!permissionGranted) {
+      const permission = await requestPermission();
+      permissionGranted = permission === 'granted';
+    }
+    if (permissionGranted) {
+      sendNotification({ title: 'TAURI', body: 'Tauri is awesome!' });
+    }
+  };
+
     return (
       <div>        
         <div id="boxHome">
+          <button type="button" onClick={async () => {
+            console.log(await requestPermission()); // Log the permission status
+            checkNotificationPermission 
+          }
+          }> not</button>
           <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>Criar novo contrato</button>
           <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
           <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
@@ -53,7 +72,7 @@ function Home(){
           </div>
           <div>
             <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
-            <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (pdf-lib)</button>
+            <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (react-pdf/renderer)</button>
           </div>
           <button className="botoesHome" type="button" onClick={login}>Voltar</button>
         </div> 
