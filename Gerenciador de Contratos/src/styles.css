@@ -295,7 +295,7 @@ button {
   top:50%;
   left: 50%;
   transform: translate(-50%, -50%); 
-  text-align: center; 
+  text-align: center;
   height: calc(90vh);  
   width: calc(100vh); /*450pcx*/
   line-height: 60px;

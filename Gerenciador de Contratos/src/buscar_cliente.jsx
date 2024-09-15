@@ -41,12 +41,10 @@ function BuscarCliente(){
           <ul className="contract-list">
             {vetor.map((locatario, index) => (
               <li key={index} className="contract-item">
-                <div className="contract-header">ID DO CLIENTE: {locatario.idlocatario}</div>
+                <div className="contract-header">NOME DO CLIENTE: {locatario.nomelocatario}</div>
                 <div className="contract-fields">
-                  <strong>ID do Endereço:</strong> {locatario.idendereco} <br />
                   <strong>CNPJ:</strong> {locatario.cnpj} <br />
                   <strong>Nome do Locatario: </strong> {locatario.nomelocatario} <br />
-                  <strong>ID do Socio:</strong> {locatario.idsocio} <br />
                 </div>
               </li>
             ))}

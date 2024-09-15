@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 });
 
 // Função para gerar o contrato com base nos parâmetros fornecidos
-const gerarTextoContratoP1 = ({
+export const gerarTextoContratoP1 = ({
   nomeLocadora,
   cnpjLocadora,
   nomeAdmLocadora,

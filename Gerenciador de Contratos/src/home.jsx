@@ -43,36 +43,35 @@ function Home(){
     navigate('/cpdf');
   };
 
-  const checkNotificationPermission = async () => {
-    let permissionGranted = await isPermissionGranted();
-    if (!permissionGranted) {
-      const permission = await requestPermission();
-      permissionGranted = permission === 'granted';
-    }
-    if (permissionGranted) {
-      sendNotification({ title: 'TAURI', body: 'Tauri is awesome!' });
-    }
+  const cadastrar_contrato = () => {
+    navigate('/cadastrar_contrato');
   };
 
     return (
       <div>        
-        <div id="boxHome">
-          <button type="button" onClick={async () => {
-            console.log(await requestPermission()); // Log the permission status
-            checkNotificationPermission 
-          }
-          }> not</button>
+        <div id="boxHome">          
           <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>Criar novo contrato</button>
           <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
           <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
-          <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente</button>
+          <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente (Locatario)</button>
           <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
           <div>
-            <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente</button>
+            <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente (Locatario)</button>
+            <button className="botoesHome" type="button" onClick={cadastrar_contrato}>Cadastrar contrato</button>
           </div>
           <div>
             <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
             <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (react-pdf/renderer)</button>
+          </div>
+          <div>
+          <button type="button" onClick={async () => {
+            const permissao = await requestPermission();
+            if (isPermissionGranted) {
+              sendNotification({ title: 'Titulo :)', body: 'Texto da notificação :D' });
+            }
+          }}>
+            Enviar notificação
+          </button>
           </div>
           <button className="botoesHome" type="button" onClick={login}>Voltar</button>
         </div> 
