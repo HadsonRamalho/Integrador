@@ -14,7 +14,7 @@ use super::gera_hash;
 #[tauri::command]
 pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
     let idusuario = idusuario.trim();
-    if nome_maquina.trim().is_empty() || idusuario.trim().is_empty(){
+    if nome_maquina.trim().is_empty() || idusuario.is_empty(){
         return Err("Erro: Um ou mais campos estão vazios".to_string())
     }
     let pool = match controller::cria_pool().await {

@@ -53,7 +53,7 @@ fn main() {
             controller::contrato::estrutura_contrato,
 
             controller::cria_conta,
-            controller::realiza_login,
+            controller::verifica_senha,
             controller::checa_email,
             controller::encontra_email_smtp,
             controller::gera_token,
