@@ -10,7 +10,8 @@ pub struct Locadora{
     pub numeroagenciabanco: String,
     pub nomebanco: String,
     pub nomelocadora: String,
-    pub idsocio: String
+    pub idsocio: String,
+    pub locadorastatus: i16
 }
 
 pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::Error>{
