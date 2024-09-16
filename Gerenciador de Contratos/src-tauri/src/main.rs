@@ -43,6 +43,7 @@ fn main() {
 
             controller::maquina::estrutura_maquina,
             controller::maquina::filtra_maquina_nome,
+            controller::maquina::cadastra_maquina,
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm,            

@@ -10,14 +10,43 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
     if nomemaquina.is_empty() || valoraluguel.is_empty() || numserie.is_empty(){
         return Err("Erro: Um ou mais campos estão vazios.".to_string())
     }
-    let idmaquina = gera_hash(&numserie);
-    let valoraluguel:f32 = valoraluguel.trim().parse().unwrap();
+    let idmaquina = gera_hash(&numserie).split_at(45 as usize).0.to_string();
     let maquina: serde_json::Value = serde_json::json!({
+        "nomemaquina": nomemaquina,
         "idmaquina": idmaquina,
         "valoraluguel": valoraluguel,
         "numserie": numserie,
     });
     return Ok(maquina);
+}
+
+#[tauri::command]
+pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, String>{
+    let valoraluguel:f32 = match maquina["valoraluguel"].as_str().unwrap_or("").to_string().trim().parse(){
+        Ok(valoraluguel) => {valoraluguel},
+        Err(e) => {
+            return Err(e.to_string());
+        }
+    };
+
+    let maquina: model::maquina::Maquina = model::maquina::Maquina {
+        nomemaquina: maquina["nomemaquina"].as_str().unwrap_or("").to_string(),
+        numserie: maquina["numserie"].as_str().unwrap_or("").to_string(),
+        valoraluguel,
+        idmaquina: maquina["idmaquina"].as_str().unwrap_or("").to_string(),
+        disponibilidade: 1,
+        maquinastatus: 1
+    };
+
+    let resultado_cadastro = model::maquina::cadastrar_maquina(maquina).await;
+    match resultado_cadastro{
+        Ok(idmaquina) => {
+            return Ok(idmaquina);
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
 }
 
 #[tauri::command]
@@ -49,7 +78,7 @@ pub async fn _filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maq
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome_maquina);
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = conn.exec_map(
-        "SELECT idmaquina, nomemaquina, numserie, valoraluguel FROM maquina WHERE nomemaquina LIKE :nome_maquina ORDER BY valoraluguel ".to_owned() + "DESC",
+        "SELECT idmaquina, nomemaquina, numserie, valoraluguel, maquinastatus, disponibilidade FROM maquina WHERE nomemaquina LIKE :nome_maquina ORDER BY valoraluguel ".to_owned() + "DESC",
         params! { "nome_maquina" => nome_like },
         |(idmaquina, nomemaquina, numserie, valoraluguel, maquinastatus, disponibilidade)| model::maquina::Maquina {
             idmaquina,

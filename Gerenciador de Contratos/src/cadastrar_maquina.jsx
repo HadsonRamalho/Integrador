@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
-import CadastrarLocatario from "./cadastrar_locatario";
 
 function CadastrarMaquina(){
   const [mensagem, setMensagem] = useState("");
@@ -12,7 +11,8 @@ function CadastrarMaquina(){
 
   async function estruturaMaquina(){
     try{      
-      const maquina = await invoke("estrutura_maquina", {nomemaquina, numserie, valoraluguel});
+      const maquina = await invoke("estrutura_maquina", {nomemaquina, valoraluguel, numserie});
+      console.log("Valor aluguel: ", maquina.valoraluguel);
       return maquina;
     }
     catch(error){
@@ -39,7 +39,7 @@ function CadastrarMaquina(){
   };
 
     return (
-      <div id="boxCadastroCliente">
+      <div id="boxCadastroMaquina">
         <div>
         <p className="subtitulo">cadastrar maquina</p>
         </div>

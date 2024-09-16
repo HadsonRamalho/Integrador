@@ -20,7 +20,8 @@ pub struct Maquina {
     pub maquinastatus: i16
 }
 
-pub async fn cadastrar_maquina(maquina: Maquina) -> Result<(), mysql_async::Error> {
+pub async fn cadastrar_maquina(maquina: Maquina) -> Result<String, mysql_async::Error> {
+    let idmaquina = maquina.idmaquina.clone();
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -33,22 +34,22 @@ pub async fn cadastrar_maquina(maquina: Maquina) -> Result<(), mysql_async::Erro
     let resultado_insert = conn
         .exec_drop(
             "INSERT INTO maquina 
-            VALUES(:idmaquina, :nomemaquina, :numserie, :valoraluguel, :maquinastatus);",
+            VALUES(:idmaquina, :nomemaquina, :numserie, :valoraluguel, :disponibilidade, :maquinastatus);",
             params! {"idmaquina" => maquina.idmaquina, "nomemaquina" => maquina.nomemaquina,
-            "numserie" => maquina.numserie, "valoraluguel" => maquina.valoraluguel, "maquinastatus" => maquina.maquinastatus},
+            "numserie" => maquina.numserie, "valoraluguel" => maquina.valoraluguel, "maquinastatus" => maquina.maquinastatus,
+            "disponibilidade" => maquina.disponibilidade},
         )
         .await;
     match resultado_insert {
         Ok(_) => {
-            println!("Maquina cadastrada")
+            println!("Maquina cadastrada");
+            return Ok(idmaquina)
         }
         Err(e) => {
             println!("{:?}", e);
             return Err(e);
         }
     }
-
-    return Ok(());
 }
 
 pub async fn buscar_maquina_nome(nome: &str) -> Result<Vec<Maquina>, mysql_async::Error>{
