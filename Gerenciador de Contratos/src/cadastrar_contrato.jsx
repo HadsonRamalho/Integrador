@@ -19,7 +19,7 @@ function CadastrarContrato(){
   const [complemento, setComplementoLocadora] = useState("");
   const [uf, setUfLocadora] = useState("");
 
-  const [nomesocio, setNomeAdmLocadora] = useState("");
+  const [nome, setNomeAdmLocadora] = useState("");
   const [cpf, setCpfAdmLocadora] = useState("")
   const [orgaoemissor, setOrgaoEmissor] = useState("")
   const [estadocivil, setEstadoCivil] = useState("")
@@ -31,6 +31,10 @@ function CadastrarContrato(){
   const [numeroenderecoadm, setNumeroAdm] = useState("");
   const [complementoadm, setComplementoAdm] = useState("");
   const [ufadm, setUfAdm] = useState("");
+
+  const [nomemaquina, setNomeMaquina] = useState("");
+  const [valoraluguel, setValorAluguel] = useState("");
+  const [numserie, setNumSerie] = useState("");
 
   async function estruturaEnderecoAdm(){
     try{
@@ -103,7 +107,7 @@ function CadastrarContrato(){
 
   async function estruturaSocioAdm(idendereco){
     try{
-      const socio = await invoke("estrutura_socio_adm", {idendereco, nomesocio, cpf, orgaoemissor, estadocivil, nacionalidade});
+      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade});
       return socio;
     } catch(error) {
       setMensagem(error);
@@ -144,6 +148,29 @@ function CadastrarContrato(){
     }
   }
 
+  async function estruturaMaquina(){
+    try{      
+      const maquina = await invoke("estrutura_maquina", {nomemaquina, valoraluguel, numserie});
+      console.log("Valor aluguel: ", maquina.valoraluguel);
+      return maquina;
+    }
+    catch(error){
+      console.log(error);
+      setMensagem(error);
+    }
+  } 
+
+  async function cadastraMaquina(){
+    try{
+      const maquina = await estruturaMaquina();
+      await invoke("cadastra_maquina", {maquina});
+      setMensagem("Máquina cadastrada!");
+    } catch(error){
+      console.log(error);
+      setMensagem(error);
+    }
+  }
+
   const navigate = useNavigate();
 
   const home = () => {
@@ -162,6 +189,7 @@ function CadastrarContrato(){
             const idsocio = await cadastraSocioAdm(idenderecoadm);
             const idenderecolocadora = await cadastraEnderecoLocadora();
             const idlocadora = await cadastraLocadora(idenderecolocadora, idsocio);
+            const idmaquina = await cadastraMaquina();
             setMensagem("Contrato cadastrado!");
           }}
         >
@@ -300,6 +328,28 @@ function CadastrarContrato(){
           onChange={(e) => setComplementoAdm(e.currentTarget.value)}
           placeholder="Complemento do sócio adm." 
         />
+        <br></br>
+        <p>Informações da máquina</p>
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setNomeMaquina(e.currentTarget.value)}
+          placeholder="Nome da máquina" 
+        />
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setNumSerie(e.currentTarget.value)}
+          placeholder="Número de série" 
+        />
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setValorAluguel(e.currentTarget.value)}
+          placeholder="Valor aprox. do aluguel" 
+        />
+        <br></br>
+        <p>Informações do contrato</p>
         <br></br>
         <p className="mensagemLogin">{mensagem}</p>
         <button type="submit" >Concluir cadastro</button>

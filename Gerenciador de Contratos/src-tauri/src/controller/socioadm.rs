@@ -1,9 +1,9 @@
 use crate::{controller, model::{self, socioadm::_cadastra_socio_adm}};
 
 #[tauri::command]
-pub fn estrutura_socio_adm(idendereco: String, nomesocio: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, String>{
+pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, String>{
     
-    if idendereco.is_empty() || nomesocio.is_empty() || cpf.is_empty()
+    if idendereco.is_empty() || nome.is_empty() || cpf.is_empty()
         || orgaoemissor.is_empty() || estadocivil.is_empty() 
         || nacionalidade.is_empty(){
             return Err("Erro: Um ou mais campos estão vazios.".to_string());
@@ -13,7 +13,7 @@ pub fn estrutura_socio_adm(idendereco: String, nomesocio: String, cpf: String, o
     let socioadm: serde_json::Value = serde_json::json!({
         "idsocio": id,
         "idendereco": idendereco,
-        "nomesocio": nomesocio,
+        "nome": nome,
         "cpf": cpf,
         "orgaoemissor": orgaoemissor,
         "estadocivil": estadocivil,
@@ -31,7 +31,7 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
     let socioadm: model::socioadm::SocioADM = model::socioadm::SocioADM {
         idsocio,
         idendereco: socioadm["idendereco"].as_str().unwrap_or("").to_string(),
-        nomesocio: socioadm["nomesocio"].as_str().unwrap_or("").to_string(),
+        nome: socioadm["nome"].as_str().unwrap_or("").to_string(),
         cpf: socioadm["cpf"].as_str().unwrap_or("").to_string(),
         orgaoemissor: socioadm["orgaoemissor"]
             .as_str()
