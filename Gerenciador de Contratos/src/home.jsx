@@ -47,6 +47,10 @@ function Home(){
     navigate('/cadastrar_contrato');
   };
 
+  const cadastrar_maquina = () => {
+    navigate('/cadastrar_maquina');
+  };
+
     return (
       <div>        
         <div id="boxHome">          
@@ -58,6 +62,7 @@ function Home(){
           <div>
             <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente (Locatario)</button>
             <button className="botoesHome" type="button" onClick={cadastrar_contrato}>Cadastrar contrato</button>
+            <button className="botoesHome" type="button" onClick={cadastrar_maquina}>Cadastrar maquina</button>
           </div>
           <div>
             <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
@@ -70,7 +75,7 @@ function Home(){
               sendNotification({ title: 'Titulo :)', body: 'Texto da notificação :D' });
             }
           }}>
-            Enviar notificação
+            Testar notificação
           </button>
           </div>
           <button className="botoesHome" type="button" onClick={login}>Voltar</button>
