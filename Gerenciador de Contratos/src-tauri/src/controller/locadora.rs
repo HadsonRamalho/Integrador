@@ -26,7 +26,7 @@ use crate::controller;
 /// - Result<serde_json::Value, bool>: Retorna `Ok(locadora)` contendo os dados da locadora em formato JSON.
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
 #[tauri::command]
-pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String) -> Result<serde_json::Value, String>{
+pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String, idsocio: String) -> Result<serde_json::Value, String>{
     if nomebanco.trim().len() < 4{
         return Err("Erro: Nome do banco é inválido.".to_string());
     }
@@ -50,7 +50,8 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
         "numerocontabanco": numerocontabanco,
         "numeroagenciabanco": numeroagenciabanco,
         "nomebanco": nomebanco,
-        "nomelocadora": nomelocadora
+        "nomelocadora": nomelocadora,
+        "idsocio": idsocio
     });
     return Ok(locadora);
 }
@@ -79,7 +80,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String
 
     match resultado_busca {
         Ok(resultado) => {
-            if resultado == "" {
+            if resultado.is_empty() {
                 let _resultado_cadastro = _cadastra_locadora(locadora).await;
                 return Ok(());
             }
@@ -141,7 +142,6 @@ pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
 fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
-    let idsocio: String = idlocadora.0.to_string();
     let idlocadora: String = idlocadora.0.to_string();
     let locadora: model::locadora::Locadora = model::locadora::Locadora {
         idlocadora: idlocadora,
@@ -157,12 +157,13 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
             .to_string(),
         nomebanco: locadora["nomebanco"].as_str().unwrap_or("").to_string(),
         nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
-        idsocio: idsocio
+        idsocio: locadora["idsocio"].as_str().unwrap_or("").to_string(),
+        locadorastatus: 1
     };
     if locadora.idendereco.trim().is_empty() || locadora.cnpj.trim().is_empty() || 
         locadora.numerocontabanco.trim().is_empty()
         || locadora.numeroagenciabanco.trim().is_empty() || 
-        locadora.nomebanco.trim().is_empty() || locadora.nomelocadora.trim().is_empty(){
+        locadora.nomebanco.trim().is_empty() || locadora.nomelocadora.trim().is_empty() || locadora.idsocio.trim().is_empty(){
             return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
     return Ok(locadora);

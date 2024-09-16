@@ -30,12 +30,14 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
     let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
     let idsocio: String = locatario["idsocio"].as_str().unwrap_or("").to_string();
     let idlocatario: String = idlocatario.0.to_string();
+    let idlocatario_cpy = idlocatario.clone();
     let locatario: model::locatario::Locatario = model::locatario::Locatario {
         idlocatario: idlocatario,
         idendereco: locatario["idendereco"].as_str().unwrap_or("").to_string(),
         cnpj: locatario["cnpj"].as_str().unwrap_or("").to_string(),
         nomelocatario: locatario["nomelocatario"].as_str().unwrap_or("").to_string(),
-        idsocio: idsocio
+        idsocio: idsocio,
+        locatariostatus: 1
     };
 
     let resultado_busca: Result<String, mysql_async::Error> = _busca_id_locatario(&locatario.cnpj).await;
@@ -53,8 +55,8 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
     }
     let resultado_cadastro = _cadastra_locatario(locatario).await;
     match resultado_cadastro{
-        Ok(cadastro) => {
-            return Ok("Locatario cadastrado com sucesso".to_string());
+        Ok(_) => {
+            return Ok(idlocatario_cpy.to_string());
         },
         Err(e) => {
             return Err(e.to_string())
