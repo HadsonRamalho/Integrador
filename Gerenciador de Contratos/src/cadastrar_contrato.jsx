@@ -36,6 +36,10 @@ function CadastrarContrato(){
   const [valoraluguel, setValorAluguel] = useState("");
   const [numserie, setNumSerie] = useState("");
 
+  const [prazolocacao, setPrazoLocacao] = useState("");
+  const [dataretirada, setDataRetirada] = useState("");
+  const [valormensal, setValorMensal] = useState("");
+
   async function estruturaEnderecoAdm(){
     try{
       const logradouro = logradouroadm;
@@ -190,7 +194,6 @@ function CadastrarContrato(){
             const idenderecolocadora = await cadastraEnderecoLocadora();
             const idlocadora = await cadastraLocadora(idenderecolocadora, idsocio);
             const idmaquina = await cadastraMaquina();
-            setMensagem("Contrato cadastrado!");
           }}
         >
         <p>Cadastro da locadora</p>
@@ -330,7 +333,6 @@ function CadastrarContrato(){
         />
         <br></br>
         <p>Informações da máquina</p>
-        <br></br>
         <input required
           className="rowReset"
           onChange={(e) => setNomeMaquina(e.currentTarget.value)}
@@ -350,6 +352,23 @@ function CadastrarContrato(){
         />
         <br></br>
         <p>Informações do contrato</p>
+        <input required
+          className="rowReset"
+          onChange={(e) => setPrazoLocacao(e.currentTarget.value)}
+          placeholder="Prazo de locação (em meses)" 
+        />
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setDataRetirada(e.currentTarget.value)}
+          placeholder="Data de retirada da máquina" 
+        />
+        <br></br>
+        <input required
+          className="rowReset"
+          onChange={(e) => setValorMensal(e.currentTarget.value)}
+          placeholder="Valor mensal do contrato" 
+        />
         <br></br>
         <p className="mensagemLogin">{mensagem}</p>
         <button type="submit" >Concluir cadastro</button>
