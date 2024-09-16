@@ -2,6 +2,8 @@ use mysql_async::{params, prelude::Queryable};
 
 use crate::{controller, model::{self, locatario::Locatario}};
 
+use super::locadora::formata_cnpj;
+
 #[tauri::command]
 pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String, idsocio: String) -> Result<serde_json::Value, String>{
     let cnpj = match controller::locadora::formata_cnpj(&cnpj){
@@ -153,10 +155,16 @@ pub async fn busca_locatario_nome(nomelocatario: String) -> Result<Vec<Locatario
 }
 
 #[tauri::command]
-pub async fn busca_locatario_cnpj(cnpj: String) -> Result<Locatario, String>{
+pub async fn busca_locatario_cnpj(cnpj: String) -> Result<Vec<Locatario>, String>{
     if cnpj.trim().is_empty(){
         return Err("Erro: O cnpj do locatário não pode estar vazio.".to_string())
     }
+    let cnpj = match formata_cnpj(&cnpj){
+        Ok(cnpj) => {cnpj},
+        Err(e) => {
+            return Err(e);
+        }
+    };
     let resultado_busca = model::locatario::busca_locatario_cnpj(&cnpj).await;
     match resultado_busca {
         Ok(locatario) =>{

@@ -76,19 +76,38 @@ pub async fn busca_locatario_nome(nome: &str) -> Result<Vec<Locatario>, mysql_as
 }
 
 
-pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Locatario, mysql_async::Error>{
-    let erro_locatario = mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound,
-        "Erro: Não foi encontrado um locatario com esse CNPJ.")));
-
-    let pool = controller::cria_pool().await.map_err(MeuErro::ConexaoBanco)?;
-    let mut conn = pool.get_conn().await.map_err(MeuErro::ConexaoBanco)?;
-    let locatario: Option<Locatario> = conn.exec_first("SELECT * FROM locatario WHERE cnpj = :cnpj", params!{"cnpj" => cnpj}).await.map_err(MeuErro::ConexaoBanco)?;
-    match locatario {
-        None => {
-            return Err(MeuErro::CnpjNaoEncontrado);
+pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Vec<Locatario>, mysql_async::Error>{
+    let pool = match controller::cria_pool().await{
+        Ok(pool) => {pool},
+        Err(e) => {
+            let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
+            return Err(err)
         }
+    };
+    let mut conn = 
+    match pool.get_conn().await{
+        Ok(conn) => {conn},
+        Err(e) => {
+            let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
+            return Err(err)
+        }
+    };
+    let locatario: Option<Locatario> =    
+    match conn.exec_first("SELECT * FROM locatario WHERE cnpj = :cnpj", params!{"cnpj" => cnpj}).await {
+        Ok(locatario) => {locatario},
+        Err(e) => {
+            let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
+            return Err(err);
+        }
+    };
+    let mut loc: Vec<Locatario> = vec![];
+    match locatario{
+        None => {
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::CnpjNaoEncontrado)))
+        },
         Some(locatario) => {
-            return Ok(locatario);
+            loc.push(locatario);
+            return Ok(loc)
         }
     }
 }

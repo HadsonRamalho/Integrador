@@ -35,6 +35,7 @@ fn main() {
             controller::locatario::cadastra_locatario,
             controller::locatario::estrutura_locatario,
             controller::locatario::busca_locatario_nome,
+            controller::locatario::busca_locatario_cnpj,
 
             controller::locadora::cadastra_locadora,
             controller::locadora::busca_id_locadora,
