@@ -157,7 +157,8 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
             .to_string(),
         nomebanco: locadora["nomebanco"].as_str().unwrap_or("").to_string(),
         nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
-        idsocio: locadora["idsocio"].as_str().unwrap_or("").to_string()
+        idsocio: locadora["idsocio"].as_str().unwrap_or("").to_string(),
+        locadorastatus: 1
     };
     if locadora.idendereco.trim().is_empty() || locadora.cnpj.trim().is_empty() || 
         locadora.numerocontabanco.trim().is_empty()

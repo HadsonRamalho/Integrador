@@ -42,6 +42,7 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
             .unwrap_or("")
             .to_string(),
         nacionalidade: socioadm["nacionalidade"].as_str().unwrap_or("").to_string(),
+        sociostatus: 1
     };
 
     // buscar o id do socio para não permitir entrada duplicada
