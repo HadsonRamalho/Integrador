@@ -124,6 +124,7 @@ function CadastrarLocatario(){
     }
     catch(error){
       console.log(error);
+      setMensagem(error);
     }
   } 
 
@@ -133,6 +134,7 @@ function CadastrarLocatario(){
       await invoke("cadastra_locatario", {locatario});
     } catch(error){
       console.log(error);
+      setMensagem(error);
     }
   }
 

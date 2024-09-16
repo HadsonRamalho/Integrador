@@ -151,7 +151,7 @@ function CadastrarContrato(){
   };
 
     return (
-      <div id="boxCadastroCliente">
+      <div id="boxCadastroContrato">
         <div>
         <p className="subtitulo">cadastrar contrato</p>
         </div>

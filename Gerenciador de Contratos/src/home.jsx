@@ -47,22 +47,29 @@ function Home(){
     navigate('/cadastrar_contrato');
   };
 
+  const cadastrar_maquina = () => {
+    navigate('/cadastrar_maquina');
+  };
+
     return (
       <div>        
-        <div id="boxHome">          
-          <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>Criar novo contrato</button>
-          <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
+        <div id="boxHome">
+          <p>Contrato</p>
+          <button className="botoesHome" type="button" onClick={cadastrar_contrato}>Cadastrar contrato</button>
           <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
-          <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente (Locatario)</button>
+          <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
+          <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (react-pdf/renderer)</button>
+          <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>HTML (Obsoleto)</button>
+
+          <p>Máquina</p>
+          <button className="botoesHome" type="button" onClick={cadastrar_maquina}>Cadastrar maquina</button>
           <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
-          <div>
-            <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente (Locatario)</button>
-            <button className="botoesHome" type="button" onClick={cadastrar_contrato}>Cadastrar contrato</button>
-          </div>
-          <div>
-            <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
-            <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (react-pdf/renderer)</button>
-          </div>
+          <p>Cliente (Locatário)</p>
+          <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente (Locatario)</button>
+          <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente (Locatario)</button>
+          <p>Usuário</p>
+          <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
+          <p>Outros</p>
           <div>
           <button type="button" onClick={async () => {
             const permissao = await requestPermission();
@@ -70,9 +77,10 @@ function Home(){
               sendNotification({ title: 'Titulo :)', body: 'Texto da notificação :D' });
             }
           }}>
-            Enviar notificação
+            Testar notificação
           </button>
           </div>
+          <br/>
           <button className="botoesHome" type="button" onClick={login}>Voltar</button>
         </div> 
       </div>
