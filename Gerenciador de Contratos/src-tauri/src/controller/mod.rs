@@ -207,3 +207,8 @@ pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<Strin
     }
     return Ok("Senhas válidas!".to_string())
 }
+
+pub fn converte_virgula_ponto(entrada: &str) -> String{
+    let entrada = entrada.replace(",", ".");
+    return entrada
+}
