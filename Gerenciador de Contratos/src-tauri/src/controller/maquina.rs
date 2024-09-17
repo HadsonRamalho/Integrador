@@ -24,7 +24,6 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
 pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, String>{
     
     let valoraluguel = maquina["valoraluguel"].as_str().unwrap_or("").to_string();
-    let valoraluguel = controller::converte_virgula_ponto(&valoraluguel);
     let valoraluguel: f32 = match valoraluguel.trim().parse(){
         Ok(valoraluguel) => {
             valoraluguel

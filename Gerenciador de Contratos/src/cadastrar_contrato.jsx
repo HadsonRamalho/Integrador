@@ -96,7 +96,7 @@ function CadastrarContrato(){
     }
     catch(error){
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | estruturaEnderecoAdm] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaEnderecoAdm] : ", error);
     }
   }
 
@@ -110,7 +110,7 @@ function CadastrarContrato(){
       return idendereco;
     } catch(error){
       console.log('Erro ao salvar o endereço: ', error);
-      setMensagem("[Buscar_contrato.jsx | cadastraEnderecoAdm] : ", error);
+      setMensagem("[Cadastrar_contrato.jsx | cadastraEnderecoAdm] : ", error);
     }
   }
 
@@ -134,7 +134,7 @@ function CadastrarContrato(){
     }
     catch(error){
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | estruturaEnderecoAdmLocatario] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaEnderecoAdmLocatario] : ", error);
     }
   }
 
@@ -147,7 +147,7 @@ function CadastrarContrato(){
       setMensagem("Endereço do adm foi cadastrado");
       return idendereco;
     } catch(error){
-      console.log("[Buscar_contrato.jsx | cadastraEnderecoAdmLocatario] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraEnderecoAdmLocatario] : ", error);
       setMensagem(error);
     }
   }
@@ -172,7 +172,7 @@ function CadastrarContrato(){
     }
     catch(error){
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | estruturaEnderecoLocatario] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaEnderecoLocatario] : ", error);
     }
   }
 
@@ -184,7 +184,7 @@ function CadastrarContrato(){
       console.log("Endereço do locatario foi cadastrado");
       return idendereco;
     } catch(error){
-      console.log("[Buscar_contrato.jsx | cadastraEnderecoLocatario] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraEnderecoLocatario] : ", error);
       setMensagem(error);
     }
   }
@@ -203,7 +203,7 @@ function CadastrarContrato(){
     }
     catch(error){
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | estruturaEnderecoLocadora] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaEnderecoLocadora] : ", error);
     }
   }
 
@@ -212,10 +212,10 @@ function CadastrarContrato(){
     try{
       const idendereco = await invoke("_salva_endereco", {endereco});
       localStorage.setItem('idendereco', idendereco);
-      console.log("Endereço do sócio foi cadastrado");
+      console.log("Endereço da locadora foi cadastrado");
       return idendereco;
     } catch(error){
-      console.log("[Buscar_contrato.jsx | cadastraEnderecoLocadora] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraEnderecoLocadora] : ", error);
       setMensagem(error);
     }
   }
@@ -226,7 +226,7 @@ function CadastrarContrato(){
       return socio;
     } catch(error) {
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | estruturaSocioAdm] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaSocioAdm] : ", error);
     }
   }
 
@@ -237,7 +237,7 @@ function CadastrarContrato(){
       return idsocio;
     } catch(error){
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | cadastraSocioAdm] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraSocioAdm] : ", error);
     }
   }
 
@@ -252,7 +252,7 @@ function CadastrarContrato(){
       return socio;
     } catch(error) {
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | estruturaSocioAdmLocatario] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaSocioAdmLocatario] : ", error);
     }
   }
 
@@ -263,7 +263,7 @@ function CadastrarContrato(){
       return idsocio;
     } catch(error){
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | cadastraSocioAdmLocatario] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraSocioAdmLocatario] : ", error);
     }
   }
 
@@ -274,7 +274,7 @@ function CadastrarContrato(){
       return locadora;
     } catch(error) {
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | estruturaLocadora] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaLocadora] : ", error);
     }
   }
 
@@ -285,7 +285,7 @@ function CadastrarContrato(){
       return idlocador;
     } catch(error){
       setMensagem(error);
-      console.log("[Buscar_contrato.jsx | cadastraLocadora] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraLocadora] : ", error);
     }
   }
 
@@ -296,7 +296,7 @@ function CadastrarContrato(){
       return maquina;
     }
     catch(error){
-      console.log("[Buscar_contrato.jsx | estruturaMaquina] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaMaquina] : ", error);
       setMensagem(error);
     }
   } 
@@ -309,7 +309,7 @@ function CadastrarContrato(){
       setMensagem("Máquina cadastrada!");
       return idmaquina;
     } catch(error){
-      console.log("[Buscar_contrato.jsx | cadastraMaquina] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraMaquina] : ", error);
       setMensagem(error);
     }
   }
@@ -321,7 +321,7 @@ function CadastrarContrato(){
       return locatario;
     }
     catch(error){
-      console.log("[Buscar_contrato.jsx | estruturaLocatario] : ", error);
+      console.log("[Cadastrar_contrato.jsx | estruturaLocatario] : ", error);
       setMensagem(error);
     }
   } 
@@ -332,7 +332,7 @@ function CadastrarContrato(){
       const idlocatario = await invoke("cadastra_locatario", {locatario});
       return idlocatario;
     } catch(error){
-      console.log("[Buscar_contrato.jsx | cadastraLocatario] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraLocatario] : ", error);
       setMensagem(error);
     }
   }
@@ -352,7 +352,7 @@ function CadastrarContrato(){
         cidadeforo, datacontrato});
         return contrato;
       } catch(error){
-        console.log("[Buscar_contrato.jsx | estruturaContrato] : ", error);
+        console.log("[Cadastrar_contrato.jsx | estruturaContrato] : ", error);
       }
   }
 
@@ -372,7 +372,7 @@ function CadastrarContrato(){
       await invoke("cadastra_contrato", {contrato});
       setMensagem("Contrato cadastrado!");
     } catch(error){
-      console.log("[Buscar_contrato.jsx | cadastraContrato] : ", error);
+      console.log("[Cadastrar_contrato.jsx | cadastraContrato] : ", error);
     }
   } 
 
