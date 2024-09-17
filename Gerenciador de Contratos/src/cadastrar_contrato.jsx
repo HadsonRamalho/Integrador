@@ -17,7 +17,11 @@ function CadastrarContrato(){
   const [logradouro, setLogradouroLocadora] = useState("");
   const [numeroendereco, setNumeroLocadora] = useState("");
   const [complemento, setComplementoLocadora] = useState("");
-  const [uf, setUfLocadora] = useState("");
+  const [uf , setUfLocadora] = useState("");
+
+  const capturaUfLocadora = (e) => {
+    setUfLocadora(e.currentTarget.value); // Atualiza o estado com o valor selecionado
+  };
 
   const [nome, setNomeAdmLocadora] = useState("");
   const [cpf, setCpfAdmLocadora] = useState("")
@@ -436,10 +440,10 @@ function CadastrarContrato(){
         />
         <br></br>
         <div class="input-box">
-                    <label for="estadoLocadora">Estado (UF)</label>
+                    <label for="estadoLocadora"></label>
                     <select id="estadoLocadora" 
                         name="estadoLocadora" 
-                        value={ufLocadora} // Valor controlado pelo estado
+                        value={uf}
                         onChange={capturaUfLocadora}
                         required 
                         aria-label="Selecione o estado da Locadora"
