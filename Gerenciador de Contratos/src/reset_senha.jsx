@@ -9,8 +9,10 @@ function ResetSenha(){
 
   async function loginEmail() {
     try{
-      await invoke("encontra_email_smtp", { email });
-      setMensagemReset("Email enviado");
+      const codigo = await invoke("encontra_email_smtp", { email });
+      localStorage.setItem('codigoReset', codigo);
+      localStorage.setItem('emailReset', email);
+      redefinicao_senha();
     } catch(error){
       setMensagemReset(error);
       console.log(error);
@@ -22,19 +24,23 @@ function ResetSenha(){
   const login = () => {
     navigate('/');
   };
+
+  const redefinicao_senha = () => {
+    navigate ('/redefinicao_senha');
+  };
+  
     return (
       <div id="boxreset">
         <div>
         <p className="subtitulo">redefinir senha</p>
         </div>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            loginEmail();
+            await loginEmail();            
           }}
         >
-          <input required
-          
+          <input required          
             className="rowReset"
             onChange={(e) => setEmail(e.currentTarget.value)}
             placeholder="Seu email..." 

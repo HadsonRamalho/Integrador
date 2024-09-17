@@ -15,6 +15,11 @@ function DadosUsuario() {
     navigate('/home');
   };
 
+  const apagarConta = () => {
+    navigate('/apagar_conta');
+  };
+
+
   const dados_usuario = async () => {
     setLoading(true);
     try {
@@ -78,7 +83,7 @@ function DadosUsuario() {
       </div>
       <button onClick={home}>Voltar</button>
       <div>
-      <button onClick={apagaConta}> Apagar minha conta </button>
+        <button> Apagar minha conta </button>
       </div>
     </div>
   );

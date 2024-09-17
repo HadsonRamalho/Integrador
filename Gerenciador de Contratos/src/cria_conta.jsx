@@ -16,9 +16,13 @@ function CriaConta(){
   
   const [senha2, setSenha2] = useState("");
 
+  const [cpf, setCpf] = useState("");
+
+  const [cnpj, setCnpj] = useState("");
+
   async function criarConta() {
     try{
-      await invoke("cria_conta", {nomeCompleto, email, senha1, senha2});
+      await invoke("cria_conta", {nomeCompleto, email, senha1, senha2, cpf, cnpj});
       setMensagemCriarConta("Conta criada");
     }
     catch(error){
@@ -40,9 +44,9 @@ function CriaConta(){
         </div>
         <form
           className="rowSignUp"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            criarConta();
+            await criarConta();
           }}
         >
           <input required
@@ -50,6 +54,16 @@ function CriaConta(){
             onChange={(e) => setNomeCompleto(e.currentTarget.value)}
             placeholder="Nome completo"
             />
+          <input required
+          className="user-input"
+          onChange={(e) => setCpf(e.currentTarget.value)}
+          placeholder="Seu CPF"
+          />
+          <input required
+          className="user-input"
+          onChange={(e) => setCnpj(e.currentTarget.value)}
+          placeholder="CNPJ da empresa"
+          />
           <input required
             className="user-input"
             onChange={(e) => setEmail(e.currentTarget.value)}

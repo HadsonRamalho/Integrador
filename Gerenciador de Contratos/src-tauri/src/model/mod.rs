@@ -8,6 +8,8 @@ pub mod locatario;
 pub mod maquina;
 pub mod socioadm;
 pub mod usuario;
+pub mod contrato;
+
 // crates para envio de email
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::{Credentials, Mechanism};
@@ -41,32 +43,12 @@ impl Usuario {
         Usuario { nome, email, senha }
     }
 
-    /// Obtém o nome do usuário.
-    ///
-    /// # Retornos
-    /// - &str: Retorna uma referência para o nome do usuário.
-    pub fn _get_nome(&mut self) -> &str {
-        return &self.nome;
-    }
-
-    /// Obtém o email do usuário.
-    ///
-    /// # Retornos
-    /// - &str: Retorna uma referência para o email do usuário.
-    pub fn _get_email(&mut self) -> &str {
-        return &self.email;
-    }
-
     /// Obtém a senha (hash) do usuário.
     ///
     /// # Retornos
     /// - &str: Retorna uma referência para a senha (hash) do usuário.
     pub fn get_hash(&mut self) -> &str {
         return &self.senha;
-    }
-
-    pub fn get_all(&mut self) -> (&String, &String, &String) {
-        return (&self.nome, &self.email, &self.senha);
     }
 
     pub async fn ja_cadastrado(&self) -> bool {
@@ -116,14 +98,17 @@ pub async fn save_data(
     nome: &str,
     email: &str,
     senha: &str,
+    cpf: &str,
+    cnpj: &str
 ) -> Result<bool, mysql_async::Error> {
     let mut conn = pool.get_conn().await?;
 
     let uuid = controller::gera_hash(&email);
     // Se o email não for repetido, crie uma conta nova
     conn.exec_drop(
-        "INSERT INTO usuarios (email, nome_completo, senha, UUID) VALUES (:email, :nome_completo, :senha, :uuid)", // Interrogações são substituídas pelos parâmetros
-        params! {"email" => email, "nome_completo" => nome, "senha" => senha, "uuid" => uuid} // Parâmetros a serem substituídos na query
+        "INSERT INTO usuarios (email, nome_completo, senha, UUID, cpf, cnpj) VALUES (:email, :nome_completo, :senha, :uuid, :cpf, :cnpj)", // Interrogações são substituídas pelos parâmetros
+        params! {"email" => email, "nome_completo" => nome, "senha" => senha, "uuid" => uuid,
+        "cpf" => cpf, "cnpj" => cnpj} // Parâmetros a serem substituídos na query
     ).await?;
     println!("Insert!");
     Ok(true)
@@ -220,7 +205,7 @@ pub async fn verifica_senha(
 /// - email: Endereço de e-mail para onde o e-mail será enviado.
 ///
 /// Esta função configura e utiliza o servidor SMTP do Gmail para enviar um e-mail de verificação com um código.
-pub fn envia_email(email: String) {
+pub fn envia_email(email: String) -> String{
     // carregando as credenciais SMTP
     dotenv().ok();
     let smtp_username =
@@ -305,4 +290,5 @@ pub fn envia_email(email: String) {
         Ok(_) => println!("E-mail enviado com sucesso!"),
         Err(err) => eprintln!("Erro ao enviar e-mail: {:?}", err),
     }
+    return id
 }
