@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::gera_hash;
+use crate::controller;
 
 #[derive(Serialize, Deserialize)]
 pub struct Endereco{
@@ -50,6 +51,10 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
         cidade.trim().is_empty() || uf.trim().is_empty(){
             return Err("Erro: Preencha todos os campos.".to_string())
     }
+    let cep = match controller::formata_cep(&cep){
+        Ok(cep) => {cep},
+        Err(e) => {return Err(e)}
+    };
     let id = gera_hash(&cep);
     // Estrutura os dados do endereço em formato JSON
     let endereco = serde_json::json!({

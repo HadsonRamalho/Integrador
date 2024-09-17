@@ -132,6 +132,7 @@ function CadastrarLocatario(){
     try{
       const locatario = await estruturaLocatario(idendereco, idsocio);
       await invoke("cadastra_locatario", {locatario});
+      setMensagem("Cliente cadastrado!");
     } catch(error){
       console.log(error);
       setMensagem(error);
@@ -156,7 +157,6 @@ function CadastrarLocatario(){
             const idenderecoLocatario = await cadastraEnderecoLocatario();
             const idsocio = await cadastraSocioAdm(idendereco);
             await cadastraLocatario(idenderecoLocatario, idsocio);
-            setMensagem("Cliente cadastrado!");
           }}
         >
         <p>Cadastro do endereço do sócio administrador</p>
