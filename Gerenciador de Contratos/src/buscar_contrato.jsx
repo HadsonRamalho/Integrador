@@ -13,7 +13,7 @@ function BuscarContrato(){
         setVetor(contrato);  
         setMensagem(""); 
     } catch(error){
-        console.log(error);
+        console.log("[Buscar_contrato.jsx] : ", error);
         setMensagem(error);
     }
   }

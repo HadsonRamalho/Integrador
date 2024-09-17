@@ -13,7 +13,7 @@ function BuscarMaquina(){
         const valoraluguel = await invoke("filtra_maquina_nome", {nomeMaquina});
         setVetor(valoraluguel); 
     } catch(error){
-        console.log(error);
+        console.log("[Buscar_maquina.jsx] : ", error);
         setMensagem(error);
     }
   }

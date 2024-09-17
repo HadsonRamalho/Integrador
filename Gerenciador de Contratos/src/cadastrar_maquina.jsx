@@ -16,7 +16,7 @@ function CadastrarMaquina(){
       return maquina;
     }
     catch(error){
-      console.log(error);
+      console.log("[Cadastrar_maquina.jsx | estruturaMaquina] : ", error);
       setMensagem(error);
     }
   } 

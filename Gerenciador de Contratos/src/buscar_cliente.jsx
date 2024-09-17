@@ -15,7 +15,7 @@ function BuscarCliente(){
         setMensagem("");
     } catch(error){
         console.log(error);
-        setMensagem(error);
+        setMensagem("[Buscar_cliente.jsx | BuscarCliente] : ", error);
     }
   }
 
@@ -26,7 +26,7 @@ function BuscarCliente(){
         setMensagem("");
     } catch(error){
         console.log(error);
-        setMensagem(error);
+        setMensagem("[Buscar_cliente.jsx | buscaClienteCnpj] : ", error);
     }
   }
 

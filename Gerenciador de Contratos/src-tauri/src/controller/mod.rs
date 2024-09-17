@@ -10,6 +10,7 @@ pub mod maquina;
 pub mod socioadm;
 pub mod usuario;
 pub mod contrato;
+pub mod erro;
 
 #[tauri::command]
 pub async fn cria_conta(

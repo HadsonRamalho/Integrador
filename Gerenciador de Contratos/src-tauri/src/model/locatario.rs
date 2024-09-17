@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::model::params;
 use crate::controller;
 use::mysql_async::prelude::FromRow;
-use::thiserror::Error;
+use crate::controller::erro::MeuErro;
 
 #[derive(FromRow, Serialize)]
 pub struct Locatario{
@@ -14,15 +14,7 @@ pub struct Locatario{
     pub idsocio: String,
     pub locatariostatus: i16
 }
-#[derive(Error, Debug)]
-pub enum MeuErro{
-    #[error("CNPJ não encontrado")]
-    CnpjNaoEncontrado,
-    #[error("Erro na conexão com o banco de dados: {0}")]
-    ConexaoBanco(#[from] mysql_async::Error),
-    #[error("Erro de conversão de Data de Retirada")]
-    ConversaoDataRetirada
-}
+
 
 pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{
     let pool = match controller::cria_pool().await {
