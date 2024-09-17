@@ -67,12 +67,14 @@ pub async fn buscar_maquina_nome(nome: &str) -> Result<Vec<Maquina>, mysql_async
     let resultado_select = conn.exec("SELECT * FROM maquina WHERE nomemaquina LIKE :nome;", 
     params!{"nome" => nome_like}).await;
     match resultado_select{
-        Ok(maquinas) => {
-            println!("Maquinas encontradas");
-            return Ok(maquinas);
+        Ok(maquinas) => {            
+            if maquinas.is_empty(){
+                return Ok(vec![]);
+            }
+            return Ok(maquinas)
         },
-        Err(e) =>{
-            println!("{:?}", e);
+        Err(e) => {
+            println!("Erro: Máquina não encontrada | {}", e);
             return Err(e);
         }
 

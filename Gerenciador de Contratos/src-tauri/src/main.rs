@@ -42,7 +42,7 @@ fn main() {
             controller::locadora::estrutura_locadora,
 
             controller::maquina::estrutura_maquina,
-            controller::maquina::filtra_maquina_nome,
+            controller::maquina::busca_maquina_nome,
             controller::maquina::cadastra_maquina,
 
             controller::socioadm::estrutura_socio_adm,
@@ -51,7 +51,7 @@ fn main() {
             controller::endereco::estrutura_endereco,
             controller::endereco::_salva_endereco,
 
-            controller::contrato::filtra_contrato_nome_maquina,
+            controller::contrato::busca_contrato_nome_maquina,
             controller::contrato::estrutura_contrato,
             controller::contrato::cadastra_contrato,
 

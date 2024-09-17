@@ -12,7 +12,7 @@ use crate::controller;
 use super::gera_hash;
 
 #[tauri::command]
-pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
+pub async fn busca_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
     let idusuario = idusuario.trim();
     if nome_maquina.trim().is_empty() || idusuario.is_empty(){
         return Err("Erro: Um ou mais campos estão vazios".to_string())
@@ -33,7 +33,7 @@ pub async fn filtra_contrato_nome_maquina(nome_maquina: String, idusuario: Strin
             return Err("Erro: O usuário não tem um CNPJ cadastrado.".to_string())
         }
     };
-    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = _filtra_contrato_nome_maquina(nome_maquina, cnpj).await;
+    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = _busca_contrato_nome_maquina(nome_maquina, cnpj).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -72,7 +72,7 @@ fn formata_data(value: Value) -> String {
     }
 }
 
-pub async fn _filtra_contrato_nome_maquina(nome_maquina: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error> {
+pub async fn _busca_contrato_nome_maquina(nome_maquina: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error> {
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool

@@ -54,8 +54,14 @@ pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, Stri
 }
 
 #[tauri::command]
-pub async fn filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, String>{
-    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = _filtra_maquina_nome(nome_maquina).await;
+pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, String>{
+    let nome_maquina_backup = nome_maquina.clone();
+    let nome_maquina = nome_maquina.replace(" ", "");
+    if nome_maquina.is_empty(){
+        return Err("Erro: O nome da máquina está vazio.".to_string());
+    }
+    let nome_maquina = nome_maquina_backup;
+    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::buscar_maquina_nome(&nome_maquina).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -70,7 +76,7 @@ pub async fn filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqu
     }
 }
 
-pub async fn _filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
+pub async fn _busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool

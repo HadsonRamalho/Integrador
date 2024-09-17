@@ -15,6 +15,7 @@ function BuscarCliente(){
         setMensagem("");
     } catch(error){
         console.log(error);
+        setVetor([]);
         setMensagem("[Buscar_cliente.jsx | BuscarCliente] : ", error);
     }
   }
