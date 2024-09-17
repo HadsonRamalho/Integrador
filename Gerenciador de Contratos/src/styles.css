@@ -207,7 +207,7 @@ button {
   text-align: center; 
   height: calc(100vh - 30px);  
   width: calc(100vw - 30px); /*450pcx*/
-  line-height: 60px;
+  line-height: 40px;
   filter: blur(0 0 50px);
   border-radius: 10px;
 
@@ -295,7 +295,7 @@ button {
   top:50%;
   left: 50%;
   transform: translate(-50%, -50%); 
-  text-align: center; 
+  text-align: center;
   height: calc(90vh);  
   width: calc(100vh); /*450pcx*/
   line-height: 60px;
@@ -311,8 +311,8 @@ button {
   left: 50%;
   transform: translate(-50%, -50%); 
   text-align: center; 
-  height: auto;  
-  width: calc(90vh); /*450pcx*/
+  height: calc(90vh);  
+  width: calc(90vh);
   line-height: 60px;
   filter: blur(0 0 50px);
   border-radius: 10px;
@@ -334,4 +334,63 @@ button {
   border-radius: 10px;
   font-size: 2vh;
   overflow: auto;
+}
+
+#boxCadastroContrato{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  height: calc(90vh);  
+  width: calc(80vh);
+  line-height: 60px;
+  filter: blur(0 0 50px);
+  border-radius: 10px;
+  font-size: 2vh;
+  overflow: auto;
+}
+
+#boxCadastroMaquina{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  height: calc(60vh);  
+  width: calc(80vh);
+  line-height: 60px;
+  filter: blur(0 0 50px);
+  border-radius: 10px;
+  font-size: 2vh;
+  overflow: auto;
+}
+
+.input-box {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-box label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.input-box select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+  background-color: #1b1b1b;
+  width: 100vh;
+  transition: border-color 0.3s ease;
+  color:#9e9e9e;
+}
+
+.input-box select:focus {
+  border-color: #7aa2cc;
+  outline: none;
 }

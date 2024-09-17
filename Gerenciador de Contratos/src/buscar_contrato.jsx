@@ -9,11 +9,12 @@ function BuscarContrato(){
   const idusuario = localStorage.getItem('token');
   async function buscaContrato(){
     try{
-        const contrato = await invoke("filtra_contrato_nome_maquina", {nomeMaquina, idusuario});
+        const contrato = await invoke("busca_contrato_nome_maquina", {nomeMaquina, idusuario});
         setVetor(contrato);  
         setMensagem(""); 
     } catch(error){
-        console.log(error);
+        setVetor([]);
+        console.log("[Buscar_contrato.jsx] : ", error);
         setMensagem(error);
     }
   }

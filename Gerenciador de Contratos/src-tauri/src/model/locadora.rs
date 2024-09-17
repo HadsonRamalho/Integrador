@@ -10,7 +10,8 @@ pub struct Locadora{
     pub numeroagenciabanco: String,
     pub nomebanco: String,
     pub nomelocadora: String,
-    pub idsocio: String
+    pub idsocio: String,
+    pub locadorastatus: i16
 }
 
 pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::Error>{
@@ -25,12 +26,12 @@ pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::E
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO locadora (idlocadora, idendereco, cnpj, 
-         numerocontabanco, numeroagenciabanco, nomebanco, nomelocadora, idsocio)
-          VALUES (:idlocadora, :idendereco, :cnpj, :numerocontabanco, :numeroagenciabanco, :nomebanco, :nomelocadora, :idsocio);", 
+         numerocontabanco, numeroagenciabanco, nomebanco, nomelocadora, idsocio, locadorastatus)
+          VALUES (:idlocadora, :idendereco, :cnpj, :numerocontabanco, :numeroagenciabanco, :nomebanco, :nomelocadora, :idsocio, :locadorastatus);", 
          params! {"idlocadora" =>  locadora.idlocadora, "idendereco" => locadora.idendereco, "cnpj" => locadora.cnpj, 
             "numerocontabanco" => locadora.numerocontabanco,
             "numeroagenciabanco" => locadora.numeroagenciabanco, "nomebanco" => locadora.nomebanco, 
-            "nomelocadora" => locadora.nomelocadora, "idsocio" => locadora.idsocio}).await;
+            "nomelocadora" => locadora.nomelocadora, "idsocio" => locadora.idsocio, "locadorastatus" => locadora.locadorastatus}).await;
     match resultado_insert{
         Ok(_) => {
             println!("Locadora cadastrada");

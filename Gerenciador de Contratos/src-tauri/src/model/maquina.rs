@@ -3,6 +3,12 @@ use mysql_async::prelude::FromRow;
 use serde::Serialize;
 
 use crate::controller;
+//Criada estrutura para representar a quantidade de maquinas em estoque
+#[derive(FromRow)]
+pub struct EstoqueMaquina{
+    pub nomemaquina: String,
+    pub quantidade: u64
+}
 
 #[derive(Serialize, FromRow)]
 pub struct Maquina {
@@ -10,9 +16,12 @@ pub struct Maquina {
     pub nomemaquina: String,
     pub numserie: String,
     pub valoraluguel: f32,
+    pub disponibilidade: i8,
+    pub maquinastatus: i16
 }
 
-pub async fn cadastrar_maquina(maquina: Maquina) -> Result<(), mysql_async::Error> {
+pub async fn cadastrar_maquina(maquina: Maquina) -> Result<String, mysql_async::Error> {
+    let idmaquina = maquina.idmaquina.clone();
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -25,22 +34,22 @@ pub async fn cadastrar_maquina(maquina: Maquina) -> Result<(), mysql_async::Erro
     let resultado_insert = conn
         .exec_drop(
             "INSERT INTO maquina 
-    VALUES(:idmaquina, :nomemaquina, :numserie, :valoraluguel);",
+            VALUES(:idmaquina, :nomemaquina, :numserie, :valoraluguel, :disponibilidade, :maquinastatus);",
             params! {"idmaquina" => maquina.idmaquina, "nomemaquina" => maquina.nomemaquina,
-            "numserie" => maquina.numserie, "valoraluguel" => maquina.valoraluguel},
+            "numserie" => maquina.numserie, "valoraluguel" => maquina.valoraluguel, "maquinastatus" => maquina.maquinastatus,
+            "disponibilidade" => maquina.disponibilidade},
         )
         .await;
     match resultado_insert {
         Ok(_) => {
-            println!("Maquina cadastrada")
+            println!("Maquina cadastrada");
+            return Ok(idmaquina)
         }
         Err(e) => {
             println!("{:?}", e);
             return Err(e);
         }
     }
-
-    return Ok(());
 }
 
 pub async fn buscar_maquina_nome(nome: &str) -> Result<Vec<Maquina>, mysql_async::Error>{
@@ -58,12 +67,14 @@ pub async fn buscar_maquina_nome(nome: &str) -> Result<Vec<Maquina>, mysql_async
     let resultado_select = conn.exec("SELECT * FROM maquina WHERE nomemaquina LIKE :nome;", 
     params!{"nome" => nome_like}).await;
     match resultado_select{
-        Ok(maquinas) => {
-            println!("Maquinas encontradas");
-            return Ok(maquinas);
+        Ok(maquinas) => {            
+            if maquinas.is_empty(){
+                return Ok(vec![]);
+            }
+            return Ok(maquinas)
         },
-        Err(e) =>{
-            println!("{:?}", e);
+        Err(e) => {
+            println!("Erro: Máquina não encontrada | {}", e);
             return Err(e);
         }
 
@@ -83,6 +94,39 @@ pub async fn busca_maquina_serie(serie: &str) -> Result<Maquina, mysql_async::Er
         },
         Some(maquina) => {
             return Ok(maquina);
+
+        }
+
+    }
+
+}
+
+pub async fn gera_estoque_total() -> Result<Vec<EstoqueMaquina>, mysql_async::Error>{
+    let pool = controller::cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let estoque: Vec<EstoqueMaquina> = conn.exec_map("SELECT nomemaquina COUNT(*) AS estoque FROM maquina WHERE disponibilidade = 1 AND 
+    maquinastatus = 1 GROUP BY nomemaquina", (), |(nomemaquina, quantidade)| EstoqueMaquina{nomemaquina, quantidade}).await?;
+    if estoque.is_empty(){
+        return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            "Não há máquinas em estoque"))));
+    }
+    Ok(estoque)
+}
+
+pub async fn gera_estoque_por_nome(nomemaquina: String) -> Result<EstoqueMaquina, mysql_async::Error>{
+    let pool = controller::cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let estoque: Option<EstoqueMaquina> = conn.exec_first("SELECT nomemaquina COUNT(*) AS estoque FROM maquina WHERE nomemaquina = :nome AND 
+    disponibilidade = 1 AND maquinastatus = 1", params!{"nome" => nomemaquina}).await?;
+    match estoque{
+        None => {
+            //Criando um erro personalizado para a aplicação.
+            return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound, 
+                "Numero de série não encontrado"))));
+        },
+        Some(estoque) => {
+            return Ok(estoque);
 
         }
 

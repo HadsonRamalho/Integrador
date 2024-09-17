@@ -15,7 +15,7 @@ function ApagarConta(){
       login();
     } catch(error){
       setMensagem(error);
-      console.log(error);
+      console.log("[Apagar_conta.jsx] : ", error);
     }
   }
 

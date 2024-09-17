@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::model::params;
 use crate::controller;
 use::mysql_async::prelude::FromRow;
+use crate::controller::erro::MeuErro;
 
 #[derive(FromRow, Serialize)]
 pub struct Locatario{
@@ -10,8 +11,10 @@ pub struct Locatario{
     pub idendereco: String,
     pub cnpj: String,
     pub nomelocatario: String,
-    pub idsocio: String
+    pub idsocio: String,
+    pub locatariostatus: i16
 }
+
 
 pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{
     let pool = match controller::cria_pool().await {
@@ -24,11 +27,11 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
     };
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
-         conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, nomelocatario, idsocio)
-          VALUES (:idlocatario, :idendereco, :cnpj, :nomelocatario, :idsocio);", 
+         conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, nomelocatario, idsocio, locatariostatus)
+          VALUES (:idlocatario, :idendereco, :cnpj, :nomelocatario, :idsocio, :locatariostatus);", 
          params! {"idlocatario" =>  locatario.idlocatario, "idendereco" => locatario.idendereco, 
          "cnpj" => locatario.cnpj, "nomelocatario" => locatario.nomelocatario, 
-         "idsocio" =>locatario.idsocio}).await;
+         "idsocio" =>locatario.idsocio, "locatariostatus" => locatario.locatariostatus}).await;
     match resultado_insert{
         Ok(_) => {
             println!("Locatario cadastrado");
@@ -67,19 +70,38 @@ pub async fn busca_locatario_nome(nome: &str) -> Result<Vec<Locatario>, mysql_as
 }
 
 
-pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Locatario, mysql_async::Error>{
-    let erro_locatario = mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound,
-        "Erro: Não foi encontrado um locatario com esse CNPJ.")));
-
-    let pool = controller::cria_pool().await?;
-    let mut conn = pool.get_conn().await?;
-    let locatario: Option<Locatario> = conn.exec_first("SELECT * FROM locatario WHERE cnpj = :cnpj", params!{"cnpj" => cnpj}).await?;
-    match locatario {
-        None => {
-            return Err(erro_locatario);
+pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Vec<Locatario>, mysql_async::Error>{
+    let pool = match controller::cria_pool().await{
+        Ok(pool) => {pool},
+        Err(e) => {
+            let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
+            return Err(err)
         }
+    };
+    let mut conn = 
+    match pool.get_conn().await{
+        Ok(conn) => {conn},
+        Err(e) => {
+            let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
+            return Err(err)
+        }
+    };
+    let locatario: Option<Locatario> =    
+    match conn.exec_first("SELECT * FROM locatario WHERE cnpj = :cnpj", params!{"cnpj" => cnpj}).await {
+        Ok(locatario) => {locatario},
+        Err(e) => {
+            let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
+            return Err(err);
+        }
+    };
+    let mut loc: Vec<Locatario> = vec![];
+    match locatario{
+        None => {
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::CnpjNaoEncontrado)))
+        },
         Some(locatario) => {
-            return Ok(locatario);
+            loc.push(locatario);
+            return Ok(loc)
         }
     }
 }

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
+
+
 
 
 function Home(){
@@ -36,20 +39,48 @@ function Home(){
     navigate('/cadastrar_locatario');
   };
     
+  const cpdf = () => {
+    navigate('/cpdf');
+  };
+
+  const cadastrar_contrato = () => {
+    navigate('/cadastrar_contrato');
+  };
+
+  const cadastrar_maquina = () => {
+    navigate('/cadastrar_maquina');
+  };
+
     return (
       <div>        
         <div id="boxHome">
-          <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>Criar novo contrato</button>
-          <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
+          <p>Contrato</p>
+          <button className="botoesHome" type="button" onClick={cadastrar_contrato}>Cadastrar contrato</button>
           <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
-          <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente</button>
+          <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
+          <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (react-pdf/renderer)</button>
+          <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>HTML (Obsoleto)</button>
+
+          <p>Máquina</p>
+          <button className="botoesHome" type="button" onClick={cadastrar_maquina}>Cadastrar maquina</button>
           <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
+          <p>Cliente (Locatário)</p>
+          <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente (Locatario)</button>
+          <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente (Locatario)</button>
+          <p>Usuário</p>
+          <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
+          <p>Outros</p>
           <div>
-            <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente</button>
+          <button type="button" onClick={async () => {
+            const permissao = await requestPermission();
+            if (isPermissionGranted) {
+              sendNotification({ title: 'Titulo :)', body: 'Texto da notificação :D' });
+            }
+          }}>
+            Testar notificação
+          </button>
           </div>
-          <div>
-            <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
-          </div>
+          <br/>
           <button className="botoesHome" type="button" onClick={login}>Voltar</button>
         </div> 
       </div>

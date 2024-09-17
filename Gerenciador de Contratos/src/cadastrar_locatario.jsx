@@ -19,7 +19,7 @@ function CadastrarLocatario(){
   const [complementoLocatario, setComplementoLocatario] = useState("");
   const [ufLocatario, setUfLocatario] = useState("");
 
-  const [nomesocio, setNomeSocio] = useState("");
+  const [nome, setNomeSocio] = useState("");
   const [cpf, setCpf] = useState("");
   const [orgaoemissor, setOrgaoEmissor] = useState("");
   const [estadocivil, setEstadoCivil] = useState("");
@@ -42,17 +42,17 @@ function CadastrarLocatario(){
     }
     catch(error){
       setMensagem(error);
-      console.log(error);
+      console.log("[Cadastrar_locatario.jsx | estruturaEndereco] : ", error);
     }
   }
 
   async function estruturaSocioAdm(idendereco){
     try{
-      const socio = await invoke("estrutura_socio_adm", {idendereco, nomesocio, cpf, orgaoemissor, estadocivil, nacionalidade});
+      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade});
       return socio;
     } catch(error) {
       setMensagem(error);
-      console.log(error);
+      console.log("[Cadastrar_locatario.jsx | estruturaSocioAdm] : ", error);
     }
   }
 
@@ -63,7 +63,7 @@ function CadastrarLocatario(){
       return idsocio;
     } catch(error){
       setMensagem(error);
-      console.log(error);
+      console.log("[Cadastrar_locatario.jsx | cadastraSocioAdm] : ", error);
     }
   }
 
@@ -87,7 +87,7 @@ function CadastrarLocatario(){
     }
     catch(error){
       setMensagem(error);
-      console.log(error);
+      console.log("[Cadastrar_locatario.jsx | estruturaEnderecoLocatario] : ", error);
     }
   }
 
@@ -99,7 +99,7 @@ function CadastrarLocatario(){
       console.log("Endereço do sócio foi cadastrado");
       return idendereco;
     } catch(error){
-      console.log('Erro ao salvar o endereço: ', error);
+      console.log("[Cadastrar_locatario.jsx | cadastraEndereco] : ", error);
       setMensagem(error);
     }
   }
@@ -112,7 +112,7 @@ function CadastrarLocatario(){
       console.log("Endereço do locatario foi cadastrado");
       return idendereco;
     } catch(error){
-      console.log('Erro ao salvar o endereço do locatario: ', error);
+      console.log("[Cadastrar_locatario.jsx | cadastraEnderecoLocatario] : ", error);
       setMensagem(error);
     }
   }
@@ -123,7 +123,8 @@ function CadastrarLocatario(){
       return locatario;
     }
     catch(error){
-      console.log(error);
+      console.log("[Cadastrar_locatario.jsx | estruturaLocatario] : ", error);
+      setMensagem(error);
     }
   } 
 
@@ -131,8 +132,10 @@ function CadastrarLocatario(){
     try{
       const locatario = await estruturaLocatario(idendereco, idsocio);
       await invoke("cadastra_locatario", {locatario});
+      setMensagem("Cliente cadastrado!");
     } catch(error){
-      console.log(error);
+      console.log("[Cadastrar_locatario.jsx | cadastraLocatario] : ", error);
+      setMensagem(error);
     }
   }
 
@@ -154,7 +157,6 @@ function CadastrarLocatario(){
             const idenderecoLocatario = await cadastraEnderecoLocatario();
             const idsocio = await cadastraSocioAdm(idendereco);
             await cadastraLocatario(idenderecoLocatario, idsocio);
-            setMensagem("Cliente cadastrado!");
           }}
         >
         <p>Cadastro do endereço do sócio administrador</p>

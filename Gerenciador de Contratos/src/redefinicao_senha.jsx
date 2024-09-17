@@ -14,7 +14,7 @@ function RedefinicaoSenha(){
             console.log(mensagem);
             alteraSenha();
         } catch(error){
-            console.log(error);
+            console.log("[Redefinicao_senha.jsx | verifica] : ", error);
         }
     }
     const navigate = useNavigate();
@@ -22,6 +22,11 @@ function RedefinicaoSenha(){
     const alteraSenha = () => {
       navigate('/altera_senha');
     };
+
+    const reset_senha = () =>{
+        navigate('/reset_senha');
+    };
+
     return(
 
     <div className="reset-password">
@@ -42,6 +47,7 @@ function RedefinicaoSenha(){
         </form>
         <p className="info">Um código foi enviado para o seu e-mail. Verifique sua caixa de entrada e insira o código acima para redefinir sua senha.</p>
         <p >Caso não tenha recebido o codigo. <a href="@">Clique aqui para solicitar o reenvio.</a></p>
+        <button onClick={reset_senha}>Voltar</button>
     </div>
     )
 }

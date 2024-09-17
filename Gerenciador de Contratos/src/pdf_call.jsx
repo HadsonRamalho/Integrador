@@ -1,61 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import CreatePdf from './pdf_gen';
-import './styles.css';
+import React from 'react';
+import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 
-function CPDF() {
-  const [pdfUrls, setPdfUrls] = useState([null, null, null]);
+// Estilos
+const styles = StyleSheet.create({
+  page: { flexDirection: 'column', padding: 30 },
+  section: { margin: 10, padding: 10, fontSize: 12 },
+  title: { fontSize: 18, textAlign: 'center', marginBottom: 10 },
+  table: { display: 'table', width: 'auto', margin: '10px 0' },
+  tableRow: { flexDirection: 'row' },
+  tableCol: { width: '25%', borderStyle: 'solid', borderWidth: 1, borderColor: '#000' },
+  tableCell: { margin: 5, fontSize: 10 },
+});
 
-  useEffect(() => {
-    async function generatePdfs() {
-      try {
-        const pdfPromises = [
-          await CreatePdf({
-            nomeLocadora: "TechSolutions Ltda.",
-            cnpjLocadora: "12.345.678/0001-90",
-            nomeAdmLocadora: "João Silva",
-            cpfAdmLocadora: "123.456.789-00",
-            enderecoAdmLocadora: "Rua das Dores, 321",
-            enderecoLocadora: "Rua das Flores, 123",
-            cidadeLocadora: "São Paulo",
-            estadoLocadora: "SP"
-          })
-        ];
+// Documento PDF com tabela
+const MeuDocumento = () => (
+  <Document>
+    <Page style={styles.page}>
+      <Text style={styles.title}>Relatório</Text>
+      <View style={styles.section}>
+        <Text>Nome: João da Silva</Text>
+        <Text>Email: joao@email.com</Text>
+      </View>
 
-        const pdfBytesArray = await Promise.all(pdfPromises);
-        const urls = pdfBytesArray.map(pdfBytes => {
-          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-          return URL.createObjectURL(blob);
-        });
+      {/* Tabela */}
+      <View style={styles.table}>
+        <View style={styles.tableRow}>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>Produto</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>Quantidade</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>Preço Unitário</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>Total</Text>
+          </View>
+        </View>
 
-        setPdfUrls(urls);
-      } catch (error) {
-        console.error('Failed to create PDFs', error);
-      }
-    }
+        <View style={styles.tableRow}>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>Computador</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>2</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>R$ 2500</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>R$ 5000</Text>
+          </View>
+        </View>
+      </View>
 
-    generatePdfs();
-  }, []);
+      <View style={styles.section}>
+        <Text>Dados de Venda:</Text>
+        <Text>Produto: Computador</Text>
+        <Text>Valor: R$ 2500</Text>
+      </View>
+    </Page>
+  </Document>
+);
 
-  return (
-    <div className="App">
-      <table className="pdf-table">
-        {pdfUrls.map((pdfUrl, index) => (
-          <td key={index} className="pdf-cell">
-            {pdfUrl ? (
-              <iframe
-                src={pdfUrl}
-                width="300%"
-                height="500px"
-                title={`PDF Viewer ${index + 1}`}
-              ></iframe>
-            ) : (
-              <p>Carregando PDF {index + 1}...</p>
-            )}
-          </td>
-        ))}
-      </table>
-    </div>
-  );
-}
+// Componente para exibir o PDF na tela
+const CPDF = () => (
+  <PDFViewer width="100%" height="600px">
+    <MeuDocumento />
+  </PDFViewer>
+);
 
 export default CPDF;

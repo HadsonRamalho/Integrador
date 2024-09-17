@@ -10,9 +10,9 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
     if nomemaquina.is_empty() || valoraluguel.is_empty() || numserie.is_empty(){
         return Err("Erro: Um ou mais campos estão vazios.".to_string())
     }
-    let idmaquina = gera_hash(&numserie);
-    let valoraluguel:f32 = valoraluguel.trim().parse().unwrap();
+    let idmaquina = gera_hash(&numserie).split_at(45 as usize).0.to_string();
     let maquina: serde_json::Value = serde_json::json!({
+        "nomemaquina": nomemaquina,
         "idmaquina": idmaquina,
         "valoraluguel": valoraluguel,
         "numserie": numserie,
@@ -21,8 +21,47 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
 }
 
 #[tauri::command]
-pub async fn filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, String>{
-    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = _filtra_maquina_nome(nome_maquina).await;
+pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, String>{
+    
+    let valoraluguel = maquina["valoraluguel"].as_str().unwrap_or("").to_string();
+    let valoraluguel: f32 = match valoraluguel.trim().parse(){
+        Ok(valoraluguel) => {
+            valoraluguel
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    };
+
+    let maquina: model::maquina::Maquina = model::maquina::Maquina {
+        nomemaquina: maquina["nomemaquina"].as_str().unwrap_or("").to_string(),
+        numserie: maquina["numserie"].as_str().unwrap_or("").to_string(),
+        valoraluguel,
+        idmaquina: maquina["idmaquina"].as_str().unwrap_or("").to_string(),
+        disponibilidade: 1,
+        maquinastatus: 1
+    };
+
+    let resultado_cadastro = model::maquina::cadastrar_maquina(maquina).await;
+    match resultado_cadastro{
+        Ok(idmaquina) => {
+            return Ok(idmaquina);
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, String>{
+    let nome_maquina_backup = nome_maquina.clone();
+    let nome_maquina = nome_maquina.replace(" ", "");
+    if nome_maquina.is_empty(){
+        return Err("Erro: O nome da máquina está vazio.".to_string());
+    }
+    let nome_maquina = nome_maquina_backup;
+    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::buscar_maquina_nome(&nome_maquina).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -37,7 +76,7 @@ pub async fn filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqu
     }
 }
 
-pub async fn _filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
+pub async fn _busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -49,13 +88,15 @@ pub async fn _filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maq
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome_maquina);
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = conn.exec_map(
-        "SELECT idmaquina, nomemaquina, numserie, valoraluguel FROM maquina WHERE nomemaquina LIKE :nome_maquina ORDER BY valoraluguel ".to_owned() + "DESC",
+        "SELECT idmaquina, nomemaquina, numserie, valoraluguel, maquinastatus, disponibilidade FROM maquina WHERE nomemaquina LIKE :nome_maquina ORDER BY valoraluguel ".to_owned() + "DESC",
         params! { "nome_maquina" => nome_like },
-        |(idmaquina, nomemaquina, numserie, valoraluguel)| model::maquina::Maquina {
+        |(idmaquina, nomemaquina, numserie, valoraluguel, maquinastatus, disponibilidade)| model::maquina::Maquina {
             idmaquina,
             nomemaquina,
             numserie,
             valoraluguel,
+            maquinastatus,
+            disponibilidade
         }
     ).await;
     

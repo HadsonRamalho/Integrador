@@ -27,6 +27,7 @@ function CriaConta(){
     }
     catch(error){
       setMensagemCriarConta(error);
+      console.log("[Cria_conta.jsx | criarConta] : ",  error);
     }
   }
 

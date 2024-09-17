@@ -31,7 +31,7 @@ function DadosUsuario() {
       setEmailFixoInterface(email);
       setNome(nome);
     } catch (error) {
-      console.error("Erro ao buscar dados do usuário:", error);
+      console.error("[Dados_usuario.jsx | dados_usuario] : ", error);
     } finally {
       setLoading(false);
     }

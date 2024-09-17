@@ -9,7 +9,8 @@ pub struct SocioADM{
     pub orgaoemissor: String,
     pub estadocivil: String,
     pub nacionalidade: String,
-    pub nomesocio: String
+    pub nome: String,
+    pub sociostatus: i16
 }
 
 pub async fn _cadastra_socio_adm(socioadm: SocioADM) -> Result<(), mysql_async::Error>{
@@ -23,10 +24,13 @@ pub async fn _cadastra_socio_adm(socioadm: SocioADM) -> Result<(), mysql_async::
     };
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
-         conn.exec_drop("INSERT INTO socioadm (idsocio, idendereco, cpf, orgaoemissor, estadocivil, nacionalidade, nome)
-          VALUES (:idsocio, :idendereco, :cpf, :orgaoemissor, :estadocivil, :nacionalidade, :nomesocio);", 
-         params! {"idsocio" =>  socioadm.idsocio, "idendereco" => socioadm.idendereco, "cpf" => socioadm.cpf, "orgaoemissor" => socioadm.orgaoemissor,
-            "estadocivil" => socioadm.estadocivil, "nacionalidade" => socioadm.nacionalidade, "nomesocio" => socioadm.nomesocio}).await;
+         conn.exec_drop("INSERT INTO socioadm (idsocio, idendereco, cpf, orgaoemissor, estadocivil, nacionalidade,
+          nome, sociostatus)
+          VALUES (:idsocio, :idendereco, :cpf, :orgaoemissor, :estadocivil, :nacionalidade, :nome, :sociostatus);", 
+         params! {"idsocio" =>  socioadm.idsocio, "idendereco" => socioadm.idendereco, "cpf" => socioadm.cpf,
+            "orgaoemissor" => socioadm.orgaoemissor,
+            "estadocivil" => socioadm.estadocivil, "nacionalidade" => socioadm.nacionalidade, "nome" => socioadm.nome,
+            "sociostatus" => socioadm.sociostatus}).await;
     match resultado_insert{
         Ok(_) => {
             println!("SocioADM cadastrado");

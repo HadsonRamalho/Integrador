@@ -10,6 +10,7 @@ pub mod maquina;
 pub mod socioadm;
 pub mod usuario;
 pub mod contrato;
+pub mod erro;
 
 #[tauri::command]
 pub async fn cria_conta(
@@ -206,4 +207,21 @@ pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<Strin
         }
     }
     return Ok("Senhas válidas!".to_string())
+}
+
+pub fn formata_cep(cep: &str) -> Result<String, String>{
+    let cep: Vec<char> = cep
+        .chars()
+        .filter(|c: &char| c.is_digit(10))
+        .collect();
+    if cep.len() != 8{
+        return Err("Erro: CEP de tamanho inválido.".to_string())
+    }
+    let mut cep: Vec<char> = cep;
+    cep.insert(6, '-');
+    let mut cepfinal: String = "".to_string();
+    for u in cep{
+        cepfinal.push(u);
+    }
+    return Ok(cepfinal);
 }

@@ -10,10 +10,12 @@ function BuscarMaquina(){
 
   async function buscaMaquina(){
     try{
-        const valoraluguel = await invoke("filtra_maquina_nome", {nomeMaquina});
+        const valoraluguel = await invoke("busca_maquina_nome", {nomeMaquina});
         setVetor(valoraluguel); 
+        setMensagem("");
     } catch(error){
-        console.log(error);
+        console.log("[Buscar_maquina.jsx] : ", error);
+        setVetor([]);
         setMensagem(error);
     }
   }
@@ -40,9 +42,8 @@ function BuscarMaquina(){
           <ul className="contract-list">
             {vetor.map((maquina, index) => (
               <li key={index} className="contract-item">
-                <div className="contract-header">ID DA MAQUINA: {maquina.idmaquina}</div>
+                <div className="contract-header">NOME DA MAQUINA: {maquina.nomemaquina}</div>
                 <div className="contract-fields">
-                  <strong>Nome da Maquina:</strong> {maquina.nomemaquina} <br />
                   <strong>Número de Série:</strong> {maquina.numserie} <br />
                   <strong>Valor Aluguel: </strong> R$ {maquina.valoraluguel} <br />
                   <strong>Disponibildiade:</strong> {maquina.disponibilidade} <br />

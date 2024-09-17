@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 function BuscarCliente(){
   const [mensagem, setMensagem] = useState("");
   const [nomelocatario, setNomeLocatario] = useState("");
+  const [cnpj, setCnpjLocatario] = useState("");
   const [vetor, setVetor] = useState([]);
   const idusuario = localStorage.getItem('token');
   async function buscaCliente(){
@@ -14,7 +15,19 @@ function BuscarCliente(){
         setMensagem("");
     } catch(error){
         console.log(error);
-        setMensagem(error);
+        setVetor([]);
+        setMensagem("[Buscar_cliente.jsx | BuscarCliente] : ", error);
+    }
+  }
+
+  async function buscaClienteCnpj(){
+    try{
+        const locatario = await invoke("busca_locatario_cnpj", {cnpj});
+        setVetor(locatario);
+        setMensagem("");
+    } catch(error){
+        console.log(error);
+        setMensagem("[Buscar_cliente.jsx | buscaClienteCnpj] : ", error);
     }
   }
 
@@ -26,14 +39,25 @@ function BuscarCliente(){
 
   return (
     <div>
-      <div className="boxBuscaCliente">
+      <div className="boxBuscaCliente">        
+        <div>
+          <input
+            required          
+            className="rowReset"
+            onChange={(e) => setNomeLocatario(e.currentTarget.value)}
+            placeholder="Buscar pelo Nome do cliente"
+          />
+          <button className="botoesHome" type="button" onClick={buscaCliente}>Buscar</button>
+        </div>
+        <div>
         <input
-          required          
-          className="rowReset"
-          onChange={(e) => setNomeLocatario(e.currentTarget.value)}
-          placeholder="Buscar pelo Nome do cliente"
-        />
-        <button className="botoesHome" type="button" onClick={buscaCliente}>Buscar</button>
+            required          
+            className="rowReset"
+            onChange={(e) => setCnpjLocatario(e.currentTarget.value)}
+            placeholder="Buscar pelo CNPJ do cliente"
+          />
+          <button className="botoesHome" type="button" onClick={buscaClienteCnpj}>Buscar pelo CNPJ</button>
+        </div>
         <button className="botoesHome" type="button" onClick={home}>Voltar</button>     
         
         <div>
@@ -41,12 +65,10 @@ function BuscarCliente(){
           <ul className="contract-list">
             {vetor.map((locatario, index) => (
               <li key={index} className="contract-item">
-                <div className="contract-header">ID DO CLIENTE: {locatario.idlocatario}</div>
+                <div className="contract-header">NOME DO CLIENTE: {locatario.nomelocatario}</div>
                 <div className="contract-fields">
-                  <strong>ID do Endereço:</strong> {locatario.idendereco} <br />
                   <strong>CNPJ:</strong> {locatario.cnpj} <br />
                   <strong>Nome do Locatario: </strong> {locatario.nomelocatario} <br />
-                  <strong>ID do Socio:</strong> {locatario.idsocio} <br />
                 </div>
               </li>
             ))}

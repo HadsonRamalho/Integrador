@@ -35,13 +35,15 @@ fn main() {
             controller::locatario::cadastra_locatario,
             controller::locatario::estrutura_locatario,
             controller::locatario::busca_locatario_nome,
+            controller::locatario::busca_locatario_cnpj,
 
             controller::locadora::cadastra_locadora,
             controller::locadora::busca_id_locadora,
             controller::locadora::estrutura_locadora,
 
             controller::maquina::estrutura_maquina,
-            controller::maquina::filtra_maquina_nome,
+            controller::maquina::busca_maquina_nome,
+            controller::maquina::cadastra_maquina,
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm,            
@@ -49,8 +51,9 @@ fn main() {
             controller::endereco::estrutura_endereco,
             controller::endereco::_salva_endereco,
 
-            controller::contrato::filtra_contrato_nome_maquina,
+            controller::contrato::busca_contrato_nome_maquina,
             controller::contrato::estrutura_contrato,
+            controller::contrato::cadastra_contrato,
 
             controller::cria_conta,
             controller::verifica_senha,

@@ -17,7 +17,7 @@ function AlteraSenha(){
       setMensagemAlteracao("Senha alterada!");
     } catch(error){
       setMensagemAlteracao(error);
-      console.log(error);
+      console.log("[Altera_Senha.jsx] : ", error);
     }
   }
 
