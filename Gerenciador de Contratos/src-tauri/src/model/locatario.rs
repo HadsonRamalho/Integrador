@@ -20,6 +20,8 @@ pub enum MeuErro{
     CnpjNaoEncontrado,
     #[error("Erro na conexão com o banco de dados: {0}")]
     ConexaoBanco(#[from] mysql_async::Error),
+    #[error("Erro de conversão de Data de Retirada")]
+    ConversaoDataRetirada
 }
 
 pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{

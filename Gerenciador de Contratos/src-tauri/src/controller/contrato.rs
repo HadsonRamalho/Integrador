@@ -152,7 +152,7 @@ pub async fn estrutura_contrato(
         vencimento: String,
         multaatraso: String,
         jurosatraso: String,
-        prazodevolucao: String) -> Result<model::contrato::Contrato, String>{
+        prazodevolucao: String) -> Result<serde_json::Value, String>{
 
     if idlocatario.trim().is_empty() || idlocador.trim().is_empty()
      || idlocatario.trim().is_empty() || idmaquina.trim().is_empty() || enderecoretirada.trim().is_empty() ||
@@ -168,50 +168,93 @@ pub async fn estrutura_contrato(
     let idmaquina = idmaquina.trim().to_string();
     let enderecoretirada = enderecoretirada.trim().to_string();
 
-    let prazolocacao = match prazolocacao.trim().parse(){
-        Ok(prazolocacao) => prazolocacao,
-        Err(e) => {
-            let erro = format!("Erro ao converter prazo de locação do contrato: {e}");
-            return Err(erro)
-        }
-    };
-
-    let valormensal = match valormensal.trim().parse(){
-        Ok(valormensal) => valormensal,
-        Err(e) => {
-            let erro = format!("Erro ao converter valor mensal do contrato: {e}");
-            return Err(erro)
-        }
-    };
-
-    let multaatraso = match multaatraso.trim().parse(){
-        Ok(multaatraso) => multaatraso,
-        Err(e) => {
-            let erro = format!("Erro ao converter multa de atraso do contrato: {e}");
-            return Err(erro)
-        }
-    };
-
-    let jurosatraso = match jurosatraso.trim().parse(){
-        Ok(jurosatraso) => jurosatraso,
-        Err(e) => {
-            let erro = format!("Erro ao converter juros de atraso do contrato: {e}");
-            return Err(erro)
-        }
-    };
-
     let idcontrato = gera_hash(&enderecoretirada);
 
-    let contrato: model::contrato::Contrato = model::contrato::Contrato{
-       idcontrato, idlocador, idlocatario, idmaquina, enderecoretirada,
-       prazolocacao, avisotransferencia, cidadeforo, datacontrato, dataretirada,
-       valormensal, vencimento, multaatraso, jurosatraso, prazodevolucao
-    };
+    let contrato =  serde_json::json!({
+        "idcontrato": idcontrato,
+        "idlocador": idlocador, 
+        "idlocatario": idlocatario,
+        "idmaquina": idmaquina,
+        "enderecoretirada": enderecoretirada,
+        "prazolocacao": prazolocacao,
+        "avisotransferencia": avisotransferencia, 
+        "cidadeforo": cidadeforo, 
+        "datacontrato": datacontrato, 
+        "dataretirada": dataretirada,
+        "valormensal": valormensal, 
+        "vencimento": vencimento, 
+        "multaatraso": multaatraso, 
+        "jurosatraso": jurosatraso, 
+        "prazodevolucao": prazodevolucao
+    });
 
     return Ok(contrato)
 }
 
 #[tauri::command]
-pub async fn cadastra_contrato(contrato: serde_json::Value){
+pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String>{
+    let idlocatario: String = contrato["idlocatario"].as_str().unwrap_or("").to_string();
+    let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
+    let idlocatario: String = idlocatario.0.to_string();
 
+    let idlocador: String = contrato["idlocador"].as_str().unwrap_or("").to_string();
+    let idlocador: (&str, &str) = idlocador.split_at(45 as usize);
+    let idlocador: String = idlocador.0.to_string();
+
+    let idmaquina: String = contrato["idmaquina"].as_str().unwrap_or("").to_string();
+    let idmaquina: (&str, &str) = idmaquina.split_at(45 as usize);
+    let idmaquina: String = idmaquina.0.to_string();
+
+    let enderecoretirada: String = contrato["enderecoretirada"].as_str().unwrap_or("").to_string();
+    let enderecoretirada: (&str, &str) = enderecoretirada.split_at(45 as usize);
+    let enderecoretirada: String = enderecoretirada.0.to_string();
+
+    let prazolocacao:f32 = match contrato["prazolocacao"].as_str().unwrap_or("").to_string().trim().parse(){
+        Ok(prazolocacao) => {prazolocacao},
+        Err(e) => {return Err(format!("Erro ao converter prazo de locação: {}", e))}
+    };
+
+    let valormensal:f32 = match contrato["valormensal"].as_str().unwrap_or("").to_string().trim().parse(){
+        Ok(valormensal) => {valormensal},
+        Err(e) => {return Err(format!("Erro ao converter valor mensal: {}", e))}
+    };
+
+    let multaatraso:f32 = match contrato["multaatraso"].as_str().unwrap_or("").to_string().trim().parse(){
+        Ok(multaatraso) => {multaatraso},
+        Err(e) => {return Err(format!("Erro ao converter multa de atraso: {}", e))}
+    };
+
+    let jurosatraso:f32 = match contrato["jurosatraso"].as_str().unwrap_or("").to_string().trim().parse(){
+        Ok(jurosatraso) => {jurosatraso},
+        Err(e) => {return Err(format!("Erro ao converter juros de atraso: {}", e))}
+    };
+
+    let idcontrato = gera_hash(&idlocatario);
+    let idcontrato: (&str, &str) = idcontrato.split_at(45 as usize);
+    let idcontrato: String = idcontrato.0.to_string();
+    let contrato: Contrato = Contrato {idcontrato,
+        prazolocacao, 
+        dataretirada: contrato["dataretirada"].as_str().unwrap_or("").to_string(), 
+        valormensal, 
+        vencimento: contrato["vencimento"].as_str().unwrap_or("").to_string(), 
+        multaatraso, 
+        jurosatraso, 
+        avisotransferencia: contrato["avisotransferencia"].as_str().unwrap_or("").to_string(), 
+        prazodevolucao: contrato["prazodevolucao"].as_str().unwrap_or("").to_string(), 
+        cidadeforo: contrato["cidadeforo"].as_str().unwrap_or("").to_string(), 
+        datacontrato: contrato["datacontrato"].as_str().unwrap_or("").to_string(), 
+        idlocatario, 
+        idlocador, 
+        idmaquina, 
+        enderecoretirada        
+    };
+    let resultado_cadastro = model::contrato::registra_contrato(contrato).await;
+    match resultado_cadastro{
+        Ok(_) => {
+            return Ok(());
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
 }

@@ -68,13 +68,14 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
 /// - `Ok(())`: Se a locadora for cadastrada com sucesso ou já existir.
 /// - `Err(String)`: Se ocorrer um erro durante a validação ou no processo de busca/cadastro.
 #[tauri::command]
-pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String> {
+pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, String> {
     let locadora: Result<Locadora, String> = valida_locadora(locadora);
     match locadora{
         Ok(_) => {},
         Err(e) => {return Err(e)}
     }
     let locadora: Locadora = locadora.unwrap();
+    let idlocadora = locadora.idlocadora.clone();
     let resultado_busca: Result<String, mysql_async::Error> =
         model::locadora::_busca_id_locadora(&locadora.cnpj).await;
 
@@ -82,7 +83,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String
         Ok(resultado) => {
             if resultado.is_empty() {
                 let _resultado_cadastro = _cadastra_locadora(locadora).await;
-                return Ok(());
+                return Ok(idlocadora);
             }
             return Err("Erro: Locadora já cadastrada".to_string());
         }

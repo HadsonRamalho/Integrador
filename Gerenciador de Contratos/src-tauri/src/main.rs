@@ -53,6 +53,7 @@ fn main() {
 
             controller::contrato::filtra_contrato_nome_maquina,
             controller::contrato::estrutura_contrato,
+            controller::contrato::cadastra_contrato,
 
             controller::cria_conta,
             controller::verifica_senha,
