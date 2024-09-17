@@ -19,7 +19,7 @@ function CadastrarLocatario(){
   const [complementoLocatario, setComplementoLocatario] = useState("");
   const [ufLocatario, setUfLocatario] = useState("");
 
-  const [nomesocio, setNomeSocio] = useState("");
+  const [nome, setNomeSocio] = useState("");
   const [cpf, setCpf] = useState("");
   const [orgaoemissor, setOrgaoEmissor] = useState("");
   const [estadocivil, setEstadoCivil] = useState("");
@@ -48,7 +48,7 @@ function CadastrarLocatario(){
 
   async function estruturaSocioAdm(idendereco){
     try{
-      const socio = await invoke("estrutura_socio_adm", {idendereco, nomesocio, cpf, orgaoemissor, estadocivil, nacionalidade});
+      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade});
       return socio;
     } catch(error) {
       setMensagem(error);
