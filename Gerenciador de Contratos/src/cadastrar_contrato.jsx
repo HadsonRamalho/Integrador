@@ -391,11 +391,28 @@ function CadastrarContrato(){
   const cpdf = () => {
     navigate('/cpdf', {
       state: {
+        //Locadora
         nomelocadora,
         cnpjLocadora: cnpj,
-        nomeAdmLocadora: nome,
+
+        //Locadora | Banco
         numeroConta: numerocontabanco,
         numeroAgencia: numeroagenciabanco,
+
+        //Locadora | Endereço
+        cep,
+        cidade,
+        logradouro,
+        numeroendereco,
+        complemento,
+        uf,
+
+        //Locadora | Socio
+        nomeAdmLocadora: nome,
+        cpf,
+        orgaoemissor,
+        nacionalidade,
+        estadocivil,
       },
     });
   };
