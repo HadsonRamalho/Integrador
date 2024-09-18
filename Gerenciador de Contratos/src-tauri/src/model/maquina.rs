@@ -6,10 +6,10 @@ use serde::Serialize;
 
 use crate::controller;
 //Criada estrutura para representar a quantidade de maquinas em estoque
-#[derive(FromRow)]
+#[derive(FromRow, Serialize, PartialEq)]
 pub struct EstoqueMaquina{
-    pub nomemaquina: String,
-    pub quantidade: u64
+    pub quantidade: i32,
+    pub nomemaquina: Option<String>
 }
 
 #[derive(Serialize, FromRow)]
@@ -100,22 +100,15 @@ pub async fn gera_estoque_total() -> Result<Vec<EstoqueMaquina>, mysql_async::Er
     Ok(estoque)
 }
 
-pub async fn gera_estoque_por_nome(nomemaquina: String) -> Result<EstoqueMaquina, mysql_async::Error>{
+pub async fn gera_estoque_por_nome(nomemaquina: String) -> Result<Vec<EstoqueMaquina>, mysql_async::Error>{
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
-    let estoque: Option<EstoqueMaquina> = conn.exec_first("SELECT nomemaquina COUNT(*) AS estoque FROM maquina WHERE nomemaquina = :nome AND 
-    disponibilidade = 1 AND maquinastatus = 1", params!{"nome" => nomemaquina}).await?;
-    match estoque{
-        None => {
-            //Criando um erro personalizado para a aplicação.
-            return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound, 
-                "Numero de série não encontrado"))));
-        },
-        Some(estoque) => {
-            return Ok(estoque);
-
-        }
-
+    let estoque_invalido: EstoqueMaquina = EstoqueMaquina{quantidade: 0, nomemaquina: None};
+    let estoque = conn.exec_map("SELECT COUNT(*) AS quantidade, nomemaquina FROM maquina WHERE nomemaquina = :nome AND disponibilidade = 1 AND maquinastatus = 1;", params! {"nome" => nomemaquina}, |(quantidade, nomemaquina )| EstoqueMaquina{quantidade, nomemaquina}).await?;
+    if estoque.is_empty() || estoque.contains(&estoque_invalido){
+        return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound, 
+            "Máquina não encontrada OU não está em estoque"))));
     }
+    return Ok(estoque)
 
 }

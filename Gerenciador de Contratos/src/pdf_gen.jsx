@@ -17,16 +17,20 @@ const styles = StyleSheet.create({
 export const gerarTextoContratoP1 = ({
   nomeLocadora,
   cnpjLocadora,
+  logradouro,
+  numeroendereco,
+  complemento,
+  cidade,
+  uf,
   nomeAdmLocadora,
-  cpfAdmLocadora,
-  enderecoAdmLocadora,
-  enderecoLocadora,
-  cidadeLocadora,
-  estadoLocadora
+  cpf,
+  orgaoemissor,
+  nacionalidade,
+  estadocivil
 }) => {
   return `
     LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em
-${enderecoLocadora}, ${cidadeLocadora}/${estadoLocadora}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, [nacionalidade], [estado civil], inscrito no CPF sob nº ${cpfAdmLocadora} SSP-MG, com endereço em ${enderecoAdmLocadora}, Cidade/MG.
+${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} ${orgaoemissor}, com endereço em [enderecoAdmLocadora], Cidade/MG.
 LOCATÁRIA: XXXXXXXXXX, inscrita no CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx, Cidade/MG, representada por XXXXXXXXXXXX, brasileiro, casado, CPF XXXXXXXXX, residente na Rua XXXXXXXXXXX, Cidade/MG.
 DEFINIÇÕES
 
@@ -241,11 +245,25 @@ const CPDF = () => {
   return (
     <PDFViewer width="100%" height="600px">
       <MeuDocumento
+      //Locadora
         nomeLocadora={state?.nomelocadora || ""}
         cnpjLocadora={state?.cnpjLocadora || ""}
-        nomeAdmLocadora={state?.nomeAdmLocadora || ""}
+      //Locadora | Banco
         numeroConta={state?.numeroConta || ""}
         numeroAgencia={state?.numeroAgencia || ""}
+      //Locadora | Endereço
+        cep={state?.cep || ""}
+        cidade={state?.cidade || ""}
+        logradouro={state?.logradouro || ""}
+        numeroendereco={state?.numeroendereco || ""}
+        complemento={state?.complemento || ""}
+        uf={state?.uf || ""}
+      //Locadora | Socio
+        nomeAdmLocadora={state?.nomeAdmLocadora || ""}
+        cpf={state?.cpf || ""}
+        orgaoemissor={state?.orgaoemissor || ""}
+        nacionalidade={state?.nacionalidade || ""}
+        estadocivil={state?.estadocivil || ""}
       />
     </PDFViewer>
   );
