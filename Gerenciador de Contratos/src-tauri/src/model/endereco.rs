@@ -18,14 +18,7 @@ use crate::controller::endereco::Endereco;
 /// - Pode retornar um erro se houver problemas ao conectar ao banco de dados ou ao executar a query.
 pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::Error> {
     // Cria uma conexão com o pool do banco de dados
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?; 
     
     let id_retorno = endereco.id.to_string(); // faz uma cópia do id do endereço

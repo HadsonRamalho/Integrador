@@ -24,14 +24,7 @@ pub struct Maquina {
 
 pub async fn cadastrar_maquina(maquina: Maquina) -> Result<String, mysql_async::Error> {
     let idmaquina = maquina.idmaquina.clone();
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let resultado_insert = conn
         .exec_drop(
@@ -55,15 +48,7 @@ pub async fn cadastrar_maquina(maquina: Maquina) -> Result<String, mysql_async::
 }
 
 pub async fn buscar_maquina_nome(nome: &str) -> Result<Vec<Maquina>, mysql_async::Error>{
-    let pool = match controller::cria_pool().await{
-            Ok(pool) => {
-                pool
-            },
-            Err(e) =>{
-                println!("{:?}", e);
-                return Err(e);
-            }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome);
     let resultado_select = conn.exec("SELECT * FROM maquina WHERE nomemaquina LIKE :nome;", 

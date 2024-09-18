@@ -77,14 +77,7 @@ pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqui
 }
 
 pub async fn _busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome_maquina);
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = conn.exec_map(
