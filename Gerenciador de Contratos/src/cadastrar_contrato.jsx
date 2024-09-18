@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
+import CPDF from "./pdf_gen";
+import ChamaContrato from "./pdf_call";
 
 function CadastrarContrato(){
   const [mensagem, setMensagem] = useState("");
@@ -386,6 +388,18 @@ function CadastrarContrato(){
     navigate('/home');
   };
 
+  const cpdf = () => {
+    navigate('/cpdf', {
+      state: {
+        nomelocadora,
+        cnpjLocadora: cnpj,
+        nomeAdmLocadora: nome,
+        numeroConta: numerocontabanco,
+        numeroAgencia: numeroagenciabanco,
+      },
+    });
+  };
+
     return (
       <div id="boxCadastroContrato">
         <div>
@@ -411,6 +425,14 @@ function CadastrarContrato(){
               idenderecolocadora, prazolocacao, dataretirada, 
               valormensal, vencimento, multaatraso, jurosatraso,
               avisotransferencia, prazodevolucao, cidadeforo, datacontrato);
+              ChamaContrato({ 
+                nomelocadora, 
+                cnpjLocadora: cnpj, 
+                nomeAdmLocadora: nome, 
+                numeroConta: numerocontabanco, 
+                numeroAgencia: numeroagenciabanco 
+              });              
+              cpdf();
           }}
         >
         <p>Cadastro da locadora</p>
