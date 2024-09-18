@@ -1,3 +1,4 @@
+use crate::model::locadora;
 use crate::model::locadora::Locadora;
 use crate::model::locadora::_cadastra_locadora;
 use crate::model;
@@ -170,6 +171,26 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     return Ok(locadora);
 }
 
+#[tauri::command]
+pub async fn locadora_existente(cnpj: &str) -> Result<serde_json::Value, String>{
+    let cnpj = formata_cnpj(cnpj)?;
+    let locadora = match model::locadora::locadora_existente(&cnpj).await{
+        Ok(locadora) => {locadora},
+        Err(e) => {return Err(e.to_string())}
+    };
+    let locadora = serde_json::json!({
+        "idlocadora": locadora.idlocadora,
+        "idendereco": locadora.idendereco,
+        "cnpj": locadora.cnpj,
+        "numerocontabanco": locadora.numerocontabanco,
+        "numeroagenciabanco": locadora.numeroagenciabanco,
+        "nomebanco": locadora.nomebanco,
+        "nomelocadora": locadora.nomelocadora,
+        "idsocio": locadora.idsocio,
+        "locadorastatus": locadora.locadorastatus
+    });
+    return Ok(locadora)
+}
 
 pub fn formata_cnpj(cnpj: &str) -> Result<String, String>{
     let cnpj_numeros: Vec<char> = cnpj

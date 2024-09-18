@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
-import CPDF from "./pdf_gen";
 import ChamaContrato from "./pdf_call";
 
 function CadastrarContrato(){
@@ -388,6 +387,15 @@ function CadastrarContrato(){
     navigate('/home');
   };
 
+  const cnpjLocadoraAlterado = async (e) => {
+    const cnpj = e.target.value;
+    const locadoraExistente = await invoke("locadora_existente", {cnpj});
+    if (locadoraExistente) {
+      setNomeLocadora(locadoraExistente.nomelocadora);
+      console.log("Locadora existe!");
+    }
+  };
+
   const cpdf = () => {
     navigate('/cpdf', {
       state: {
@@ -453,33 +461,34 @@ function CadastrarContrato(){
           }}
         >
         <p>Cadastro da locadora</p>
-          <input required
-          className="rowReset"
-          onChange={(e) => setNomeLocadora(e.currentTarget.value)}
-          placeholder="Nome da Locadora" 
-        />
-        <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCnpjLocadora(e.currentTarget.value)}
-          placeholder="CNPJ da Locadora"
+          placeholder="CNPJ da Locadora (Ex.: 11.222.333/0001-01)"
+          onBlur={cnpjLocadoraAlterado}  ///////////////////////////////////////////////////////////
+        />
+        <br/>
+          <input required
+          className="inputContrato"
+          onChange={(e) => setNomeLocadora(e.currentTarget.value)}
+          placeholder={nomelocadora || "Nome da Locadora (Ex.: Mineração XYZ)"}
         />
         <br></br>
         <p>Cadastro do endereço da locadora</p>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCepLocadora(e.currentTarget.value)}
-          placeholder="CEP da Locadora" 
+          placeholder="CEP da Locadora (Ex.: 40400-400)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCidadeLocadora(e.currentTarget.value)}
-          placeholder="Cidade da Locadora" 
+          placeholder="Cidade da Locadora (Ex.: Belo Horizonte)" 
         />
         <br></br>
-        <div class="input-box">
-                    <label for="estadoLocadora"></label>
+        <div className="input-box">
+                    <label htmlFor="estadoLocadora"></label>
                     <select id="estadoLocadora" 
                         name="estadoLocadora" 
                         value={uf}
@@ -488,7 +497,7 @@ function CadastrarContrato(){
                         aria-label="Selecione o estado da Locadora"
                         
                     >
-                        <option value="" disabled selected>Selecione o estado da Locadora</option>
+                        <option value="" defaultValue={""}>Selecione o estado da Locadora</option>
                         <option value="AC">AC</option>
                         <option value="AL">AL</option>
                         <option value="AP">AP</option>
@@ -516,308 +525,306 @@ function CadastrarContrato(){
                         <option value="SE">SE</option>
                         <option value="TO">TO</option>
       </select>
-      
     </div>
-        <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setLogradouroLocadora(e.currentTarget.value)}
-          placeholder="Logradouro da Locadora" 
+          placeholder="Logradouro da Locadora (Ex.: Avenida Central)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNumeroLocadora(e.currentTarget.value)}
-          placeholder="Numero do end. Locadora" 
+          placeholder="Numero do end. Locadora (Ex.: 101B)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setComplementoLocadora(e.currentTarget.value)}
-          placeholder="Complemento do end. Locadora" 
+          placeholder="Complemento do end. Locadora (Ex.: Sala 01)" 
         />
         <p>Cadastro dos Dados Bancários da Locadora</p>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNomeBanco(e.currentTarget.value)}
-          placeholder="Nome do banco" 
+          placeholder="Nome do banco (Ex.: Banco do Brasil)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNumeroContaBanco(e.currentTarget.value)}
-          placeholder="Número da conta" 
+          placeholder="Número da conta (Ex.: 3040)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNumeroAgenciaBanco(e.currentTarget.value)}
-          placeholder="Agência da conta" 
+          placeholder="Agência da conta (Ex.: 001)" 
         />
         <br></br>
         <p>Cadastro do Sócio Administrador da Locadora</p>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNomeAdmLocadora(e.currentTarget.value)}
-          placeholder="Nome do sócio adm." 
+          placeholder="Nome do sócio adm. (Ex.: João Carlos Pinheiro)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCpfAdmLocadora(e.currentTarget.value)}
-          placeholder="CPF do sócio adm." 
+          placeholder="CPF do sócio adm. (Ex.: 123.456.789-01)" 
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setOrgaoEmissor(e.currentTarget.value)}
-          placeholder="Órgão Emissor do Doc."
+          placeholder="Órgão Emissor do Doc. (Ex.: PC-MG)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setEstadoCivil(e.currentTarget.value)}
-          placeholder="Estado Civil do Sócio"
+          placeholder="Estado Civil do Sócio (Ex.: Casado)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNacionalidade(e.currentTarget.value)}
-          placeholder="Nacionalidade do Sócio"
+          placeholder="Nacionalidade do Sócio (Ex.: Brasileiro)"
         />
         <br></br>
         <p>Endereço do Sócio Administrador da Locadora</p>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCepAdm(e.currentTarget.value)}
-          placeholder="CEP do sócio adm." 
+          placeholder="CEP do sócio adm. (Ex.: 40400-400)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCidadeAdm(e.currentTarget.value)}
-          placeholder="Cidade do sócio adm." 
+          placeholder="Cidade do sócio adm. (Ex.: Belo Horizonte)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setUfAdm(e.currentTarget.value)}
-          placeholder="UF do sócio adm." 
+          placeholder="UF do sócio adm. " 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setLogradouroAdm(e.currentTarget.value)}
-          placeholder="Logradouro do sócio adm." 
+          placeholder="Logradouro do sócio adm. (Ex.: Avenida Central)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNumeroAdm(e.currentTarget.value)}
-          placeholder="Numero do sócio adm." 
+          placeholder="Numero do sócio adm. (Ex.: 101B)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setComplementoAdm(e.currentTarget.value)}
-          placeholder="Complemento do sócio adm." 
+          placeholder="Complemento do sócio adm. (Ex.: Sala 01)" 
         />
         <br></br>
         <p>Informações da máquina</p>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNomeMaquina(e.currentTarget.value)}
-          placeholder="Nome da máquina" 
+          placeholder="Nome da máquina (Ex.: Máquina de Corte)"  
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNumSerie(e.currentTarget.value)}
-          placeholder="Número de série" 
+          placeholder="Número de série (Ex.: 11444A555B)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setValorAluguel(e.currentTarget.value)}
-          placeholder="Valor aprox. do aluguel" 
+          placeholder="Valor aprox. do aluguel (Ex.: 30000)" 
         />
         <br></br>
         <p>Cadastro do endereço do sócio administrador do locatario</p>
           <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCidadeSocioLocatario(e.currentTarget.value)}
-          placeholder="Cidade" 
+          placeholder="Cidade (Ex.: Belo Horizonte)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setUfSocioLocatario(e.currentTarget.value)}
           placeholder="Estado"
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCepSocioLocatario(e.currentTarget.value)}
-          placeholder="CEP" 
+          placeholder="CEP (Ex.: 40400-400)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setLogradouroSocioLocatario(e.currentTarget.value)}
-          placeholder="Logradouro" 
+          placeholder="Logradouro (Ex.: Avenida Central)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNumeroSocioLocatario(e.currentTarget.value)}
-          placeholder="Numero do endereço"
+          placeholder="Numero do endereço (Ex.: 101B)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setComplementoSocioLocatario(e.currentTarget.value)}
-          placeholder="Complemento do endereço"
+          placeholder="Complemento do endereço (Ex.: Sala 01)"
         />
         <br></br>
         <p>Cadastro do Sócio Administrador do locatario</p>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNomeSocioLocatario(e.currentTarget.value)}
-          placeholder="Nome do Sócio"
+          placeholder="Nome do Sócio (Ex.: Carlos Figueiredo Rocha)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCpfSocioLocatario(e.currentTarget.value)}
-          placeholder="CPF do Sócio"
+          placeholder="CPF do Sócio (Ex.: 321.654.987-10)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setOrgaoEmissorSocioLocatario(e.currentTarget.value)}
-          placeholder="Órgão Emissor do Documento"
+          placeholder="Órgão Emissor do Documento (Ex.: PC-MG)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setEstadoCivilSocioLocatario(e.currentTarget.value)}
-          placeholder="Estado Civil do Sócio"
+          placeholder="Estado Civil do Sócio (Ex.: Solteiro)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNacionalidadeSocioLocatario(e.currentTarget.value)}
-          placeholder="Nacionalidade do Sócio"
+          placeholder="Nacionalidade do Sócio (Ex.: Brasileiro)"
         />
         <br></br>
         <p>Cadastro do endereço da empresa do locatario</p>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCidadeLocatario(e.currentTarget.value)}
-          placeholder="Cidade" 
+          placeholder="Cidade (Ex.: Belo Horizonte)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setUfLocatario(e.currentTarget.value)}
           placeholder="Estado"
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCepLocatario(e.currentTarget.value)}
-          placeholder="CEP" 
+          placeholder="CEP (Ex.: 40400-400)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setLogradouroLocatario(e.currentTarget.value)}
-          placeholder="Logradouro" 
+          placeholder="Logradouro (Ex.: Avenida Central)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNumeroLocatario(e.currentTarget.value)}
-          placeholder="Numero do endereço"
+          placeholder="Numero do endereço (Ex.: 101B)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setComplementoLocatario(e.currentTarget.value)}
-          placeholder="Complemento do endereço"
+          placeholder="Complemento do endereço (Ex.: Sala 01)"
         />
         <br></br>
         <p>Cadastro da empresa do locatario</p>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCnpjLocatario(e.currentTarget.value)}
-          placeholder="CNPJ da Empresa"
+          placeholder="CNPJ da Empresa (Ex.: 11.234.567/0001-01)"
         />
         <br></br>
         <input
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setNomeLocatario(e.currentTarget.value)}
-          placeholder="Nome da Empresa"
+          placeholder="Nome da Empresa (Ex.: Mineração OPQ)"
         />
         <p>Informações do contrato</p>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setPrazoLocacao(e.currentTarget.value)}
-          placeholder="Prazo de locação (em meses)" 
+          placeholder="Prazo de locação (em meses) (Ex.: 12)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setDataRetirada(e.currentTarget.value)}
-          placeholder="Data de retirada da máquina" 
+          placeholder="Data de retirada da máquina (Ex.: 2024-12-01)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setValorMensal(e.currentTarget.value)}
-          placeholder="Valor mensal do contrato" 
+          placeholder="Valor mensal do contrato (Ex.: 30000)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setVencimento(e.currentTarget.value)}
-          placeholder="Vencimento do contrato" 
+          placeholder="Vencimento do contrato (Ex.: 2025-12-01)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setMultaAtraso(e.currentTarget.value)}
-          placeholder="Multa de atraso" 
+          placeholder="Multa de atraso (Ex.: 10)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setJurosAtraso(e.currentTarget.value)}
-          placeholder="Juros de atraso" 
+          placeholder="Juros de atraso (Ex.: 5)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setAvisoTransferencia(e.currentTarget.value)}
-          placeholder="Aviso de transferência" 
+          placeholder="Aviso de transferência (Ex.: Não aplicável)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setPrazoDevolucao(e.currentTarget.value)}
-          placeholder="Prazo de devolução" 
+          placeholder="Prazo de devolução (Ex.: 2025-12-31)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setCidadeForo(e.currentTarget.value)}
-          placeholder="Cidade foro" 
+          placeholder="Cidade foro (Ex.: Belo Horizonte)" 
         />
         <br></br>
         <input required
-          className="rowReset"
+          className="inputContrato"
           onChange={(e) => setDataContrato(e.currentTarget.value)}
-          placeholder="Data do contrato" 
+          placeholder="Data do contrato (Ex.: 2024-12-01)" 
         />
         <br></br>
         <p className="mensagemLogin">{mensagem}</p>

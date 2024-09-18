@@ -30,7 +30,7 @@ export const gerarTextoContratoP1 = ({
 }) => {
   return `
     LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em
-${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} SSP-MG, com endereço em [enderecoAdmLocadora], Cidade/MG.
+${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} ${orgaoemissor}, com endereço em [enderecoAdmLocadora], Cidade/MG.
 LOCATÁRIA: XXXXXXXXXX, inscrita no CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx, Cidade/MG, representada por XXXXXXXXXXXX, brasileiro, casado, CPF XXXXXXXXX, residente na Rua XXXXXXXXXXX, Cidade/MG.
 DEFINIÇÕES
 

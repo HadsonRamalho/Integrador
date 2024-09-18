@@ -40,6 +40,7 @@ fn main() {
             controller::locadora::cadastra_locadora,
             controller::locadora::busca_id_locadora,
             controller::locadora::estrutura_locadora,
+            controller::locadora::locadora_existente,
 
             controller::maquina::estrutura_maquina,
             controller::maquina::busca_maquina_nome,
