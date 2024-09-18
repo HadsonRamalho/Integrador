@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 import ChamaContrato from "./pdf_call";
 
+
 function CadastrarContrato(){
   const [mensagem, setMensagem] = useState("");
 

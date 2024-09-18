@@ -25,6 +25,7 @@ function BuscarMaquina(){
       const maquina = await invoke("busca_maquina_numserie", {numserie});
       setVetor(maquina); 
       setMensagem("");
+      return;
     } catch(error){
         console.log("[Buscar_maquina.jsx] : ", error);
         setVetor([]);
@@ -51,7 +52,10 @@ function BuscarMaquina(){
           className="rowReset"
           type="text"
           value={valorBusca}
-          onChange={(e) => setValorBusca(e.currentTarget.value)}
+          onChange={(e) => {setValorBusca(e.currentTarget.value)
+            setNumSerie(valorBusca)
+          setNomeMaquina(valorBusca)}
+          }
           placeholder={`Buscar máquina por ${filtro}`}
         />
         <button onClick={async () => {
