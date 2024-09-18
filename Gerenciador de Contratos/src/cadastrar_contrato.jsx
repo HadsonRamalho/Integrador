@@ -465,7 +465,7 @@ function CadastrarContrato(){
           className="inputContrato"
           onChange={(e) => setCnpjLocadora(e.currentTarget.value)}
           placeholder="CNPJ da Locadora (Ex.: 11.222.333/0001-01)"
-          onBlur={cnpjLocadoraAlterado}  ///////////////////////////////////////////////////////////
+          onBlur={cnpjLocadoraAlterado}
         />
         <br/>
           <input required

@@ -128,3 +128,12 @@ pub async fn busca_maquina_numserie(numserie: String) -> Result<Vec<model::maqui
         }
     }
 }
+
+#[tauri::command]
+pub async fn gera_estoque_por_nome(nomemaquina: &str) -> Result<model::maquina::EstoqueMaquina, String>{
+    let estoque_maquina = match model::maquina::gera_estoque_por_nome(nomemaquina.to_string()).await{
+        Ok(maquina) => {maquina},
+        Err(e) => {return Err(e.to_string())}
+    };
+    return Ok(estoque_maquina)
+}

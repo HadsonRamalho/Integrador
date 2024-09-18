@@ -6,7 +6,7 @@ use serde::Serialize;
 
 use crate::controller;
 //Criada estrutura para representar a quantidade de maquinas em estoque
-#[derive(FromRow)]
+#[derive(FromRow, Serialize)]
 pub struct EstoqueMaquina{
     pub nomemaquina: String,
     pub quantidade: u64

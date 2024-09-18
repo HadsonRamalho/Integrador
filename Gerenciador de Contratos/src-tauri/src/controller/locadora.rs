@@ -1,4 +1,3 @@
-use crate::model::locadora;
 use crate::model::locadora::Locadora;
 use crate::model::locadora::_cadastra_locadora;
 use crate::model;
