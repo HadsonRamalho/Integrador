@@ -31,10 +31,11 @@ function RelatorioEstoqueMaquina(){
       <div id="boxRelatorioEstoqueMaquina">
         <input
           required          
-          className="rowReset"
+          className="inputRelatorioEstoqueMaquina"
           onChange={(e) => setNomeMaquina(e.currentTarget.value)}
-          placeholder="Buscar por nome da máquina"
+          placeholder="Buscar por nome da máquina (Nome completo, igual consta no cadastro da máquina)"
         />
+        <br/>
         <button className="botoesHome" type="button" onClick={buscaMaquina}>Buscar</button>
         <button className="botoesHome" type="button" onClick={home}>Voltar</button>
         <p>{mensagem}</p>
