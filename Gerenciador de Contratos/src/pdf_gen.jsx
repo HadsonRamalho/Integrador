@@ -1,5 +1,6 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
+import { useLocation } from 'react-router-dom';
 
 // Estilos
 const styles = StyleSheet.create({
@@ -232,19 +233,22 @@ const MeuDocumento = (params) => {
 };
 
 // Componente para exibir o PDF na tela
-const CPDF = () => (
-  <PDFViewer width="100%" height="600px">
-    <MeuDocumento 
-      nomeLocadora="Locadora ABC"
-      cnpjLocadora="00.000.000/0001-00"
-      nomeAdmLocadora="José da Silva"
-      cpfAdmLocadora="000.000.000-00"
-      enderecoAdmLocadora="Rua A, 123"
-      enderecoLocadora="Av. B, 456"
-      cidadeLocadora="São Paulo"
-      estadoLocadora="SP"
-    />
-  </PDFViewer>
-);
+const CPDF = () => {
+  const { state } = useLocation();
+
+  console.log("Dados preenchidos:", state);
+
+  return (
+    <PDFViewer width="100%" height="600px">
+      <MeuDocumento
+        nomeLocadora={state?.nomelocadora || ""}
+        cnpjLocadora={state?.cnpjLocadora || ""}
+        nomeAdmLocadora={state?.nomeAdmLocadora || ""}
+        numeroConta={state?.numeroConta || ""}
+        numeroAgencia={state?.numeroAgencia || ""}
+      />
+    </PDFViewer>
+  );
+};
 
 export default CPDF;

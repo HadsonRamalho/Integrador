@@ -77,14 +77,7 @@ pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqui
 }
 
 pub async fn _busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome_maquina);
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = conn.exec_map(
@@ -109,6 +102,29 @@ pub async fn _busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqu
         },
         Err(e) => {
             return Err(e);
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn busca_maquina_numserie(numserie: String) -> Result<Vec<model::maquina::Maquina>, String>{
+    let numserie_backup = numserie.clone();
+    let numserie = numserie.replace(" ", "");
+    if numserie.is_empty(){
+        return Err("Erro: O nome da máquina está vazio.".to_string());
+    }
+    let numserie = numserie_backup;
+    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::busca_maquina_serie(&numserie).await;
+
+    match resultado_busca{
+        Ok(resultado) => {
+            if !resultado.is_empty(){
+                return Ok(resultado);
+            }
+            return Err("Erro: Máquina não encontrada".to_string());
+        },
+        Err(erro) => {
+            return Err(erro.to_string());
         }
     }
 }

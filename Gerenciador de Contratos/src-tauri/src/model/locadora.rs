@@ -15,14 +15,7 @@ pub struct Locadora{
 }
 
 pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::Error>{
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO locadora (idlocadora, idendereco, cnpj, 

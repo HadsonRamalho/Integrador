@@ -6,13 +6,25 @@ function BuscarMaquina(){
   const [mensagem, setMensagem] = useState("");
   const [nomeMaquina, setNomeMaquina] = useState("");
   const [vetor, setVetor] = useState([]);
+  const [numserie, setNumSerie] = useState([]);
+  const [valorBusca, setValorBusca] = useState([]);
   const idusuario = localStorage.getItem('token');
+  const [filtro, setFiltro] = useState('name');
 
-  async function buscaMaquina(){
+
+  async function buscaMaquina(filtro){
     try{
-        const valoraluguel = await invoke("busca_maquina_nome", {nomeMaquina});
-        setVetor(valoraluguel); 
+      if (filtro == "nome"){
+        setNomeMaquina(valorBusca);
+        const maquinas = await invoke("busca_maquina_nome", {nomeMaquina});
+        setVetor(maquinas); 
         setMensagem("");
+        return;
+      }
+      setNumSerie(valorBusca);
+      const maquina = await invoke("busca_maquina_numserie", {numserie});
+      setVetor(maquina); 
+      setMensagem("");
     } catch(error){
         console.log("[Buscar_maquina.jsx] : ", error);
         setVetor([]);
@@ -29,20 +41,31 @@ function BuscarMaquina(){
   return (
     <div>
       <div className="boxBuscaMaquina">
+         <div>
+          Filtro: 
+          <select value={filtro} onChange={(e) => setFiltro(e.target.value)}>
+            <option value="nome">Nome</option>
+            <option value="número de série">Número de série</option>
+        </select>
         <input
-          required          
           className="rowReset"
-          onChange={(e) => setNomeMaquina(e.currentTarget.value)}
-          placeholder="Buscar por nome da máquina"
+          type="text"
+          value={valorBusca}
+          onChange={(e) => setValorBusca(e.currentTarget.value)}
+          placeholder={`Buscar máquina por ${filtro}`}
         />
-        <button className="botoesHome" type="button" onClick={buscaMaquina}>Buscar</button>
-        <button className="botoesHome" type="button" onClick={home}>Voltar</button>        
-        <p>{mensagem}</p>
-        <div>
-          <ul className="contract-list">
-            {vetor.map((maquina, index) => (
-              <li key={index} className="contract-item">
-                <div className="contract-header">NOME DA MAQUINA: {maquina.nomemaquina}</div>
+        <button onClick={async () => {
+          await buscaMaquina(filtro);
+        }
+        }>Buscar</button>
+      </div>
+      <button className="botoesHome" type="button" onClick={home}>Voltar</button>        
+      <p>{mensagem}</p>
+      <div>
+        <ul className="contract-list">
+          {vetor.map((maquina, index) => (
+            <li key={index} className="contract-item">
+              <div className="contract-header">NOME DA MAQUINA: {maquina.nomemaquina}</div>
                 <div className="contract-fields">
                   <strong>Número de Série:</strong> {maquina.numserie} <br />
                   <strong>Valor Aluguel: </strong> R$ {maquina.valoraluguel} <br />

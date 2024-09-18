@@ -1,3 +1,5 @@
+use std::vec;
+
 use mysql_async::{params, prelude::Queryable};
 use mysql_async::prelude::FromRow;
 use serde::Serialize;
@@ -22,14 +24,7 @@ pub struct Maquina {
 
 pub async fn cadastrar_maquina(maquina: Maquina) -> Result<String, mysql_async::Error> {
     let idmaquina = maquina.idmaquina.clone();
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let resultado_insert = conn
         .exec_drop(
@@ -53,15 +48,7 @@ pub async fn cadastrar_maquina(maquina: Maquina) -> Result<String, mysql_async::
 }
 
 pub async fn buscar_maquina_nome(nome: &str) -> Result<Vec<Maquina>, mysql_async::Error>{
-    let pool = match controller::cria_pool().await{
-            Ok(pool) => {
-                pool
-            },
-            Err(e) =>{
-                println!("{:?}", e);
-                return Err(e);
-            }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome);
     let resultado_select = conn.exec("SELECT * FROM maquina WHERE nomemaquina LIKE :nome;", 
@@ -81,11 +68,12 @@ pub async fn buscar_maquina_nome(nome: &str) -> Result<Vec<Maquina>, mysql_async
     }
 }
 
-pub async fn busca_maquina_serie(serie: &str) -> Result<Maquina, mysql_async::Error>{
+pub async fn busca_maquina_serie(serie: &str) -> Result<Vec<Maquina>, mysql_async::Error>{
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let maquina: Option<Maquina> = conn.exec_first("SELECT * FROM maquina WHERE numserie = :serie", 
     params! {"serie" => serie}).await?;
+    let mut maquina_retorno = vec![];
     match maquina{
         None => {
             //Criando um erro personalizado para a aplicação.
@@ -93,12 +81,10 @@ pub async fn busca_maquina_serie(serie: &str) -> Result<Maquina, mysql_async::Er
                 "Numero de série não encontrado"))));
         },
         Some(maquina) => {
-            return Ok(maquina);
-
+            maquina_retorno.push(maquina);
+            return Ok(maquina_retorno);
         }
-
     }
-
 }
 
 pub async fn gera_estoque_total() -> Result<Vec<EstoqueMaquina>, mysql_async::Error>{

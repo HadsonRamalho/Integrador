@@ -44,6 +44,7 @@ fn main() {
             controller::maquina::estrutura_maquina,
             controller::maquina::busca_maquina_nome,
             controller::maquina::cadastra_maquina,
+            controller::maquina::busca_maquina_numserie,
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm,            
