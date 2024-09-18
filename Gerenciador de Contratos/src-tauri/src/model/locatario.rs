@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::model::params;
 use crate::controller;
 use::mysql_async::prelude::FromRow;
-use::thiserror::Error;
+use crate::controller::erro::MeuErro;
 
 #[derive(FromRow, Serialize)]
 pub struct Locatario{
@@ -14,23 +14,10 @@ pub struct Locatario{
     pub idsocio: String,
     pub locatariostatus: i16
 }
-#[derive(Error, Debug)]
-pub enum MeuErro{
-    #[error("CNPJ não encontrado")]
-    CnpjNaoEncontrado,
-    #[error("Erro na conexão com o banco de dados: {0}")]
-    ConexaoBanco(#[from] mysql_async::Error),
-}
+
 
 pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, nomelocatario, idsocio, locatariostatus)
@@ -77,13 +64,7 @@ pub async fn busca_locatario_nome(nome: &str) -> Result<Vec<Locatario>, mysql_as
 
 
 pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Vec<Locatario>, mysql_async::Error>{
-    let pool = match controller::cria_pool().await{
-        Ok(pool) => {pool},
-        Err(e) => {
-            let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
-            return Err(err)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = 
     match pool.get_conn().await{
         Ok(conn) => {conn},

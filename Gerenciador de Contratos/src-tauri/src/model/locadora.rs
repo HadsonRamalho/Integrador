@@ -1,7 +1,9 @@
-use mysql_async::prelude::Queryable;
+use mysql_async::prelude::{FromRow, Queryable};
+use crate::controller::erro::MeuErro;
 use crate::model::params;
-use crate::controller;
+use crate::controller::{self, cria_pool};
 
+#[derive(FromRow)]
 pub struct Locadora{
     pub idlocadora: String,
     pub idendereco: String,
@@ -15,23 +17,16 @@ pub struct Locadora{
 }
 
 pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::Error>{
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let resultado_insert =
          conn.exec_drop("INSERT INTO locadora (idlocadora, idendereco, cnpj, 
-         numerocontabanco, numeroagenciabanco, nomebanco, nomelocadora, idsocio)
-          VALUES (:idlocadora, :idendereco, :cnpj, :numerocontabanco, :numeroagenciabanco, :nomebanco, :nomelocadora, :idsocio);", 
+         numerocontabanco, numeroagenciabanco, nomebanco, nomelocadora, idsocio, locadorastatus)
+          VALUES (:idlocadora, :idendereco, :cnpj, :numerocontabanco, :numeroagenciabanco, :nomebanco, :nomelocadora, :idsocio, :locadorastatus);", 
          params! {"idlocadora" =>  locadora.idlocadora, "idendereco" => locadora.idendereco, "cnpj" => locadora.cnpj, 
             "numerocontabanco" => locadora.numerocontabanco,
             "numeroagenciabanco" => locadora.numeroagenciabanco, "nomebanco" => locadora.nomebanco, 
-            "nomelocadora" => locadora.nomelocadora, "idsocio" => locadora.idsocio}).await;
+            "nomelocadora" => locadora.nomelocadora, "idsocio" => locadora.idsocio, "locadorastatus" => locadora.locadorastatus}).await;
     match resultado_insert{
         Ok(_) => {
             println!("Locadora cadastrada");
@@ -70,5 +65,20 @@ pub async fn _busca_id_locadora(cnpj: &str) -> Result<String, mysql_async::Error
         Err(e) => {
             return Err(e);
         }
+    }
+}
+
+pub async fn locadora_existente(cnpj: &str) -> Result<Locadora, mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let locadora: Result<Option<Locadora>, mysql_async::Error> = 
+        conn.exec_first("SELECT * FROM locadora WHERE cnpj = :cnpj", params! {"cnpj" => cnpj} ).await;
+    let locadora = match locadora{
+        Ok(locadora) => {locadora},
+        Err(e) => {return Err(e)}
+    };
+    match locadora{
+        None => {return Err(mysql_async::Error::Other(Box::new(MeuErro::CnpjNaoEncontrado)))},
+        Some(locadora) => {return Ok(locadora)}
     }
 }

@@ -55,9 +55,10 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
     if !id.is_empty(){
         return Err("Erro: Locatario já cadastrado".to_string());        
     }
-    let resultado_cadastro = _cadastra_locatario(locatario).await;
+    let resultado_cadastro = model::locatario::_cadastra_locatario(locatario).await;
     match resultado_cadastro{
         Ok(_) => {
+            println!("idlocatario: {}", idlocatario_cpy);
             return Ok(idlocatario_cpy.to_string());
         },
         Err(e) => {
@@ -81,14 +82,7 @@ pub async fn busca_id_locatario(cnpj: &str) -> Result<String, String>{
 }
 
 pub async fn _busca_id_locatario(cnpj: &str) -> Result<String, mysql_async::Error>{
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocatario FROM locatario WHERE cnpj = :cnpj",
         params!{"cnpj" => cnpj}).await;
@@ -108,34 +102,6 @@ pub async fn _busca_id_locatario(cnpj: &str) -> Result<String, mysql_async::Erro
             return Ok("".to_string());
         }
     }
-}
-
-pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async::Error>{
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
-    let mut conn = pool.get_conn().await?;
-    let resultado_insert =
-         conn.exec_drop("INSERT INTO locatario (idlocatario, idendereco, cnpj, 
-         nomelocatario, idsocio)
-          VALUES (:idlocatario, :idendereco, :cnpj, :nomelocatario, :idsocio);", 
-         params! {"idlocatario" =>  locatario.idlocatario, "idendereco" => locatario.idendereco, "cnpj" => locatario.cnpj,
-            "nomelocatario" => locatario.nomelocatario, "idsocio" => locatario.idsocio}).await;
-    match resultado_insert{
-        Ok(_) => {
-            println!("Locatario cadastrado");
-        }, 
-        Err(e) => {
-            println!("{:?}", e);
-            return Err(e);
-        }
-    }
-    return Ok(());
 }
 
 #[tauri::command]

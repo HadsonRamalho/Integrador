@@ -15,6 +15,7 @@ import CadastrarLocatario from './cadastrar_locatario';
 import CPDF from './pdf_gen';
 import CadastrarContrato from './cadastrar_contrato';
 import CadastrarMaquina from './cadastrar_maquina';
+import RelatorioEstoqueMaquina from './relatorio_estoque_maquina';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/cpdf" element = {<CPDF/>} />
         <Route path="/cadastrar_contrato" element = {<CadastrarContrato/>} />
         <Route path="/cadastrar_maquina" element = {<CadastrarMaquina/>} />
+        <Route path="/relatorio_estoque_maquina" element = {<RelatorioEstoqueMaquina/>} />
       </Routes>
     </Router>
   );

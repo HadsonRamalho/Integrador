@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::gera_hash;
+use crate::controller;
 
 #[derive(Serialize, Deserialize)]
 pub struct Endereco{
@@ -50,6 +51,10 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
         cidade.trim().is_empty() || uf.trim().is_empty(){
             return Err("Erro: Preencha todos os campos.".to_string())
     }
+    let cep = match controller::formata_cep(&cep){
+        Ok(cep) => {cep},
+        Err(e) => {return Err(e)}
+    };
     let id = gera_hash(&cep);
     // Estrutura os dados do endereço em formato JSON
     let endereco = serde_json::json!({
@@ -81,6 +86,16 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
 ///   ou um erro booleano indicando falha na criação da estrutura.
 #[tauri::command]
 pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, String>{
+    // Converte os dados recebidos em um objeto `Endereco`
+    let endereco = Endereco {
+        id: endereco["id"].as_str().unwrap_or("").to_string().split_off(15 as usize),
+        logradouro: endereco["logradouro"].as_str().unwrap_or("").to_string(),
+        cep: endereco["cep"].as_str().unwrap_or("").to_string(),
+        complemento: endereco["complemento"].as_str().unwrap_or("").to_string(),
+        numeroendereco: endereco["numeroendereco"].as_str().unwrap_or("").to_string(),
+        cidade: endereco["cidade"].as_str().unwrap_or("").to_string(),
+        uf: endereco["uf"].as_str().unwrap_or("").to_string(),
+    };
     let resultado_insert = crate::model::endereco::salva_endereco(endereco).await;
     match resultado_insert{
         Ok(id) => {

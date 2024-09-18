@@ -24,7 +24,6 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
 pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, String>{
     
     let valoraluguel = maquina["valoraluguel"].as_str().unwrap_or("").to_string();
-    let valoraluguel = controller::converte_virgula_ponto(&valoraluguel);
     let valoraluguel: f32 = match valoraluguel.trim().parse(){
         Ok(valoraluguel) => {
             valoraluguel
@@ -55,8 +54,14 @@ pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, Stri
 }
 
 #[tauri::command]
-pub async fn filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, String>{
-    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = _filtra_maquina_nome(nome_maquina).await;
+pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, String>{
+    let nome_maquina_backup = nome_maquina.clone();
+    let nome_maquina = nome_maquina.replace(" ", "");
+    if nome_maquina.is_empty(){
+        return Err("Erro: O nome da máquina está vazio.".to_string());
+    }
+    let nome_maquina = nome_maquina_backup;
+    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::buscar_maquina_nome(&nome_maquina).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -71,15 +76,8 @@ pub async fn filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqu
     }
 }
 
-pub async fn _filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
+pub async fn _busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome_maquina);
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = conn.exec_map(
@@ -106,4 +104,39 @@ pub async fn _filtra_maquina_nome(nome_maquina: String) -> Result<Vec<model::maq
             return Err(e);
         }
     }
+}
+
+#[tauri::command]
+pub async fn busca_maquina_numserie(numserie: String) -> Result<Vec<model::maquina::Maquina>, String>{
+    let numserie_backup = numserie.clone();
+    let numserie = numserie.replace(" ", "");
+    if numserie.is_empty(){
+        return Err("Erro: O nome da máquina está vazio.".to_string());
+    }
+    let numserie = numserie_backup;
+    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::busca_maquina_serie(&numserie).await;
+
+    match resultado_busca{
+        Ok(resultado) => {
+            if !resultado.is_empty(){
+                return Ok(resultado);
+            }
+            return Err("Erro: Máquina não encontrada".to_string());
+        },
+        Err(erro) => {
+            return Err(erro.to_string());
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn gera_estoque_por_nome(nomemaquina: &str) -> Result<Vec<model::maquina::EstoqueMaquina>, String>{
+    let estoque_maquina = match model::maquina::gera_estoque_por_nome(nomemaquina.to_string()).await{
+        Ok(maquina) => {maquina},
+        Err(e) => {return Err(e.to_string())}
+    };
+    if estoque_maquina.is_empty(){
+        return Err("Erro: Máquina não encontrada".to_string())
+    }
+    return Ok(estoque_maquina)
 }

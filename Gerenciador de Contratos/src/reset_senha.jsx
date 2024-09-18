@@ -15,7 +15,7 @@ function ResetSenha(){
       redefinicao_senha();
     } catch(error){
       setMensagemReset(error);
-      console.log(error);
+      console.log("[Reset_senha.jsx | loginEmail] : ", error);
     }
   }
 

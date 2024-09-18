@@ -68,13 +68,14 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
 /// - `Ok(())`: Se a locadora for cadastrada com sucesso ou já existir.
 /// - `Err(String)`: Se ocorrer um erro durante a validação ou no processo de busca/cadastro.
 #[tauri::command]
-pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String> {
+pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, String> {
     let locadora: Result<Locadora, String> = valida_locadora(locadora);
     match locadora{
         Ok(_) => {},
         Err(e) => {return Err(e)}
     }
     let locadora: Locadora = locadora.unwrap();
+    let idlocadora = locadora.idlocadora.clone();
     let resultado_busca: Result<String, mysql_async::Error> =
         model::locadora::_busca_id_locadora(&locadora.cnpj).await;
 
@@ -82,7 +83,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<(), String
         Ok(resultado) => {
             if resultado.is_empty() {
                 let _resultado_cadastro = _cadastra_locadora(locadora).await;
-                return Ok(());
+                return Ok(idlocadora);
             }
             return Err("Erro: Locadora já cadastrada".to_string());
         }
@@ -169,6 +170,26 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     return Ok(locadora);
 }
 
+#[tauri::command]
+pub async fn locadora_existente(cnpj: &str) -> Result<serde_json::Value, String>{
+    let cnpj = formata_cnpj(cnpj)?;
+    let locadora = match model::locadora::locadora_existente(&cnpj).await{
+        Ok(locadora) => {locadora},
+        Err(e) => {return Err(e.to_string())}
+    };
+    let locadora = serde_json::json!({
+        "idlocadora": locadora.idlocadora,
+        "idendereco": locadora.idendereco,
+        "cnpj": locadora.cnpj,
+        "numerocontabanco": locadora.numerocontabanco,
+        "numeroagenciabanco": locadora.numeroagenciabanco,
+        "nomebanco": locadora.nomebanco,
+        "nomelocadora": locadora.nomelocadora,
+        "idsocio": locadora.idsocio,
+        "locadorastatus": locadora.locadorastatus
+    });
+    return Ok(locadora)
+}
 
 pub fn formata_cnpj(cnpj: &str) -> Result<String, String>{
     let cnpj_numeros: Vec<char> = cnpj
