@@ -1,6 +1,19 @@
 use mysql_async::prelude::*;
-use crate::controller;
-use crate::controller::endereco::Endereco;
+use serde::{Deserialize, Serialize};
+use crate::controller::erro::MeuErro;
+use crate::controller::{self, cria_pool};
+
+#[derive(Serialize, Deserialize, FromRow)]
+pub struct Endereco{
+    pub idendereco: String,
+    pub logradouro: String,
+    pub cep: String,
+    pub complemento: String,
+    pub numeroendereco: String,
+    pub cidade: String,
+    pub uf: String,
+}
+
 
 /// Função para salvar um endereço no banco de dados.
 ///
@@ -21,12 +34,12 @@ pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::E
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?; 
     
-    let id_retorno = endereco.id.to_string(); // faz uma cópia do id do endereço
+    let id_retorno = endereco.idendereco.to_string(); // faz uma cópia do id do endereço
     // Insere o endereço na tabela `endereco`
     conn.exec_drop(
         "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf)
          VALUES (:idendereco, :logradouro, :cep, :complemento, :numeroendereco, :cidade, :uf)",
-        params! {"idendereco" => endereco.id, "logradouro" => endereco.logradouro,
+        params! {"idendereco" => endereco.idendereco, "logradouro" => endereco.logradouro,
         "cep" => endereco.cep, "complemento" => endereco.complemento,
         "numeroendereco" => endereco.numeroendereco, "cidade" => endereco.cidade,
         "uf" => endereco.uf},
@@ -35,4 +48,16 @@ pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::E
     println!("Endereço salvo com sucesso");
 
     return Ok(id_retorno) // retorna o id do endereço
+}
+
+pub async fn busca_endereco_id(id: &str) -> Result<Endereco, mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_busca = 
+        conn.exec_first("SELECT * FROM endereco WHERE idendereco = :id",
+        params! {"id" => id} ).await?;
+    match resultado_busca{
+        None => {return Err(mysql_async::Error::Other(Box::new(MeuErro::EnderecoNaoEncontrado)))},
+        Some(endereco) => {return Ok(endereco)}
+    }
 }

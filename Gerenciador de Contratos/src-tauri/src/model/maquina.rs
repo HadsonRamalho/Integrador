@@ -104,7 +104,11 @@ pub async fn gera_estoque_por_nome(nomemaquina: String) -> Result<Vec<EstoqueMaq
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let estoque_invalido: EstoqueMaquina = EstoqueMaquina{quantidade: 0, nomemaquina: None};
-    let estoque = conn.exec_map("SELECT COUNT(*) AS quantidade, nomemaquina FROM maquina WHERE nomemaquina = :nome AND disponibilidade = 1 AND maquinastatus = 1;", params! {"nome" => nomemaquina}, |(quantidade, nomemaquina )| EstoqueMaquina{quantidade, nomemaquina}).await?;
+    let estoque = conn.exec_map(
+        "SELECT COUNT(*) AS quantidade, nomemaquina FROM maquina 
+        WHERE nomemaquina = :nome AND disponibilidade = 1 AND maquinastatus = 1;",
+         params! {"nome" => nomemaquina}, |(quantidade, nomemaquina )| 
+            EstoqueMaquina{quantidade, nomemaquina}).await?;
     if estoque.is_empty() || estoque.contains(&estoque_invalido){
         return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound, 
             "Máquina não encontrada OU não está em estoque"))));

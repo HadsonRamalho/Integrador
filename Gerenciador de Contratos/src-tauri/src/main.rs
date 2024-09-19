@@ -53,6 +53,7 @@ fn main() {
 
             controller::endereco::estrutura_endereco,
             controller::endereco::_salva_endereco,
+            controller::endereco::busca_endereco_id,
 
             controller::contrato::busca_contrato_nome_maquina,
             controller::contrato::estrutura_contrato,

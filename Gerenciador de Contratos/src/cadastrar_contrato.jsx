@@ -388,11 +388,24 @@ function CadastrarContrato(){
     navigate('/home');
   };
 
+  const [locadoraexiste, setLocadoraExiste] = useState();
   const cnpjLocadoraAlterado = async (e) => {
     const cnpj = e.target.value;
     const locadoraExistente = await invoke("locadora_existente", {cnpj});
     if (locadoraExistente) {
       setNomeLocadora(locadoraExistente.nomelocadora);
+      setNumeroContaBanco(locadoraExistente.numerocontabanco);
+      setNumeroAgenciaBanco(locadoraExistente.numeroagenciabanco);
+      setNomeBanco(locadoraExistente.nomebanco);
+      const idendereco = locadoraExistente.idendereco;
+      const endereco = await invoke("busca_endereco_id", {idendereco});
+      setCepLocadora(endereco.cep);
+      setLogradouroLocadora(endereco.logradouro);
+      setNumeroLocadora(endereco.numeroendereco);
+      setUfLocadora(endereco.uf);
+      setCidadeLocadora(endereco.cidade);
+      setComplementoLocadora(endereco.complemento);
+      setLocadoraExiste(true);
       console.log("Locadora existe!");
     }
   };
@@ -469,23 +482,23 @@ function CadastrarContrato(){
           onBlur={cnpjLocadoraAlterado}
         />
         <br/>
-          <input required
+          <input readOnly={locadoraexiste}
           className="inputContrato"
           onChange={(e) => setNomeLocadora(e.currentTarget.value)}
           placeholder={nomelocadora || "Nome da Locadora (Ex.: Mineração XYZ)"}
         />
         <br></br>
         <p>Cadastro do endereço da locadora</p>
-        <input required
+        <input readOnly={locadoraexiste}
           className="inputContrato"
           onChange={(e) => setCepLocadora(e.currentTarget.value)}
-          placeholder="CEP da Locadora (Ex.: 40400-400)" 
+          placeholder={cep || "CEP da Locadora (Ex.: 40400-400)"}
         />
         <br></br>
-        <input required
+        <input readOnly={locadoraexiste}
           className="inputContrato"
           onChange={(e) => setCidadeLocadora(e.currentTarget.value)}
-          placeholder="Cidade da Locadora (Ex.: Belo Horizonte)" 
+          placeholder={cidade || "Cidade da Locadora (Ex.: Belo Horizonte)"}
         />
         <br></br>
         <div className="input-box">
@@ -527,40 +540,40 @@ function CadastrarContrato(){
                         <option value="TO">TO</option>
       </select>
     </div>
-        <input required
+        <input readOnly={locadoraexiste}
           className="inputContrato"
           onChange={(e) => setLogradouroLocadora(e.currentTarget.value)}
-          placeholder="Logradouro da Locadora (Ex.: Avenida Central)" 
+          placeholder={logradouro || "Logradouro da Locadora (Ex.: Avenida Central)" }
         />
         <br></br>
-        <input required
+        <input readOnly={locadoraexiste}
           className="inputContrato"
           onChange={(e) => setNumeroLocadora(e.currentTarget.value)}
-          placeholder="Numero do end. Locadora (Ex.: 101B)" 
+          placeholder={numeroendereco || "Numero do end. Locadora (Ex.: 101B)"}
         />
         <br></br>
-        <input required
+        <input readOnly={locadoraexiste}
           className="inputContrato"
           onChange={(e) => setComplementoLocadora(e.currentTarget.value)}
-          placeholder="Complemento do end. Locadora (Ex.: Sala 01)" 
+          placeholder={complemento || "Complemento do end. Locadora (Ex.: Sala 01)"} 
         />
         <p>Cadastro dos Dados Bancários da Locadora</p>
-        <input required
+        <input readOnly={numeroagenciabanco}
           className="inputContrato"
           onChange={(e) => setNomeBanco(e.currentTarget.value)}
-          placeholder="Nome do banco (Ex.: Banco do Brasil)" 
+          placeholder={nomebanco || "Nome do banco (Ex.: Banco do Brasil)" }
         />
         <br></br>
-        <input required
+        <input readOnly={numeroagenciabanco}
           className="inputContrato"
           onChange={(e) => setNumeroContaBanco(e.currentTarget.value)}
-          placeholder="Número da conta (Ex.: 3040)" 
+          placeholder={numerocontabanco || "Número da conta (Ex.: 3040)" }
         />
         <br></br>
-        <input required
+        <input readOnly={numeroagenciabanco}
           className="inputContrato"
           onChange={(e) => setNumeroAgenciaBanco(e.currentTarget.value)}
-          placeholder="Agência da conta (Ex.: 001)" 
+          placeholder={numeroagenciabanco || "Agência da conta (Ex.: 001)" }
         />
         <br></br>
         <p>Cadastro do Sócio Administrador da Locadora</p>
