@@ -275,7 +275,6 @@ pub async fn _busca_cnpj_usuario(pool: &Pool, id: &str) -> Result<String, mysql_
         message: "ID inválido.".to_string(),
         state: "28000".to_string()
     };
-    println!("{:?}", cnpj);
     match cnpj{
         None => {
             return Err(mysql_async::Error::Server(server_error));

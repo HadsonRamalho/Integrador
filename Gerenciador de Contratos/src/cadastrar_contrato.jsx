@@ -389,25 +389,24 @@ function CadastrarContrato(){
     navigate('/home');
   };
 
-  const [locadoraexiste, setLocadoraExiste] = useState(false);
-  const [idlocador, setIdLocador] = useState("");
-  const [idenderecolocadora, setIdEnderecoLocador] = useState("");
-  
+  const [idlocador, setIdLocadora] = useState("");
+  const [idenderecolocadora, setIdEnderecoLocadora] = useState("");
 
-  const cnpjLocadoraAlterado = async (e) => {
-    setLocadoraExiste(false);
-    const cnpj = e.target.value;
-    const locadoraExistente = await invoke("locadora_existente", {cnpj});
-    const id = locadoraExistente.idlocadora;
-    setIdLocador(id);
-    if (locadoraExistente.cnpj != "") {
-      setLocadoraExiste(true);
+  const carregaDadosLocadora = async () => {
+    const id = localStorage.getItem('token');
+    try{
+      const cnpjLocador = await invoke("busca_cnpj_usuario", {id});
+      const cnpj = cnpjLocador;
+      console.log("cnpj no usuario: ", cnpj);
+      setCnpjLocadora(cnpj);
+      const locadoraExistente = await invoke("locadora_existente", {cnpj});
+      setIdLocadora(locadoraExistente.idlocadora);
+      setIdEnderecoLocadora(locadoraExistente.idendereco);
       setNomeLocadora(locadoraExistente.nomelocadora);
       setNumeroContaBanco(locadoraExistente.numerocontabanco);
       setNumeroAgenciaBanco(locadoraExistente.numeroagenciabanco);
       setNomeBanco(locadoraExistente.nomebanco);
       const idendereco = locadoraExistente.idendereco;
-      setIdEnderecoLocador(locadoraExistente.idendereco);
       try{
         const endereco = await invoke("busca_endereco_id", {idendereco});
         setCepLocadora(endereco.cep);
@@ -419,12 +418,36 @@ function CadastrarContrato(){
       } catch(error){
         console.log("Ei, pode ser que o endereço ainda não foi cadastrado!", error);
       }      
-      console.log("Locadora existe!");
-      return;
+    } catch(error){
+      console.log("Erro ao buscar o CNPJ cadastrado no Usuário: ", error);
     }
-    
   };
 
+  const carregaDadosLocatario = async () => {
+    try{
+      const cnpj = cnpjlocatario;
+      const idlocatario = await invoke("busca_id_locatario", {cnpj});
+      console.log("carregaDadosLocatario 1: ", idlocatario);
+      const veclocatario = await invoke("busca_locatario_cnpj", {cnpj});
+      const locatario = veclocatario[0];
+      setNomeLocatario(locatario.nomelocatario);
+      try{
+        const idendereco = locatario.idendereco;
+        const enderecolocatario = await invoke("busca_endereco_id", {idendereco});
+        console.log(enderecolocatario);
+        setLogradouroLocatario(enderecolocatario.logradouro);
+        setCepLocatario(enderecolocatario.cep);
+        setNumeroLocatario(enderecolocatario.numeroendereco);
+        setCidadeLocatario(enderecolocatario.cidade);
+        setComplementoLocatario(enderecolocatario.complemento);
+        setUfLocatario(enderecolocatario.uf);
+      } catch(error){
+        console.log("Erro ao carregar dados do endereço do locatario: ", error);
+      }
+    }catch(error){
+      console.log("Erro ao carregar dados do locatario: ", error);
+    }
+  }
   const cpdf = () => {
     navigate('/cpdf', {
       state: {
@@ -454,11 +477,19 @@ function CadastrarContrato(){
     });
   };
 
+  useEffect(() => {
+    // Função executada após a interface ser carregada
+    console.log('Componente foi montado e a interface carregou');
+    
+    // Pode-se executar qualquer outra lógica aqui, como uma chamada de API
+    carregaDadosLocadora();
+  }, []); //
+  
     return (
       <div id="boxCadastroContrato">
         <div>
         <p className="subtitulo">cadastrar contrato</p>
-        </div>
+        </div>      
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -472,15 +503,6 @@ function CadastrarContrato(){
 
             const idenderecolocatario = await cadastraEnderecoLocatario();
             const idlocatario = await cadastraLocatario(idenderecolocatario, idsociolocatario);
-            if (!locadoraexiste) {
-              /*const novoIdEnderecoLocadora = await cadastraEnderecoLocadora();
-              setIdEnderecoLocador(novoIdEnderecoLocadora);
-              const novoIdLocador = await cadastraLocadora(novoIdEnderecoLocadora, idsocio);
-              setIdLocador(novoIdLocador);*/
-              console.log("Erro: Cadastre a locadora na rota de cadastro");
-              setMensagem("Erro: Cadastre a locadora antes!");
-              return;
-            }
             await cadastraContrato(
               idlocatario, idlocador, idmaquina, 
               idenderecolocadora, prazolocacao, dataretirada, 
@@ -497,41 +519,38 @@ function CadastrarContrato(){
           }}
         >
         <p>Cadastro da locadora</p>
-        <input required
+        <input readOnly={true} required
           className="inputContrato"
-          onChange={(e) => setCnpjLocadora(e.currentTarget.value)}
-          placeholder="CNPJ da Locadora (Ex.: 11.222.333/0001-01)"
-          onBlur={cnpjLocadoraAlterado}
+          placeholder={cnpj || "CNPJ da Locadora (Ex.: 11.222.333/0001-01)"}
         />
         <br/>
-          <input readOnly={locadoraexiste}
+          <input readOnly={true} required
           className="inputContrato"
-          onChange={(e) => setNomeLocadora(e.currentTarget.value)}
           placeholder={nomelocadora || "Nome da Locadora (Ex.: Mineração XYZ)"}
         />
         <br></br>
         <p>Cadastro do endereço da locadora</p>
-        <input readOnly={locadoraexiste}
+        <input readOnly={true} required
           className="inputContrato"
-          onChange={(e) => setCepLocadora(e.currentTarget.value)}
           placeholder={cep || "CEP da Locadora (Ex.: 40400-400)"}
         />
         <br></br>
-        <input readOnly={locadoraexiste}
+        <input readOnly={true} required
           className="inputContrato"
-          onChange={(e) => setCidadeLocadora(e.currentTarget.value)}
           placeholder={cidade || "Cidade da Locadora (Ex.: Belo Horizonte)"}
         />
         <br></br>
+        <input readOnly={true} required
+          className="inputContrato"
+          placeholder={uf || "Estado da Locadora (Ex.: MG)"}
+        />
         <div className="input-box">
                     <label htmlFor="estadoLocadora"></label>
-                    <select id="estadoLocadora" 
+                    <select id="estadoLocadora" readOnly={true}
                         name="estadoLocadora" 
                         value={uf}
-                        onChange={capturaUfLocadora}
-                        required 
-                        aria-label="Selecione o estado da Locadora"
-                        
+                        onChange={capturaUfLocadora}                         
+                        aria-label="Selecione o estado da Locadora"                        
                     >
                         <option value="" defaultValue={""}>Selecione o estado da Locadora</option>
                         <option value="AC">AC</option>
@@ -562,39 +581,33 @@ function CadastrarContrato(){
                         <option value="TO">TO</option>
       </select>
     </div>
-        <input readOnly={locadoraexiste}
+        <input readOnly={true} required
           className="inputContrato"
-          onChange={(e) => setLogradouroLocadora(e.currentTarget.value)}
           placeholder={logradouro || "Logradouro da Locadora (Ex.: Avenida Central)" }
         />
         <br></br>
-        <input readOnly={locadoraexiste}
+        <input readOnly={true} required
           className="inputContrato"
-          onChange={(e) => setNumeroLocadora(e.currentTarget.value)}
           placeholder={numeroendereco || "Numero do end. Locadora (Ex.: 101B)"}
         />
         <br></br>
-        <input readOnly={locadoraexiste}
+        <input readOnly={true} 
           className="inputContrato"
-          onChange={(e) => setComplementoLocadora(e.currentTarget.value)}
           placeholder={complemento || "Complemento do end. Locadora (Ex.: Sala 01)"} 
         />
         <p>Cadastro dos Dados Bancários da Locadora</p>
-        <input 
+        <input readOnly={true}
           className="inputContrato"
-          onChange={(e) => setNomeBanco(e.currentTarget.value)}
           placeholder={nomebanco || "Nome do banco (Ex.: Banco do Brasil)" }
         />
         <br></br>
-        <input 
+        <input readOnly={true}
           className="inputContrato"
-          onChange={(e) => setNumeroContaBanco(e.currentTarget.value)}
           placeholder={numerocontabanco || "Número da conta (Ex.: 3040)" }
         />
         <br></br>
-        <input 
+        <input readOnly={true}
           className="inputContrato"
-          onChange={(e) => setNumeroAgenciaBanco(e.currentTarget.value)}
           placeholder={numeroagenciabanco || "Agência da conta (Ex.: 001)" }
         />
         <br></br>
@@ -685,41 +698,56 @@ function CadastrarContrato(){
           placeholder="Valor aprox. do aluguel (Ex.: 30000)" 
         />
         <br></br>
+        <p>Cadastro da empresa do locatario</p>
+        <input
+          className="inputContrato"
+          onChange={(e) => {
+            setCnpjLocatario(e.currentTarget.value); 
+            carregaDadosLocatario;}}
+          onBlur={carregaDadosLocatario}
+          placeholder="CNPJ da Empresa (Ex.: 11.234.567/0001-01)"
+        />
+        <br></br>
+        <input
+          className="inputContrato"
+          onChange={(e) => setNomeLocatario(e.currentTarget.value)}
+          placeholder={nomelocatario||"Nome da Empresa (Ex.: Mineração OPQ)"}
+        />
         <p>Cadastro do endereço do sócio administrador do locatario</p>
           <input required
           className="inputContrato"
           onChange={(e) => setCidadeSocioLocatario(e.currentTarget.value)}
-          placeholder="Cidade (Ex.: Belo Horizonte)" 
+          placeholder={cidadeLocatario || "Cidade (Ex.: Belo Horizonte)"} 
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setUfSocioLocatario(e.currentTarget.value)}
-          placeholder="Estado"
+          placeholder={ufLocatario || "Estado"}
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setCepSocioLocatario(e.currentTarget.value)}
-          placeholder="CEP (Ex.: 40400-400)" 
+          placeholder={cepLocatario || "CEP (Ex.: 40400-400)" }
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setLogradouroSocioLocatario(e.currentTarget.value)}
-          placeholder="Logradouro (Ex.: Avenida Central)" 
+          placeholder={logradouroLocatario || "Logradouro (Ex.: Avenida Central)"} 
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setNumeroSocioLocatario(e.currentTarget.value)}
-          placeholder="Numero do endereço (Ex.: 101B)"
+          placeholder={numeroenderecoLocatario || "Numero do endereço (Ex.: 101B)"}
         />
         <br></br>
         <input
           className="inputContrato"
           onChange={(e) => setComplementoSocioLocatario(e.currentTarget.value)}
-          placeholder="Complemento do endereço (Ex.: Sala 01)"
+          placeholder={complementoLocatario || "Complemento do endereço (Ex.: Sala 01)"}
         />
         <br></br>
         <p>Cadastro do Sócio Administrador do locatario</p>
@@ -790,18 +818,7 @@ function CadastrarContrato(){
           placeholder="Complemento do endereço (Ex.: Sala 01)"
         />
         <br></br>
-        <p>Cadastro da empresa do locatario</p>
-        <input
-          className="inputContrato"
-          onChange={(e) => setCnpjLocatario(e.currentTarget.value)}
-          placeholder="CNPJ da Empresa (Ex.: 11.234.567/0001-01)"
-        />
-        <br></br>
-        <input
-          className="inputContrato"
-          onChange={(e) => setNomeLocatario(e.currentTarget.value)}
-          placeholder="Nome da Empresa (Ex.: Mineração OPQ)"
-        />
+        
         <p>Informações do contrato</p>
         <input required
           className="inputContrato"
