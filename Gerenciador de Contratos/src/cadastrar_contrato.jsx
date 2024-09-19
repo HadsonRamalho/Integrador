@@ -463,15 +463,7 @@ function CadastrarContrato(){
           onSubmit={async (e) => {
             e.preventDefault();
             const idenderecoadm = await cadastraEnderecoAdm();            
-            const idsocio = await cadastraSocioAdm(idenderecoadm);
-
-            if (!locadoraexiste) {
-              const novoIdEnderecoLocadora = await cadastraEnderecoLocadora();
-              setIdEnderecoLocador(novoIdEnderecoLocadora);
-              const novoIdLocador = await cadastraLocadora(novoIdEnderecoLocadora, idsocio);
-              setIdLocador(novoIdLocador);
-            }
-
+            const idsocio = await cadastraSocioAdm(idenderecoadm);            
 
             const idmaquina = await cadastraMaquina();
 
@@ -480,7 +472,15 @@ function CadastrarContrato(){
 
             const idenderecolocatario = await cadastraEnderecoLocatario();
             const idlocatario = await cadastraLocatario(idenderecolocatario, idsociolocatario);
-            console.log("idlocador no form: ",idlocador);
+            if (!locadoraexiste) {
+              /*const novoIdEnderecoLocadora = await cadastraEnderecoLocadora();
+              setIdEnderecoLocador(novoIdEnderecoLocadora);
+              const novoIdLocador = await cadastraLocadora(novoIdEnderecoLocadora, idsocio);
+              setIdLocador(novoIdLocador);*/
+              console.log("Erro: Cadastre a locadora na rota de cadastro");
+              setMensagem("Erro: Cadastre a locadora antes!");
+              return;
+            }
             await cadastraContrato(
               idlocatario, idlocador, idmaquina, 
               idenderecolocadora, prazolocacao, dataretirada, 
