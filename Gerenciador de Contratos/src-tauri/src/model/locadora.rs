@@ -78,7 +78,16 @@ pub async fn locadora_existente(cnpj: &str) -> Result<Locadora, mysql_async::Err
         Err(e) => {return Err(e)}
     };
     match locadora{
-        None => {return Err(mysql_async::Error::Other(Box::new(MeuErro::CnpjNaoEncontrado)))},
+        None => {return Ok(Locadora {idlocadora: "".to_string(),
+            idendereco: "".to_string(),
+            idsocio: "".to_string(),
+            cnpj:"".to_string(),
+            numerocontabanco: "".to_string(),
+            numeroagenciabanco: "".to_string(),
+            nomebanco: "".to_string(),
+            nomelocadora: "".to_string(),
+            locadorastatus: 1,
+        })},
         Some(locadora) => {return Ok(locadora)}
     }
 }

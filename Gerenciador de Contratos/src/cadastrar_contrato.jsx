@@ -2,6 +2,7 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 import ChamaContrato from "./pdf_call";
+import { useEffect } from "react";
 
 
 function CadastrarContrato(){
@@ -388,26 +389,40 @@ function CadastrarContrato(){
     navigate('/home');
   };
 
-  const [locadoraexiste, setLocadoraExiste] = useState();
+  const [locadoraexiste, setLocadoraExiste] = useState(false);
+  const [idlocador, setIdLocador] = useState("");
+  const [idenderecolocadora, setIdEnderecoLocador] = useState("");
+  
+
   const cnpjLocadoraAlterado = async (e) => {
+    setLocadoraExiste(false);
     const cnpj = e.target.value;
     const locadoraExistente = await invoke("locadora_existente", {cnpj});
-    if (locadoraExistente) {
+    const id = locadoraExistente.idlocadora;
+    setIdLocador(id);
+    if (locadoraExistente.cnpj != "") {
+      setLocadoraExiste(true);
       setNomeLocadora(locadoraExistente.nomelocadora);
       setNumeroContaBanco(locadoraExistente.numerocontabanco);
       setNumeroAgenciaBanco(locadoraExistente.numeroagenciabanco);
       setNomeBanco(locadoraExistente.nomebanco);
       const idendereco = locadoraExistente.idendereco;
-      const endereco = await invoke("busca_endereco_id", {idendereco});
-      setCepLocadora(endereco.cep);
-      setLogradouroLocadora(endereco.logradouro);
-      setNumeroLocadora(endereco.numeroendereco);
-      setUfLocadora(endereco.uf);
-      setCidadeLocadora(endereco.cidade);
-      setComplementoLocadora(endereco.complemento);
-      setLocadoraExiste(true);
+      setIdEnderecoLocador(locadoraExistente.idendereco);
+      try{
+        const endereco = await invoke("busca_endereco_id", {idendereco});
+        setCepLocadora(endereco.cep);
+        setLogradouroLocadora(endereco.logradouro);
+        setNumeroLocadora(endereco.numeroendereco);
+        setUfLocadora(endereco.uf);
+        setCidadeLocadora(endereco.cidade);
+        setComplementoLocadora(endereco.complemento);
+      } catch(error){
+        console.log("Ei, pode ser que o endereço ainda não foi cadastrado!", error);
+      }      
       console.log("Locadora existe!");
+      return;
     }
+    
   };
 
   const cpdf = () => {
@@ -449,8 +464,15 @@ function CadastrarContrato(){
             e.preventDefault();
             const idenderecoadm = await cadastraEnderecoAdm();            
             const idsocio = await cadastraSocioAdm(idenderecoadm);
-            const idenderecolocadora = await cadastraEnderecoLocadora();
-            const idlocador = await cadastraLocadora(idenderecolocadora, idsocio);
+
+            if (!locadoraexiste) {
+              const novoIdEnderecoLocadora = await cadastraEnderecoLocadora();
+              setIdEnderecoLocador(novoIdEnderecoLocadora);
+              const novoIdLocador = await cadastraLocadora(novoIdEnderecoLocadora, idsocio);
+              setIdLocador(novoIdLocador);
+            }
+
+
             const idmaquina = await cadastraMaquina();
 
             const idenderecoadmlocatario = await cadastraEnderecoAdmLocatario();
@@ -558,19 +580,19 @@ function CadastrarContrato(){
           placeholder={complemento || "Complemento do end. Locadora (Ex.: Sala 01)"} 
         />
         <p>Cadastro dos Dados Bancários da Locadora</p>
-        <input readOnly={numeroagenciabanco}
+        <input 
           className="inputContrato"
           onChange={(e) => setNomeBanco(e.currentTarget.value)}
           placeholder={nomebanco || "Nome do banco (Ex.: Banco do Brasil)" }
         />
         <br></br>
-        <input readOnly={numeroagenciabanco}
+        <input 
           className="inputContrato"
           onChange={(e) => setNumeroContaBanco(e.currentTarget.value)}
           placeholder={numerocontabanco || "Número da conta (Ex.: 3040)" }
         />
         <br></br>
-        <input readOnly={numeroagenciabanco}
+        <input 
           className="inputContrato"
           onChange={(e) => setNumeroAgenciaBanco(e.currentTarget.value)}
           placeholder={numeroagenciabanco || "Agência da conta (Ex.: 001)" }
