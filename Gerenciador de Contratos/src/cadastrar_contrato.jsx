@@ -7,6 +7,7 @@ import { useEffect } from "react";
 
 function CadastrarContrato(){
   const [mensagem, setMensagem] = useState("");
+  const [mensagemLocatario, setMensagemLocatario] = useState("");
 
   const [nomelocadora, setNomeLocadora] = useState("");
   const [cnpj, setCnpjLocadora] = useState("");
@@ -422,7 +423,8 @@ function CadastrarContrato(){
       console.log("Erro ao buscar o CNPJ cadastrado no Usuário: ", error);
     }
   };
-
+  const [locatarioCarregado, setLocatarioCarregado] = useState(false);
+  const [idlocatario, setIdLocatario] = useState("");
   const carregaDadosLocatario = async () => {
     try{
       const cnpj = cnpjlocatario;
@@ -430,7 +432,9 @@ function CadastrarContrato(){
       console.log("carregaDadosLocatario 1: ", idlocatario);
       const veclocatario = await invoke("busca_locatario_cnpj", {cnpj});
       const locatario = veclocatario[0];
+      setIdLocatario(locatario.idlocatario);
       setNomeLocatario(locatario.nomelocatario);
+      setMensagemLocatario("");
       try{
         const idendereco = locatario.idendereco;
         const enderecolocatario = await invoke("busca_endereco_id", {idendereco});
@@ -441,11 +445,21 @@ function CadastrarContrato(){
         setCidadeLocatario(enderecolocatario.cidade);
         setComplementoLocatario(enderecolocatario.complemento);
         setUfLocatario(enderecolocatario.uf);
+        console.log(cidadeLocatario);
+        setLocatarioCarregado(true);
       } catch(error){
         console.log("Erro ao carregar dados do endereço do locatario: ", error);
       }
     }catch(error){
       console.log("Erro ao carregar dados do locatario: ", error);
+      setMensagemLocatario("Erro: Verifique se há um cliente cadastrado com esse CNPJ.");
+      setNomeLocatario("");
+      setLogradouroLocatario("");
+      setCepLocatario("");
+      setNumeroLocatario("");
+      setCidadeLocatario("");
+      setComplementoLocatario("");
+      setUfLocatario("");
     }
   }
   const cpdf = () => {
@@ -478,10 +492,8 @@ function CadastrarContrato(){
   };
 
   useEffect(() => {
-    // Função executada após a interface ser carregada
     console.log('Componente foi montado e a interface carregou');
     
-    // Pode-se executar qualquer outra lógica aqui, como uma chamada de API
     carregaDadosLocadora();
   }, []); //
   
@@ -501,8 +513,11 @@ function CadastrarContrato(){
             const idenderecoadmlocatario = await cadastraEnderecoAdmLocatario();
             const idsociolocatario = await cadastraSocioAdmLocatario(idenderecoadmlocatario);
 
-            const idenderecolocatario = await cadastraEnderecoLocatario();
-            const idlocatario = await cadastraLocatario(idenderecolocatario, idsociolocatario);
+            if (!locatarioCarregado){
+              const idenderecolocatario = await cadastraEnderecoLocatario();
+              const idlocatario = await cadastraLocatario(idenderecolocatario, idsociolocatario);
+              setIdLocatario(idlocatario);
+            }
             await cadastraContrato(
               idlocatario, idlocador, idmaquina, 
               idenderecolocadora, prazolocacao, dataretirada, 
@@ -707,47 +722,84 @@ function CadastrarContrato(){
           onBlur={carregaDadosLocatario}
           placeholder="CNPJ da Empresa (Ex.: 11.234.567/0001-01)"
         />
-        <br></br>
-        <input
+        <br/>
+        {mensagemLocatario}
+        <input required readOnly={true}
           className="inputContrato"
           onChange={(e) => setNomeLocatario(e.currentTarget.value)}
           placeholder={nomelocatario||"Nome da Empresa (Ex.: Mineração OPQ)"}
         />
+        <p>Cadastro do endereço do locatario</p>
+        <input required readOnly={true}
+          className="inputContrato"
+          placeholder={cidadeLocatario || "Cidade (Ex.: Belo Horizonte)" }
+        />
+        <br></br>
+        <input required readOnly={true}
+          className="inputContrato"
+          onChange={(e) => setUfLocatario(e.currentTarget.value)}
+          placeholder={ufLocatario || "Estado"}
+        />
+        <br></br>
+        <input required readOnly={true}
+          className="inputContrato"
+          onChange={(e) => setCepLocatario(e.currentTarget.value)}
+          placeholder={cepLocatario || "CEP (Ex.: 40400-400)"} 
+        />
+        <br></br>
+        <input required readOnly={true}
+          className="inputContrato"
+          onChange={(e) => setLogradouroLocatario(e.currentTarget.value)}
+          placeholder={logradouroLocatario || "Logradouro (Ex.: Avenida Central)" }
+        />
+        <br></br>
+        <input required readOnly={true}
+          className="inputContrato"
+          onChange={(e) => setNumeroLocatario(e.currentTarget.value)}
+          placeholder={numeroenderecoLocatario || "Numero do endereço (Ex.: 101B)"}
+        />
+        <br></br>
+        <input  readOnly={true}
+          className="inputContrato"
+          onChange={(e) => setComplementoLocatario(e.currentTarget.value)}
+          placeholder={complementoLocatario || "Complemento do endereço (Ex.: Sala 01)"}
+        />
+        <br></br>
         <p>Cadastro do endereço do sócio administrador do locatario</p>
           <input required
           className="inputContrato"
           onChange={(e) => setCidadeSocioLocatario(e.currentTarget.value)}
-          placeholder={cidadeLocatario || "Cidade (Ex.: Belo Horizonte)"} 
+          placeholder={"Cidade (Ex.: Belo Horizonte)"} 
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setUfSocioLocatario(e.currentTarget.value)}
-          placeholder={ufLocatario || "Estado"}
+          placeholder={"Estado"}
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setCepSocioLocatario(e.currentTarget.value)}
-          placeholder={cepLocatario || "CEP (Ex.: 40400-400)" }
+          placeholder={"CEP (Ex.: 40400-400)" }
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setLogradouroSocioLocatario(e.currentTarget.value)}
-          placeholder={logradouroLocatario || "Logradouro (Ex.: Avenida Central)"} 
+          placeholder={"Logradouro (Ex.: Avenida Central)"} 
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setNumeroSocioLocatario(e.currentTarget.value)}
-          placeholder={numeroenderecoLocatario || "Numero do endereço (Ex.: 101B)"}
+          placeholder={"Numero do endereço (Ex.: 101B)"}
         />
         <br></br>
         <input
           className="inputContrato"
           onChange={(e) => setComplementoSocioLocatario(e.currentTarget.value)}
-          placeholder={complementoLocatario || "Complemento do endereço (Ex.: Sala 01)"}
+          placeholder={"Complemento do endereço (Ex.: Sala 01)"}
         />
         <br></br>
         <p>Cadastro do Sócio Administrador do locatario</p>
@@ -780,45 +832,7 @@ function CadastrarContrato(){
           onChange={(e) => setNacionalidadeSocioLocatario(e.currentTarget.value)}
           placeholder="Nacionalidade do Sócio (Ex.: Brasileiro)"
         />
-        <br></br>
-        <p>Cadastro do endereço da empresa do locatario</p>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setCidadeLocatario(e.currentTarget.value)}
-          placeholder="Cidade (Ex.: Belo Horizonte)" 
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setUfLocatario(e.currentTarget.value)}
-          placeholder="Estado"
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setCepLocatario(e.currentTarget.value)}
-          placeholder="CEP (Ex.: 40400-400)" 
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setLogradouroLocatario(e.currentTarget.value)}
-          placeholder="Logradouro (Ex.: Avenida Central)" 
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setNumeroLocatario(e.currentTarget.value)}
-          placeholder="Numero do endereço (Ex.: 101B)"
-        />
-        <br></br>
-        <input
-          className="inputContrato"
-          onChange={(e) => setComplementoLocatario(e.currentTarget.value)}
-          placeholder="Complemento do endereço (Ex.: Sala 01)"
-        />
-        <br></br>
-        
+        <br></br>     
         <p>Informações do contrato</p>
         <input required
           className="inputContrato"
