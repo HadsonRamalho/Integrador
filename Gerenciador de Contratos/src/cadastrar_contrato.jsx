@@ -96,7 +96,6 @@ function CadastrarContrato(){
       const numeroendereco = numeroenderecoadm;
       const cidade = cidadeadm;
       const uf = ufadm;
-      console.log("UF ADMLOCATARIO: ", uf);
       const endereco = await invoke("estrutura_endereco", {
         logradouro, 
         cep, 
@@ -119,7 +118,6 @@ function CadastrarContrato(){
       const idendereco = await invoke("_salva_endereco", {endereco});
       localStorage.setItem('idendereco', idendereco);
       console.log("Endereço do adm foi cadastrado");
-      setMensagem("Endereço do adm foi cadastrado");
       return idendereco;
     } catch(error){
       console.log('Erro ao salvar o endereço: ', error);
@@ -135,7 +133,6 @@ function CadastrarContrato(){
       const numeroendereco = numeroenderecoSocioLocatario;
       const cidade = cidadeSocioLocatario;
       const uf = ufSocioLocatario;
-      console.log("UF LOCATARIO: ", uf);
       const endereco = await invoke("estrutura_endereco", {
         logradouro,         
         complemento, 
@@ -158,7 +155,6 @@ function CadastrarContrato(){
       const idendereco = await invoke("_salva_endereco", {endereco});
       localStorage.setItem('idendereco', idendereco);
       console.log("Endereço do adm foi cadastrado");
-      setMensagem("Endereço do adm foi cadastrado");
       return idendereco;
     } catch(error){
       console.log("[Cadastrar_contrato.jsx | cadastraEnderecoAdmLocatario] : ", error);
@@ -283,7 +279,6 @@ function CadastrarContrato(){
 
   async function estruturaLocadora(idendereco, idsocio){
     try{
-      console.log(idendereco);
       const locadora = await invoke("estrutura_locadora", {idendereco, cnpj, numerocontabanco, numeroagenciabanco, nomebanco, nomelocadora, idsocio});
       return locadora;
     } catch(error) {
@@ -306,7 +301,6 @@ function CadastrarContrato(){
   async function estruturaMaquina(){
     try{      
       const maquina = await invoke("estrutura_maquina", {nomemaquina, valoraluguel, numserie});
-      console.log("Valor aluguel: ", maquina.valoraluguel);
       return maquina;
     }
     catch(error){
@@ -319,8 +313,6 @@ function CadastrarContrato(){
     try{
       const maquina = await estruturaMaquina();
       const idmaquina =await invoke("cadastra_maquina", {maquina});
-      console.log("idmaquina:", idmaquina);
-      setMensagem("Máquina cadastrada!");
       return idmaquina;
     } catch(error){
       console.log("[Cadastrar_contrato.jsx | cadastraMaquina] : ", error);
@@ -358,7 +350,6 @@ function CadastrarContrato(){
     cidadeforo, datacontrato){
       try{
       const enderecoretirada = idenderecolocadora;      
-      console.log("IDLOCADOR: ", idlocador);
       const contrato = await invoke("estrutura_contrato", {idlocatario, idlocador, idmaquina,
         enderecoretirada, prazolocacao, dataretirada, 
         valormensal, vencimento, multaatraso, 
@@ -404,7 +395,6 @@ function CadastrarContrato(){
     try{
       const cnpjLocador = await invoke("busca_cnpj_usuario", {id});
       const cnpj = cnpjLocador;
-      console.log("cnpj no usuario: ", cnpj);
       setCnpjLocadora(cnpj);
       const locadoraExistente = await invoke("locadora_existente", {cnpj});
       setIdLocadora(locadoraExistente.idlocadora);
@@ -435,7 +425,6 @@ function CadastrarContrato(){
     try{
       const cnpj = cnpjlocatario;
       const idlocatario = await invoke("busca_id_locatario", {cnpj});
-      console.log("carregaDadosLocatario 1: ", idlocatario);
       const veclocatario = await invoke("busca_locatario_cnpj", {cnpj});
       const locatario = veclocatario[0];
       setIdLocatario(locatario.idlocatario);
@@ -444,7 +433,6 @@ function CadastrarContrato(){
       try{
         const idendereco = locatario.idendereco;
         const enderecolocatario = await invoke("busca_endereco_id", {idendereco});
-        console.log(enderecolocatario);
         setLogradouroLocatario(enderecolocatario.logradouro);
         setCepLocatario(enderecolocatario.cep);
         setNumeroLocatario(enderecolocatario.numeroendereco);
@@ -452,7 +440,6 @@ function CadastrarContrato(){
         setComplementoLocatario(enderecolocatario.complemento);
         setUfLocatario(enderecolocatario.uf);
         setLocatarioCarregado(true);
-        console.log(enderecolocatario);
       } catch(error){
         console.log("Erro ao carregar dados do endereço do locatario: ", error);
       }
@@ -784,9 +771,7 @@ function CadastrarContrato(){
         <br></br>
         <input required
           className="inputContrato"
-          onChange={(e) => {setUfSocioLocatario(e.currentTarget.value)
-            console.log(ufSocioLocatario);
-          }}
+          onChange={(e) => {setUfSocioLocatario(e.currentTarget.value)}}
           placeholder={"Estado"}
         />
         <br></br>
