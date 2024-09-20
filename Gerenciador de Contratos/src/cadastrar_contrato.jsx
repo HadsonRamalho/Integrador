@@ -96,6 +96,7 @@ function CadastrarContrato(){
       const numeroendereco = numeroenderecoadm;
       const cidade = cidadeadm;
       const uf = ufadm;
+      console.log("UF ADMLOCATARIO: ", uf);
       const endereco = await invoke("estrutura_endereco", {
         logradouro, 
         cep, 
@@ -103,7 +104,7 @@ function CadastrarContrato(){
         numeroendereco, 
         cidade, 
         uf
-      })
+      });
       return endereco;
     }
     catch(error){
@@ -134,14 +135,15 @@ function CadastrarContrato(){
       const numeroendereco = numeroenderecoSocioLocatario;
       const cidade = cidadeSocioLocatario;
       const uf = ufSocioLocatario;
+      console.log("UF LOCATARIO: ", uf);
       const endereco = await invoke("estrutura_endereco", {
-        logradouro, 
-        cep, 
+        logradouro,         
         complemento, 
+        uf, 
         numeroendereco, 
         cidade, 
-        uf
-      })
+        cep
+      });
       return endereco;
     }
     catch(error){
@@ -168,10 +170,10 @@ function CadastrarContrato(){
     try{
       const logradouro = logradouroLocatario;
       const cep = cepLocatario;
+      const uf = ufLocatario;
       const complemento = complementoLocatario;
       const numeroendereco = numeroenderecoLocatario;
       const cidade = cidadeLocatario;
-      const uf = ufLocatario;
       const endereco = await invoke("estrutura_endereco", {
         logradouro, 
         cep, 
@@ -179,7 +181,7 @@ function CadastrarContrato(){
         numeroendereco, 
         cidade, 
         uf
-      })
+      });
       return endereco;
     }
     catch(error){
@@ -449,8 +451,8 @@ function CadastrarContrato(){
         setCidadeLocatario(enderecolocatario.cidade);
         setComplementoLocatario(enderecolocatario.complemento);
         setUfLocatario(enderecolocatario.uf);
-        console.log(cidadeLocatario);
         setLocatarioCarregado(true);
+        console.log(enderecolocatario);
       } catch(error){
         console.log("Erro ao carregar dados do endereço do locatario: ", error);
       }
@@ -500,44 +502,52 @@ function CadastrarContrato(){
     
     carregaDadosLocadora();
   }, []); //
+
+  async function cadastraDados(){
+    try{
+      const idenderecoadm = await cadastraEnderecoAdm();            
+    const idsocio = await cadastraSocioAdm(idenderecoadm);            
+
+    const idmaquina = await cadastraMaquina();
+
+    const idenderecoadmlocatario = await cadastraEnderecoAdmLocatario();
+    const idsociolocatario = await cadastraSocioAdmLocatario(idenderecoadmlocatario);
+
+    if (!locatarioCarregado){
+      const idenderecolocatario = await cadastraEnderecoLocatario();
+      const idlocatario = await cadastraLocatario(idenderecolocatario, idsociolocatario);
+      setIdLocatario(idlocatario);
+    }
+    await cadastraContrato(
+      idlocatario, idlocador, idmaquina, 
+      idenderecolocadora, prazolocacao, dataretirada, 
+      valormensal, vencimento, multaatraso, jurosatraso,
+      avisotransferencia, prazodevolucao, cidadeforo, datacontrato);
+      ChamaContrato({ 
+        nomelocadora, 
+        cnpjLocadora: cnpj, 
+        nomeAdmLocadora: nome, 
+        numeroConta: numerocontabanco, 
+        numeroAgencia: numeroagenciabanco 
+      });              
+      cpdf();
+    } catch(error){
+      console.log(error);
+    }
+  }
   
     return (
       <div id="boxCadastroContrato">
         <div>
-        <p className="subtitulo">cadastrar contrato</p>
+        <h1 className="subtitulo">cadastrar contrato</h1>
         </div>      
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            const idenderecoadm = await cadastraEnderecoAdm();            
-            const idsocio = await cadastraSocioAdm(idenderecoadm);            
-
-            const idmaquina = await cadastraMaquina();
-
-            const idenderecoadmlocatario = await cadastraEnderecoAdmLocatario();
-            const idsociolocatario = await cadastraSocioAdmLocatario(idenderecoadmlocatario);
-
-            if (!locatarioCarregado){
-              const idenderecolocatario = await cadastraEnderecoLocatario();
-              const idlocatario = await cadastraLocatario(idenderecolocatario, idsociolocatario);
-              setIdLocatario(idlocatario);
-            }
-            await cadastraContrato(
-              idlocatario, idlocador, idmaquina, 
-              idenderecolocadora, prazolocacao, dataretirada, 
-              valormensal, vencimento, multaatraso, jurosatraso,
-              avisotransferencia, prazodevolucao, cidadeforo, datacontrato);
-              ChamaContrato({ 
-                nomelocadora, 
-                cnpjLocadora: cnpj, 
-                nomeAdmLocadora: nome, 
-                numeroConta: numerocontabanco, 
-                numeroAgencia: numeroagenciabanco 
-              });              
-              cpdf();
+            await cadastraDados();
           }}
         >
-        <p>Cadastro da locadora</p>
+        <h3>Cadastro da locadora</h3>
         <input readOnly={true} required
           className="inputContrato"
           placeholder={cnpj || "CNPJ da Locadora (Ex.: 11.222.333/0001-01)"}
@@ -548,7 +558,7 @@ function CadastrarContrato(){
           placeholder={nomelocadora || "Nome da Locadora (Ex.: Mineração XYZ)"}
         />
         <br></br>
-        <p>Cadastro do endereço da locadora</p>
+        <h3>Cadastro do endereço da locadora</h3>
         <input readOnly={true} required
           className="inputContrato"
           placeholder={cep || "CEP da Locadora (Ex.: 40400-400)"}
@@ -578,7 +588,7 @@ function CadastrarContrato(){
           className="inputContrato"
           placeholder={complemento || "Complemento do end. Locadora (Ex.: Sala 01)"} 
         />
-        <p>Cadastro dos Dados Bancários da Locadora</p>
+        <h3>Cadastro dos Dados Bancários da Locadora</h3>
         <input readOnly={true}
           className="inputContrato"
           placeholder={nomebanco || "Nome do banco (Ex.: Banco do Brasil)" }
@@ -594,7 +604,7 @@ function CadastrarContrato(){
           placeholder={numeroagenciabanco || "Agência da conta (Ex.: 001)" }
         />
         <br></br>
-        <p>Cadastro do Sócio Administrador da Locadora</p>
+        <h3>Cadastro do Sócio Administrador da Locadora</h3>
         <input required
           className="inputContrato"
           onChange={(e) => setNomeAdmLocadora(e.currentTarget.value)}
@@ -625,7 +635,7 @@ function CadastrarContrato(){
           placeholder="Nacionalidade do Sócio (Ex.: Brasileiro)"
         />
         <br></br>
-        <p>Endereço do Sócio Administrador da Locadora</p>
+        <h3>Endereço do Sócio Administrador da Locadora</h3>
         <input required
           className="inputContrato"
           onChange={(e) => setCepAdm(e.currentTarget.value)}
@@ -639,14 +649,14 @@ function CadastrarContrato(){
         />
         <br></br>
         <div className="input-box">
-                    <label htmlFor="estadoLocadora"></label>
-                    <select id="estadoLocadora" readOnly={true}
-                        name="estadoLocadora" 
-                        value={uf}
-                        onChange={capturaUfAdm}                         
-                        aria-label="Selecione o estado da Locadora"                        
+                    <label htmlFor="estadoAdm"></label>
+                    <select id="estadoAdm"
+                        name="estadoAdm" 
+                        value={ufadm}
+                        onChange={capturaUfAdm}
+                        aria-label="Selecione o estado do Adm"                        
                     >
-                        <option value="" defaultValue={""}>Selecione o estado da Locadora</option>
+                        <option value="" defaultValue={""}>Selecione o estado do Adm</option>
                         <option value="AC">AC</option>
                         <option value="AL">AL</option>
                         <option value="AP">AP</option>
@@ -694,7 +704,7 @@ function CadastrarContrato(){
           placeholder="Complemento do sócio adm. (Ex.: Sala 01)" 
         />
         <br></br>
-        <p>Informações da máquina</p>
+        <h3>Informações da máquina</h3>
         <input required
           className="inputContrato"
           onChange={(e) => setNomeMaquina(e.currentTarget.value)}
@@ -713,7 +723,7 @@ function CadastrarContrato(){
           placeholder="Valor aprox. do aluguel (Ex.: 30000)" 
         />
         <br></br>
-        <p>Cadastro da empresa do locatario</p>
+        <h3>Cadastro da empresa do locatario</h3>
         <input
           className="inputContrato"
           onChange={(e) => {
@@ -729,7 +739,7 @@ function CadastrarContrato(){
           onChange={(e) => setNomeLocatario(e.currentTarget.value)}
           placeholder={nomelocatario||"Nome da Empresa (Ex.: Mineração OPQ)"}
         />
-        <p>Cadastro do endereço do locatario</p>
+        <h3>Cadastro do endereço do locatario</h3>
         <input required readOnly={true}
           className="inputContrato"
           placeholder={cidadeLocatario || "Cidade (Ex.: Belo Horizonte)" }
@@ -765,7 +775,7 @@ function CadastrarContrato(){
           placeholder={complementoLocatario || "Complemento do endereço (Ex.: Sala 01)"}
         />
         <br></br>
-        <p>Cadastro do endereço do sócio administrador do locatario</p>
+        <h3>Cadastro do endereço do sócio administrador do locatario</h3>
           <input required
           className="inputContrato"
           onChange={(e) => setCidadeSocioLocatario(e.currentTarget.value)}
@@ -774,7 +784,9 @@ function CadastrarContrato(){
         <br></br>
         <input required
           className="inputContrato"
-          onChange={(e) => setUfSocioLocatario(e.currentTarget.value)}
+          onChange={(e) => {setUfSocioLocatario(e.currentTarget.value)
+            console.log(ufSocioLocatario);
+          }}
           placeholder={"Estado"}
         />
         <br></br>
@@ -802,7 +814,7 @@ function CadastrarContrato(){
           placeholder={"Complemento do endereço (Ex.: Sala 01)"}
         />
         <br></br>
-        <p>Cadastro do Sócio Administrador do locatario</p>
+        <h3>Cadastro do Sócio Administrador do locatario</h3>
         <input
           className="inputContrato"
           onChange={(e) => setNomeSocioLocatario(e.currentTarget.value)}
@@ -833,17 +845,22 @@ function CadastrarContrato(){
           placeholder="Nacionalidade do Sócio (Ex.: Brasileiro)"
         />
         <br></br>     
-        <p>Informações do contrato</p>
+        <h3>Informações do contrato</h3>
         <input required
           className="inputContrato"
           onChange={(e) => setPrazoLocacao(e.currentTarget.value)}
           placeholder="Prazo de locação (em meses) (Ex.: 12)" 
         />
         <br></br>
+        <h8>Data de retirada da máquina</h8>
         <input required
+          type="date"
           className="inputContrato"
-          onChange={(e) => setDataRetirada(e.currentTarget.value)}
-          placeholder="Data de retirada da máquina (Ex.: 2024-12-01)" 
+          style={{backgroundColor: "#444b5a"}}
+          onChange={(e) => {
+            setDataRetirada(e.currentTarget.value)
+          }}
+          placeholder="Data de retirada da máquina" 
         />
         <br></br>
         <input required
@@ -852,10 +869,15 @@ function CadastrarContrato(){
           placeholder="Valor mensal do contrato (Ex.: 30000)" 
         />
         <br></br>
+        <h8>Vencimento do contrato</h8>
         <input required
+          type="date"
           className="inputContrato"
-          onChange={(e) => setVencimento(e.currentTarget.value)}
-          placeholder="Vencimento do contrato (Ex.: 2025-12-01)" 
+          style={{backgroundColor: "#444b5a"}}
+          onChange={(e) => {
+            setVencimento(e.currentTarget.value)
+          }}
+          placeholder="Vencimento do contrato" 
         />
         <br></br>
         <input required
@@ -876,10 +898,15 @@ function CadastrarContrato(){
           placeholder="Aviso de transferência (Ex.: Não aplicável)" 
         />
         <br></br>
+        <h8>Prazo de devolução</h8>
         <input required
+          type="date"
           className="inputContrato"
-          onChange={(e) => setPrazoDevolucao(e.currentTarget.value)}
-          placeholder="Prazo de devolução (Ex.: 2025-12-31)" 
+          style={{backgroundColor: "#444b5a"}}
+          onChange={(e) => {
+            setPrazoDevolucao(e.currentTarget.value)
+          }}
+          placeholder="Prazo de devolução" 
         />
         <br></br>
         <input required
@@ -888,13 +915,18 @@ function CadastrarContrato(){
           placeholder="Cidade foro (Ex.: Belo Horizonte)" 
         />
         <br></br>
+        <h8>Data do contrato</h8>
         <input required
+          type="date"
           className="inputContrato"
-          onChange={(e) => setDataContrato(e.currentTarget.value)}
-          placeholder="Data do contrato (Ex.: 2024-12-01)" 
+          style={{backgroundColor: "#444b5a"}}
+          onChange={(e) => {
+            setDataContrato(e.currentTarget.value)
+          }}
+          placeholder="Data do contrato" 
         />
         <br></br>
-        <p className="mensagemLogin">{mensagem}</p>
+        <h3 >{mensagem}</h3>
         <button type="submit" >Concluir cadastro</button>
         <br />
         <button onClick={home}>Voltar</button>

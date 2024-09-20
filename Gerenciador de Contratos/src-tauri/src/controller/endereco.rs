@@ -33,6 +33,11 @@ use crate::{controller, model};
 #[tauri::command]
 pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, numeroendereco: String, cidade: String, uf: String) -> Result<serde_json::Value, String>{
     // Gera um ID único para o endereço com base no CEP
+    println!("logradouro: {}", logradouro);
+    println!("cep: {}", cep);
+    println!("numeroendereco: {}", numeroendereco);
+    println!("cidade: {} ", cidade);
+    println!("uf: {}", uf);
     if logradouro.trim().is_empty() || cep.trim().is_empty()
         || numeroendereco.trim().is_empty() ||
         cidade.trim().is_empty() || uf.trim().is_empty(){
