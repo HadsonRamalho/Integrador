@@ -51,6 +51,10 @@ function Home(){
     navigate('/cadastrar_maquina');
   };
 
+  const relatorio_estoque_maquina = () => {
+    navigate('/relatorio_estoque_maquina');
+  };
+
     return (
       <div>        
         <div id="boxHome">
@@ -64,6 +68,7 @@ function Home(){
           <p>Máquina</p>
           <button className="botoesHome" type="button" onClick={cadastrar_maquina}>Cadastrar maquina</button>
           <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
+          <button className="botoesHome" type="button" onClick={relatorio_estoque_maquina}>Máquinas em estoque</button>
           <p>Cliente (Locatário)</p>
           <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente (Locatario)</button>
           <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente (Locatario)</button>

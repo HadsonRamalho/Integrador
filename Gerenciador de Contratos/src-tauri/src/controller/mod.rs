@@ -218,7 +218,7 @@ pub fn formata_cep(cep: &str) -> Result<String, String>{
         return Err("Erro: CEP de tamanho inválido.".to_string())
     }
     let mut cep: Vec<char> = cep;
-    cep.insert(6, '-');
+    cep.insert(5, '-');
     let mut cepfinal: String = "".to_string();
     for u in cep{
         cepfinal.push(u);

@@ -1,18 +1,5 @@
-use serde::{Deserialize, Serialize};
-
 use super::gera_hash;
-use crate::controller;
-
-#[derive(Serialize, Deserialize)]
-pub struct Endereco{
-    pub logradouro: String,
-    pub cep: String,
-    pub complemento: String,
-    pub numeroendereco: String,
-    pub cidade: String,
-    pub uf: String,
-    pub id: String
-}
+use crate::{controller, model::{self, endereco::Endereco}};
 
 /// Função para estruturar os dados de um endereço em formato JSON.
 ///
@@ -58,7 +45,7 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
     let id = gera_hash(&cep);
     // Estrutura os dados do endereço em formato JSON
     let endereco = serde_json::json!({
-        "id": id,
+        "idendereco": id,
         "logradouro": logradouro,
         "cep": cep,
         "complemento": complemento,
@@ -87,8 +74,8 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
 #[tauri::command]
 pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, String>{
     // Converte os dados recebidos em um objeto `Endereco`
-    let endereco = Endereco {
-        id: endereco["id"].as_str().unwrap_or("").to_string().split_off(15 as usize),
+    let endereco = crate::model::endereco::Endereco {
+        idendereco: endereco["idendereco"].as_str().unwrap_or("").to_string().split_off(15 as usize),
         logradouro: endereco["logradouro"].as_str().unwrap_or("").to_string(),
         cep: endereco["cep"].as_str().unwrap_or("").to_string(),
         complemento: endereco["complemento"].as_str().unwrap_or("").to_string(),
@@ -105,4 +92,22 @@ pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, Stri
             return Err(e.to_string());
         }
     }
+}
+
+#[tauri::command]
+pub async fn busca_endereco_id(idendereco: &str) -> Result<serde_json::Value, String>{
+    let endereco: model::endereco::Endereco = match model::endereco::busca_endereco_id(idendereco).await{
+        Ok(endereco) => {endereco},
+        Err(e) => {return Err(e.to_string())}
+    };
+    let endereco = serde_json::json!({
+        "idendereco": endereco.idendereco,
+        "logradouro": endereco.logradouro,
+        "cep": endereco.cep,
+        "complemento": endereco.complemento,
+        "numeroendereco": endereco.numeroendereco,
+        "cidade": endereco.cidade,
+        "uf": endereco.uf
+    });
+    return Ok(endereco)
 }

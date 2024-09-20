@@ -6,4 +6,6 @@ pub enum MeuErro{
     CnpjNaoEncontrado,
     #[error("Erro na conexão com o banco de dados: {0}")]
     ConexaoBanco(#[from] mysql_async::Error),
+    #[error("Endereço não encontrado")]
+    EnderecoNaoEncontrado,
 }

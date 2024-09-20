@@ -40,16 +40,20 @@ fn main() {
             controller::locadora::cadastra_locadora,
             controller::locadora::busca_id_locadora,
             controller::locadora::estrutura_locadora,
+            controller::locadora::locadora_existente,
 
             controller::maquina::estrutura_maquina,
             controller::maquina::busca_maquina_nome,
             controller::maquina::cadastra_maquina,
+            controller::maquina::busca_maquina_numserie,
+            controller::maquina::gera_estoque_por_nome,
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm,            
 
             controller::endereco::estrutura_endereco,
             controller::endereco::_salva_endereco,
+            controller::endereco::busca_endereco_id,
 
             controller::contrato::busca_contrato_nome_maquina,
             controller::contrato::estrutura_contrato,

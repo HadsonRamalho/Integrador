@@ -3,76 +3,93 @@ body {
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
-  
     color: #0f0f0f;
-    background-color:rgb(169, 163, 163);
+    background-color: rgb(169, 163, 163);
     display: flex;
     justify-content: center;
-
-    
-    
 }
-.conteudo{
+
+.conteudo {
     background-color: #f6f6f6;
-    text-align: center ;
-    padding: 0px;
-    width: 600px;
-    height: 600px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    
-}
-
-h1, p{
     text-align: center;
+    padding: 20px;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Adicione uma sombra suave */
+    margin: auto; 
 }
 
-.input-group{
+h1 {
     
+    color: #333;
+    
+}
+p{
+    color: black;
+    font-size: 20px;
+    
+}
+
+.input-group {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    box-shadow: black;
-    align-items: center;
-}
-
-
-
-.input-box{
-    display:flex;
     flex-direction: column;
-}
-
-label{
-    font-weight: bold;
-    padding: 5px 5px;
+    margin-bottom: 20px;
     
+   
 }
-.input-box input{
-    border-radius: 0.5px;
-    margin-bottom: 12px;
-    margin:10px;
-    padding:10px;
-    border-radius: 5px ;
-    box-shadow: none;
+input[type="text"], input[type="email"], textarea {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%; /* Faça os inputs ocuparem a largura total disponível */
 }
 
-.button{
-    padding:10px 20px ;
+textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+    min-height: 100px; /* Defina uma altura mínima para a área de texto */
+}
+.input-box {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: auto;
+}
+
+select {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: none; 
+    cursor: pointer;
+    margin:10px
+}
+select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 3px rgba(0, 123, 255, 0.5); /* Adiciona uma sombra no foco */
+}
+
+.button {
+    display: flex;
+    padding: 12px 20px;
     width: 130px;
     height: 50px;
-    color:#0f0f0f;
-    text-align:center;
+    color: #0f0f0f;
     background-color:  #2b1a1a69;
-    border-radius: 10px;
-    display: flex;
-    align-items:center;
+    border: none;
+    border-radius: 5px;
+    align-items: center;
     text-decoration: none;
     font-weight: bold;
     font-size: large;
-}
-.button:hover{
-    background-color: #160d0d69;
     cursor: pointer;
+}
+
+.button:hover {
+    background-color: #9e9696;
 }
