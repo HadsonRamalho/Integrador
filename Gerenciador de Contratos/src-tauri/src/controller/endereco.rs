@@ -1,5 +1,5 @@
 use super::gera_hash;
-use crate::{controller, model::{self, endereco::Endereco}};
+use crate::{controller, model};
 
 /// Função para estruturar os dados de um endereço em formato JSON.
 ///

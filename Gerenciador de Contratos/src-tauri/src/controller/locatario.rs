@@ -6,6 +6,10 @@ use super::locadora::{self, formata_cnpj};
 
 #[tauri::command]
 pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String, idsocio: String) -> Result<serde_json::Value, String>{
+    if idendereco.trim().is_empty() || cnpj.trim().is_empty() || 
+        nomelocatario.trim().is_empty() || idsocio.trim().is_empty(){
+        return Err("Erro: Um ou mais campos do Locatário estão vazios".to_string())
+    }
     let cnpj = match controller::locadora::formata_cnpj(&cnpj){
         Ok(_) => {
             cnpj
@@ -42,6 +46,12 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
         locatariostatus: 1
     };
 
+    if locatario.idlocatario.is_empty() || locatario.idsocio.is_empty() || 
+        locatario.cnpj.is_empty() || locatario.nomelocatario.is_empty() || 
+        locatario.idendereco.is_empty(){
+        return Err("Erro: Um ou mais campos do Locatário estão vazios".to_string())
+    }
+
     let resultado_busca: Result<String, mysql_async::Error> = _busca_id_locatario(&locatario.cnpj).await;
 
     let id = match resultado_busca{
@@ -70,6 +80,9 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
 
 #[tauri::command]
 pub async fn busca_id_locatario(cnpj: &str) -> Result<String, String>{
+    if cnpj.trim().is_empty(){
+        return Err("Erro: O CNPJ não pode estar vazio".to_string())
+    }
     let resultado: Result<String, mysql_async::Error> = _busca_id_locatario(cnpj).await;
     match resultado{
         Ok(id) =>{

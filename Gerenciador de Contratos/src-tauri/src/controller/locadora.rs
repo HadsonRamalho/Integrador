@@ -165,7 +165,7 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
         locadora.numerocontabanco.trim().is_empty()
         || locadora.numeroagenciabanco.trim().is_empty() || 
         locadora.nomebanco.trim().is_empty() || locadora.nomelocadora.trim().is_empty() || locadora.idsocio.trim().is_empty(){
-            return Err("Erro: Um ou mais campos estão vazios.".to_string());
+            return Err("Erro: Um ou mais campos da locadora estão vazios.".to_string());
     }
     return Ok(locadora);
 }

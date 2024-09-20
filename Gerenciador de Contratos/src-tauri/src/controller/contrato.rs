@@ -68,7 +68,7 @@ fn formata_data(value: Value) -> String {
             return data_precisa;
             
         },
-        _ => "".to_string(),
+        _ => "Erro: Formato de data inválido".to_string(),
     }
 }
 
@@ -228,6 +228,10 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         Ok(jurosatraso) => {jurosatraso},
         Err(e) => {return Err(format!("Erro ao converter juros de atraso: {}", e))}
     };
+
+    if idlocatario.is_empty() || idlocador.is_empty() || idmaquina.is_empty() || enderecoretirada.is_empty() {
+        return Err("Erro: um ou mais campos do contrato estão vazios".to_string())
+    }
 
     let idcontrato = gera_hash(&idlocatario);
     let idcontrato: (&str, &str) = idcontrato.split_at(45 as usize);
