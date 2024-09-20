@@ -32,6 +32,20 @@ function CadastrarLocatario(){
 
   const navigate = useNavigate();
 
+  async function cadastraDados(){
+    try{
+      const idendereco = await cadastraEndereco(cep, logradouro, numeroendereco, complemento, cidade, uf);
+      const idenderecoLocatario = await cadastraEndereco(cepLocatario, logradouroLocatario, numeroenderecoLocatario, complementoLocatario, cidadeLocatario, ufLocatario);
+      const idsocio = await cadastraSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade);
+      await cadastraLocatario(idenderecoLocatario, idsocio, cnpj, nomelocatario);
+      setMensagem("Locatário cadastrado com sucesso!");
+    } catch(error){
+      setMensagem(error);
+      console.log("Erro ao tentar cadastrar dados: ", error);
+    }
+    
+  }
+
   const home = () => {
     navigate('/home');
   };
@@ -44,10 +58,7 @@ function CadastrarLocatario(){
         <form
           onSubmit={async (e) => {
             e.preventDefault();      
-            const idendereco = await cadastraEndereco(cep, logradouro, numeroendereco, complemento, cidade, uf);
-            const idenderecoLocatario = await cadastraEndereco(cepLocatario, logradouroLocatario, numeroenderecoLocatario, complementoLocatario, cidadeLocatario, ufLocatario);
-            const idsocio = await cadastraSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade);
-            await cadastraLocatario(idenderecoLocatario, idsocio, cnpj, nomelocatario);
+            cadastraDados();
           }}
         >
         <p>Cadastro do endereço do sócio administrador</p>
