@@ -14,6 +14,7 @@ export async function estruturaEndereco(cep, logradouro, numeroendereco, complem
     }
     catch(error){
       console.log("[estruturaEndereco] : ", error);
+      throw(error);
     }
 }
 
@@ -26,5 +27,6 @@ export async function cadastraEndereco(cep, logradouro, numeroendereco, compleme
       return idendereco;
     } catch(error){
       console.log("[cadastraEndereco] : ", error);
+      throw(error);
     }
 }

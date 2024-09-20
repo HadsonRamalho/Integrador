@@ -7,6 +7,7 @@ export async function estruturaMaquina(nomemaquina, valoraluguel, numserie){
     }
     catch(error){
       console.log("[estruturaMaquina] : ", error);
+      throw(error);
     }
 } 
 
@@ -16,5 +17,6 @@ export async function cadastraMaquina(nomemaquina, valoraluguel, numserie){
       await invoke("cadastra_maquina", {maquina});
     } catch(error){
       console.log("[estruturaMaquina] : ", error);
+      throw(error);
     }
 }

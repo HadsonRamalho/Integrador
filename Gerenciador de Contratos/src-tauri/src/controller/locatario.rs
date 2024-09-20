@@ -2,7 +2,7 @@ use mysql_async::{params, prelude::Queryable};
 
 use crate::{controller, model::{self, locatario::Locatario}};
 
-use super::locadora::formata_cnpj;
+use super::locadora::{self, formata_cnpj};
 
 #[tauri::command]
 pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String, idsocio: String) -> Result<serde_json::Value, String>{
@@ -112,7 +112,10 @@ pub async fn busca_locatario_nome(nomelocatario: String) -> Result<Vec<Locatario
     let resultado_busca = model::locatario::busca_locatario_nome(&nomelocatario).await;
     match resultado_busca {
         Ok(locatario) =>{
-            return Ok(locatario);
+            if locatario.is_empty(){
+                return Err("Locatário não encontrado".to_string());
+            }
+            return Ok(locatario)
         },
         Err(e) => {
             return Err(e.to_string());
