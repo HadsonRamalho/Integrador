@@ -23,10 +23,6 @@ function CadastrarContrato(){
   const [complemento, setComplementoLocadora] = useState("");
   const [uf , setUfLocadora] = useState("");
 
-  const capturaUfLocadora = (e) => {
-    setUfLocadora(e.currentTarget.value); // Atualiza o estado com o valor selecionado
-  };
-
   const [nome, setNomeAdmLocadora] = useState("");
   const [cpf, setCpfAdmLocadora] = useState("")
   const [orgaoemissor, setOrgaoEmissor] = useState("")
@@ -83,6 +79,14 @@ function CadastrarContrato(){
   const [numeroenderecoSocioLocatario, setNumeroSocioLocatario] = useState("");
   const [complementoSocioLocatario, setComplementoSocioLocatario] = useState("");
   const [ufSocioLocatario, setUfSocioLocatario] = useState("");
+
+  const capturaUfLocadora = (e) => {
+    setUfLocadora(e.currentTarget.value); // Atualiza o estado com o valor selecionado
+  };
+
+  const capturaUfAdm = (e) => {
+    setUfAdm(e.currentTarget.value);
+  };
 
   async function estruturaEnderecoAdm(){
     try{
@@ -559,43 +563,7 @@ function CadastrarContrato(){
           className="inputContrato"
           placeholder={uf || "Estado da Locadora (Ex.: MG)"}
         />
-        <div className="input-box">
-                    <label htmlFor="estadoLocadora"></label>
-                    <select id="estadoLocadora" readOnly={true}
-                        name="estadoLocadora" 
-                        value={uf}
-                        onChange={capturaUfLocadora}                         
-                        aria-label="Selecione o estado da Locadora"                        
-                    >
-                        <option value="" defaultValue={""}>Selecione o estado da Locadora</option>
-                        <option value="AC">AC</option>
-                        <option value="AL">AL</option>
-                        <option value="AP">AP</option>
-                        <option value="AM">AM</option>
-                        <option value="BA">BA</option>
-                        <option value="CE">CE</option>
-                        <option value="ES">ES</option>
-                        <option value="GO">GO</option>
-                        <option value="MA">MA</option>
-                        <option value="MT">MT</option>
-                        <option value="MS">MS</option>
-                        <option value="MG">MG</option>
-                        <option value="PA">PA</option>
-                        <option value="PB">PB</option>
-                        <option value="PR">PR</option>
-                        <option value="PE">PE</option>
-                        <option value="PI">PI</option>
-                        <option value="RJ">RJ</option>
-                        <option value="RN">RN</option>
-                        <option value="RS">RS</option>
-                        <option value="RO">RO</option>
-                        <option value="RR">RR</option>
-                        <option value="SC">SC</option>
-                        <option value="SP">SP</option>
-                        <option value="SE">SE</option>
-                        <option value="TO">TO</option>
-      </select>
-    </div>
+        
         <input readOnly={true} required
           className="inputContrato"
           placeholder={logradouro || "Logradouro da Locadora (Ex.: Avenida Central)" }
@@ -670,11 +638,43 @@ function CadastrarContrato(){
           placeholder="Cidade do sócio adm. (Ex.: Belo Horizonte)" 
         />
         <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setUfAdm(e.currentTarget.value)}
-          placeholder="UF do sócio adm. " 
-        />
+        <div className="input-box">
+                    <label htmlFor="estadoLocadora"></label>
+                    <select id="estadoLocadora" readOnly={true}
+                        name="estadoLocadora" 
+                        value={uf}
+                        onChange={capturaUfAdm}                         
+                        aria-label="Selecione o estado da Locadora"                        
+                    >
+                        <option value="" defaultValue={""}>Selecione o estado da Locadora</option>
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
+      </select>
+    </div>
         <br></br>
         <input required
           className="inputContrato"

@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
+import {cadastraEndereco} from "./endereco";
+import { cadastraSocioAdm } from "./socioAdm";
+import { cadastraLocatario } from "./locatario";
 
 function CadastrarLocatario(){
   const [mensagem, setMensagem] = useState("");
@@ -26,118 +28,7 @@ function CadastrarLocatario(){
   const [nacionalidade, setNacionalidade] = useState("");
 
   const [nomelocatario, setNomeLocatario] = useState("");
-  const [cnpj, setCnpj] = useState("");
-
-  async function estruturaEndereco(){
-    try{
-      const endereco = await invoke("estrutura_endereco", {
-        logradouro, 
-        cep, 
-        complemento, 
-        numeroendereco, 
-        cidade, 
-        uf
-      })
-      return endereco;
-    }
-    catch(error){
-      setMensagem(error);
-      console.log("[Cadastrar_locatario.jsx | estruturaEndereco] : ", error);
-    }
-  }
-
-  async function estruturaSocioAdm(idendereco){
-    try{
-      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade});
-      return socio;
-    } catch(error) {
-      setMensagem(error);
-      console.log("[Cadastrar_locatario.jsx | estruturaSocioAdm] : ", error);
-    }
-  }
-
-  async function cadastraSocioAdm(idendereco){
-    try{
-      const socioadm = await estruturaSocioAdm(idendereco);
-      const idsocio = await invoke("cadastra_socio_adm", {socioadm});
-      return idsocio;
-    } catch(error){
-      setMensagem(error);
-      console.log("[Cadastrar_locatario.jsx | cadastraSocioAdm] : ", error);
-    }
-  }
-
-  async function estruturaEnderecoLocatario(){
-    try{
-      const logradouro = logradouroLocatario;
-      const cep = cepLocatario;
-      const complemento = complementoLocatario;
-      const numeroendereco = numeroenderecoLocatario;
-      const cidade = cidadeLocatario;
-      const uf = ufLocatario;
-      const endereco = await invoke("estrutura_endereco", {
-        logradouro, 
-        cep, 
-        complemento, 
-        numeroendereco, 
-        cidade, 
-        uf
-      })
-      return endereco;
-    }
-    catch(error){
-      setMensagem(error);
-      console.log("[Cadastrar_locatario.jsx | estruturaEnderecoLocatario] : ", error);
-    }
-  }
-
-  async function cadastraEndereco(){
-    const endereco = await estruturaEndereco();
-    try{
-      const idendereco = await invoke("_salva_endereco", {endereco});
-      localStorage.setItem('idendereco', idendereco);
-      console.log("Endereço do sócio foi cadastrado");
-      return idendereco;
-    } catch(error){
-      console.log("[Cadastrar_locatario.jsx | cadastraEndereco] : ", error);
-      setMensagem(error);
-    }
-  }
-
-  async function cadastraEnderecoLocatario(){
-    const endereco = await estruturaEnderecoLocatario();
-    try{
-      const idendereco = await invoke("_salva_endereco", {endereco});
-      localStorage.setItem('idenderecolocatario', idendereco);
-      console.log("Endereço do locatario foi cadastrado");
-      return idendereco;
-    } catch(error){
-      console.log("[Cadastrar_locatario.jsx | cadastraEnderecoLocatario] : ", error);
-      setMensagem(error);
-    }
-  }
-
-  async function estruturaLocatario(idendereco, idsocio){
-    try{      
-      const locatario = await invoke("estrutura_locatario", {idendereco, cnpj, nomelocatario, idsocio});
-      return locatario;
-    }
-    catch(error){
-      console.log("[Cadastrar_locatario.jsx | estruturaLocatario] : ", error);
-      setMensagem(error);
-    }
-  } 
-
-  async function cadastraLocatario(idendereco, idsocio){
-    try{
-      const locatario = await estruturaLocatario(idendereco, idsocio);
-      await invoke("cadastra_locatario", {locatario});
-      setMensagem("Cliente cadastrado!");
-    } catch(error){
-      console.log("[Cadastrar_locatario.jsx | cadastraLocatario] : ", error);
-      setMensagem(error);
-    }
-  }
+  const [cnpj, setCnpj] = useState("");  
 
   const navigate = useNavigate();
 
@@ -152,11 +43,11 @@ function CadastrarLocatario(){
         </div>
         <form
           onSubmit={async (e) => {
-            e.preventDefault();
-            const idendereco = await cadastraEndereco();
-            const idenderecoLocatario = await cadastraEnderecoLocatario();
-            const idsocio = await cadastraSocioAdm(idendereco);
-            await cadastraLocatario(idenderecoLocatario, idsocio);
+            e.preventDefault();      
+            const idendereco = await cadastraEndereco(cep, logradouro, numeroendereco, complemento, cidade, uf);
+            const idenderecoLocatario = await cadastraEndereco(cepLocatario, logradouroLocatario, numeroenderecoLocatario, complementoLocatario, cidadeLocatario, ufLocatario);
+            const idsocio = await cadastraSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade);
+            await cadastraLocatario(idenderecoLocatario, idsocio, cnpj, nomelocatario);
           }}
         >
         <p>Cadastro do endereço do sócio administrador</p>

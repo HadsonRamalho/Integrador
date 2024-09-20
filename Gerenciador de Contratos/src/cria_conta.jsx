@@ -8,17 +8,18 @@ import { useNavigate } from "react-router-dom";
 function CriaConta(){
 
   const [mensagemCriarConta, setMensagemCriarConta] = useState("");
+
   const [email, setEmail] = useState("");
-
   const [nomeCompleto, setNomeCompleto] = useState("");
-
   const [senha1, setSenha1] = useState("");
-  
   const [senha2, setSenha2] = useState("");
-
   const [cpf, setCpf] = useState("");
 
   const [cnpj, setCnpj] = useState("");
+  const [nomeLocadora, setNomeLocadora] = useState("");
+  const [numeroConta, setNumeroConta] = useState("");
+  const [agenciaConta, setAgenciaConta] = useState("");
+  const [nomebanco, setNomebanco] = useState("");
 
   async function criarConta() {
     try{
@@ -59,12 +60,7 @@ function CriaConta(){
           className="user-input"
           onChange={(e) => setCpf(e.currentTarget.value)}
           placeholder="Seu CPF"
-          />
-          <input required
-          className="user-input"
-          onChange={(e) => setCnpj(e.currentTarget.value)}
-          placeholder="CNPJ da empresa"
-          />
+          />          
           <input required
             className="user-input"
             onChange={(e) => setEmail(e.currentTarget.value)}
@@ -82,6 +78,12 @@ function CriaConta(){
             onChange={(e) => setSenha2(e.currentTarget.value)}
             placeholder="Confirme sua senha"
             type="password"
+          />
+          <p>Informações da empresa</p>
+          <input required
+          className="user-input"
+          onChange={(e) => setCnpj(e.currentTarget.value)}
+          placeholder="CNPJ da empresa"
           />
           <p className="mensagemLogin"> {mensagemCriarConta} </p>  
         <button className="user-input" type="submit">Criar</button>
