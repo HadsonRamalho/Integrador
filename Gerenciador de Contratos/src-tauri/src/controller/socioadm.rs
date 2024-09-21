@@ -1,5 +1,7 @@
 use crate::{controller, model::{self, socioadm::_cadastra_socio_adm}};
 
+use super::formata_cpf;
+
 #[tauri::command]
 pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, String>{
     
@@ -10,6 +12,7 @@ pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoe
     }
     
     let id: String = controller::gera_hash(&cpf);
+    let cpf = formata_cpf(&cpf)?;
     let socioadm: serde_json::Value = serde_json::json!({
         "idsocio": id,
         "idendereco": idendereco,
@@ -28,11 +31,12 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
     let idsocio: (&str, &str) = idsocio.split_at(45 as usize);
     let idsocio: String = idsocio.0.to_string();
     let idsocio_cpy = idsocio.clone();
+    let cpf = formata_cpf(socioadm["cpf"].as_str().unwrap_or(""))?;
     let socioadm: model::socioadm::SocioADM = model::socioadm::SocioADM {
         idsocio,
         idendereco: socioadm["idendereco"].as_str().unwrap_or("").to_string(),
         nome: socioadm["nome"].as_str().unwrap_or("").to_string(),
-        cpf: socioadm["cpf"].as_str().unwrap_or("").to_string(),
+        cpf: cpf,
         orgaoemissor: socioadm["orgaoemissor"]
             .as_str()
             .unwrap_or("")
