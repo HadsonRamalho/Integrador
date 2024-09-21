@@ -19,7 +19,26 @@ function CriaConta(){
   const [nomeLocadora, setNomeLocadora] = useState("");
   const [numeroConta, setNumeroConta] = useState("");
   const [agenciaConta, setAgenciaConta] = useState("");
-  const [nomebanco, setNomebanco] = useState("");
+  const [nomebanco, setNomeBanco] = useState("");
+
+  const [locadoraExiste, setLocadoraExiste] = useState(true);
+  const carregaDadosLocadora = async (cnpj) => {
+    try{
+      const locadoraExistente = await invoke("locadora_existente", {cnpj});
+      setNomeLocadora(locadoraExistente.nomelocadora);
+      setNumeroConta(locadoraExistente.numerocontabanco);
+      setAgenciaConta(locadoraExistente.numeroagenciabanco);
+      setNomeBanco(locadoraExistente.nomebanco);
+      console.log(locadoraExistente);
+      const idendereco = locadoraExistente.idendereco;
+      if (locadoraExistente.idlocadora != ""){
+        console.log("ID vazio");
+        setLocadoraExiste(true);
+      }
+    } catch(error){
+      console.log("Erro ao buscar o CNPJ cadastrado no Usuário: ", error);
+    }
+  };
 
   async function criarConta() {
     try{
@@ -36,6 +55,28 @@ function CriaConta(){
 
   const login = () => {
     navigate('/');
+  };
+
+  const cadastroLocadora = () => {
+    if (!locadoraExiste){
+    return(<div>
+      <input required
+          className="user-input"
+          onChange={(e) => setNomeLocadora(e.currentTarget.value)}
+          placeholder="Nome da locadora"
+      />
+      <button>x</button>
+      
+    </div>);
+    }
+    return(<div>
+      <input required
+          className="user-input"
+          onChange={(e) => setNomeLocadora(e.currentTarget.value)}
+          placeholder="Locadora existe"
+      />
+      
+    </div>);
   };
 
     return (
@@ -81,10 +122,16 @@ function CriaConta(){
           />
           <p>Informações da empresa</p>
           <input required
-          className="user-input"
-          onChange={(e) => setCnpj(e.currentTarget.value)}
-          placeholder="CNPJ da empresa"
+            className="user-input"
+            onChange={(e) => setCnpj(e.currentTarget.value)}
+            onBlur={async (e) => { await carregaDadosLocadora(e.currentTarget.value); }}
+            placeholder="CNPJ da empresa"
           />
+          {locadoraExiste ? (
+            <input className="user-input" placeholder="Nome da Locadora" readOnly value={nomeLocadora} />
+          ) : (
+            <input required className="user-input" onChange={(e) => setNomeLocadora(e.currentTarget.value)} placeholder="Nome da locadora" />
+          )}
           <p className="mensagemLogin"> {mensagemCriarConta} </p>  
         <button className="user-input" type="submit">Criar</button>
         <div>

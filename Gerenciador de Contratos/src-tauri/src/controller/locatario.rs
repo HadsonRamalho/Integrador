@@ -2,7 +2,7 @@ use mysql_async::{params, prelude::Queryable};
 
 use crate::{controller, model::{self, locatario::Locatario}};
 
-use super::locadora::{self, formata_cnpj};
+use super::locadora::formata_cnpj;
 
 #[tauri::command]
 pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String, idsocio: String) -> Result<serde_json::Value, String>{
