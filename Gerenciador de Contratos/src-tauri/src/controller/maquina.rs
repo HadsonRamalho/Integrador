@@ -111,7 +111,7 @@ pub async fn busca_maquina_numserie(numserie: String) -> Result<Vec<model::maqui
     let numserie_backup = numserie.clone();
     let numserie = numserie.replace(" ", "");
     if numserie.is_empty(){
-        return Err("Erro: O nome da máquina está vazio.".to_string());
+        return Err("Erro: O número de série está vazio.".to_string());
     }
     let numserie = numserie_backup;
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::busca_maquina_serie(&numserie).await;
@@ -139,4 +139,12 @@ pub async fn gera_estoque_por_nome(nomemaquina: &str) -> Result<Vec<model::maqui
         return Err("Erro: Máquina não encontrada".to_string())
     }
     return Ok(estoque_maquina)
+}
+
+#[tauri::command]
+pub async fn gera_estoque_total() -> Result<Vec<model::maquina::EstoqueMaquina>, String>{
+    match model::maquina::gera_estoque_total().await{
+        Ok(estoque_total) => {return Ok(estoque_total)},
+        Err(e) => return Err(e.to_string())
+    };
 }

@@ -419,8 +419,22 @@ function CadastrarContrato(){
       console.log("Erro ao buscar o CNPJ cadastrado no Usuário: ", error);
     }
   };
+
+
+  const carregaDadosMaquina = async () => {
+    try{
+      const vecmaquina = await invoke("busca_maquina_numserie", {numserie});
+      const maquina = vecmaquina[0];
+      setNomeMaquina(maquina.nomemaquina);     
+      setValorAluguel(maquina.valoraluguel); 
+    } catch(error){
+      console.log("Erro ao buscar a máquina, verifique se já está cadastrada: ", error);
+    }
+  };
+
   const [locatarioCarregado, setLocatarioCarregado] = useState(false);
   const [idlocatario, setIdLocatario] = useState("");
+
   const carregaDadosLocatario = async () => {
     try{
       const cnpj = cnpjlocatario;
@@ -493,9 +507,7 @@ function CadastrarContrato(){
   async function cadastraDados(){
     try{
       const idenderecoadm = await cadastraEnderecoAdm();            
-    const idsocio = await cadastraSocioAdm(idenderecoadm);            
-
-    const idmaquina = await cadastraMaquina();
+    const idsocio = await cadastraSocioAdm(idenderecoadm);
 
     const idenderecoadmlocatario = await cadastraEnderecoAdmLocatario();
     const idsociolocatario = await cadastraSocioAdmLocatario(idenderecoadmlocatario);
@@ -694,20 +706,24 @@ function CadastrarContrato(){
         <h3>Informações da máquina</h3>
         <input required
           className="inputContrato"
-          onChange={(e) => setNomeMaquina(e.currentTarget.value)}
-          placeholder="Nome da máquina (Ex.: Máquina de Corte)"  
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setNumSerie(e.currentTarget.value)}
+          onChange={(e) => {
+            setNumSerie(e.currentTarget.value)
+            carregaDadosMaquina;
+          }}
+          onBlur={carregaDadosMaquina}
           placeholder="Número de série (Ex.: 11444A555B)" 
         />
         <br></br>
         <input required
           className="inputContrato"
+          onChange={(e) => setNomeMaquina(e.currentTarget.value)}
+          placeholder={nomemaquina || "Nome da máquina (Ex.: Máquina de Corte)"}  
+        />
+        <br></br>
+        <input required
+          className="inputContrato"
           onChange={(e) => setValorAluguel(e.currentTarget.value)}
-          placeholder="Valor aprox. do aluguel (Ex.: 30000)" 
+          placeholder={valoraluguel || "Valor aprox. do aluguel (Ex.: 30000)"}
         />
         <br></br>
         <h3>Cadastro da empresa do locatario</h3>
@@ -837,7 +853,7 @@ function CadastrarContrato(){
           placeholder="Prazo de locação (em meses) (Ex.: 12)" 
         />
         <br></br>
-        <h8>Data de retirada da máquina</h8>
+        <h4>Data de retirada da máquina</h4>
         <input required
           type="date"
           className="inputContrato"
@@ -854,7 +870,7 @@ function CadastrarContrato(){
           placeholder="Valor mensal do contrato (Ex.: 30000)" 
         />
         <br></br>
-        <h8>Vencimento do contrato</h8>
+        <h4>Vencimento do contrato</h4>
         <input required
           type="date"
           className="inputContrato"
@@ -883,7 +899,7 @@ function CadastrarContrato(){
           placeholder="Aviso de transferência (Ex.: Não aplicável)" 
         />
         <br></br>
-        <h8>Prazo de devolução</h8>
+        <h4>Prazo de devolução</h4>
         <input required
           type="date"
           className="inputContrato"
@@ -900,7 +916,7 @@ function CadastrarContrato(){
           placeholder="Cidade foro (Ex.: Belo Horizonte)" 
         />
         <br></br>
-        <h8>Data do contrato</h8>
+        <h4>Data do contrato</h4>
         <input required
           type="date"
           className="inputContrato"
