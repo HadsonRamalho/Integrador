@@ -47,6 +47,7 @@ fn main() {
             controller::maquina::cadastra_maquina,
             controller::maquina::busca_maquina_numserie,
             controller::maquina::gera_estoque_por_nome,
+            controller::maquina::gera_estoque_total,
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm,            
