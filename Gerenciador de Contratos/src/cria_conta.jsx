@@ -92,44 +92,68 @@ function CriaConta(){
             await criarConta();
           }}
         >
+          <div>
           <input required
             className="user-input"
             onChange={(e) => setNomeCompleto(e.currentTarget.value)}
             placeholder="Nome completo"
             />
+          </div>
+          <div>
           <input required
           className="user-input"
           onChange={(e) => setCpf(e.currentTarget.value)}
           placeholder="Seu CPF"
-          />          
+          />    </div>      
+          <div>
           <input required
             className="user-input"
             onChange={(e) => setEmail(e.currentTarget.value)}
             placeholder="E-mail " 
           />
+          </div>
+          <div>
           <input required
-            className="user-input"
-            
+            className="user-input"            
             onChange={(e) => setSenha1(e.currentTarget.value)}
             placeholder="Sua senha"
             type="password"
           />
+          </div>
+          <div>
           <input required
             className="user-input"
             onChange={(e) => setSenha2(e.currentTarget.value)}
             placeholder="Confirme sua senha"
             type="password"
           />
+          </div>
           <p>Informações da empresa</p>
+          <div>
           <input required
             className="user-input"
             onChange={(e) => setCnpj(e.currentTarget.value)}
             onBlur={async (e) => { await carregaDadosLocadora(e.currentTarget.value); }}
             placeholder="CNPJ da empresa"
           />
+          </div>
           {locadoraExiste ? (
-            <input className="user-input" placeholder="Nome da Locadora" readOnly value={nomeLocadora} />
-          ) : (
+            <div>
+            <div><input className="user-input" placeholder="Nome da Locadora"  value={nomeLocadora} /></div>
+            <div><input className="user-input" placeholder="Nome do banco"  value={nomeLocadora} /></div>
+            <p>Dados bancários da empresa</p>
+            <div><input className="user-input" placeholder="Numero da agencia"  value={nomeLocadora} /></div>
+            <div><input className="user-input" placeholder="Numero da conta"  value={nomeLocadora} /></div>
+            <p>Endereço da empresa</p>
+            <input className="user-input" placeholder="CEP"  value={nomeLocadora} />
+            <input className="user-input" placeholder="Logradouro"  value={nomeLocadora} />
+            <input className="user-input" placeholder="Número"  value={nomeLocadora} />
+            <input className="user-input" placeholder="Complemento"  value={nomeLocadora} />
+            <input className="user-input" placeholder="Cidade"  value={nomeLocadora} />
+            <input className="user-input" placeholder="UF"  value={nomeLocadora} />
+
+            </div>
+) : (
             <input required className="user-input" onChange={(e) => setNomeLocadora(e.currentTarget.value)} placeholder="Nome da locadora" />
           )}
           <p className="mensagemLogin"> {mensagemCriarConta} </p>  

@@ -39,6 +39,7 @@
   margin-top: 10px;
   background-color: #111;
   color:#ffffff;
+  width: calc(50vh);
 
 }
 
@@ -143,11 +144,11 @@ button {
   left: 50%;
   transform: translate(-50%, -50%); 
   text-align: center; 
-  height: 600px; 
-  width: 400px; /*450pcx*/
+  height: calc(80vh); 
+  width: 600px; /*450pcx*/
   line-height: 60px;
   border-radius: 10px;
-
+  overflow: auto;
 
 }
 

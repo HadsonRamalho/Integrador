@@ -26,11 +26,17 @@ export const gerarTextoContratoP1 = ({
   cpf,
   orgaoemissor,
   nacionalidade,
-  estadocivil
+  estadocivil,
+  logradouroadm,
+  cepadm ,
+  ufadm ,
+  complementoadm,
+  cidadeadm ,
+  numeroenderecoadm,
 }) => {
   return `
     LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em
-${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} ${orgaoemissor}, com endereço em [enderecoAdmLocadora], Cidade/MG.
+${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} emitido por ${orgaoemissor}, com endereço em ${cepadm}, ${logradouroadm}, ${numeroenderecoadm}, ${complementoadm}, ${cidadeadm}/${ufadm}.
 LOCATÁRIA: XXXXXXXXXX, inscrita no CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx, Cidade/MG, representada por XXXXXXXXXXXX, brasileiro, casado, CPF XXXXXXXXX, residente na Rua XXXXXXXXXXX, Cidade/MG.
 DEFINIÇÕES
 
@@ -264,6 +270,13 @@ const CPDF = () => {
         orgaoemissor={state?.orgaoemissor || ""}
         nacionalidade={state?.nacionalidade || ""}
         estadocivil={state?.estadocivil || ""}
+      //Locadora | Socio | Endereço
+        logradouroadm = {state?.logradouroadm || ""}
+        cepadm = {state?.cepadm || ""}
+        ufadm = {state?.ufadm || ""}
+        complementoadm = {state?.complementoadm || ""}
+        cidadeadm = {state?.cidadeadm || ""}
+        numeroenderecoadm = {state?.numeroenderecoadm || ""}
       />
     </PDFViewer>
   );

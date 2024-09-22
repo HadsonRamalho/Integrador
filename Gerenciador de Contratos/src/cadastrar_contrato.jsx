@@ -427,6 +427,7 @@ function CadastrarContrato(){
       const maquina = vecmaquina[0];
       setNomeMaquina(maquina.nomemaquina);     
       setValorAluguel(maquina.valoraluguel); 
+      setIdMaquina(maquina.idmaquina);
     } catch(error){
       console.log("Erro ao buscar a máquina, verifique se já está cadastrada: ", error);
     }
@@ -438,9 +439,11 @@ function CadastrarContrato(){
   const carregaDadosLocatario = async () => {
     try{
       const cnpj = cnpjlocatario;
+      console.log(cnpj);
       const idlocatario = await invoke("busca_id_locatario", {cnpj});
       const veclocatario = await invoke("busca_locatario_cnpj", {cnpj});
       const locatario = veclocatario[0];
+      console.log(locatario);
       setIdLocatario(locatario.idlocatario);
       setNomeLocatario(locatario.nomelocatario);
       setMensagemLocatario("");
@@ -494,6 +497,14 @@ function CadastrarContrato(){
         orgaoemissor,
         nacionalidade,
         estadocivil,
+
+        //Locadora | Socio | Endereço
+        logradouroadm,
+        numeroenderecoadm,
+        cepadm,
+        complementoadm,
+        cidadeadm,
+        ufadm
       },
     });
   };
@@ -503,7 +514,7 @@ function CadastrarContrato(){
     
     carregaDadosLocadora();
   }, []); //
-
+  const [idmaquina, setIdMaquina] = useState("");
   async function cadastraDados(){
     try{
       const idenderecoadm = await cadastraEnderecoAdm();            
@@ -714,7 +725,7 @@ function CadastrarContrato(){
           placeholder="Número de série (Ex.: 11444A555B)" 
         />
         <br></br>
-        <input required
+        <input readOnly={true}
           className="inputContrato"
           onChange={(e) => setNomeMaquina(e.currentTarget.value)}
           placeholder={nomemaquina || "Nome da máquina (Ex.: Máquina de Corte)"}  
