@@ -2,6 +2,7 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
+import { cadastraEndereco } from "./endereco";
 //import "./App.css";
 
 
@@ -30,6 +31,14 @@ function CriaConta(){
 
   let idendereco ;
   const [locadoraExiste, setLocadoraExiste] = useState(true);
+
+  const cadastraLocadora = async () => {
+    const idendereco = 
+      await cadastraEndereco(cep, logradouro, numeroendereco, complemento, cidade, uf);
+    const numerocontabanco = numeroConta;
+    const numeroagenciabanco = agenciaConta;
+    await invoke("estrutura_locadora", {idendereco, cnpj, numerocontabanco, numeroagenciabanco, nomeLocadora, nomebanco});
+  };
   
   const carregaDadosLocadora = async (cnpj) => {
     setLocadoraExiste(false);
@@ -155,26 +164,28 @@ function CriaConta(){
             <input readOnly className="user-input" placeholder="Complemento"  value={complemento} />
             <input readOnly className="user-input" placeholder="Cidade"  value={cidade} />
             <input readOnly className="user-input" placeholder="UF"  value={uf} />
+            <button className="user-input" type="submit">Criar</button>
 
             </div>
 ) : (
             <div>
-              <div><input className="user-input" placeholder="Nome da LocadorAAa"  /></div>
+              <div><input className="user-input" placeholder="Nome da LocadorAAa"  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
             <p>Dados bancários da empresa</p>
-            <div><input className="user-input" placeholder="Nome do banco"   /></div>
-            <div><input className="user-input" placeholder="Numero da agencia" /></div>
-            <div><input className="user-input" placeholder="Numero da conta"  /></div>
+            <div><input className="user-input" placeholder="Nome do banco"  onChange={(e) =>setNomeBanco(e.currentTarget.value)} /></div>
+            <div><input className="user-input" placeholder="Numero da agencia" onChangeCapture={(e) =>setAgenciaConta(e.currentTarget.value)} /> </div>
+            <div><input className="user-input" placeholder="Numero da conta"  onChange={(e) =>setNumeroConta(e.currentTarget.value)}/></div>
             <p>Endereço da empresa</p>
-            <input className="user-input" placeholder="CEP"/>
-            <input className="user-input" placeholder="Logradouro" />
-            <input className="user-input" placeholder="Número"  />
-            <input className="user-input" placeholder="Complemento"  />
-            <input className="user-input" placeholder="Cidade"  />
-            <input className="user-input" placeholder="UF"  />
+            <input className="user-input" placeholder="CEP" onChange={(e) =>setCep(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Logradouro" onChange={(e) =>setLogradouro(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Número"  onChange={(e) =>setNumeroEndereco(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Complemento" onChange={(e) =>setComplemento(e.currentTarget.value)} />
+            <input className="user-input" placeholder="Cidade"  onChange={(e) =>setCidade(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="UF (Ex.: MG, SP, RJ)" onChange={(e) =>setUf(e.currentTarget.value)} />
+            <button className="user-input" type="submit">Criar conta e cadastrar Locadora</button>
+              
               </div>
           )}
           <p className="mensagemLogin"> {mensagemCriarConta} </p>  
-        <button className="user-input" type="submit">Criar</button>
         <div>
           <br />
           <button className="botaovoltar" type="button" onClick={login}>Ja tenho conta</button>
