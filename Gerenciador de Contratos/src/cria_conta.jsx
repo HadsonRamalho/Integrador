@@ -21,23 +21,49 @@ function CriaConta(){
   const [agenciaConta, setAgenciaConta] = useState("");
   const [nomebanco, setNomeBanco] = useState("");
 
+  const [cep, setCep] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [numeroendereco, setNumeroEndereco] = useState("");
+  const [logradouro, setLogradouro] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [uf, setUf] = useState("");
+
+  let idendereco ;
   const [locadoraExiste, setLocadoraExiste] = useState(true);
+  
   const carregaDadosLocadora = async (cnpj) => {
+    setLocadoraExiste(false);
     try{
       const locadoraExistente = await invoke("locadora_existente", {cnpj});
       setNomeLocadora(locadoraExistente.nomelocadora);
       setNumeroConta(locadoraExistente.numerocontabanco);
       setAgenciaConta(locadoraExistente.numeroagenciabanco);
       setNomeBanco(locadoraExistente.nomebanco);
-      console.log(locadoraExistente);
-      const idendereco = locadoraExistente.idendereco;
-      if (locadoraExistente.idlocadora != ""){
-        console.log("ID vazio");
+      const id = locadoraExistente.idendereco;
+      idendereco = id;
+
+      const idlocadora = locadoraExistente.idlocadora;
+      if (idlocadora != ""){
         setLocadoraExiste(true);
+      }else{
+        setLocadoraExiste(false);
       }
+      console.log(locadoraExiste);
     } catch(error){
       console.log("Erro ao buscar o CNPJ cadastrado no Usuário: ", error);
     }
+
+    try{
+      const endereco = await invoke("busca_endereco_id", {idendereco});
+      setUf(endereco.uf);
+      setComplemento(endereco.complemento);
+      setLogradouro(endereco.logradouro);
+      setCidade(endereco.cidade);
+      setCep(endereco.cep);
+      setNumeroEndereco(endereco.numeroendereco);
+     } catch(error){
+      console.log(error);
+     }
   };
 
   async function criarConta() {
@@ -55,28 +81,6 @@ function CriaConta(){
 
   const login = () => {
     navigate('/');
-  };
-
-  const cadastroLocadora = () => {
-    if (!locadoraExiste){
-    return(<div>
-      <input required
-          className="user-input"
-          onChange={(e) => setNomeLocadora(e.currentTarget.value)}
-          placeholder="Nome da locadora"
-      />
-      <button>x</button>
-      
-    </div>);
-    }
-    return(<div>
-      <input required
-          className="user-input"
-          onChange={(e) => setNomeLocadora(e.currentTarget.value)}
-          placeholder="Locadora existe"
-      />
-      
-    </div>);
   };
 
     return (
@@ -136,25 +140,38 @@ function CriaConta(){
             onBlur={async (e) => { await carregaDadosLocadora(e.currentTarget.value); }}
             placeholder="CNPJ da empresa"
           />
-          </div>
+          </div>  
           {locadoraExiste ? (
             <div>
-            <div><input className="user-input" placeholder="Nome da Locadora"  value={nomeLocadora} /></div>
-            <div><input className="user-input" placeholder="Nome do banco"  value={nomeLocadora} /></div>
+            <div><input  readOnly className="user-input" placeholder="Nome da LAocadora"  value={nomeLocadora} /></div>
             <p>Dados bancários da empresa</p>
-            <div><input className="user-input" placeholder="Numero da agencia"  value={nomeLocadora} /></div>
-            <div><input className="user-input" placeholder="Numero da conta"  value={nomeLocadora} /></div>
+            <div><input readOnly className="user-input" placeholder="Nome do banco"  value={nomebanco} /></div>
+            <div><input readOnly className="user-input" placeholder="Numero da agencia"  value={agenciaConta} /></div>
+            <div><input readOnly className="user-input" placeholder="Numero da conta"  value={numeroConta} /></div>
             <p>Endereço da empresa</p>
-            <input className="user-input" placeholder="CEP"  value={nomeLocadora} />
-            <input className="user-input" placeholder="Logradouro"  value={nomeLocadora} />
-            <input className="user-input" placeholder="Número"  value={nomeLocadora} />
-            <input className="user-input" placeholder="Complemento"  value={nomeLocadora} />
-            <input className="user-input" placeholder="Cidade"  value={nomeLocadora} />
-            <input className="user-input" placeholder="UF"  value={nomeLocadora} />
+            <input readOnly className="user-input" placeholder="CEP"  value={cep} />
+            <input readOnly className="user-input" placeholder="Logradouro"  value={logradouro} />
+            <input readOnly className="user-input" placeholder="Número"  value={numeroendereco} />
+            <input readOnly className="user-input" placeholder="Complemento"  value={complemento} />
+            <input readOnly className="user-input" placeholder="Cidade"  value={cidade} />
+            <input readOnly className="user-input" placeholder="UF"  value={uf} />
 
             </div>
 ) : (
-            <input required className="user-input" onChange={(e) => setNomeLocadora(e.currentTarget.value)} placeholder="Nome da locadora" />
+            <div>
+              <div><input className="user-input" placeholder="Nome da LocadorAAa"  /></div>
+            <p>Dados bancários da empresa</p>
+            <div><input className="user-input" placeholder="Nome do banco"   /></div>
+            <div><input className="user-input" placeholder="Numero da agencia" /></div>
+            <div><input className="user-input" placeholder="Numero da conta"  /></div>
+            <p>Endereço da empresa</p>
+            <input className="user-input" placeholder="CEP"/>
+            <input className="user-input" placeholder="Logradouro" />
+            <input className="user-input" placeholder="Número"  />
+            <input className="user-input" placeholder="Complemento"  />
+            <input className="user-input" placeholder="Cidade"  />
+            <input className="user-input" placeholder="UF"  />
+              </div>
           )}
           <p className="mensagemLogin"> {mensagemCriarConta} </p>  
         <button className="user-input" type="submit">Criar</button>

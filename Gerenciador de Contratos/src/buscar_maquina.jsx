@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 
@@ -12,8 +12,11 @@ function BuscarMaquina(){
   const [filtro, setFiltro] = useState('name');
 
 
-  async function buscaMaquina(filtro){
+  async function buscaMaquina(){
     try{
+      setNumSerie(valorBusca);
+      setNomeMaquina(valorBusca);
+      console.log(valorBusca);
       if (filtro == "nome"){
         setNomeMaquina(valorBusca);
         const maquinas = await invoke("busca_maquina_nome", {nomeMaquina});
@@ -39,6 +42,7 @@ function BuscarMaquina(){
     navigate('/home');
   };
 
+
   return (
     <div>
       <div className="boxBuscaMaquina">
@@ -53,13 +57,12 @@ function BuscarMaquina(){
           type="text"
           value={valorBusca}
           onChange={(e) => {setValorBusca(e.currentTarget.value)
-            setNumSerie(valorBusca)
-          setNomeMaquina(valorBusca)}
+            }
           }
           placeholder={`Buscar máquina por ${filtro}`}
         />
         <button onClick={async () => {
-          await buscaMaquina(filtro);
+          await buscaMaquina();
         }
         }>Buscar</button>
       </div>

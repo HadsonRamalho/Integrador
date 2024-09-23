@@ -25,6 +25,15 @@ function CadastrarMaquina(){
     }
   }
 
+  const formataValor = (e) => {
+    let valor = e.currentTarget.value.replace(/\D/g, "");
+    valor = (Number(valor) / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+    setValorAluguel(valor);
+  };
+
     return (
       <div id="boxCadastroMaquina">
         <div>
@@ -50,8 +59,11 @@ function CadastrarMaquina(){
         <br></br>
         <input required
           className="rowReset"
-          onChange={(e) => setValorAluguel(e.currentTarget.value)}
-          placeholder="Valor do aluguel" 
+          placeholder="R$ 0,00" 
+          type="text"
+          value={valoraluguel}
+          onChange={formataValor}
+          
         />
         <p className="mensagemLogin">{mensagem}</p>
         <button type="submit" >Concluir cadastro</button>

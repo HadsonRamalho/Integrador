@@ -65,18 +65,19 @@ function Home(){
           <p>Contrato</p>
           <button className="botoesHome" type="button" onClick={cadastrar_contrato}>Cadastrar contrato</button>
           <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
-          <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
           <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (react-pdf/renderer)</button>
           <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>HTML (Obsoleto)</button>
 
           <p>Máquina</p>
           <button className="botoesHome" type="button" onClick={cadastrar_maquina}>Cadastrar maquina</button>
           <button className="botoesHome" type="button" onClick={buscar_maquina}>Buscar Máquina</button>
-          <button className="botoesHome" type="button" onClick={relatorio_estoque_maquina}>Máquinas em estoque</button>
           <button className="botoesHome" type="button" onClick={relatorio_estoque_total}>Todas as máquinas</button>
           <p>Cliente (Locatário)</p>
           <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente (Locatario)</button>
           <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente (Locatario)</button>
+          <p>Relatórios</p>
+          <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
+          <button className="botoesHome" type="button" onClick={relatorio_estoque_maquina}>Máquinas em estoque</button>
           <p>Usuário</p>
           <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
           <p>Outros</p>

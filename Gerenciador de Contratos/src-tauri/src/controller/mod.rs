@@ -49,7 +49,7 @@ pub async fn cria_conta(
         return Err("Usuário já cadastrado".to_string());
     }
     let cpf = formata_cpf(&cpf)?;
-    let resultado_cadastro = save_data(nome_completo, &email, usuario.get_hash(), &cpf, &cnpj).await;
+    let resultado_cadastro = cadastra_usuario(nome_completo, &email, usuario.get_hash(), &cpf, &cnpj).await;
     match resultado_cadastro {
         Ok(_) => return Ok(()),
         Err(_) => return Err("Erro no cadastro do usuário.".to_string()),
@@ -81,7 +81,7 @@ pub async fn verifica_senha(email: &str, senha: &str) -> Result<(), String> {
     }
 }
 
-pub async fn save_data(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
+pub async fn cadastra_usuario(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
     let pool = match cria_pool().await {
         Ok(pool) => {
             pool
@@ -91,7 +91,7 @@ pub async fn save_data(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &s
         }
     };
     let cpf = formata_cpf(cpf)?;
-    let _resultado_criacao = model::save_data(&pool, nome, &email, senha, &cpf, cnpj)
+    let _resultado_criacao = model::cadastra_usuario(&pool, nome, &email, senha, &cpf, cnpj)
         .await
         .map_err(|e| format!("{}", e))?;
     Ok(())
