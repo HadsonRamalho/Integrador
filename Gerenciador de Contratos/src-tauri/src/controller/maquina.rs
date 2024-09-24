@@ -24,14 +24,7 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
 pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, String>{
     
     let valoraluguel = maquina["valoraluguel"].as_str().unwrap_or("").to_string();
-    let valoraluguel: f32 = match valoraluguel.trim().replace(".", "").replace(",", ".").parse(){
-        Ok(valoraluguel) => {
-            valoraluguel
-        },
-        Err(e) => {
-            return Err(e.to_string())
-        }
-    };
+    let valoraluguel = formata_valor_f32(&valoraluguel)?;
 
     let maquina: model::maquina::Maquina = model::maquina::Maquina {
         nomemaquina: maquina["nomemaquina"].as_str().unwrap_or("").to_string(),
@@ -147,4 +140,13 @@ pub async fn gera_estoque_total() -> Result<Vec<model::maquina::EstoqueMaquina>,
         Ok(estoque_total) => {return Ok(estoque_total)},
         Err(e) => return Err(e.to_string())
     };
+}
+
+pub fn formata_valor_f32(valor: &str) -> Result<f32, String>{
+    let valor:String = valor.trim().split("R$").collect();
+    let valor: f32 = match valor.trim().replace(".", "").replace(",", ".").parse(){
+        Ok(valor) => {valor},
+        Err(e) => {return Err(e.to_string())}
+    };
+    return Ok(valor);
 }
