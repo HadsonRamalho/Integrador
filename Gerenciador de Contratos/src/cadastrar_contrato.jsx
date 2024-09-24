@@ -523,7 +523,16 @@ function CadastrarContrato(){
         cepadm,
         complementoadm,
         cidadeadm,
-        ufadm
+        ufadm,
+
+        //Locatario
+        nomelocatario,
+        cnpjlocatario,
+
+        //Locatario | Endereço
+        logradouroLocatario,
+        cidadeLocatario,
+        ufLocatario
       },
     });
   };
@@ -551,14 +560,7 @@ function CadastrarContrato(){
       idlocatario, idlocador, idmaquina, 
       idenderecolocadora, prazolocacao, dataretirada, 
       valormensal, vencimento, multaatraso, jurosatraso,
-      avisotransferencia, prazodevolucao, cidadeforo, datacontrato);
-      ChamaContrato({ 
-        nomelocadora, 
-        cnpjLocadora: cnpj, 
-        nomeAdmLocadora: nome, 
-        numeroConta: numerocontabanco, 
-        numeroAgencia: numeroagenciabanco 
-      });              
+      avisotransferencia, prazodevolucao, cidadeforo, datacontrato);        
     } catch(error){
       setMensagem(error);
       console.log(error);

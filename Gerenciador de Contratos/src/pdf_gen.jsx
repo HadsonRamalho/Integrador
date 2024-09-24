@@ -34,10 +34,17 @@ export const gerarTextoContratoP1 = ({
   complementoadm,
   cidadeadm ,
   numeroenderecoadm,
+  nomelocatario,
+  cnpjlocatario,
+  logradourolocatario,
+  cidadelocatario,
+  uflocatario,
+
+
 }) => {
   return `
     LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em ${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} emitido por ${orgaoemissor}, com endereço em ${cepadm}, ${logradouroadm}, ${numeroenderecoadm}, ${complementoadm}, ${cidadeadm}/${ufadm}.
-LOCATÁRIA: XXXXXXXXXX, inscrita no CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx, Cidade/MG, representada por XXXXXXXXXXXX, brasileiro, casado, CPF XXXXXXXXX, residente na Rua XXXXXXXXXXX, Cidade/MG.
+LOCATÁRIA: ${nomelocatario}, inscrita no CNPJ sob o nº ${cnpjlocatario}, com sede na ${logradourolocatario}, Cidade/MG, representada por XXXXXXXXXXXX, brasileiro, casado, CPF XXXXXXXXX, residente na Rua XXXXXXXXXXX, Cidade/MG.
 Ambas as PARTES aqui representadas por quem de direito, têm justo e contratado entre si a celebração do presente Contrato de Locação de Bens Móveis, que reger-se-á de acordo com as cláusulas e condições aqui previstas.
 DEFINIÇÕES
 
@@ -264,6 +271,19 @@ E por estarem assim justos e contratados, assinam o presente contrato em 02 (dua
 
 
 Diamantina/MG, 23 de novembro de 2023.
+
+LOCADORA:____________________________	
+LOCATÁRIA:____________________________
+
+
+
+TESTEMUNHAS:
+
+
+
+
+Nome:____________________________	Nome:____________________________
+CPF:____________________________	CPF:____________________________
   `;
 };
 
@@ -377,6 +397,14 @@ const CPDF = () => {
         complementoadm = {state?.complementoadm || ""}
         cidadeadm = {state?.cidadeadm || ""}
         numeroenderecoadm = {state?.numeroenderecoadm || ""}
+
+      //Locatario 
+        nomelocatario = {state?.nomelocatario || ""}
+        cnpjlocatario = {state?.cnpjlocatario || ""}
+      //Locatario | Endereço
+        logradourolocatario = {state?.logradouroLocatario || ""}
+        cidadelocatario = {state?.cidadeLocatario || ""}
+        uflocatario = {state?.ufLocatario || ""}
       />
     </PDFViewer>
     <button onClick={home}>Voltar para a página inicial</button>

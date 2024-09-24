@@ -1,7 +1,7 @@
 import React from 'react';
 import CPDF from './pdf_gen';
 
-const ChamaContrato = ({ nomelocadora, cnpjLocadora, nomeAdmLocadora, numeroConta, numeroAgencia }) => (
+const ChamaContrato = ({ nomelocadora, cnpjLocadora, nomeAdmLocadora, numeroConta, numeroAgencia, nomelocatario }) => (
   <div>
     <CPDF 
           nomelocadora={nomelocadora} 
@@ -9,6 +9,7 @@ const ChamaContrato = ({ nomelocadora, cnpjLocadora, nomeAdmLocadora, numeroCont
           nomeAdmLocadora={nomeAdmLocadora} 
           numeroConta={numeroConta} 
           numeroAgencia={numeroAgencia} 
+          nomelocatario={nomelocatario}
       />
   </div>
 );
