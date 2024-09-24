@@ -20,3 +20,9 @@ export async function cadastraMaquina(nomemaquina, valoraluguel, numserie){
       throw(error);
     }
 }
+
+export const formataValor = (e) => {
+  let valor = e.replace(/\D/g, "");
+  valor = (Number(valor) / 100).toLocaleString("pt-BR");
+  return valor;
+};

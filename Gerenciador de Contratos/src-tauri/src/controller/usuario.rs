@@ -1,6 +1,7 @@
 use mysql_async::prelude::Queryable;
 use mysql_async::{params, Pool};
 
+use crate::model::erro::MeuErro;
 use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
@@ -286,4 +287,16 @@ pub async fn _busca_cnpj_usuario(pool: &Pool, id: &str) -> Result<String, mysql_
             return Ok(cnpj);
         }
     }
+}
+
+#[tauri::command]
+pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), String>{
+    let email = email.trim();
+    if email.is_empty() {
+        return Err(MeuErro::EmailVazio.to_string());
+    }
+    if nome.is_empty(){
+        return Err("Erro: Nome vazio".to_string());
+    }
+    return Ok(())
 }

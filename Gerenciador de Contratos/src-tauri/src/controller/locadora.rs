@@ -1,3 +1,4 @@
+use crate::model::erro::MeuErro;
 use crate::model::locadora::Locadora;
 use crate::model::locadora::_cadastra_locadora;
 use crate::model;
@@ -107,7 +108,7 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
 #[tauri::command]
 pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
     if cnpj.trim().is_empty(){
-        return Err("Erro: O campo CNPJ está vazio.".to_string());
+        return Err(MeuErro::CnpjVazio.to_string());
     }
     let cnpj = formata_cnpj(cnpj);
     let cnpj = match cnpj{
@@ -165,7 +166,7 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
         locadora.numerocontabanco.trim().is_empty()
         || locadora.numeroagenciabanco.trim().is_empty() || 
         locadora.nomebanco.trim().is_empty() || locadora.nomelocadora.trim().is_empty() || locadora.idsocio.trim().is_empty(){
-            return Err("Erro: Um ou mais campos da locadora estão vazios.".to_string());
+            return Err(MeuErro::CamposVazios.to_string());
     }
     return Ok(locadora);
 }

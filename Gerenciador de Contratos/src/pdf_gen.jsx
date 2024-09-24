@@ -1,6 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 // Estilos
 const styles = StyleSheet.create({
@@ -242,13 +243,20 @@ const MeuDocumento = (params) => {
   );
 };
 
+
 // Componente para exibir o PDF na tela
 const CPDF = () => {
   const { state } = useLocation();
 
   console.log("Dados preenchidos:", state);
+  const navigate = useNavigate();
+
+  const home = () => {
+    navigate('/home');
+  };
 
   return (
+    <div>
     <PDFViewer width="100%" height="600px">
       <MeuDocumento
       //Locadora
@@ -279,6 +287,8 @@ const CPDF = () => {
         numeroenderecoadm = {state?.numeroenderecoadm || ""}
       />
     </PDFViewer>
+    <button onClick={home}>Voltar para a página inicial</button>
+    </div>
   );
 };
 

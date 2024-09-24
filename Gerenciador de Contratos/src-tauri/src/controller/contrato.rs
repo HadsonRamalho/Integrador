@@ -6,6 +6,7 @@ use mysql_async::prelude::*;
 use mysql_async::Row;
 use mysql_async::Value;
 
+use crate::model::erro::MeuErro;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
@@ -214,7 +215,7 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         Err(e) => {return Err(format!("Erro ao converter prazo de locação: {}", e))}
     };
 
-    let valormensal:f32 = match contrato["valormensal"].as_str().unwrap_or("").to_string().trim().parse(){
+    let valormensal:f32 = match contrato["valormensal"].as_str().unwrap_or("").to_string().trim().replace(".", "").replace(",", ".").parse(){
         Ok(valormensal) => {valormensal},
         Err(e) => {return Err(format!("Erro ao converter valor mensal: {}", e))}
     };
@@ -230,7 +231,7 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
     };
 
     if idlocatario.is_empty() || idlocador.is_empty() || idmaquina.is_empty() || enderecoretirada.is_empty() {
-        return Err("Erro: um ou mais campos do contrato estão vazios".to_string())
+        return Err(MeuErro::CamposVazios.to_string())
     }
 
     let idcontrato = gera_hash(&idlocatario);

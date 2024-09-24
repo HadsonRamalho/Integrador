@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { cadastraMaquina } from "./maquina";
+import { formataValor } from "./maquina";
 
 function CadastrarMaquina(){
   const [mensagem, setMensagem] = useState("");
@@ -24,16 +25,7 @@ function CadastrarMaquina(){
       console.log(error);
     }
   }
-
-  const formataValor = (e) => {
-    let valor = e.currentTarget.value.replace(/\D/g, "");
-    valor = (Number(valor) / 100).toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-    setValorAluguel(valor);
-  };
-
+  
     return (
       <div id="boxCadastroMaquina">
         <div>
@@ -59,11 +51,10 @@ function CadastrarMaquina(){
         <br></br>
         <input required
           className="rowReset"
-          placeholder="R$ 0,00" 
+          placeholder="0,00" 
           type="text"
           value={valoraluguel}
-          onChange={formataValor}
-          
+          onChange={(e) => setValorAluguel(formataValor(e.currentTarget.value))}          
         />
         <p className="mensagemLogin">{mensagem}</p>
         <button type="submit" >Concluir cadastro</button>

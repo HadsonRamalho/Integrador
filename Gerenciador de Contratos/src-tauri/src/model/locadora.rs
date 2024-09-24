@@ -1,5 +1,5 @@
 use mysql_async::prelude::{FromRow, Queryable};
-use crate::controller::erro::MeuErro;
+use crate::model::erro::MeuErro;
 use crate::model::params;
 use crate::controller::{self, cria_pool};
 

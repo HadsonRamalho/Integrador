@@ -2,13 +2,13 @@ use mysql_async::{params, prelude::Queryable};
 
 use crate::{
     controller::{self, gera_hash},
-    model,
+    model::{self, erro::MeuErro},
 };
 
 #[tauri::command]
 pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numserie: String) -> Result<serde_json::Value, String> {
     if nomemaquina.is_empty() || valoraluguel.is_empty() || numserie.is_empty(){
-        return Err("Erro: Um ou mais campos estão vazios.".to_string())
+        return Err(MeuErro::CamposVazios.to_string())
     }
     let idmaquina = gera_hash(&numserie).split_at(45 as usize).0.to_string();
     let maquina: serde_json::Value = serde_json::json!({
@@ -24,7 +24,7 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
 pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, String>{
     
     let valoraluguel = maquina["valoraluguel"].as_str().unwrap_or("").to_string();
-    let valoraluguel: f32 = match valoraluguel.trim().parse(){
+    let valoraluguel: f32 = match valoraluguel.trim().replace(".", "").replace(",", ".").parse(){
         Ok(valoraluguel) => {
             valoraluguel
         },
@@ -68,7 +68,7 @@ pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqui
             if !resultado.is_empty(){
                 return Ok(resultado);
             }
-            return Err("Erro: Máquina não encontrada".to_string());
+            return Err(MeuErro::MaquinaNaoEncontrada.to_string());
         },
         Err(erro) => {
             return Err(erro.to_string());
@@ -121,7 +121,7 @@ pub async fn busca_maquina_numserie(numserie: String) -> Result<Vec<model::maqui
             if !resultado.is_empty(){
                 return Ok(resultado);
             }
-            return Err("Erro: Máquina não encontrada".to_string());
+            return Err(MeuErro::MaquinaNaoEncontrada.to_string());
         },
         Err(erro) => {
             return Err(erro.to_string());
@@ -136,7 +136,7 @@ pub async fn gera_estoque_por_nome(nomemaquina: &str) -> Result<Vec<model::maqui
         Err(e) => {return Err(e.to_string())}
     };
     if estoque_maquina.is_empty(){
-        return Err("Erro: Máquina não encontrada".to_string())
+        return Err(MeuErro::MaquinaNaoEncontrada.to_string())
     }
     return Ok(estoque_maquina)
 }

@@ -1,4 +1,5 @@
 use crate::model;
+use crate::model::erro::MeuErro;
 use crate::model::Usuario;
 use locadora::formata_cnpj;
 use pwhash::bcrypt;
@@ -10,7 +11,6 @@ pub mod maquina;
 pub mod socioadm;
 pub mod usuario;
 pub mod contrato;
-pub mod erro;
 
 #[tauri::command]
 pub async fn cria_conta(
@@ -187,7 +187,7 @@ pub async fn verifica_codigo_email(codigo_usuario: String, codigo_banco: String)
 #[tauri::command]
 pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<String, String>{
     if senha1.trim().is_empty() || senha2.trim().is_empty(){
-        return Err("Erro: Preencha todos os campos.".to_string())
+        return Err(MeuErro::CamposVazios.to_string())
     }
     if senha1 != senha2 {
         return Err("Erro: As senhas são diferentes".to_string())

@@ -9,6 +9,7 @@ pub mod maquina;
 pub mod socioadm;
 pub mod usuario;
 pub mod contrato;
+pub mod erro;
 
 // crates para envio de email
 use lettre::message::header::ContentType;

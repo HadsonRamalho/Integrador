@@ -1,4 +1,4 @@
-use crate::{controller, model::{self, socioadm::_cadastra_socio_adm}};
+use crate::{controller, model::{self, erro::MeuErro, socioadm::_cadastra_socio_adm}};
 
 use super::formata_cpf;
 
@@ -8,7 +8,7 @@ pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoe
     if idendereco.is_empty() || nome.is_empty() || cpf.is_empty()
         || orgaoemissor.is_empty() || estadocivil.is_empty() 
         || nacionalidade.is_empty(){
-            return Err("Erro: Um ou mais campos estão vazios.".to_string());
+            return Err(MeuErro::CamposVazios.to_string());
     }
     
     let id: String = controller::gera_hash(&cpf);

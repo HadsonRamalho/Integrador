@@ -3,6 +3,8 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 import ChamaContrato from "./pdf_call";
 import { useEffect } from "react";
+import {formataValor} from "./maquina";
+import {selecionaUf, selecionaUfDefinido} from "./endereco";
 
 
 function CadastrarContrato(){
@@ -109,6 +111,7 @@ function CadastrarContrato(){
     catch(error){
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | estruturaEnderecoAdm] : ", error);
+      throw(error);
     }
   }
 
@@ -122,6 +125,7 @@ function CadastrarContrato(){
     } catch(error){
       console.log('Erro ao salvar o endereço: ', error);
       setMensagem("[Cadastrar_contrato.jsx | cadastraEnderecoAdm] : ", error);
+      throw(error);
     }
   }
 
@@ -146,6 +150,7 @@ function CadastrarContrato(){
     catch(error){
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | estruturaEnderecoAdmLocatario] : ", error);
+      throw(error);
     }
   }
 
@@ -159,6 +164,7 @@ function CadastrarContrato(){
     } catch(error){
       console.log("[Cadastrar_contrato.jsx | cadastraEnderecoAdmLocatario] : ", error);
       setMensagem(error);
+      throw(error);
     }
   }
 
@@ -183,6 +189,7 @@ function CadastrarContrato(){
     catch(error){
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | estruturaEnderecoLocatario] : ", error);
+      throw(error);
     }
   }
 
@@ -196,6 +203,7 @@ function CadastrarContrato(){
     } catch(error){
       console.log("[Cadastrar_contrato.jsx | cadastraEnderecoLocatario] : ", error);
       setMensagem(error);
+      throw(error);
     }
   }
 
@@ -214,6 +222,7 @@ function CadastrarContrato(){
     catch(error){
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | estruturaEnderecoLocadora] : ", error);
+      throw(error);
     }
   }
 
@@ -227,6 +236,7 @@ function CadastrarContrato(){
     } catch(error){
       console.log("[Cadastrar_contrato.jsx | cadastraEnderecoLocadora] : ", error);
       setMensagem(error);
+      throw(error);
     }
   }
 
@@ -237,6 +247,7 @@ function CadastrarContrato(){
     } catch(error) {
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | estruturaSocioAdm] : ", error);
+      throw(error);
     }
   }
 
@@ -248,6 +259,7 @@ function CadastrarContrato(){
     } catch(error){
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | cadastraSocioAdm] : ", error);
+      throw(error);
     }
   }
 
@@ -263,6 +275,7 @@ function CadastrarContrato(){
     } catch(error) {
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | estruturaSocioAdmLocatario] : ", error);
+      throw(error);
     }
   }
 
@@ -274,6 +287,7 @@ function CadastrarContrato(){
     } catch(error){
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | cadastraSocioAdmLocatario] : ", error);
+      throw(error);
     }
   }
 
@@ -284,6 +298,7 @@ function CadastrarContrato(){
     } catch(error) {
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | estruturaLocadora] : ", error);
+      throw(error);
     }
   }
 
@@ -295,6 +310,7 @@ function CadastrarContrato(){
     } catch(error){
       setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | cadastraLocadora] : ", error);
+      throw(error);
     }
   }
 
@@ -306,19 +322,9 @@ function CadastrarContrato(){
     catch(error){
       console.log("[Cadastrar_contrato.jsx | estruturaMaquina] : ", error);
       setMensagem(error);
+      throw(error);
     }
   } 
-
-  async function cadastraMaquina(){
-    try{
-      const maquina = await estruturaMaquina();
-      const idmaquina =await invoke("cadastra_maquina", {maquina});
-      return idmaquina;
-    } catch(error){
-      console.log("[Cadastrar_contrato.jsx | cadastraMaquina] : ", error);
-      setMensagem(error);
-    }
-  }
 
   async function estruturaLocatario(idendereco, idsocio){
     try{      
@@ -329,6 +335,7 @@ function CadastrarContrato(){
     catch(error){
       console.log("[Cadastrar_contrato.jsx | estruturaLocatario] : ", error);
       setMensagem(error);
+      throw(error);
     }
   } 
 
@@ -340,6 +347,7 @@ function CadastrarContrato(){
     } catch(error){
       console.log("[Cadastrar_contrato.jsx | cadastraLocatario] : ", error);
       setMensagem(error);
+      throw(error);
     }
   }
 
@@ -357,7 +365,9 @@ function CadastrarContrato(){
         cidadeforo, datacontrato});
         return contrato;
       } catch(error){
+        setMensagem(error);
         console.log("[Cadastrar_contrato.jsx | estruturaContrato] : ", error);
+        throw(error);
       }
   }
 
@@ -377,7 +387,9 @@ function CadastrarContrato(){
       await invoke("cadastra_contrato", {contrato});
       setMensagem("Contrato cadastrado!");
     } catch(error){
+      setMensagem(error);
       console.log("[Cadastrar_contrato.jsx | cadastraContrato] : ", error);
+      throw(error);
     }
   } 
 
@@ -413,9 +425,11 @@ function CadastrarContrato(){
         setCidadeLocadora(endereco.cidade);
         setComplementoLocadora(endereco.complemento);
       } catch(error){
+        setMensagem(error);
         console.log("Ei, pode ser que o endereço ainda não foi cadastrado!", error);
       }      
     } catch(error){
+      setMensagem(error);
       console.log("Erro ao buscar o CNPJ cadastrado no Usuário: ", error);
     }
   };
@@ -429,12 +443,15 @@ function CadastrarContrato(){
       setValorAluguel(maquina.valoraluguel); 
       setIdMaquina(maquina.idmaquina);
     } catch(error){
+      setMensagem(error);
       console.log("Erro ao buscar a máquina, verifique se já está cadastrada: ", error);
     }
   };
 
   const [locatarioCarregado, setLocatarioCarregado] = useState(false);
   const [idlocatario, setIdLocatario] = useState("");
+
+  
 
   const carregaDadosLocatario = async () => {
     try{
@@ -458,6 +475,7 @@ function CadastrarContrato(){
         setUfLocatario(enderecolocatario.uf);
         setLocatarioCarregado(true);
       } catch(error){
+        setMensagem(error);
         console.log("Erro ao carregar dados do endereço do locatario: ", error);
       }
     }catch(error){
@@ -470,6 +488,7 @@ function CadastrarContrato(){
       setCidadeLocatario("");
       setComplementoLocatario("");
       setUfLocatario("");
+      setMensagem(error);
     }
   }
   const cpdf = () => {
@@ -540,11 +559,13 @@ function CadastrarContrato(){
         numeroConta: numerocontabanco, 
         numeroAgencia: numeroagenciabanco 
       });              
-      cpdf();
     } catch(error){
+      setMensagem(error);
       console.log(error);
+      return;
     }
-  }
+    cpdf();
+  } 
   
     return (
       <div id="boxCadastroContrato">
@@ -579,10 +600,7 @@ function CadastrarContrato(){
           placeholder={cidade || "Cidade da Locadora (Ex.: Belo Horizonte)"}
         />
         <br></br>
-        <input readOnly={true} required
-          className="inputContrato"
-          placeholder={uf || "Estado da Locadora (Ex.: MG)"}
-        />
+        {selecionaUfDefinido(setUfLocadora, uf, true)}
         
         <input readOnly={true} required
           className="inputContrato"
@@ -638,13 +656,16 @@ function CadastrarContrato(){
           onChange={(e) => setEstadoCivil(e.currentTarget.value)}
           placeholder="Estado Civil do Sócio (Ex.: Casado)"
         />
-        <br></br>
-        <input
-          className="inputContrato"
-          onChange={(e) => setNacionalidade(e.currentTarget.value)}
-          placeholder="Nacionalidade do Sócio (Ex.: Brasileiro)"
-        />
-        <br></br>
+        <div class= "input-box">
+            <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
+            onChange={(e) => setNacionalidade(e.currentTarget.value)}>
+                <option value="" disabled selected> Selecione a nacionalidade </option>
+                <option value = "Brasil"> Brasil </option>
+                <option value = "EUA"> Estados Unidos </option>
+                <option value = "Argentina"> Argentina </option>
+                <option value = "Chile"> Chile </option>
+            </select>
+        </div>
         <h3>Endereço do Sócio Administrador da Locadora</h3>
         <input required
           className="inputContrato"
@@ -658,43 +679,7 @@ function CadastrarContrato(){
           placeholder="Cidade do sócio adm. (Ex.: Belo Horizonte)" 
         />
         <br></br>
-        <div className="input-box">
-                    <label htmlFor="estadoAdm"></label>
-                    <select id="estadoAdm"
-                        name="estadoAdm" 
-                        value={ufadm}
-                        onChange={capturaUfAdm}
-                        aria-label="Selecione o estado do Adm"                        
-                    >
-                        <option value="" defaultValue={""}>Selecione o estado do Adm</option>
-                        <option value="AC">AC</option>
-                        <option value="AL">AL</option>
-                        <option value="AP">AP</option>
-                        <option value="AM">AM</option>
-                        <option value="BA">BA</option>
-                        <option value="CE">CE</option>
-                        <option value="ES">ES</option>
-                        <option value="GO">GO</option>
-                        <option value="MA">MA</option>
-                        <option value="MT">MT</option>
-                        <option value="MS">MS</option>
-                        <option value="MG">MG</option>
-                        <option value="PA">PA</option>
-                        <option value="PB">PB</option>
-                        <option value="PR">PR</option>
-                        <option value="PE">PE</option>
-                        <option value="PI">PI</option>
-                        <option value="RJ">RJ</option>
-                        <option value="RN">RN</option>
-                        <option value="RS">RS</option>
-                        <option value="RO">RO</option>
-                        <option value="RR">RR</option>
-                        <option value="SC">SC</option>
-                        <option value="SP">SP</option>
-                        <option value="SE">SE</option>
-                        <option value="TO">TO</option>
-      </select>
-    </div>
+        {selecionaUf(setUfAdm)}
         <br></br>
         <input required
           className="inputContrato"
@@ -731,9 +716,11 @@ function CadastrarContrato(){
           placeholder={nomemaquina || "Nome da máquina (Ex.: Máquina de Corte)"}  
         />
         <br></br>
-        <input required
+        <input required readOnly={true}
           className="inputContrato"
-          onChange={(e) => setValorAluguel(e.currentTarget.value)}
+          value={valoraluguel}
+          type="text"
+          onChange={(e) => setValorAluguel(formataValor(e.currentTarget.value))}
           placeholder={valoraluguel || "Valor aprox. do aluguel (Ex.: 30000)"}
         />
         <br></br>
@@ -759,11 +746,8 @@ function CadastrarContrato(){
           placeholder={cidadeLocatario || "Cidade (Ex.: Belo Horizonte)" }
         />
         <br></br>
-        <input required readOnly={true}
-          className="inputContrato"
-          onChange={(e) => setUfLocatario(e.currentTarget.value)}
-          placeholder={ufLocatario || "Estado"}
-        />
+        {selecionaUfDefinido(setUfSocioLocatario, ufLocatario, true)}
+
         <br></br>
         <input required readOnly={true}
           className="inputContrato"
@@ -796,11 +780,7 @@ function CadastrarContrato(){
           placeholder={"Cidade (Ex.: Belo Horizonte)"} 
         />
         <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => {setUfSocioLocatario(e.currentTarget.value)}}
-          placeholder={"Estado"}
-        />
+        {selecionaUf(setUfSocioLocatario)}
         <br></br>
         <input required
           className="inputContrato"
@@ -850,13 +830,16 @@ function CadastrarContrato(){
           onChange={(e) => setEstadoCivilSocioLocatario(e.currentTarget.value)}
           placeholder="Estado Civil do Sócio (Ex.: Solteiro)"
         />
-        <br></br>
-        <input
-          className="inputContrato"
-          onChange={(e) => setNacionalidadeSocioLocatario(e.currentTarget.value)}
-          placeholder="Nacionalidade do Sócio (Ex.: Brasileiro)"
-        />
-        <br></br>     
+        <div class= "input-box">
+            <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
+            onChange={(e) => setNacionalidadeSocioLocatario(e.currentTarget.value)}>
+                <option value="" disabled selected> Selecione a nacionalidade </option>
+                <option value = "Brasil"> Brasil </option>
+                <option value = "EUA"> Estados Unidos </option>
+                <option value = "Argentina"> Argentina </option>
+                <option value = "Chile"> Chile </option>
+            </select>
+        </div>
         <h3>Informações do contrato</h3>
         <input required
           className="inputContrato"
@@ -877,7 +860,9 @@ function CadastrarContrato(){
         <br></br>
         <input required
           className="inputContrato"
-          onChange={(e) => setValorMensal(e.currentTarget.value)}
+          type="text"
+          value={valormensal}
+          onChange={(e) => setValorMensal(formataValor(e.currentTarget.value))}
           placeholder="Valor mensal do contrato (Ex.: 30000)" 
         />
         <br></br>
@@ -937,6 +922,7 @@ function CadastrarContrato(){
           }}
           placeholder="Data do contrato" 
         />
+        
         <br></br>
         <h3 >{mensagem}</h3>
         <button type="submit" >Concluir cadastro</button>

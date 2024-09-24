@@ -31,6 +31,7 @@ function CriaConta(){
 
   let idendereco ;
   const [locadoraExiste, setLocadoraExiste] = useState(true);
+  const [mensagemEmpresa, setMensagemEmpresa] = useState("");
 
   const cadastraLocadora = async () => {
     const idendereco = 
@@ -54,6 +55,7 @@ function CriaConta(){
       const idlocadora = locadoraExistente.idlocadora;
       if (idlocadora != ""){
         setLocadoraExiste(true);
+        setMensagemEmpresa("Sua empresa já está cadastrada! Os dados abaixo foram preenchidos automaticamente.");
       }else{
         setLocadoraExiste(false);
       }
@@ -106,6 +108,7 @@ function CriaConta(){
           }}
         >
           <div>
+          <p>Suas informações</p>
           <input required
             className="user-input"
             onChange={(e) => setNomeCompleto(e.currentTarget.value)}
@@ -118,6 +121,7 @@ function CriaConta(){
           onChange={(e) => setCpf(e.currentTarget.value)}
           placeholder="Seu CPF"
           />    </div>      
+          
           <div>
           <input required
             className="user-input"
@@ -149,10 +153,11 @@ function CriaConta(){
             onBlur={async (e) => { await carregaDadosLocadora(e.currentTarget.value); }}
             placeholder="CNPJ da empresa"
           />
+          <p>{mensagemEmpresa}</p>
           </div>  
           {locadoraExiste ? (
             <div>
-            <div><input  readOnly className="user-input" placeholder="Nome da LAocadora"  value={nomeLocadora} /></div>
+            <div><input  readOnly className="user-input" placeholder="Nome da Locadora"  value={nomeLocadora} /></div>
             <p>Dados bancários da empresa</p>
             <div><input readOnly className="user-input" placeholder="Nome do banco"  value={nomebanco} /></div>
             <div><input readOnly className="user-input" placeholder="Numero da agencia"  value={agenciaConta} /></div>
@@ -164,12 +169,12 @@ function CriaConta(){
             <input readOnly className="user-input" placeholder="Complemento"  value={complemento} />
             <input readOnly className="user-input" placeholder="Cidade"  value={cidade} />
             <input readOnly className="user-input" placeholder="UF"  value={uf} />
-            <button className="user-input" type="submit">Criar</button>
+            <button className="user-input" type="submit">Criar conta</button>
 
             </div>
 ) : (
             <div>
-              <div><input className="user-input" placeholder="Nome da LocadorAAa"  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
+              <div><input className="user-input" placeholder="Nome da Locadora"  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
             <p>Dados bancários da empresa</p>
             <div><input className="user-input" placeholder="Nome do banco"  onChange={(e) =>setNomeBanco(e.currentTarget.value)} /></div>
             <div><input className="user-input" placeholder="Numero da agencia" onChangeCapture={(e) =>setAgenciaConta(e.currentTarget.value)} /> </div>
@@ -181,6 +186,35 @@ function CriaConta(){
             <input className="user-input" placeholder="Complemento" onChange={(e) =>setComplemento(e.currentTarget.value)} />
             <input className="user-input" placeholder="Cidade"  onChange={(e) =>setCidade(e.currentTarget.value)}/>
             <input className="user-input" placeholder="UF (Ex.: MG, SP, RJ)" onChange={(e) =>setUf(e.currentTarget.value)} />
+            <p>Obs.: A locadora precisa de ao menos um sócio cadastrado. Você poderá designar outro sócio após entrar no sistema.</p>
+            <p>Cadastre o seu endereço:</p>
+            <input className="user-input" placeholder="CEP" onChange={(e) =>setCepSocio(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Logradouro" onChange={(e) =>setLogradouroSocio(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Número"  onChange={(e) =>setNumeroEnderecoSocio(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Complemento" onChange={(e) =>setComplementoSocio(e.currentTarget.value)} />
+            <input className="user-input" placeholder="Cidade"  onChange={(e) =>setCidadeSocio(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="UF (Ex.: MG, SP, RJ)" onChange={(e) =>setUfSocio(e.currentTarget.value)} />
+            <p></p>
+            <p>Continue o cadastro dos seus dados</p>
+            <div><input required
+          className="user-input"
+          onChange={(e) => setCpf(e.currentTarget.value)}
+          placeholder="Órgão Emissor do CPF"
+          /></div>
+          <div>
+          <input required
+          className="user-input"
+          onChange={(e) => setCpf(e.currentTarget.value)}
+          placeholder="Estado civil"
+          />
+          </div>
+          <div>
+          <input required
+          className="user-input"
+          onChange={(e) => setCpf(e.currentTarget.value)}
+          placeholder="Nacionalidade"
+          />
+          </div>
             <button className="user-input" type="submit">Criar conta e cadastrar Locadora</button>
               
               </div>
