@@ -18,33 +18,45 @@ const styles = StyleSheet.create({
 export const gerarTextoContratoP1 = ({
   nomeLocadora,
   cnpjLocadora,
+
   logradouro,
   numeroendereco,
   complemento,
   cidade,
   uf,
+
   nomeAdmLocadora,
   cpf,
   orgaoemissor,
   nacionalidade,
   estadocivil,
+
   logradouroadm,
   cepadm ,
   ufadm ,
   complementoadm,
   cidadeadm ,
   numeroenderecoadm,
+
   nomelocatario,
   cnpjlocatario,
+
   logradourolocatario,
   cidadelocatario,
   uflocatario,
 
+  nomesociolocatario,
+  nacionalidadesociolocatario,
+  estadocivilsociolocatario,
+  cpfsociolocatario,
+  logradourosociolocatario,
+  cidadesociolocatairo,
+  ufsociolocatario
 
 }) => {
   return `
-    LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em ${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} emitido por ${orgaoemissor}, com endereço em ${cepadm}, ${logradouroadm}, ${numeroenderecoadm}, ${complementoadm}, ${cidadeadm}/${ufadm}.
-LOCATÁRIA: ${nomelocatario}, inscrita no CNPJ sob o nº ${cnpjlocatario}, com sede na ${logradourolocatario}, Cidade/MG, representada por XXXXXXXXXXXX, brasileiro, casado, CPF XXXXXXXXX, residente na Rua XXXXXXXXXXX, Cidade/MG.
+    LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em ${logradouro}, N° ${numeroendereco} ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} emitido por ${orgaoemissor}, com endereço em ${cepadm}, ${logradouroadm}, ${numeroenderecoadm}, ${complementoadm}, ${cidadeadm}/${ufadm}.
+LOCATÁRIA: ${nomelocatario}, inscrita no CNPJ sob o nº ${cnpjlocatario}, com sede na ${logradourolocatario}, ${cidadelocatario}/${uflocatario}, representada por ${nomesociolocatario}, ${nacionalidadesociolocatario}, ${estadocivilsociolocatario}, CPF ${cpfsociolocatario}, residente na ${logradourosociolocatario}, ${cidadesociolocatairo}/${ufsociolocatario}.
 Ambas as PARTES aqui representadas por quem de direito, têm justo e contratado entre si a celebração do presente Contrato de Locação de Bens Móveis, que reger-se-á de acordo com as cláusulas e condições aqui previstas.
 DEFINIÇÕES
 
@@ -405,6 +417,14 @@ const CPDF = () => {
         logradourolocatario = {state?.logradouroLocatario || ""}
         cidadelocatario = {state?.cidadeLocatario || ""}
         uflocatario = {state?.ufLocatario || ""}
+      //Locatario | Socio
+        nomesociolocatario = {state?.nomesociolocatario || ""} 
+        nacionalidadesociolocatario = {state?.nacionalidadesociolocatario || ""} 
+        estadocivilsociolocatario = {state?.estadocivilsociolocatario || ""} 
+        cpfsociolocatario = {state?.cpfsociolocatario || ""} 
+        logradourosociolocatario = {state?.logradouroSocioLocatario || ""} 
+        cidadesociolocatairo = {state?.cidadeSocioLocatario || ""} 
+        ufsociolocatario = {state?.ufSocioLocatario || ""}
       />
     </PDFViewer>
     <button onClick={home}>Voltar para a página inicial</button>

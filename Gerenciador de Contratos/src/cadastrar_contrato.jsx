@@ -532,7 +532,18 @@ function CadastrarContrato(){
         //Locatario | Endereço
         logradouroLocatario,
         cidadeLocatario,
-        ufLocatario
+        ufLocatario,
+
+        //Locatario | Socio
+        nomesociolocatario,
+        nacionalidadesociolocatario,
+        estadocivilsociolocatario,
+        cpfsociolocatario,
+        
+        //Locatario | Socio | Endereço
+        logradouroSocioLocatario,
+        cidadeSocioLocatario,
+        ufSocioLocatario
       },
     });
   };
