@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {cadastraEndereco} from "./endereco";
+import {cadastraEndereco, selecionaUf} from "./endereco";
 import { cadastraSocioAdm } from "./socioAdm";
 import { cadastraLocatario } from "./locatario";
 
@@ -68,11 +68,7 @@ function CadastrarLocatario(){
           placeholder="Cidade" 
         />
         <br></br>
-        <input required
-          className="rowReset"
-          onChange={(e) => setUf(e.currentTarget.value)}
-          placeholder="Estado"
-        />
+        {selecionaUf(setUf)}
         <br></br>
         <input required
           className="rowReset"
@@ -136,11 +132,7 @@ function CadastrarLocatario(){
           placeholder="Cidade" 
         />
         <br></br>
-        <input required
-          className="rowReset"
-          onChange={(e) => setUfLocatario(e.currentTarget.value)}
-          placeholder="Estado"
-        />
+        {selecionaUf(setUfLocatario)}
         <br></br>
         <input required
           className="rowReset"

@@ -6,10 +6,10 @@ function BuscarMaquina(){
   const [mensagem, setMensagem] = useState("");
   const [nomeMaquina, setNomeMaquina] = useState("");
   const [vetor, setVetor] = useState([]);
-  const [numserie, setNumSerie] = useState([]);
-  const [valorBusca, setValorBusca] = useState([]);
+  const [numserie, setNumSerie] = useState("");
+  const [valorBusca, setValorBusca] = useState("");
   const idusuario = localStorage.getItem('token');
-  const [filtro, setFiltro] = useState('name');
+  const [filtro, setFiltro] = useState('nome');
 
 
   async function buscaMaquina(){
@@ -17,18 +17,16 @@ function BuscarMaquina(){
       setNumSerie(valorBusca);
       setNomeMaquina(valorBusca);
       console.log(valorBusca);
-      if (filtro == "nome"){
-        setNomeMaquina(valorBusca);
-        const maquinas = await invoke("busca_maquina_nome", {nomeMaquina});
+      if (filtro === "nome") {
+        const maquinas = await invoke("busca_maquina_nome", { nomeMaquina: valorBusca });
         setVetor(maquinas); 
         setMensagem("");
         return;
-      }
-      setNumSerie(valorBusca);
-      const maquina = await invoke("busca_maquina_numserie", {numserie});
-      setVetor(maquina); 
-      setMensagem("");
-      return;
+      } 
+        const maquina = await invoke("busca_maquina_numserie", { numserie: valorBusca });
+        setVetor(maquina); 
+        setMensagem("");
+        return;
     } catch(error){
         console.log("[Buscar_maquina.jsx] : ", error);
         setVetor([]);

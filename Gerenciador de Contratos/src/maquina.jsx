@@ -23,6 +23,6 @@ export async function cadastraMaquina(nomemaquina, valoraluguel, numserie){
 
 export const formataValor = (e) => {
   let valor = e.replace(/\D/g, "");
-  valor = (Number(valor) / 100).toLocaleString("pt-BR");
+  valor = (Number(valor) / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   return valor;
 };

@@ -2,7 +2,7 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
-import { cadastraEndereco } from "./endereco";
+import { cadastraEndereco, selecionaUf, selecionaUfDefinido } from "./endereco";
 import { cadastraSocioAdm } from "./socioAdm";
 //import "./App.css";
 
@@ -194,7 +194,7 @@ function CriaConta(){
             <input readOnly className="user-input" placeholder="Número"  value={numeroendereco} />
             <input readOnly className="user-input" placeholder="Complemento"  value={complemento} />
             <input readOnly className="user-input" placeholder="Cidade"  value={cidade} />
-            <input readOnly className="user-input" placeholder="UF"  value={uf} />
+            {selecionaUfDefinido(setUf, uf, true)}
             <button className="user-input" type="submit">Criar conta</button>
 
             </div>
@@ -211,7 +211,7 @@ function CriaConta(){
             <input className="user-input" placeholder="Número"  onChange={(e) =>setNumeroEndereco(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Complemento" onChange={(e) =>setComplemento(e.currentTarget.value)} />
             <input className="user-input" placeholder="Cidade"  onChange={(e) =>setCidade(e.currentTarget.value)}/>
-            <input className="user-input" placeholder="UF (Ex.: MG, SP, RJ)" onChange={(e) =>setUf(e.currentTarget.value)} />
+            {selecionaUf(setUf)}
             <p>Obs.: A locadora precisa de ao menos um sócio cadastrado. Você poderá designar outro sócio após entrar no sistema.</p>
             <p>Cadastre o seu endereço:</p>
             <input className="user-input" placeholder="CEP" onChange={(e) =>setCepSocio(e.currentTarget.value)}/>
@@ -219,7 +219,7 @@ function CriaConta(){
             <input className="user-input" placeholder="Número"  onChange={(e) =>setNumeroEnderecoSocio(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Complemento" onChange={(e) =>setComplementoSocio(e.currentTarget.value)} />
             <input className="user-input" placeholder="Cidade"  onChange={(e) =>setCidadeSocio(e.currentTarget.value)}/>
-            <input className="user-input" placeholder="UF (Ex.: MG, SP, RJ)" onChange={(e) =>setUfSocio(e.currentTarget.value)} />
+            {selecionaUf(setUfSocio)}
             <p></p>
             <p>Continue o cadastro dos seus dados</p>
             <div><input required

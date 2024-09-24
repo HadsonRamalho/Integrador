@@ -13,88 +13,11 @@ pub mod usuario;
 pub mod contrato;
 
 #[tauri::command]
-pub async fn cria_conta(
-    nome_completo: &str,
-    email: &str,
-    senha1: &str,
-    senha2: &str,
-    cpf: &str,
-    cnpj: &str
-) -> Result<(), String> {
-    let email = email.trim(); // Removendo todos os espaços em branco do email
-    if !valida_email(&email) {
-        return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
-    }
-    if senha1.trim() != senha2.trim() {
-        return Err("As senhas são diferentes".to_string()); // Conta não criada
-    }
-    let cnpj = match formata_cnpj(cnpj){
-        Ok(cnpj) => {
-            cnpj
-        },
-        Err(e) => {
-            return Err(e)
-        }
-    };
-    match usuario::valida_senha(senha1) {
-        Ok(_) => {}
-        Err(e) => {
-            return Err(e);
-        }
-    }
-    let hash = gera_hash(senha1); // Criptografando a senha (Standard *BSD hash)
-    let mut usuario =
-        model::Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), hash); // Cria um novo usuário
-    if usuario.ja_cadastrado().await {
-        return Err("Usuário já cadastrado".to_string());
-    }
-    let cpf = formata_cpf(&cpf)?;
-    let resultado_cadastro = cadastra_usuario(nome_completo, &email, usuario.get_hash(), &cpf, &cnpj).await;
-    match resultado_cadastro {
-        Ok(_) => return Ok(()),
-        Err(_) => return Err("Erro no cadastro do usuário.".to_string()),
-    }
-}
-
-#[tauri::command]
 pub fn checa_email(email: &str) -> Result<(), String> {
     if !valida_email(email.trim()) {
         return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
     }
     return Ok(());
-}
-
-#[tauri::command]
-pub async fn verifica_senha(email: &str, senha: &str) -> Result<(), String> {
-    // Retorna uma mensagem para o front e um booleano
-    let senha = senha.trim();
-    if senha.is_empty() {
-        // Verificação caso o campo do front falhe
-        return Err("A senha não pode estar vazia".to_string());
-    }
-    let resultado_verificacao: Result<Usuario, String> = _verifica_senha(email, &senha).await;
-    match resultado_verificacao {
-        Ok(_) => return Ok(()),
-        Err(e) => {
-            return Err(e.to_string());
-        }
-    }
-}
-
-pub async fn cadastra_usuario(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
-    let pool = match cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e.to_string())
-        }
-    };
-    let cpf = formata_cpf(cpf)?;
-    let _resultado_criacao = model::cadastra_usuario(&pool, nome, &email, senha, &cpf, cnpj)
-        .await
-        .map_err(|e| format!("{}", e))?;
-    Ok(())
 }
 
 pub async fn cria_pool() -> Result<mysql_async::Pool, mysql_async::Error> {
@@ -109,20 +32,6 @@ pub async fn cria_pool() -> Result<mysql_async::Pool, mysql_async::Error> {
     }
 }
 
-pub async fn _verifica_senha(email: &str, senha: &str) -> Result<Usuario, String> {
-    let pool = match cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e.to_string())
-        }
-    };
-    let usuario_autenticado = model::verifica_senha(&pool, &email, senha)
-        .await
-        .map_err(|e| format!("{}", e))?;
-    Ok(usuario_autenticado)
-}
 
 pub fn valida_email(email: &str) -> bool {
     let mut verificador = false;
@@ -239,7 +148,7 @@ pub fn formata_cpf(cpf: &str) -> Result<String, String>{
     let mut cpf: Vec<char> = cpf;
     cpf.insert(3, '.');
     cpf.insert(6, '.');
-    cpf.insert(10, '-');
+    cpf.insert(11, '-');
     let mut cpffinal: String = "".to_string();
     for u in cpf{
         cpffinal.push(u);
