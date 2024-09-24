@@ -74,7 +74,7 @@ function BuscarMaquina(){
                 <div className="contract-fields">
                   <strong>Número de Série:</strong> {maquina.numserie} <br />
                   <strong>Valor Aluguel: </strong> R$ {maquina.valoraluguel} <br />
-                  <strong>Disponibildiade:</strong> {maquina.disponibilidade} <br />
+                  <strong>Disponibilidade:</strong> {maquina.disponibilidade} <br />
                 </div>
               </li>
             ))}

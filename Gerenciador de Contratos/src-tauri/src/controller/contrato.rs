@@ -11,6 +11,7 @@ use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
 use super::gera_hash;
+use super::maquina::formata_valor_f32;
 
 #[tauri::command]
 pub async fn busca_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
@@ -215,11 +216,8 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         Err(e) => {return Err(format!("Erro ao converter prazo de locação: {}", e))}
     };
 
-    let valormensal:f32 = match contrato["valormensal"].as_str().unwrap_or("").to_string().trim().replace(".", "").replace(",", ".").parse(){
-        Ok(valormensal) => {valormensal},
-        Err(e) => {return Err(format!("Erro ao converter valor mensal: {}", e))}
-    };
-
+    let valormensal= contrato["valormensal"].as_str().unwrap_or("").to_string();
+    let valormensal = formata_valor_f32(&valormensal)?;
     let multaatraso:f32 = match contrato["multaatraso"].as_str().unwrap_or("").to_string().trim().parse(){
         Ok(multaatraso) => {multaatraso},
         Err(e) => {return Err(format!("Erro ao converter multa de atraso: {}", e))}

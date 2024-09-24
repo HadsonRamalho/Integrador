@@ -393,5 +393,14 @@ pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), String>{
     if nome.is_empty(){
         return Err("Erro: Nome vazio".to_string());
     }
-    return Ok(())
+    let resultado_atualizacao: Result<(), mysql_async::Error> = model::usuario::atualiza_nome(email, nome).await;
+    match resultado_atualizacao{
+        Ok(()) => {
+            return Ok(())
+        },
+        Err(_e) => {
+            println!("Erro ao atualizar o nome");
+            return Err("Erro ao atualizar o nome".to_string());
+        }
+    }
 }

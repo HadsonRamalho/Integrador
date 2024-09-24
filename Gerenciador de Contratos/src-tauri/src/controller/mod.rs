@@ -147,7 +147,7 @@ pub fn formata_cpf(cpf: &str) -> Result<String, String>{
     }
     let mut cpf: Vec<char> = cpf;
     cpf.insert(3, '.');
-    cpf.insert(6, '.');
+    cpf.insert(7, '.');
     cpf.insert(11, '-');
     let mut cpffinal: String = "".to_string();
     for u in cpf{

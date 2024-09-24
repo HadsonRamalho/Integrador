@@ -1,4 +1,4 @@
-use crate::model::Pool;
+use crate::{controller::cria_pool, model::Pool};
 use mysql_async::{params, prelude::Queryable};
 
 pub async fn atualiza_email(pool: &Pool, email_antigo: &str, email_novo: &str) -> Result<(), mysql_async::Error>{
@@ -69,4 +69,19 @@ pub async fn verifica_id_usuario(pool: &Pool, id: &str) -> Result<(), mysql_asyn
 
 
 
+}
+
+pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_conexao = conn.exec_drop("UPDATE usuarios SET nome_completo = :nome WHERE email = :email;", 
+    params!{"email" => email, "nome" => nome}).await;
+    match resultado_conexao{
+        Ok(()) => {
+            return Ok(());
+        },
+        Err(e ) => {
+            return Err(e)
+        }
+    }
 }
