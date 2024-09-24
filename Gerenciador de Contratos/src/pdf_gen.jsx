@@ -36,142 +36,234 @@ export const gerarTextoContratoP1 = ({
   numeroenderecoadm,
 }) => {
   return `
-    LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em
-${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} emitido por ${orgaoemissor}, com endereço em ${cepadm}, ${logradouroadm}, ${numeroenderecoadm}, ${complementoadm}, ${cidadeadm}/${ufadm}.
+    LOCADORA: ${nomeLocadora}, inscrita no CNPJ sob o nº ${cnpjLocadora}, com sede em ${logradouro}, N° ${numeroendereco}, ${complemento},  ${cidade}/${uf}, neste ato representada pelo seu sócio administrador, ${nomeAdmLocadora}, ${nacionalidade}, ${estadocivil}, inscrito no CPF sob nº ${cpf} emitido por ${orgaoemissor}, com endereço em ${cepadm}, ${logradouroadm}, ${numeroenderecoadm}, ${complementoadm}, ${cidadeadm}/${ufadm}.
 LOCATÁRIA: XXXXXXXXXX, inscrita no CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx, Cidade/MG, representada por XXXXXXXXXXXX, brasileiro, casado, CPF XXXXXXXXX, residente na Rua XXXXXXXXXXX, Cidade/MG.
+Ambas as PARTES aqui representadas por quem de direito, têm justo e contratado entre si a celebração do presente Contrato de Locação de Bens Móveis, que reger-se-á de acordo com as cláusulas e condições aqui previstas.
 DEFINIÇÕES
 
-As expressões grafadas em “caixa alta” neste contrato têm os seguintes significados:
 
-LOCADORA: Pessoa Jurídica que disponibiliza o(s) bem(ns) em locação.
-LOCATÁRIA: Pessoa Jurídica que recebe o(s) bem(ns) em locação.
-PARTES: Referem-se à LOCADORA e LOCATÁRIA conjuntamente.
-PARTE: Refere-se à LOCADORA ou LOCATÁRIA isoladamente.
+As expressões abaixo, sempre que grafadas neste contrato em “caixa alta”, terão para todos os fins e efeitos de direito, os seguintes significados:
+
+    a) LOCADORA: Pessoa Jurídica que dará o(s) bem(ns) em locação.
+
+    b) LOCATÁRIA: Pessoa Jurídica que receberá o(s) bem(ns) dado(s) em locação.
+
+    c) PARTES: São a LOCADORA e a LOCATÁRIA qualificadas no preâmbulo deste contrato, quando consideradas em conjunto.
+
+    d) PARTE: São a LOCADORA e a LOCATÁRIA qualificadas no preâmbulo deste contrato, quando consideradas isoladamente.
 
 CLÁUSULA PRIMEIRA – DO OBJETO, PRAZO E USO
 
-1.1 A LOCADORA cede à LOCATÁRIA os seguintes bens móveis listados abaixo, declarando-se legítima possuidora e/ou proprietária:
-  `;
+
+        1.1 A LOCADORA dará em locação à LOCATÁRIA, bens móveis que declara ser a legítima possuidora e/ou proprietária. Os bens estão descritos conforme lista de equipamentos abaixo. Assim, os objetos desta locação são os seguintes equipamentos:
+ `;
 };
 
 const gerarTextoContratoP2 = ({
 }) => {
   return `
-    1.1.1 Os equipamentos serão retirados no endereço especificado pela LOCADORA.
+    1.1.1 Os equipamentos previstos nessa cláusula, sendo objetos do presente contrato, serão retirados no seguinte endereço:
 
-1.1.2 Os equipamentos serão utilizados pela LOCATÁRIA no endereço mencionado, com todas as responsabilidades sobre seu uso, guarda e depósito.
+                • Endereço de retirada
 
-1.1.3 Os equipamentos serão mantidos sob a guarda da LOCATÁRIA como fiel depositária, assumindo todas as responsabilidades conforme a lei civil e penal.
+            1.1.2 Os equipamentos serão utilizados pela LOCATÁRIA no endereço supramencionado, sendo que todas as responsabilidades sobre o uso do equipamento permanecem integrais à LOCATÁRIA, referentes à guarda, ao depósito e ao uso dos bens. Mediante prévia comunicação da LOCATÁRIA à LOCADORA, bem como mediante expressa autorização dessa última, os equipamentos locados poderão ser transferidos para outras pedreiras do grupo econômico da LOCATÁRIA, localizadas no Estado de Minas Gerais, mantidas inalteradas todas as obrigações previstas neste Contrato.
+
+            1.1.3 Os equipamentos permanecerão sob a guarda, depósito e responsabilidade da LOCATÁRIA na qualidade de fiel depositária, declarando assumir todas as responsabilidades e encargos que lhe incumbem de acordo com a lei civil e penal.
+
 
 CLÁUSULA SEGUNDA – PRAZO DE VIGÊNCIA DO CONTRATO
 
-2.1 O prazo da locação é de 03 (três) meses a partir da data de entrega dos equipamentos, em 23 de novembro de 2023.
 
-2.2 O contrato pode ser renovado por igual período mediante acordo entre as partes, com ajuste do valor conforme Cláusula Terceira.
+2.1 O prazo da presente locação é de 03 (três) meses, passando a vigorar a partir da data de entrega dos equipamento, qual seja, a data de 23 de novembro de 2023, nos termos previstos da Cláusula Primeira, item 1.1.1.
 
-CLÁUSULA TERCEIRA – DO VALOR E FORMA DE PAGAMENTO
+            2.2.1 Findo prazo acima estipulado, o mesmo poderá ser renovado através de aditivo ou outro instrumento contratual por igual período, com pagamento mínimo do valor previsto conforme Cláusula Terceira, item 3.1, podendo este vir a ser reajustado na ocasião por acordo entre as partes.
 
-3.1 A LOCATÁRIA pagará à LOCADORA R$ 19.000,00 mensais, ajustáveis anualmente pelo IPCA ou índice equivalente, adiantados até o dia 23 de cada mês.
+            2.2.2 Não havendo interesse em renovação, os equipamentos deverão ser devolvidos à LOCADORA nas mesmas condições recebidas, qual seja, conforme o laudo de entrega inicial e no mesmo local em que se encontrava quando locado.
 
-3.1.1 A primeira parcela (entrada) será paga por transferência bancária conforme dados fornecidos pela LOCADORA.
+            2.2.3 Os bens locados somente poderão ser destinados para uso exclusivo ao qual se destinam, qual seja, mineração.
 
-3.1.2 Atrasos incorrerão em multa de 2% e juros de 1% ao mês sobre o débito corrigido.
+            2.2.4 Os bens locados apenas poderão ser operados por Operador devidamente habilitado para manuseio de cada equipamento.
 
-3.1.3 O valor acordado cobre o uso de 200 horas/mês; horas adicionais serão cobradas separadamente.
 
-CLÁUSULA QUARTA – ESTADO DE CONSERVAÇÃO
+CLAÚSULA TERCEIRA – DO VALOR E FORMA DE PAGAMENTO
 
-4.1 Os equipamentos estão no estado descrito nos laudos de entrega, reconhecido por ambas as partes.
 
-CLÁUSULA QUINTA – UTILIZAÇÃO E MANUTENÇÃO
+        3.1 A LOCATÁRIA pagará à LOCADORA a título de contraprestação pela locação dos equipamentos, o valor mensal de R$ 19.000,00 (Dezenove Mil Reais) e, na hipótese de renovação deste contrato, os valores passarão a ser corrigidos anualmente pelo valor positivo do índice IPCA ou por outro que venha eventualmente a substituí-lo.
 
-5.1 A LOCATÁRIA usará os bens conforme suas especificações técnicas e normas de segurança.
+            3.1.1 O pagamento da locação será mensal e adiantado, vencendo todo dia 23 (vinte e três), com início em 23/11/2023, mediante boleto bancário, com exceção da primeira parcela (entrada).
 
-5.2 A LOCADORA é responsável pelas manutenções preventivas; danos por uso normal são de sua responsabilidade.
+            3.1.2 O pagamento da entrada será efetuado mediante transferência bancária para a LOCADORA, na conta que segue:
 
-5.3 Danos por mau uso são responsabilidade da LOCATÁRIA, exceto os dente da escavadeira.
+DADOS da CONTA
 
-5.4 Defeitos pré-existentes serão corrigidos pela LOCADORA.
 
-5.5 Substituições de peças devem ser feitas com autorização da LOCADORA.
+            3.1.3 O atraso no pagamento do acordo da cláusula acima sujeita a LOCATÁRIA ao pagamento de multa de 2% (dois por cento) e juros de 1% (um por cento) ao mês, sobre o valor do débito devidamente corrigido pelo valor positivo do índice IPCA ou por outro que venha eventualmente a substitui-lo, sem prejuízo da rescisão da locação que poderá ser exigida pela LOCADORA, após notificação à LOCATÁRIA oportunizando o adimplemento do débito mais encargos no prazo de 10 (dez) dias.
 
-5.6 Adaptar ou instalar peças sem autorização é proibido.
+            3.1.4 Em caso de atraso no pagamento a LOCADORA poderá ainda, incluir a LOCATÁRIA na lista de inadimplentes do SPC e/ou outras instituições de proteção ao crédito.
 
-5.7 A LOCADORA pode inspecionar os bens a qualquer momento.
+            3.1.5 Na formação de preço da locação levou-se em conta que caberá à LOCADORA o custeio de todas as manutenções preventivas e daquelas decorrentes do uso normal dos equipamentos, devendo tais manutenções serem feitas conforme especificações técnicas dos fabricantes dos equipamentos.
 
-5.8 A LOCATÁRIA mantém sigilo sobre informações confidenciais e protegidas por patente.
+            3.1.6 Fica devidamente e expressamente ajustado entre as PARTES que o valor mensal acordado neste contrato, conforme Cláusula Terceira, item 3.1, a título de contraprestação pela locação dos equipamentos, está condicionado ao uso de 200 (duzentas) horas por mês. Deste modo, caso esse limite seja ultrapassado, as horas excedentes serão cobradas a parte no fechamento da planilha mensal.
 
-5.9 Mudanças nos bens devem ser comunicadas à LOCADORA.
 
-CLÁUSULA SEXTA – RESPONSABILIDADES
+CLAÚSULA QUARTA – DO ESTADO DE CONSERVAÇÃO DOS EQUIPAMENTOS
 
-6.1 Acidentes e danos durante o uso são responsabilidade da LOCATÁRIA, salvo culpa comprovada da LOCADORA.
 
-6.2 Uso inadequado pode resultar em rescisão do contrato pela LOCADORA.
+4.1 Os equipamentos objetos da presente locação encontram-se no estado de conservação e funcionamento constantes dos laudos de entrega/recebimento inicial, fato que ambas as PARTES expressamente reconhecem.
 
-6.3 Danos a terceiros são responsabilidade exclusiva da LOCATÁRIA, incluindo despesas legais.
 
-6.4 A LOCATÁRIA informará à LOCADORA sobre reclamações legais relacionadas aos bens.
+CLAÚSULA QUINTA – DA UTILIZAÇÃO E MANUTENÇÃO DOS BENS, INSPEÇÃO, IDENTIFICAÇÃO, SIGILO E PATENTE
 
-6.5 Normas ambientais são responsabilidade da LOCATÁRIA.
 
-6.6 A LOCATÁRIA deve contratar pessoal técnico para operar os equipamentos.
+        5.1 A LOCATÁRIA se obriga a utilizar os bens única e exclusivamente para as atividades a que se destinam e a operá-los de acordo com as recomendações técnicas do fabricante, por pessoa tecnicamente qualificada a fazê-lo.
 
-CLÁUSULA SÉTIMA – DEVOLUÇÃO DOS EQUIPAMENTOS
+        5.2 À LOCATÁRIA são transferidas todas as garantias e o direito de assistência técnica, dados pelo fabricante, ficando a LOCADORA, responsável pela execução e/ou custeio das manutenções preventivas e por quaisquer outras decorrentes do uso normal dos equipamentos. Mas, ressalta-se que a LOCADORA poderá ser acionada sempre que for necessário.
 
-7.1 A devolução dos equipamentos será no endereço da LOCADORA em Diamantina.
+        5.3 A LOCATÁRIA se responsabiliza pelos danos que os bens venham a sofrer na constância do contrato, em virtude de mau uso ou negligência na sua conservação, competindo-lhe tomar todas as providências para a manutenção, serviços e reparos necessários. São de responsabilidade da LOCADORA, já estando contemplados no preço da locação, os danos e depreciação decorrentes do uso normal dos equipamentos e/ou quando decorrentes de caso fortuito ou força maior. Exclusivamente com relação aos dentes da escavadeira locada, a LOCATÁRIA será responsável por sua manutenção, ainda que decorrente de uso normal do equipamento.
 
-7.2 Os equipamentos serão vistoriados pela LOCADORA no ato da devolução.
+        5.4 A LOCADORA responderá pelos vícios ou defeitos do bem que sejam anteriores à locação, realizando o reparo ou substituição de peças, quando referidos vícios forem comprovadamente resultantes de fabricação ou imperfeição da mão de obra utilizada.
 
-7.3 Danos além do desgaste normal devem ser reparados pela LOCATÁRIA antes da devolução.
+        5.5 Se qualquer peça vier a se destruir, estragar ou a se inutilizar por negligência ou mau uso, de qualquer forma, na constância do contrato, a LOCATÁRIA se obriga, com o expresso consentimento da LOCADORA, a substituí-la, utilizando-se das peças adequadas e especificadas a tal substituição.
 
-CLÁUSULA OITAVA – EXTRAVIO E DANOS TOTAIS
+        5.6 A LOCADORA ressarcirá a LOCATÁRIA os gastos decorrentes da obrigação retromencionada, salvo se o dano for oriundo de ação ou omissão, única e exclusiva da LOCATÁRIA. Todos os serviços de reparo, manutenção ou substituição de peças somente poderão ser executados por oficiais e/ou pessoal especializado, de indicação do fabricante.
 
-8.1 Danos totais serão indenizados pela LOCATÁRIA pelo valor de mercado.
+        5.7 A LOCATÁRIA não poderá adaptar ou instalar quaisquer peças ou acessórios aos bens, que alterem as condições técnicas e normais de uso.
 
-8.2 A LOCATÁRIA é responsável por extravios durante a locação.
+        5.8 Na ocorrência de não funcionamento dos bens, por qualquer motivo, a LOCATÁRIA não poderá pleitear diminuição, suspensão ou cessação de pagamento das obrigações pecuniárias ou indenização por PARTE da LOCADORA, cabendo a LOCADORA, providenciar o funcionamento desses, substituindo-os se for o caso. A LOCADORA compromete- se a transferir à LOCATÁRIA todos os direitos e garantias dos bens.
 
-CLÁUSULA NONA – TRIBUTAÇÃO
+        5.9 A LOCADORA, a qualquer tempo, poderá inspecionar os bens e exigir que sejam tomadas providências para preservação e bom funcionamento dos mesmos, sem que isso implique em transferência para ela das responsabilidades da LOCATÁRIA.
 
-9.1 Tributos são de responsabilidade da LOCADORA, sem ônus para a LOCATÁRIA.
+        5.10 A LOCATÁRIA por si e por seus empregados ou prepostos, fica obrigada a manter sigilo sobre todas as informações confidenciais e/ou protegidas por registro de patente, que lhe venham a ser transmitidas pelo fabricante ou fornecedor, responsabilizando-se por qualquer prejuízo, reclamação ou pleito oriundo de eventual violação.
 
-CLÁUSULA DÉCIMA – SUB-LOCAÇÃO
+        5.11 Além das condições aqui especificadas, a LOCATÁRIA obriga-se a comunicar prontamente por escrito, qualquer deslocamento dos bens.
 
-10.1 Sub-locação dentro do grupo econômico da LOCATÁRIA requer autorização da LOCADORA.
 
-CLÁUSULA DÉCIMA PRIMEIRA – TRANSFERÊNCIA DE LOCALIZAÇÃO
+CLAÚSULA	SEXTA	–	DA	RESPONSABILIDADE	PELA	UTILIZAÇÃO	DOS EQUIPAMENTOS LOCADOS
 
-11.1 Mudanças de localização devem ser comunicadas à LOCADORA com 10 dias de antecedência.
 
-CLÁUSULA DÉCIMA SEGUNDA – RESCISÃO DO CONTRATO
+        6.1 Quaisquer acidentes ocorridos com os equipamentos locados ou por ele causados à terceiros, desde sua entrega até sua efetiva devolução e recebimento pela LOCADORA, serão de exclusiva responsabilidade da LOCATÁRIA, ficando a LOCADORA excluída de quaisquer responsabilidades civis, criminais, trabalhistas ou outras, salvo se restar comprovada a culpa direta ou indireta da LOCADORA para ocorrência do evento, caso em que responderão conforme o seu grau individual de responsabilidade.
 
-12.1 Rescisão requer aviso prévio de 30 dias por escrito.
+        6.2 Caso a LOCADORA constate a utilização dos equipamentos em condições impróprias, conflitantes com as Normas de Segurança do Trabalho do Ministério do Trabalho e Previdência Social ou recomendações da Associação Brasileira de Normas Técnicas, que venham oferecer risco a integridade física dos funcionários e/ou de terceiros ou que ameacem causar danos ao equipamento, poderá considerar rescindido o presente contrato.
 
-12.2 Descumprimento pode resultar em pagamento equivalente a uma mensalidade.
+        6.3 No caso de ocorrência de quaisquer eventos envolvendo responsabilidade por danos corporais e/ou materiais e/ou danos morais causados a terceiros e decorrentes direta ou indiretamente da propriedade, uso, transporte ou operação dos bens caberá única e exclusivamente à LOCATÁRIA, independentemente da existência ou não de seguro, a responsabilidade decorrente de tais eventos, inclusive pelas despesas extrajudiciais e judiciais, honorários advocatícios, constituição de capital cuja renda assegure o cabal cumprimento de indenização, e tudo o mais que for necessário para que a LOCADORA não sofra qualquer gravame ou prejuízo, salvo se restar comprovado que o evento se deu por falta de informação necessária à LOCATÁRIA por PARTE da LOCADORA, caso em que responderão conforme o seu grau individual de responsabilidade.
 
-12.3 Descumprimento grave permite rescisão imediata sem aviso prévio.
+        6.4 Independentemente e sem prejuízo de sua responsabilidade, a LOCATÁRIA se obriga a dar imediato conhecimento por escrito à LOCADORA de qualquer reclamação, citação, intimação, carta ou documento que receber, com relação a qualquer ocorrência envolvendo danos corporais e/ou materiais e/ou pecuniários e/ou danos morais, relacionados com os bens.
 
-12.4 Liquidação de obrigações deve ocorrer dentro de 20 dias após rescisão.
+        6.5 As obrigações legais perante o Poder Público, concernentes à lavra e aos cuidados ambientais, serão de competência e responsabilidade exclusiva da LOCATÁRIA, que assume o compromisso de diligenciar, às suas expensas, as autorizações pertinentes à atividade a ser desempenhada e responderá pela não observância das imposições normativas inerentes a espécie, bem como por todo e qualquer dano ambiental eventualmente causado.
+
+        6.6 Cabe a LOCATÁRIA, única e exclusivamente, contratar pessoal técnico especializado para fim de operar os equipamentos, cumprindo todas as obrigações legais e exigências ambientais para manutenção da operação.
+
+
+CLAÚSULA SÉTIMA – DA DEVOLUÇÃO DOS EQUIPAMENTOS
+
+
+        7.1 Finda a locação, a LOCATÁRIA devolverá os equipamentos locados descritos na Cláusula Primeira, arcando com os devidos custos, no endereço da pedreira da LOCADORA localizada no Distrito de Batatal, Diamantina.
+
+        7.2 Na ocasião da devolução os equipamentos serão vistoriados pela LOCADORA e essa, no ato da devolução, fará os respectivos relatórios das quantidades e condições dos equipamentos.
+
+        7.3 Qualquer irregularidade, peça faltante, quebra ou desgaste dos equipamentos, exceto os desgastes naturais de uso, será apontada no relatório referido no parágrafo anterior, que deverá ser assinado pela pessoa que fez acompanhar a devolução dos equipamentos, considerando-se essa como preposta da LOCATÁRIA, o que desde já deixa reconhecido.
+
+        7.4 As avarias verificadas que não se enquadrem em depreciação por uso normal dos equipamentos locados, em atividade de mineração, desde que já não apontadas no laudo de recebimento dos equipamentos feito no início do contrato, constatadas de acordo com o parágrafo anterior serão reparadas pela LOCATÁRIA, sendo o presente contrato apenas considerado encerrado para todos os fins após a realização dos devidos reparos. Para que não haja dúvida, não serão objeto de indenização ou reparação à LOCADORA quaisquer reparos que sejam decorrentes de depreciação ou desgaste por uso normal, em atividade de mineração, dos equipamentos locados. 
+
+
+CLAÚSULA	OITAVA	–	DO	EXTRAVIO	E	DANIFICAÇÃO	TOTAL	DOS EQUIPAMENTOS
+
+
+        8.1 Havendo danificação total do equipamento locado, por culpa da LOCATÁRIA, essa se responsabilizará pelo seu pagamento, cujo preço será o de mercado em vigor na data da constatação para equipamentos do mesmo ano de fabricação, horas semelhantes de utilização e mesmo tipo de uso dos equipamentos locados, podendo a LOCATÁRIA optar por pagar o referido valor ou adquirir outros equipamentos semelhantes aos locados e restituí-los à LOCADORA.
+
+        8.2 A LOCATÁRIA se responsabiliza pelo equipamento em caso de extravio durante o período de vigência deste contrato, salvo se restar comprovado que não poderia tê-lo evitado, hipótese em que a LOCADORA sofrerá a perda e a obrigação se resolverá.
+
+
+CLAÚSULA NONA – DA TRIBUTAÇÃO
+
+
+9.1 Todos os tributos incidentes sobre a locação objeto deste Contrato serão arcados e devidos pela LOCADORA, devendo a LOCATÁRIA restar isenta de qualquer acréscimo ou pagamento de tributos relacionados à locação. Ademais, o valor do aluguel decorrente do presente contrato não estará sujeito à retenção do imposto por PARTE da LOCATÁRIA, o que não afastará a obrigação da LOCADORA de pagar pontualmente todos os tributos devidos.
+
+
+CLAÚSULA DÉCIMA – DA POSSIBILIDADE DE SUB-LOCAÇÃO, EMPRÉSTIMO OU    ARRENDAMENTO DOS EQUIPAMENTOS LOCADOS
+
+
+10.1 A LOCATÁRIA poderá, mediante prévia comunicação e expressa autorização da LOCADORA, sublocar, emprestar ou arrendar os equipamentos constantes do presente contrato para outra empresa do seu grupo econômico, desde que mantidas e observadas todas as obrigações previstas neste Contrato. A previsão desta Cláusula não abrange, por qualquer forma, a cessão, sublocação ou empréstimo dos equipamentos para terceiros não integrantes do grupo econômico da LOCATÁRIA, o que resta EXPRESSAMENTE PROIBIDO.
+
+
+CLAÚSULA DÉCIMA PRIMEIRA – TRANSFERÊNCIA DE LOCALIZAÇÃO DOS EQUIPAMENTOS
+
+
+11.1 As transferências de localização dos equipamentos deverão ser comunicadas e acordadas com a LOCADORA no prazo de até 10 (dez) dias antes da data da mudança.
+
+
+CLÁUSULA DÉCIMA SEGUNDA – DA RESCISÃO DO CONTRATO
+
+
+        12.1 O presente contrato poderá ser rescindido, com antecedência de 30 (trinta) dias, por ambas as PARTES, por escrito. Caso a LOCADORA rescinda o contrato previamente ao término do prazo deste Contrato, a LOCADORA deverá arcar exclusivamente com os custos de transporte e remoção dos equipamentos locados.
+
+        12.2 Se o prazo mencionado acima não for respeitado, deverá o denunciante arcar com o valor equivalente a uma mensalidade, listado na Cláusula Terceira, item 3.1.
+
+        12.3 Se houver descumprimento de quaisquer cláusulas deste contrato, a rescisão contratual poderá ocorrer independentemente de notificação prévia.
+
+        12.4 Rescindido o contrato, as PARTES terão o prazo de 20 (vinte) dias corridos para a liquidação de suas obrigações, prazo que poderá ser dilatado, por acordo entre as PARTES, caso seja necessário um período maior para realizar a sua desmobilização.
+
 
 CLÁUSULA DÉCIMA TERCEIRA – MULTA CONTRATUAL
 
-13.1 Rescisão antecipada implica multa de 30% sobre uma mensalidade.
+13.1 No caso de rescisão  antecipada por qualquer das PARTES, será aplicada multa de 30% (trinta por cento), sobre a mensalidade de locação.
 
-CLÁUSULA DÉCIMA QUARTA – CONFIDENCIALIDADE
 
-14.1 Informações técnicas e comerciais são confidenciais entre as partes.
+CLÁUSULA DÉCIMA QUARTA – DA CONFIDENCIALIDADE
 
-14.2 O descumprimento gera responsabilidade por perdas e danos.
+
+        14.1  As PARTES contratantes, por força do presente instrumento, se comprometem a manter em sigilo todas as informações técnicas e comerciais, relativas à contratação ora realizada.
+
+        14.2  O descumprimento da obrigação de sigilo e de confidencialidade poderá acarretar:
+
+14.2.1 Na responsabilidade por perdas e danos da PARTE infratora à PARTE inocente.
+
+14.2.2 Adoção dos remédios jurídicos e sanções cabíveis e demais legislações pertinentes.
+
+14.2.3 Só será legítima, como motivo de exceção à obrigatoriedade de sigilo, a ocorrência descumprimento nas seguintes hipóteses:
+
+    a) A informação já era conhecida pela PARTE receptora anteriormente as tratativas do negócio jurídico, sem quebra de confidencialidade;
+
+    b) Houve prévia e expressa anuência da PARTE divulgadora quanto à liberação da obrigação de sigilo e confidencialidade;
+
+    c) A informação foi comprovadamente obtida por outra fonte, de forma legal e legítima, independentemente deste contrato;
+
+    d) Determinação judicial ou governamental para conhecimento das informações, desde que notificadas imediatamente a PARTE divulgadora, previamente à sua liberação, sendo requerido segredo de justiça no seu trato judicial ou administrativo.
+
 
 CLÁUSULA DÉCIMA QUINTA – DISPOSIÇÕES GERAIS
 
-15.1 Contrato sem vícios de vontade, com representação legal adequada.
 
-15.2 Cláusulas inválidas não invalidam o contrato; demais cláusulas permanecem válidas.
+15.1 As PARTES declaram que a presente contratação se faz livre de defeitos que viciem a manifestação de vontade, que se última por intermédio de representantes legais com poderes suficientes para obrigá-las e que foi submetida às suas assessorias jurídicas, que concordaram quanto ao atendimento da vontade das partes, licitude ou não proscrição do objeto.
 
-15.3 Contrato irrevogável e irretratável; alterações requerem aditivo por escrito.
+15.2 Caso qualquer das cláusulas deste instrumento venha a ser declarada nula, ilegal, inválida ou inexequível, nos termos da legislação brasileira, no todo ou em parte, por qualquer razão que seja, as demais cláusulas continuarão em pleno vigor, salvo se por força dessa declaração o presente contrato venha perder o seu objeto ou torná-lo inexequível.
 
-15.4 Contrato é título executivo extrajudicial.
+15.3 O presente instrumento é celebrado em caráter irrevogável e irretratável, renunciando as PARTES, expressamente, à faculdade de arrependimento, obrigando as PARTES, seus herdeiros e sucessores a fazerem o presente compromisso em qualquer tempo ou lugar, de forma boa, firme e valiosa.
+
+15.4 Qualquer modificação do presente instrumento será realizada unicamente por meio de Termo Aditivo escrito, concluído e assinado por ambas as PARTES.
+
+15.5 O presente instrumento particular representa título executivo extrajudicial, nos termos do art. 784, inciso III do Código de Processo Civil e está sujeito à execução específica de suas obrigações na forma da lei.
+
+15.6 Este contrato constitui o acordo completo e final entre as PARTES, substituindo todos os entendimentos, compromissos, opções, mensagem via e-mail ou fax, cartas, ou correspondências anteriores e em relação ao assunto objeto deste contrato. Qualquer alteração das obrigações, direitos ou condições, ora pactuados, somente poderá ser procedida mediante a celebração de aditamento contratual escrito.
+
+15.7 Fica expressa e irrevogavelmente estabelecido que a ação ou omissão, bem como abstenção do exercício, por qualquer das PARTES dos direitos ou faculdades que lhe assistem pelo presente contrato, ou a concordância com o atraso no cumprimento das obrigações da outra PARTE, não implicará renúncia daqueles direitos ou faculdades, que poderão ser exercidos, a qualquer tempo, a seu exclusivo critério, salvo se manifestada por escrito. Neste caso, a remissão ou renúncia terá aplicação específica, não significando novação ou renúncia de outros direitos assegurados por lei ou pelo presente contrato.
+
+15.8 A eventual aceitação, por uma das PARTES, da inexecução, pela outra, de qualquer das condições aqui estabelecidas, a qualquer tempo, não constituirá novação, devendo ser interpretada como mera liberalidade, não implicando, portanto, na desistência de exigir o cumprimento das disposições aqui contidas ou do direito de requerer futuramente a total execução de cada uma das obrigações estabelecidas neste contrato, bem como de pleitear perdas e danos.
+
+15.9 As comunicações entre as PARTES contratantes, relacionadas com o acompanhamento e controle do presente contrato, serão sempre feitas por escrito ou por e-mail.
+
+15.10 O término do prazo contratual, a resolução, a resilição ou a rescisão deste contrato não afeta a responsabilidade das PARTES no que tange ao sigilo a ser observado em face deste contrato, bem como eventuais ressarcimentos relativos às obrigações de cunho trabalhista, fiscal, cível ou previdenciária, ou ainda dos danos causados a terceiros decorrentes de culpa ou dolo da outra PARTE, seus empregados, prepostos e/ou sócios.
+
+
+CLÁUSULA DÉCIMA SEXTA – DA ELEIÇÃO DO FORO
+
+
+16.1 Fica eleito o foro da cidade de Diamantina/MG, para dirimir quaisquer divergências provenientes do presente contrato, com renúncia a quaisquer outros por mais privilegiados que sejam.
+
+E por estarem assim justos e contratados, assinam o presente contrato em 02 (duas) vias de igual teor para o mesmo efeito, juntamente com as duas testemunhas abaixo, declarando ser perfeitamente conhecedores das condições e termos do presente, aceitando-os na forma como se encontram redigidos.
+
+
+Diamantina/MG, 23 de novembro de 2023.
   `;
 };
 

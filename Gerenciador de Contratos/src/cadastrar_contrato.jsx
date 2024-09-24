@@ -567,6 +567,12 @@ function CadastrarContrato(){
     cpdf();
   } 
   
+  useEffect(() => {
+    const hoje = new Date();
+    const dataFormatada = hoje.toISOString().split('T')[0];
+    setDataContrato(dataFormatada);
+  }, []);
+
     return (
       <div id="boxCadastroContrato">
         <div>
@@ -841,10 +847,16 @@ function CadastrarContrato(){
             </select>
         </div>
         <h3>Informações do contrato</h3>
+        <h4>Data do contrato</h4>
         <input required
+          type="date"
           className="inputContrato"
-          onChange={(e) => setPrazoLocacao(e.currentTarget.value)}
-          placeholder="Prazo de locação (em meses) (Ex.: 12)" 
+          style={{ backgroundColor: "#444b5a" }}
+          value={datacontrato}
+          onChange={(e) => {
+            setDataContrato(e.currentTarget.value);
+          }}
+          placeholder="Data do contrato" 
         />
         <br></br>
         <h4>Data de retirada da máquina</h4>
@@ -858,14 +870,6 @@ function CadastrarContrato(){
           placeholder="Data de retirada da máquina" 
         />
         <br></br>
-        <input required
-          className="inputContrato"
-          type="text"
-          value={valormensal}
-          onChange={(e) => setValorMensal(formataValor(e.currentTarget.value))}
-          placeholder="Valor mensal do contrato (Ex.: 30000)" 
-        />
-        <br></br>
         <h4>Vencimento do contrato</h4>
         <input required
           type="date"
@@ -875,24 +879,6 @@ function CadastrarContrato(){
             setVencimento(e.currentTarget.value)
           }}
           placeholder="Vencimento do contrato" 
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setMultaAtraso(e.currentTarget.value)}
-          placeholder="Multa de atraso (Ex.: 10)" 
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setJurosAtraso(e.currentTarget.value)}
-          placeholder="Juros de atraso (Ex.: 5)" 
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setAvisoTransferencia(e.currentTarget.value)}
-          placeholder="Aviso de transferência (Ex.: Não aplicável)" 
         />
         <br></br>
         <h4>Prazo de devolução</h4>
@@ -908,20 +894,43 @@ function CadastrarContrato(){
         <br></br>
         <input required
           className="inputContrato"
+          type="text"
+          value={valormensal}
+          onChange={(e) => setValorMensal(formataValor(e.currentTarget.value))}
+          placeholder="Valor mensal do contrato (Ex.: 30000)" 
+        />
+        <br></br>
+        <input required
+          className="inputContrato"
+          onChange={(e) => setMultaAtraso(e.currentTarget.value)}
+          placeholder="Multa de atraso (Ex.: 10)" 
+        />
+        <br></br>
+        <input required
+          className="inputContrato"
+          onChange={(e) => setPrazoLocacao(e.currentTarget.value)}
+          placeholder="Prazo de locação (em meses) (Ex.: 12)" 
+        />
+        <br></br>
+        <input required
+          className="inputContrato"
+          onChange={(e) => setJurosAtraso(e.currentTarget.value)}
+          placeholder="Juros de atraso (Ex.: 5)" 
+        />
+        <br></br>
+        <input required
+          className="inputContrato"
+          onChange={(e) => setAvisoTransferencia(e.currentTarget.value)}
+          placeholder="Aviso de transferência (Ex.: Não aplicável)" 
+        />
+        <br></br>        
+        <input required
+          className="inputContrato"
           onChange={(e) => setCidadeForo(e.currentTarget.value)}
           placeholder="Cidade foro (Ex.: Belo Horizonte)" 
         />
         <br></br>
-        <h4>Data do contrato</h4>
-        <input required
-          type="date"
-          className="inputContrato"
-          style={{backgroundColor: "#444b5a"}}
-          onChange={(e) => {
-            setDataContrato(e.currentTarget.value)
-          }}
-          placeholder="Data do contrato" 
-        />
+        
         
         <br></br>
         <h3 >{mensagem}</h3>
