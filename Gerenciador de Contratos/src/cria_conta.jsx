@@ -3,6 +3,7 @@ import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 import { cadastraEndereco } from "./endereco";
+import { cadastraSocioAdm } from "./socioAdm";
 //import "./App.css";
 
 
@@ -17,9 +18,9 @@ function CriaConta(){
   const [cpf, setCpf] = useState("");
 
   const [cnpj, setCnpj] = useState("");
-  const [nomeLocadora, setNomeLocadora] = useState("");
-  const [numeroConta, setNumeroConta] = useState("");
-  const [agenciaConta, setAgenciaConta] = useState("");
+  const [nomelocadora, setNomeLocadora] = useState("");
+  const [numeroconta, setNumeroConta] = useState("");
+  const [agenciaconta, setAgenciaConta] = useState("");
   const [nomebanco, setNomeBanco] = useState("");
 
   const [cep, setCep] = useState("");
@@ -33,13 +34,32 @@ function CriaConta(){
   const [locadoraExiste, setLocadoraExiste] = useState(true);
   const [mensagemEmpresa, setMensagemEmpresa] = useState("");
 
-  const cadastraLocadora = async () => {
-    const idendereco = 
-      await cadastraEndereco(cep, logradouro, numeroendereco, complemento, cidade, uf);
-    const numerocontabanco = numeroConta;
-    const numeroagenciabanco = agenciaConta;
-    await invoke("estrutura_locadora", {idendereco, cnpj, numerocontabanco, numeroagenciabanco, nomeLocadora, nomebanco});
-  };
+  const [complementosocio, setComplementoSocio] = useState("");
+  const [logradourosocio, setLogradouroSocio] = useState("");
+  const [cepsocio, setCepSocio] = useState("");
+  const [ufsocio, setUfSocio] = useState("");
+  const [cidadesocio, setCidadeSocio] = useState("");
+  const [numeroenderecosocio, setNumeroEnderecoSocio] = useState("");
+
+  const [nacionalidade, setNacionalidade] = useState("");
+  const [estadocivil, setEstadoCivil] = useState("");
+  const [orgaoemissor, setOrgaoEmissor] = useState("");
+
+
+  async function cadastraLocadora(idsocio){
+    try{
+      const idendereco = await cadastraEndereco(cep, logradouro, numeroendereco, 
+        complemento, cidade, uf);
+        const numerocontabanco = numeroconta;
+        const numeroagenciabanco = agenciaconta;
+        const locadora = await invoke("estrutura_locadora", {idendereco, cnpj, numerocontabanco, numeroagenciabanco, nomelocadora, nomebanco, idsocio});
+        await invoke("cadastra_locadora", {locadora});
+    } catch(error){
+      console.log(error);
+      setMensagemCriarConta(error);
+      throw(error);
+    }
+  }
   
   const carregaDadosLocadora = async (cnpj) => {
     setLocadoraExiste(false);
@@ -79,6 +99,12 @@ function CriaConta(){
 
   async function criarConta() {
     try{
+      const idenderecosocio = await cadastraEndereco(cepsocio, logradourosocio, 
+        numeroenderecosocio, complementosocio, cidadesocio, ufsocio
+      );
+      const idsocio = await cadastraSocioAdm(idenderecosocio, nomeCompleto, cpf, 
+        orgaoemissor, estadocivil, nacionalidade)
+      await cadastraLocadora(idsocio);
       await invoke("cria_conta", {nomeCompleto, email, senha1, senha2, cpf, cnpj});
       setMensagemCriarConta("Conta criada");
     }
@@ -157,11 +183,11 @@ function CriaConta(){
           </div>  
           {locadoraExiste ? (
             <div>
-            <div><input  readOnly className="user-input" placeholder="Nome da Locadora"  value={nomeLocadora} /></div>
+            <div><input  readOnly className="user-input" placeholder="Nome da Locadora"  value={nomelocadora} /></div>
             <p>Dados bancários da empresa</p>
             <div><input readOnly className="user-input" placeholder="Nome do banco"  value={nomebanco} /></div>
-            <div><input readOnly className="user-input" placeholder="Numero da agencia"  value={agenciaConta} /></div>
-            <div><input readOnly className="user-input" placeholder="Numero da conta"  value={numeroConta} /></div>
+            <div><input readOnly className="user-input" placeholder="Numero da agencia"  value={agenciaconta} /></div>
+            <div><input readOnly className="user-input" placeholder="Numero da conta"  value={numeroconta} /></div>
             <p>Endereço da empresa</p>
             <input readOnly className="user-input" placeholder="CEP"  value={cep} />
             <input readOnly className="user-input" placeholder="Logradouro"  value={logradouro} />
@@ -198,20 +224,20 @@ function CriaConta(){
             <p>Continue o cadastro dos seus dados</p>
             <div><input required
           className="user-input"
-          onChange={(e) => setCpf(e.currentTarget.value)}
+          onChange={(e) => setOrgaoEmissor(e.currentTarget.value)}
           placeholder="Órgão Emissor do CPF"
           /></div>
           <div>
           <input required
           className="user-input"
-          onChange={(e) => setCpf(e.currentTarget.value)}
+          onChange={(e) => setEstadoCivil(e.currentTarget.value)}
           placeholder="Estado civil"
           />
           </div>
           <div>
           <input required
           className="user-input"
-          onChange={(e) => setCpf(e.currentTarget.value)}
+          onChange={(e) => setNacionalidade(e.currentTarget.value)}
           placeholder="Nacionalidade"
           />
           </div>
