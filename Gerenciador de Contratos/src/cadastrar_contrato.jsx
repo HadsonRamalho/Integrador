@@ -543,7 +543,11 @@ function CadastrarContrato(){
         //Locatario | Socio | Endereço
         logradouroSocioLocatario,
         cidadeSocioLocatario,
-        ufSocioLocatario
+        ufSocioLocatario,
+
+        //Máquina
+        nomemaquina,
+        numserie
       },
     });
   };

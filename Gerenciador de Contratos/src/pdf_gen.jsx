@@ -304,7 +304,9 @@ CPF:____________________________	CPF:____________________________
 const MeuDocumento = (params) => {
   const contratoTexto = gerarTextoContratoP1(params);
   const contratoTexto2 = gerarTextoContratoP2(params);
-  
+  const nomemaquina = params.nomemaquina;
+  const numserie = params.numserie;
+  console.log(nomemaquina, numserie);
   return (
     <Document>
       <Page style={styles.page}>
@@ -324,13 +326,13 @@ const MeuDocumento = (params) => {
             <Text style={styles.tableCell}>ITEM</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>QUANT.</Text>
+            <Text style={styles.tableCell}>QUANTIDADE</Text>
           </View>
           <View style={styles.tableCol}>
             <Text style={styles.tableCell}>EQUIPAMENTO</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>NÚMEROS DE SÉRIE</Text>
+            <Text style={styles.tableCell}>NÚMERO DE SÉRIE</Text>
           </View>
           <View style={styles.tableCol}>
             <Text style={styles.tableCell}>LOCAÇÃO</Text>
@@ -342,13 +344,13 @@ const MeuDocumento = (params) => {
             <Text style={styles.tableCell}>1</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>2</Text>
+            <Text style={styles.tableCell}>1</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Máquina a Fio Diamantado 75C</Text>
+            <Text style={styles.tableCell}>{nomemaquina}</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>MF75S20046, MF75D20022</Text>
+            <Text style={styles.tableCell}>{numserie}</Text>
           </View>
           <View style={styles.tableCol}>
             <Text style={styles.tableCell}>R$ 30.000,00</Text>
@@ -425,6 +427,10 @@ const CPDF = () => {
         logradourosociolocatario = {state?.logradouroSocioLocatario || ""} 
         cidadesociolocatairo = {state?.cidadeSocioLocatario || ""} 
         ufsociolocatario = {state?.ufSocioLocatario || ""}
+
+      //Maquina
+        nomemaquina = {state?.nomemaquina || ""}
+        numserie = {state?.numserie || ""}
       />
     </PDFViewer>
     <button onClick={home}>Voltar para a página inicial</button>
