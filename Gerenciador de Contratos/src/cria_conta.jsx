@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 import { cadastraEndereco, selecionaUf, selecionaUfDefinido } from "./endereco";
 import { cadastraSocioAdm } from "./socioAdm";
+import InputMask from 'react-input-mask';
 //import "./App.css";
 
 
@@ -146,7 +147,21 @@ function CriaConta(){
           className="user-input"
           onChange={(e) => setCpf(e.currentTarget.value)}
           placeholder="Seu CPF"
-          />    </div>      
+          /> <InputMask
+          mask="999.999.999-99" // Máscara para CPF
+          value={cpf}
+          onChange={(e) => setCpf(e.target.value)}
+          required
+          placeholder="CPF"
+      >
+          {(inputProps) => <input {...inputProps} type="text" />}
+      </InputMask> <input
+          required
+          type="email"
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="E-mail" 
+      />
+         </div>      
           
           <div>
           <input required
