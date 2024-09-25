@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 
@@ -6,26 +6,27 @@ function BuscarMaquina(){
   const [mensagem, setMensagem] = useState("");
   const [nomeMaquina, setNomeMaquina] = useState("");
   const [vetor, setVetor] = useState([]);
-  const [numserie, setNumSerie] = useState([]);
-  const [valorBusca, setValorBusca] = useState([]);
+  const [numserie, setNumSerie] = useState("");
+  const [valorBusca, setValorBusca] = useState("");
   const idusuario = localStorage.getItem('token');
-  const [filtro, setFiltro] = useState('name');
+  const [filtro, setFiltro] = useState('nome');
 
 
-  async function buscaMaquina(filtro){
+  async function buscaMaquina(){
     try{
-      if (filtro == "nome"){
-        setNomeMaquina(valorBusca);
-        const maquinas = await invoke("busca_maquina_nome", {nomeMaquina});
+      setNumSerie(valorBusca);
+      setNomeMaquina(valorBusca);
+      console.log(valorBusca);
+      if (filtro === "nome") {
+        const maquinas = await invoke("busca_maquina_nome", { nomeMaquina: valorBusca });
         setVetor(maquinas); 
         setMensagem("");
         return;
-      }
-      setNumSerie(valorBusca);
-      const maquina = await invoke("busca_maquina_numserie", {numserie});
-      setVetor(maquina); 
-      setMensagem("");
-      return;
+      } 
+        const maquina = await invoke("busca_maquina_numserie", { numserie: valorBusca });
+        setVetor(maquina); 
+        setMensagem("");
+        return;
     } catch(error){
         console.log("[Buscar_maquina.jsx] : ", error);
         setVetor([]);
@@ -38,6 +39,7 @@ function BuscarMaquina(){
   const home = () => {
     navigate('/home');
   };
+
 
   return (
     <div>
@@ -53,13 +55,12 @@ function BuscarMaquina(){
           type="text"
           value={valorBusca}
           onChange={(e) => {setValorBusca(e.currentTarget.value)
-            setNumSerie(valorBusca)
-          setNomeMaquina(valorBusca)}
+            }
           }
           placeholder={`Buscar máquina por ${filtro}`}
         />
         <button onClick={async () => {
-          await buscaMaquina(filtro);
+          await buscaMaquina();
         }
         }>Buscar</button>
       </div>
@@ -73,7 +74,7 @@ function BuscarMaquina(){
                 <div className="contract-fields">
                   <strong>Número de Série:</strong> {maquina.numserie} <br />
                   <strong>Valor Aluguel: </strong> R$ {maquina.valoraluguel} <br />
-                  <strong>Disponibildiade:</strong> {maquina.disponibilidade} <br />
+                  <strong>Disponibilidade:</strong> {maquina.disponibilidade} <br />
                 </div>
               </li>
             ))}

@@ -30,6 +30,9 @@ fn main() {
             controller::usuario::atualiza_email,
             controller::usuario::busca_email_usuario,
             controller::usuario::busca_cnpj_usuario,
+            controller::usuario::cria_conta,
+            controller::usuario::verifica_senha,
+            controller::usuario::atualiza_nome,
 
             controller::locatario::busca_id_locatario,
             controller::locatario::cadastra_locatario,
@@ -47,6 +50,7 @@ fn main() {
             controller::maquina::cadastra_maquina,
             controller::maquina::busca_maquina_numserie,
             controller::maquina::gera_estoque_por_nome,
+            controller::maquina::gera_estoque_total,
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm,            
@@ -59,8 +63,6 @@ fn main() {
             controller::contrato::estrutura_contrato,
             controller::contrato::cadastra_contrato,
 
-            controller::cria_conta,
-            controller::verifica_senha,
             controller::checa_email,
             controller::encontra_email_smtp,
             controller::gera_token,

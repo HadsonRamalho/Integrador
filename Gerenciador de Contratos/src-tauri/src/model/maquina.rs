@@ -90,8 +90,8 @@ pub async fn busca_maquina_serie(serie: &str) -> Result<Vec<Maquina>, mysql_asyn
 pub async fn gera_estoque_total() -> Result<Vec<EstoqueMaquina>, mysql_async::Error>{
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
-    let estoque: Vec<EstoqueMaquina> = conn.exec_map("SELECT nomemaquina COUNT(*) AS estoque FROM maquina WHERE disponibilidade = 1 AND 
-    maquinastatus = 1 GROUP BY nomemaquina", (), |(nomemaquina, quantidade)| EstoqueMaquina{nomemaquina, quantidade}).await?;
+    let estoque: Vec<EstoqueMaquina> = conn.exec_map("SELECT nomemaquina, COUNT(*) AS estoque FROM maquina WHERE disponibilidade = 1 AND 
+    maquinastatus = 1 GROUP BY nomemaquina;", (), |(nomemaquina, quantidade)| EstoqueMaquina{nomemaquina, quantidade}).await?;
     if estoque.is_empty(){
         return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(
             std::io::ErrorKind::NotFound,

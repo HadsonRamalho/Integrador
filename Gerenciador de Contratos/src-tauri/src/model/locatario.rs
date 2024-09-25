@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::model::params;
 use crate::controller;
 use::mysql_async::prelude::FromRow;
-use crate::controller::erro::MeuErro;
+use crate::model::erro::MeuErro;
 
 #[derive(FromRow, Serialize)]
 pub struct Locatario{

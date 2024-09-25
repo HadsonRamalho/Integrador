@@ -9,6 +9,7 @@ pub mod maquina;
 pub mod socioadm;
 pub mod usuario;
 pub mod contrato;
+pub mod erro;
 
 // crates para envio de email
 use lettre::message::header::ContentType;
@@ -93,7 +94,7 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
 /// # Retornos
 /// - Result<(), mysql_async::Error>: Retorna Ok(()) se o usuário for inserido com sucesso,
 ///   ou Err(mysql_async::Error) se houver um erro na inserção dos dados.
-pub async fn save_data(
+pub async fn cadastra_usuario(
     pool: &Pool,
     nome: &str,
     email: &str,

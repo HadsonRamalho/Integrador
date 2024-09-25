@@ -1,5 +1,5 @@
 use super::gera_hash;
-use crate::{controller, model::{self, endereco::Endereco}};
+use crate::{controller, model::{self, erro::MeuErro}};
 
 /// Função para estruturar os dados de um endereço em formato JSON.
 ///
@@ -32,12 +32,12 @@ use crate::{controller, model::{self, endereco::Endereco}};
 /// ```
 #[tauri::command]
 pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, numeroendereco: String, cidade: String, uf: String) -> Result<serde_json::Value, String>{
-    // Gera um ID único para o endereço com base no CEP
     if logradouro.trim().is_empty() || cep.trim().is_empty()
         || numeroendereco.trim().is_empty() ||
         cidade.trim().is_empty() || uf.trim().is_empty(){
-            return Err("Erro: Preencha todos os campos.".to_string())
+            return Err(MeuErro::CamposVazios.to_string())
     }
+    // Gera um ID único para o endereço com base no CEP
     let cep = match controller::formata_cep(&cep){
         Ok(cep) => {cep},
         Err(e) => {return Err(e)}

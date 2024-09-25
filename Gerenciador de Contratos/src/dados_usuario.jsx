@@ -6,6 +6,11 @@ function DadosUsuario() {
   const [emailAtual, setEmailAtual] = useState("");
   const [emailFixoInterface, setEmailFixoInterface] = useState("");
   const [emailAntigo, setEmailAntigo] = useState("");
+
+  const [nomeAtual, setNomeAtual] = useState("");
+  const [nomeFixoInterface, setNomeFixoInterface] = useState("");
+  const [nomeAntigo, setNomeAntigo] = useState("");
+
   const [nome, setNome] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -28,8 +33,11 @@ function DadosUsuario() {
       const nome = await invoke("busca_nome_usuario", { id });
       setEmailAntigo(email);
       setEmailAtual(email);
-      setEmailFixoInterface(email);
       setNome(nome);
+      setNomeAntigo(nome);
+      setNomeAtual(nome);
+      setNomeFixoInterface(nome);
+      setEmailFixoInterface(email);
     } catch (error) {
       console.error("[Dados_usuario.jsx | dados_usuario] : ", error);
     } finally {
@@ -56,6 +64,20 @@ function DadosUsuario() {
     }
   }
 
+  async function atualizaNome(){
+    try{
+      const id = localStorage.getItem('token');
+      const email = await invoke("busca_email_usuario", { id });
+      const nome = nomeAtual;
+      await invoke("atualiza_nome", {email, nome});
+      console.log("Nome antigo: ", nomeAntigo);
+      console.log("Nome novo: ", nomeAtual);
+      setNomeFixoInterface(nome);
+    } catch(error){
+      console.log(error);
+    }
+  }
+
   return (
     <div id="boxDadosUsuario">
       <h1>Dados do Usuário</h1>
@@ -65,8 +87,11 @@ function DadosUsuario() {
       </div>
       <div>
         <div>
-          <input placeholder={nome}></input>
-          <button>Atualizar Nome</button>
+          <input placeholder={nome} onChange={(e) => setNomeAtual(e.currentTarget.value)}></input>
+          <button onClick={async () => {
+            await atualizaNome();
+            await dados_usuario();
+          }}>Atualizar Nome</button>
         </div>
         <div>
           <input

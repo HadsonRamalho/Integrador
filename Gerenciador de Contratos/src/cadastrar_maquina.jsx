@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
+import { cadastraMaquina } from "./maquina";
+import { formataValor } from "./maquina";
 
 function CadastrarMaquina(){
   const [mensagem, setMensagem] = useState("");
@@ -9,35 +10,22 @@ function CadastrarMaquina(){
   const [numserie, setNumSerie] = useState("");
   const [valoraluguel, setValorAluguel] = useState("");
 
-  async function estruturaMaquina(){
-    try{      
-      const maquina = await invoke("estrutura_maquina", {nomemaquina, valoraluguel, numserie});
-      console.log("Valor aluguel: ", maquina.valoraluguel);
-      return maquina;
-    }
-    catch(error){
-      console.log("[Cadastrar_maquina.jsx | estruturaMaquina] : ", error);
-      setMensagem(error);
-    }
-  } 
-
-  async function cadastraMaquina(){
-    try{
-      const maquina = await estruturaMaquina();
-      await invoke("cadastra_maquina", {maquina});
-      setMensagem("Máquina cadastrada!");
-    } catch(error){
-      console.log(error);
-      setMensagem(error);
-    }
-  }
-
   const navigate = useNavigate();
 
   const home = () => {
     navigate('/home');
   };
 
+  async function cadastraDados(){
+    try{
+      await cadastraMaquina(nomemaquina, valoraluguel, numserie);
+      setMensagem("Máquina cadastrada com sucesso!");
+    } catch(error){
+      setMensagem(error);
+      console.log(error);
+    }
+  }
+  
     return (
       <div id="boxCadastroMaquina">
         <div>
@@ -46,7 +34,7 @@ function CadastrarMaquina(){
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await cadastraMaquina();
+            cadastraDados();
           }}
         >
         <input required
@@ -63,8 +51,10 @@ function CadastrarMaquina(){
         <br></br>
         <input required
           className="rowReset"
-          onChange={(e) => setValorAluguel(e.currentTarget.value)}
-          placeholder="Valor do aluguel" 
+          placeholder="0,00" 
+          type="text"
+          value={valoraluguel}
+          onChange={(e) => setValorAluguel(formataValor(e.currentTarget.value))}          
         />
         <p className="mensagemLogin">{mensagem}</p>
         <button type="submit" >Concluir cadastro</button>

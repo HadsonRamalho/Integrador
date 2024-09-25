@@ -6,10 +6,12 @@ use mysql_async::prelude::*;
 use mysql_async::Row;
 use mysql_async::Value;
 
+use crate::model::erro::MeuErro;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
 use super::gera_hash;
+use super::maquina::formata_valor_f32;
 
 #[tauri::command]
 pub async fn busca_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
@@ -68,7 +70,7 @@ fn formata_data(value: Value) -> String {
             return data_precisa;
             
         },
-        _ => "".to_string(),
+        _ => "Erro: Formato de data inválido".to_string(),
     }
 }
 
@@ -214,11 +216,8 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         Err(e) => {return Err(format!("Erro ao converter prazo de locação: {}", e))}
     };
 
-    let valormensal:f32 = match contrato["valormensal"].as_str().unwrap_or("").to_string().trim().parse(){
-        Ok(valormensal) => {valormensal},
-        Err(e) => {return Err(format!("Erro ao converter valor mensal: {}", e))}
-    };
-
+    let valormensal= contrato["valormensal"].as_str().unwrap_or("").to_string();
+    let valormensal = formata_valor_f32(&valormensal)?;
     let multaatraso:f32 = match contrato["multaatraso"].as_str().unwrap_or("").to_string().trim().parse(){
         Ok(multaatraso) => {multaatraso},
         Err(e) => {return Err(format!("Erro ao converter multa de atraso: {}", e))}
@@ -228,6 +227,10 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         Ok(jurosatraso) => {jurosatraso},
         Err(e) => {return Err(format!("Erro ao converter juros de atraso: {}", e))}
     };
+
+    if idlocatario.is_empty() || idlocador.is_empty() || idmaquina.is_empty() || enderecoretirada.is_empty() {
+        return Err(MeuErro::CamposVazios.to_string())
+    }
 
     let idcontrato = gera_hash(&idlocatario);
     let idcontrato: (&str, &str) = idcontrato.split_at(45 as usize);

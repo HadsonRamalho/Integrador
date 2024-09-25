@@ -1,6 +1,6 @@
 use mysql_async::prelude::*;
 use serde::{Deserialize, Serialize};
-use crate::controller::erro::MeuErro;
+use crate::model::erro::MeuErro;
 use crate::controller::{self, cria_pool};
 
 #[derive(Serialize, Deserialize, FromRow)]
