@@ -10,6 +10,7 @@ import {selecionaUf, selecionaUfDefinido} from "./endereco";
 function CadastrarContrato(){
   const [mensagem, setMensagem] = useState("");
   const [mensagemLocatario, setMensagemLocatario] = useState("");
+  const [mensagemDatas, setMensagemDatas] = useState("");
 
   const [nomelocadora, setNomeLocadora] = useState("");
   const [cnpj, setCnpjLocadora] = useState("");
@@ -590,6 +591,64 @@ function CadastrarContrato(){
     setDataContrato(dataFormatada);
   }, []);
 
+  const validaDataContrato = (e) => {
+    const data = e.currentTarget.value;
+    if (dataretirada && data > dataretirada) {
+      console.log("A data do contrato não pode ser após a data de retirada.");
+      setMensagemDatas("A data do contrato não pode ser após a data de retirada.");
+      return;
+    }
+    setDataContrato(data);
+  };
+
+  const validaDataRetirada = (e) => {
+    const data = e.currentTarget.value;
+    if (datacontrato && data < datacontrato) {
+      console.log("A data de retirada não pode ser antes da data do contrato.");
+      setMensagemDatas("A data de retirada não pode ser antes da data do contrato.");
+      return;
+    }
+    if (vencimento && data > vencimento) {
+      console.log("A data de retirada não pode ser após a data de vencimento.");
+      setMensagemDatas("A data de retirada não pode ser após a data de vencimento.");
+      return;
+    }
+    setDataRetirada(data);
+  };
+  
+  const validaDataVencimento = (e) => {
+    const data = e.currentTarget.value;
+    if (datacontrato && data < datacontrato) {
+      console.log("A data de vencimento não pode ser antes da data do contrato.");
+      setMensagemDatas("A data de vencimento não pode ser antes da data do contrato.");
+      return;
+    }
+    setVencimento(data);
+  };
+
+  function calculaPrazoLocacao(Pdataretirada, Pdatadevolucao) {
+    const dataretirada = new Date(Pdataretirada);
+    const datadevolucao = new Date(Pdatadevolucao);
+    const anoInicio = dataretirada.getFullYear();
+    const mesInicio = dataretirada.getMonth();
+  
+    const anoFim = datadevolucao.getFullYear();
+    const mesFim = datadevolucao.getMonth();
+    console.log("AnoFim:", anoFim);
+    console.log("anoInicio:", anoInicio);
+    console.log("mesFim:", mesFim);
+    console.log("mesInicio:", mesInicio);
+
+
+    let diferencaEmMeses = (anoFim - anoInicio) * 12 + (mesFim - mesInicio);
+    if (diferencaEmMeses < 1) {
+      diferencaEmMeses = 1;
+    }
+  
+    setPrazoLocacao(diferencaEmMeses);
+    console.log(diferencaEmMeses);
+  }
+
     return (
       <div id="boxCadastroContrato">
         <div>
@@ -871,7 +930,7 @@ function CadastrarContrato(){
           style={{ backgroundColor: "#444b5a" }}
           value={datacontrato}
           onChange={(e) => {
-            setDataContrato(e.currentTarget.value);
+            validaDataContrato(e) 
           }}
           placeholder="Data do contrato" 
         />
@@ -882,7 +941,7 @@ function CadastrarContrato(){
           className="inputContrato"
           style={{backgroundColor: "#444b5a"}}
           onChange={(e) => {
-            setDataRetirada(e.currentTarget.value)
+            validaDataRetirada(e)
           }}
           placeholder="Data de retirada da máquina" 
         />
@@ -893,7 +952,7 @@ function CadastrarContrato(){
           className="inputContrato"
           style={{backgroundColor: "#444b5a"}}
           onChange={(e) => {
-            setVencimento(e.currentTarget.value)
+            validaDataVencimento(e)
           }}
           placeholder="Vencimento do contrato" 
         />
@@ -904,10 +963,13 @@ function CadastrarContrato(){
           className="inputContrato"
           style={{backgroundColor: "#444b5a"}}
           onChange={(e) => {
-            setPrazoDevolucao(e.currentTarget.value)
+            const Iprazodevolucao = e.currentTarget.value;
+            setPrazoDevolucao(Iprazodevolucao)
+            calculaPrazoLocacao(dataretirada, prazodevolucao)
           }}
           placeholder="Prazo de devolução" 
         />
+        {mensagemDatas}
         <br></br>
         <input required
           className="inputContrato"
@@ -923,10 +985,10 @@ function CadastrarContrato(){
           placeholder="Multa de atraso (Ex.: 10)" 
         />
         <br></br>
-        <input required
+        <input required readOnly
           className="inputContrato"
           onChange={(e) => setPrazoLocacao(e.currentTarget.value)}
-          placeholder="Prazo de locação (em meses) (Ex.: 12)" 
+          placeholder={"Prazo de locação (em meses): "+ prazolocacao} 
         />
         <br></br>
         <input required

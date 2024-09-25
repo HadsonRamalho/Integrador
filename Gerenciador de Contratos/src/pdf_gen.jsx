@@ -78,12 +78,17 @@ CLÁUSULA PRIMEIRA – DO OBJETO, PRAZO E USO
  `;
 };
 
-const gerarTextoContratoP2 = ({
+const gerarTextoContratoP2 = ({logradouro,
+  numeroendereco,
+  complemento,
+  cidade,
+  uf,
+
 }) => {
   return `
     1.1.1 Os equipamentos previstos nessa cláusula, sendo objetos do presente contrato, serão retirados no seguinte endereço:
 
-                • Endereço de retirada
+                • ${logradouro}, N° ${numeroendereco} ${complemento},  ${cidade}/${uf}
 
             1.1.2 Os equipamentos serão utilizados pela LOCATÁRIA no endereço supramencionado, sendo que todas as responsabilidades sobre o uso do equipamento permanecem integrais à LOCATÁRIA, referentes à guarda, ao depósito e ao uso dos bens. Mediante prévia comunicação da LOCATÁRIA à LOCADORA, bem como mediante expressa autorização dessa última, os equipamentos locados poderão ser transferidos para outras pedreiras do grupo econômico da LOCATÁRIA, localizadas no Estado de Minas Gerais, mantidas inalteradas todas as obrigações previstas neste Contrato.
 
@@ -93,7 +98,7 @@ const gerarTextoContratoP2 = ({
 CLÁUSULA SEGUNDA – PRAZO DE VIGÊNCIA DO CONTRATO
 
 
-2.1 O prazo da presente locação é de 03 (três) meses, passando a vigorar a partir da data de entrega dos equipamento, qual seja, a data de 23 de novembro de 2023, nos termos previstos da Cláusula Primeira, item 1.1.1.
+2.1 O prazo da presente locação é de ${prazolocacao} meses, passando a vigorar a partir da data de entrega dos equipamento, qual seja, a data de 23 de novembro de 2023, nos termos previstos da Cláusula Primeira, item 1.1.1.
 
             2.2.1 Findo prazo acima estipulado, o mesmo poderá ser renovado através de aditivo ou outro instrumento contratual por igual período, com pagamento mínimo do valor previsto conforme Cláusula Terceira, item 3.1, podendo este vir a ser reajustado na ocasião por acordo entre as partes.
 
