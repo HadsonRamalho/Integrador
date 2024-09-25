@@ -548,7 +548,18 @@ function CadastrarContrato(){
 
         //Máquina
         nomemaquina,
-        numserie
+        numserie,
+        valoraluguel,
+
+        //Contrato
+        prazolocacao,
+        dataretirada,
+        valormensal,
+        datacontrato,
+        multaatraso,
+        jurosatraso,
+        cidadeforo
+
       },
     });
   };

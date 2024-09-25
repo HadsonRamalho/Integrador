@@ -84,6 +84,17 @@ const gerarTextoContratoP2 = ({logradouro,
   cidade,
   uf,
 
+  numeroAgencia,
+  numeroConta,
+
+  prazolocacao,
+  dataretirada,
+  valormensal,
+  datacontrato,
+  multaatraso,
+  jurosatraso,
+  cidadeforo
+
 }) => {
   return `
     1.1.1 Os equipamentos previstos nessa cláusula, sendo objetos do presente contrato, serão retirados no seguinte endereço:
@@ -98,7 +109,7 @@ const gerarTextoContratoP2 = ({logradouro,
 CLÁUSULA SEGUNDA – PRAZO DE VIGÊNCIA DO CONTRATO
 
 
-2.1 O prazo da presente locação é de ${prazolocacao} meses, passando a vigorar a partir da data de entrega dos equipamento, qual seja, a data de 23 de novembro de 2023, nos termos previstos da Cláusula Primeira, item 1.1.1.
+2.1 O prazo da presente locação é de ${prazolocacao} meses, passando a vigorar a partir da data de entrega dos equipamento, qual seja, a data de ${dataretirada}, nos termos previstos da Cláusula Primeira, item 1.1.1.
 
             2.2.1 Findo prazo acima estipulado, o mesmo poderá ser renovado através de aditivo ou outro instrumento contratual por igual período, com pagamento mínimo do valor previsto conforme Cláusula Terceira, item 3.1, podendo este vir a ser reajustado na ocasião por acordo entre as partes.
 
@@ -112,16 +123,17 @@ CLÁUSULA SEGUNDA – PRAZO DE VIGÊNCIA DO CONTRATO
 CLAÚSULA TERCEIRA – DO VALOR E FORMA DE PAGAMENTO
 
 
-        3.1 A LOCATÁRIA pagará à LOCADORA a título de contraprestação pela locação dos equipamentos, o valor mensal de R$ 19.000,00 (Dezenove Mil Reais) e, na hipótese de renovação deste contrato, os valores passarão a ser corrigidos anualmente pelo valor positivo do índice IPCA ou por outro que venha eventualmente a substituí-lo.
+        3.1 A LOCATÁRIA pagará à LOCADORA a título de contraprestação pela locação dos equipamentos, o valor mensal de R$ ${valormensal} e, na hipótese de renovação deste contrato, os valores passarão a ser corrigidos anualmente pelo valor positivo do índice IPCA ou por outro que venha eventualmente a substituí-lo.
 
-            3.1.1 O pagamento da locação será mensal e adiantado, vencendo todo dia 23 (vinte e três), com início em 23/11/2023, mediante boleto bancário, com exceção da primeira parcela (entrada).
+            3.1.1 O pagamento da locação será mensal e adiantado, vencendo todo DIA ${datacontrato}, com início em ${datacontrato}, mediante boleto bancário, com exceção da primeira parcela (entrada).
 
             3.1.2 O pagamento da entrada será efetuado mediante transferência bancária para a LOCADORA, na conta que segue:
 
-DADOS da CONTA
+Agência: ${numeroAgencia}
+Conta: ${numeroConta}
 
 
-            3.1.3 O atraso no pagamento do acordo da cláusula acima sujeita a LOCATÁRIA ao pagamento de multa de 2% (dois por cento) e juros de 1% (um por cento) ao mês, sobre o valor do débito devidamente corrigido pelo valor positivo do índice IPCA ou por outro que venha eventualmente a substitui-lo, sem prejuízo da rescisão da locação que poderá ser exigida pela LOCADORA, após notificação à LOCATÁRIA oportunizando o adimplemento do débito mais encargos no prazo de 10 (dez) dias.
+            3.1.3 O atraso no pagamento do acordo da cláusula acima sujeita a LOCATÁRIA ao pagamento de multa de ${multaatraso}% e juros de ${jurosatraso}% ao mês, sobre o valor do débito devidamente corrigido pelo valor positivo do índice IPCA ou por outro que venha eventualmente a substitui-lo, sem prejuízo da rescisão da locação que poderá ser exigida pela LOCADORA, após notificação à LOCATÁRIA oportunizando o adimplemento do débito mais encargos no prazo de 10 (dez) dias.
 
             3.1.4 Em caso de atraso no pagamento a LOCADORA poderá ainda, incluir a LOCATÁRIA na lista de inadimplentes do SPC e/ou outras instituições de proteção ao crédito.
 
@@ -282,12 +294,12 @@ CLÁUSULA DÉCIMA QUINTA – DISPOSIÇÕES GERAIS
 CLÁUSULA DÉCIMA SEXTA – DA ELEIÇÃO DO FORO
 
 
-16.1 Fica eleito o foro da cidade de Diamantina/MG, para dirimir quaisquer divergências provenientes do presente contrato, com renúncia a quaisquer outros por mais privilegiados que sejam.
+16.1 Fica eleito o foro da cidade de ${cidadeforo}, para dirimir quaisquer divergências provenientes do presente contrato, com renúncia a quaisquer outros por mais privilegiados que sejam.
 
 E por estarem assim justos e contratados, assinam o presente contrato em 02 (duas) vias de igual teor para o mesmo efeito, juntamente com as duas testemunhas abaixo, declarando ser perfeitamente conhecedores das condições e termos do presente, aceitando-os na forma como se encontram redigidos.
 
 
-Diamantina/MG, 23 de novembro de 2023.
+${cidadeforo}, 23 de novembro de 2023.
 
 LOCADORA:____________________________	
 LOCATÁRIA:____________________________
@@ -311,6 +323,7 @@ const MeuDocumento = (params) => {
   const contratoTexto2 = gerarTextoContratoP2(params);
   const nomemaquina = params.nomemaquina;
   const numserie = params.numserie;
+  const valoraluguel = params.valoraluguel;
   console.log(nomemaquina, numserie);
   return (
     <Document>
@@ -358,7 +371,7 @@ const MeuDocumento = (params) => {
             <Text style={styles.tableCell}>{numserie}</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>R$ 30.000,00</Text>
+            <Text style={styles.tableCell}>R$ {valoraluguel}</Text>
           </View>
         </View>
       </View>
@@ -436,6 +449,16 @@ const CPDF = () => {
       //Maquina
         nomemaquina = {state?.nomemaquina || ""}
         numserie = {state?.numserie || ""}
+        valoraluguel = {state?.valoraluguel || ""}
+
+      //Contrato
+        prazolocacao = {state?.prazolocacao || ""}
+        dataretirada = {state?.dataretirada || ""}
+        valormensal = {state?.valormensal || ""}
+        datacontrato = {state?.datacontrato || ""}
+        multaatraso = {state?.multaatraso || ""}
+        jurosatraso = {state?.jurosatraso || ""}
+        cidadeforo = {state?.cidadeforo || ""}
       />
     </PDFViewer>
     <button onClick={home}>Voltar para a página inicial</button>
