@@ -595,6 +595,13 @@ function CadastrarContrato(){
     }
     cpdf();
   } 
+
+  useEffect(() => {
+    if (valoraluguel && prazolocacao) {
+      calculaValorMensal(valoraluguel, prazolocacao);
+    }
+  }, [valoraluguel, prazolocacao]);
+  
   
   useEffect(() => {
     const hoje = new Date();
@@ -638,32 +645,30 @@ function CadastrarContrato(){
     setVencimento(data);
   };
 
-  const [meses, setMeses] = useState();
-  const [valor, setValor] = useState();
-
   function calculaPrazoLocacao(Pdataretirada, Pdatadevolucao) {
     const dataretirada = new Date(Pdataretirada);
     const datadevolucao = new Date(Pdatadevolucao);
+  
     const anoInicio = dataretirada.getFullYear();
     const mesInicio = dataretirada.getMonth();
   
     const anoFim = datadevolucao.getFullYear();
     const mesFim = datadevolucao.getMonth();
-
+  
     let diferencaEmMeses = (anoFim - anoInicio) * 12 + (mesFim - mesInicio);
     if (diferencaEmMeses < 1) {
       diferencaEmMeses = 1;
     }
   
     setPrazoLocacao(diferencaEmMeses.toString());
-    setMeses(diferencaEmMeses);
-    setValor(valoraluguel);
-    setValorMensal((valoraluguel * diferencaEmMeses).toString());
-
-    console.log("meses ", diferencaEmMeses);
-    console.log("valor: ", valoraluguel);
-    console.log(diferencaEmMeses);
+    return diferencaEmMeses;
   }
+  
+
+  function calculaValorMensal(valoraluguel, meses) {
+    const valor = (valoraluguel * meses) * 100;
+    setValorMensal(formataValor(valor.toString()));
+}
 
     return (
       <div id="boxCadastroContrato">
@@ -806,6 +811,7 @@ function CadastrarContrato(){
           onChange={(e) => {
             setNumSerie(e.currentTarget.value)
             carregaDadosMaquina;
+            calculaValorMensal(valoraluguel, prazolocacao);
           }}
           onBlur={carregaDadosMaquina}
           placeholder="Número de série (Ex.: 11444A555B)" 
@@ -818,8 +824,7 @@ function CadastrarContrato(){
         />
         <br></br>
         <input required readOnly={true}
-          className="inputContrato"
-          value={valoraluguel}
+          className="inputContrato"     
           type="text"
           onChange={(e) => setValorAluguel(formataValor(e.currentTarget.value))}
           placeholder={valoraluguel || "Valor aprox. do aluguel (Ex.: 30000)"}
@@ -982,10 +987,11 @@ function CadastrarContrato(){
           className="inputContrato"
           style={{backgroundColor: "#444b5a"}}
           onChange={(e) => {
-            const Iprazodevolucao = e.currentTarget.value;
-            setPrazoDevolucao(Iprazodevolucao)
-            calculaPrazoLocacao(dataretirada, prazodevolucao)
-          }}
+            const novaDataDevolucao = e.currentTarget.value;
+            setPrazoDevolucao(novaDataDevolucao);
+            const novoPrazoLocacao = calculaPrazoLocacao(dataretirada, novaDataDevolucao);
+            calculaValorMensal(valoraluguel, novoPrazoLocacao);
+          }}          
           placeholder="Prazo de devolução" 
         />
         {mensagemDatas}
