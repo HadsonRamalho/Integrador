@@ -625,6 +625,7 @@ function CadastrarContrato(){
       return;
     }
     setDataRetirada(data);
+    setMensagemDatas("");
   };
   
   const validaDataVencimento = (e) => {
@@ -637,6 +638,9 @@ function CadastrarContrato(){
     setVencimento(data);
   };
 
+  const [meses, setMeses] = useState();
+  const [valor, setValor] = useState();
+
   function calculaPrazoLocacao(Pdataretirada, Pdatadevolucao) {
     const dataretirada = new Date(Pdataretirada);
     const datadevolucao = new Date(Pdatadevolucao);
@@ -645,18 +649,19 @@ function CadastrarContrato(){
   
     const anoFim = datadevolucao.getFullYear();
     const mesFim = datadevolucao.getMonth();
-    console.log("AnoFim:", anoFim);
-    console.log("anoInicio:", anoInicio);
-    console.log("mesFim:", mesFim);
-    console.log("mesInicio:", mesInicio);
-
 
     let diferencaEmMeses = (anoFim - anoInicio) * 12 + (mesFim - mesInicio);
     if (diferencaEmMeses < 1) {
       diferencaEmMeses = 1;
     }
   
-    setPrazoLocacao(diferencaEmMeses);
+    setPrazoLocacao(diferencaEmMeses.toString());
+    setMeses(diferencaEmMeses);
+    setValor(valoraluguel);
+    setValorMensal((valoraluguel * diferencaEmMeses).toString());
+
+    console.log("meses ", diferencaEmMeses);
+    console.log("valor: ", valoraluguel);
     console.log(diferencaEmMeses);
   }
 
@@ -668,6 +673,7 @@ function CadastrarContrato(){
         <form
           onSubmit={async (e) => {
             e.preventDefault();
+            setAvisoTransferencia("Não aplicável no momento");
             await cadastraDados();
           }}
         >
@@ -753,10 +759,12 @@ function CadastrarContrato(){
             <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
             onChange={(e) => setNacionalidade(e.currentTarget.value)}>
                 <option value="" disabled selected> Selecione a nacionalidade </option>
-                <option value = "Brasil"> Brasil </option>
-                <option value = "EUA"> Estados Unidos </option>
-                <option value = "Argentina"> Argentina </option>
-                <option value = "Chile"> Chile </option>
+                <option value = "Brasil"> Brasileiro </option>
+                <option value = "EUA"> Americano </option>
+                <option value = "Argentina"> Argentino </option>
+                <option value = "Chile"> Chileno </option>
+                <option value = "China"> Chinês </option>
+                <option value = "Coreia"> Coreano </option>
             </select>
         </div>
         <h3>Endereço do Sócio Administrador da Locadora</h3>
@@ -982,42 +990,36 @@ function CadastrarContrato(){
         />
         {mensagemDatas}
         <br></br>
+        <h4>Valor mensal do contrato</h4>
         <input required
           className="inputContrato"
           type="text"
           value={valormensal}
           onChange={(e) => setValorMensal(formataValor(e.currentTarget.value))}
-          placeholder="Valor mensal do contrato (Ex.: 30000)" 
+          placeholder={"Valor mensal do contrato: " + valormensal} 
+        />
+        <br></br>
+        <input required readOnly
+          className="inputContrato"
+          placeholder={"Prazo de locação (em meses): "+ prazolocacao} 
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setMultaAtraso(e.currentTarget.value)}
           placeholder="Multa de atraso (Ex.: 10)" 
-        />
-        <br></br>
-        <input required readOnly
-          className="inputContrato"
-          onChange={(e) => setPrazoLocacao(e.currentTarget.value)}
-          placeholder={"Prazo de locação (em meses): "+ prazolocacao} 
-        />
+        />        
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setJurosAtraso(e.currentTarget.value)}
           placeholder="Juros de atraso (Ex.: 5)" 
         />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setAvisoTransferencia(e.currentTarget.value)}
-          placeholder="Aviso de transferência (Ex.: Não aplicável)" 
-        />
         <br></br>        
         <input required
           className="inputContrato"
           onChange={(e) => setCidadeForo(e.currentTarget.value)}
-          placeholder="Cidade foro (Ex.: Belo Horizonte)" 
+          placeholder="Cidade do foro (Ex.: Belo Horizonte)" 
         />
         <br></br>
         

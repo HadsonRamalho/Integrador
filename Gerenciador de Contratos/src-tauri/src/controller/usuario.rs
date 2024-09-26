@@ -324,7 +324,7 @@ pub async fn busca_nome_usuario(id: String) -> Result<String, String>{
 
 pub async fn _busca_nome_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
     let mut conn = pool.get_conn().await?;
-    let nome_usuario: Option<String> = conn.exec_first("SELECT nome_completo FROM usuarios WHERE UUID = :id;", 
+    let nome_usuario: Option<String> = conn.exec_first("SELECT nomecompleto FROM usuarios WHERE UUID = :id;", 
     params!{"id" => id}).await?;
     let server_error = mysql_async::ServerError{
         code: 1045, 
