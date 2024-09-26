@@ -221,7 +221,7 @@ function CriaConta(){
             <p>Dados bancários da empresa</p>
             <div><input className="user-input" placeholder="Nome do banco"  value={nomebanco || ""}  onChange={(e) =>setNomeBanco(e.currentTarget.value)} /></div>
             <div><input className="user-input" placeholder="Numero da agencia"  value={agenciaconta || ""}  onChangeCapture={(e) =>setAgenciaConta(e.currentTarget.value)} /> </div>
-            <div><input className="user-input" placeholder="Numero da conta"  value={numeroendereco || ""}  onChange={(e) =>setNumeroConta(e.currentTarget.value)}/></div>
+            <div><input className="user-input" placeholder="Numero da conta"  value={numeroconta || ""}  onChange={(e) =>setNumeroConta(e.currentTarget.value)}/></div>
             <p>Endereço da empresa</p>
             <input className="user-input" placeholder="CEP"  value={cep || ""}  onChange={(e) =>setCep(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Logradouro"  value={logradouro || ""}  onChange={(e) =>setLogradouro(e.currentTarget.value)}/>
