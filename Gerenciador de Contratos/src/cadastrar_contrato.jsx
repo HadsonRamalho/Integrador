@@ -755,11 +755,17 @@ function CadastrarContrato(){
           placeholder="Órgão Emissor do Doc. (Ex.: PC-MG)"
         />
         <br></br>
-        <input
-          className="inputContrato"
-          onChange={(e) => setEstadoCivil(e.currentTarget.value)}
-          placeholder="Estado Civil do Sócio (Ex.: Casado)"
-        />
+        <div class= "input-box">
+            <label for= "estadoCivil"> Estado Civil </label>
+            <select id= "estadoCivil" name= "estadoCivil" required aria-label= "Estado civil do socio Administrativo"
+            onChange={(e) => setEstadoCivil(e.currentTarget.value)}>
+                <option value="" disabled selected> Selecione seu estado civil </option>
+                <option value = "Solteiro"> Solteiro(a) </option>
+                <option value = "Casado"> Casado(a) </option>
+                <option value = "Viuvo"> Viuvo(a) </option>
+                <option value = "Divorciado"> Divorciado(a) </option>
+            </select>
+        </div>
         <div class= "input-box">
             <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
             onChange={(e) => setNacionalidade(e.currentTarget.value)}>
@@ -931,19 +937,26 @@ function CadastrarContrato(){
           placeholder="Órgão Emissor do Documento (Ex.: PC-MG)"
         />
         <br></br>
-        <input
-          className="inputContrato"
-          onChange={(e) => setEstadoCivilSocioLocatario(e.currentTarget.value)}
-          placeholder="Estado Civil do Sócio (Ex.: Solteiro)"
-        />
+        <div class= "input-box">
+            <select id= "estadoCivil" name= "estadoCivil" required aria-label= "Estado civil do socio Administrativo"
+            onChange={(e) => setEstadoCivilSocioLocatario(e.currentTarget.value)}>
+                <option value="" disabled selected> Selecione seu estado civil </option>
+                <option value = "Solteiro"> Solteiro(a) </option>
+                <option value = "Casado"> Casado(a) </option>
+                <option value = "Viuvo"> Viuvo(a) </option>
+                <option value = "Divorciado"> Divorciado(a) </option>
+            </select>
+        </div>
         <div class= "input-box">
             <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
             onChange={(e) => setNacionalidadeSocioLocatario(e.currentTarget.value)}>
                 <option value="" disabled selected> Selecione a nacionalidade </option>
-                <option value = "Brasil"> Brasil </option>
-                <option value = "EUA"> Estados Unidos </option>
-                <option value = "Argentina"> Argentina </option>
-                <option value = "Chile"> Chile </option>
+                <option value = "Brasil"> Brasileiro </option>
+                <option value = "EUA"> Americano </option>
+                <option value = "Argentina"> Argentino </option>
+                <option value = "Chile"> Chileno </option>
+                <option value = "China"> Chinês </option>
+                <option value = "Coreia"> Coreano </option>
             </select>
         </div>
         <h3>Informações do contrato</h3>

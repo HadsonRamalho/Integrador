@@ -107,7 +107,7 @@ pub async fn cadastra_usuario(
     let uuid = controller::gera_hash(&email);
     // Se o email não for repetido, crie uma conta nova
     conn.exec_drop(
-        "INSERT INTO usuarios (email, nome_completo, senha, UUID, cpf, cnpj) VALUES (:email, :nome_completo, :senha, :uuid, :cpf, :cnpj)", // Interrogações são substituídas pelos parâmetros
+        "INSERT INTO usuarios (email, nomecompleto, senha, UUID, cpf, cnpj) VALUES (:email, :nome_completo, :senha, :uuid, :cpf, :cnpj)", // Interrogações são substituídas pelos parâmetros
         params! {"email" => email, "nome_completo" => nome, "senha" => senha, "uuid" => uuid,
         "cpf" => cpf, "cnpj" => cnpj} // Parâmetros a serem substituídos na query
     ).await?;

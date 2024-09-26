@@ -32,7 +32,7 @@ function CriaConta(){
   const [uf, setUf] = useState("");
 
   let idendereco ;
-  const [locadoraExiste, setLocadoraExiste] = useState(true);
+  const [locadoraExiste, setLocadoraExiste] = useState(false);
   const [mensagemEmpresa, setMensagemEmpresa] = useState("");
 
   const [complementosocio, setComplementoSocio] = useState("");
@@ -80,7 +80,6 @@ function CriaConta(){
       }else{
         setLocadoraExiste(false);
       }
-      console.log(locadoraExiste);
     } catch(error){
       console.log("Erro ao buscar o CNPJ cadastrado no Usuário: ", error);
     }
@@ -100,12 +99,14 @@ function CriaConta(){
 
   async function criarConta() {
     try{
-      const idenderecosocio = await cadastraEndereco(cepsocio, logradourosocio, 
-        numeroenderecosocio, complementosocio, cidadesocio, ufsocio
-      );
-      const idsocio = await cadastraSocioAdm(idenderecosocio, nomeCompleto, cpf, 
-        orgaoemissor, estadocivil, nacionalidade)
-      await cadastraLocadora(idsocio);
+      if (!locadoraExiste){
+        const idenderecosocio = await cadastraEndereco(cepsocio, logradourosocio, 
+          numeroenderecosocio, complementosocio, cidadesocio, ufsocio
+        );
+        const idsocio = await cadastraSocioAdm(idenderecosocio, nomeCompleto, cpf, 
+          orgaoemissor, estadocivil, nacionalidade)
+        await cadastraLocadora(idsocio);
+      }      
       await invoke("cria_conta", {nomeCompleto, email, senha1, senha2, cpf, cnpj});
       setMensagemCriarConta("Conta criada");
     }
@@ -143,26 +144,27 @@ function CriaConta(){
             />
           </div>
           <div>
-          <input required
-          className="user-input"
-          onChange={(e) => setCpf(e.currentTarget.value)}
-          placeholder="Seu CPF"
-          /> <InputMask
-          mask="999.999.999-99" // Máscara para CPF
-          value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
-          required
-          placeholder="CPF"
-      >
-          {(inputProps) => <input {...inputProps} type="text" />}
-      </InputMask> <input
-          required
-          type="email"
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="E-mail" 
-      />
-         </div>      
-          
+            <input required
+              className="user-input"
+              onChange={(e) => setCpf(e.currentTarget.value)}
+              placeholder="Seu CPF"
+            />      
+            <InputMask
+              mask="999.999.999-99" // Máscara para CPF
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              required
+              placeholder="CPF"
+            >
+              {(inputProps) => <input {...inputProps} type="text" />}
+            </InputMask> 
+            <input
+              required
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="E-mail" 
+            />
+          </div>             
           <div>
           <input required
             className="user-input"
@@ -198,34 +200,34 @@ function CriaConta(){
           </div>  
           {locadoraExiste ? (
             <div>
-            <div><input  readOnly className="user-input" placeholder="Nome da Locadora"  value={nomelocadora} /></div>
+            <div><input  readOnly className="user-input" placeholder="Nome da Locadora"  value={nomelocadora || ""} /></div>
             <p>Dados bancários da empresa</p>
-            <div><input readOnly className="user-input" placeholder="Nome do banco"  value={nomebanco} /></div>
-            <div><input readOnly className="user-input" placeholder="Numero da agencia"  value={agenciaconta} /></div>
-            <div><input readOnly className="user-input" placeholder="Numero da conta"  value={numeroconta} /></div>
+            <div><input readOnly className="user-input" placeholder="Nome do banco"  value={nomebanco || ""} /></div>
+            <div><input readOnly className="user-input" placeholder="Numero da agencia"  value={agenciaconta || ""} /></div>
+            <div><input readOnly className="user-input" placeholder="Numero da conta"  value={numeroconta || ""} /></div>
             <p>Endereço da empresa</p>
-            <input readOnly className="user-input" placeholder="CEP"  value={cep} />
-            <input readOnly className="user-input" placeholder="Logradouro"  value={logradouro} />
-            <input readOnly className="user-input" placeholder="Número"  value={numeroendereco} />
-            <input readOnly className="user-input" placeholder="Complemento"  value={complemento} />
-            <input readOnly className="user-input" placeholder="Cidade"  value={cidade} />
+            <input readOnly className="user-input" placeholder="CEP"  value={cep || ""} />
+            <input readOnly className="user-input" placeholder="Logradouro"  value={logradouro || ""} />
+            <input readOnly className="user-input" placeholder="Número"  value={numeroendereco || ""} />
+            <input readOnly className="user-input" placeholder="Complemento"  value={complemento || ""} />
+            <input readOnly className="user-input" placeholder="Cidade"  value={cidade || ""} />
             {selecionaUfDefinido(setUf, uf, true)}
             <button className="user-input" type="submit">Criar conta</button>
 
             </div>
 ) : (
             <div>
-              <div><input className="user-input" placeholder="Nome da Locadora"  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
+              <div><input className="user-input" placeholder="Nome da Locadora"  value={nomelocadora || ""}  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
             <p>Dados bancários da empresa</p>
-            <div><input className="user-input" placeholder="Nome do banco"  onChange={(e) =>setNomeBanco(e.currentTarget.value)} /></div>
-            <div><input className="user-input" placeholder="Numero da agencia" onChangeCapture={(e) =>setAgenciaConta(e.currentTarget.value)} /> </div>
-            <div><input className="user-input" placeholder="Numero da conta"  onChange={(e) =>setNumeroConta(e.currentTarget.value)}/></div>
+            <div><input className="user-input" placeholder="Nome do banco"  value={nomebanco || ""}  onChange={(e) =>setNomeBanco(e.currentTarget.value)} /></div>
+            <div><input className="user-input" placeholder="Numero da agencia"  value={agenciaconta || ""}  onChangeCapture={(e) =>setAgenciaConta(e.currentTarget.value)} /> </div>
+            <div><input className="user-input" placeholder="Numero da conta"  value={numeroendereco || ""}  onChange={(e) =>setNumeroConta(e.currentTarget.value)}/></div>
             <p>Endereço da empresa</p>
-            <input className="user-input" placeholder="CEP" onChange={(e) =>setCep(e.currentTarget.value)}/>
-            <input className="user-input" placeholder="Logradouro" onChange={(e) =>setLogradouro(e.currentTarget.value)}/>
-            <input className="user-input" placeholder="Número"  onChange={(e) =>setNumeroEndereco(e.currentTarget.value)}/>
-            <input className="user-input" placeholder="Complemento" onChange={(e) =>setComplemento(e.currentTarget.value)} />
-            <input className="user-input" placeholder="Cidade"  onChange={(e) =>setCidade(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="CEP"  value={cep || ""}  onChange={(e) =>setCep(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Logradouro"  value={logradouro || ""}  onChange={(e) =>setLogradouro(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Número"  value={numeroendereco || ""}  onChange={(e) =>setNumeroEndereco(e.currentTarget.value)}/>
+            <input className="user-input" placeholder="Complemento"  value={complemento || ""}  onChange={(e) =>setComplemento(e.currentTarget.value)} />
+            <input className="user-input" placeholder="Cidade"  value={cidade || ""}  onChange={(e) =>setCidade(e.currentTarget.value)}/>
             {selecionaUf(setUf)}
             <p>Obs.: A locadora precisa de ao menos um sócio cadastrado. Você poderá designar outro sócio após entrar no sistema.</p>
             <p>Cadastre o seu endereço:</p>

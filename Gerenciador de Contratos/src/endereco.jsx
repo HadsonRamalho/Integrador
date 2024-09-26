@@ -34,10 +34,10 @@ export async function cadastraEndereco(cep, logradouro, numeroendereco, compleme
 export const selecionaUf = (onUfChange, selectedUf = "", isReadOnly = false) => {
   return (
     <div className="input-box">
-      <label htmlFor="estadoAdm"></label>
+      <label htmlFor="estado"></label>
     <select
-      id="estadoAdm"
-      name="estadoAdm"
+      id="estado"
+      name="estado"
 
       onChange={(e) => onUfChange(e.target.value)} // Atualiza o valor selecionado
       disabled={isReadOnly} // Define se o campo é somente leitura
@@ -79,10 +79,10 @@ export const selecionaUf = (onUfChange, selectedUf = "", isReadOnly = false) => 
 export const selecionaUfDefinido = (onUfChange, selectedUf = "", isReadOnly = false) => {
   return (
     <div className="input-box">
-      <label htmlFor="estadoAdm"></label>
+      <label htmlFor="estadoDef"></label>
     <select
-      id="estadoAdm"
-      name="estadoAdm"
+      id="estadoDef"
+      name="estadoDef"
       value={selectedUf}
       onChange={(e) => onUfChange(e.target.value)} // Atualiza o valor selecionado
       disabled={isReadOnly} // Define se o campo é somente leitura
