@@ -58,6 +58,10 @@ function Home(){
   const relatorio_estoque_total = () => {
     navigate('/relatorio_estoque_total');
   };
+
+  const relatorio_estoque_maquinas_alugadas = () => {
+    navigate('/relatorio_estoque_maquinas_alugadas');
+  };
   // <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>[DEV] Formulário anterior</button>
     return (
       <div>        
@@ -77,6 +81,7 @@ function Home(){
           <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
           <button className="botoesHome" type="button" onClick={relatorio_estoque_total}>Todas as máquinas disponíveis</button>
           <button className="botoesHome" type="button" onClick={relatorio_estoque_maquina}>Máquinas em estoque</button>
+          <button className="botoesHome" type="button" onClick={relatorio_estoque_maquinas_alugadas}>Máquinas alugadas</button>
           <p>Usuário</p>
           <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
           <p>Outros</p>

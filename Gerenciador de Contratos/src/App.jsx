@@ -17,6 +17,7 @@ import CadastrarContrato from './cadastrar_contrato';
 import CadastrarMaquina from './cadastrar_maquina';
 import RelatorioEstoqueMaquina from './relatorio_estoque_maquina';
 import RelatorioEstoqueTotal from './relatorio_estoque_total';
+import RelatorioEstoqueTotalAlugadas from './relatorio_estoque_maquinas_alugadas';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/cadastrar_maquina" element = {<CadastrarMaquina/>} />
         <Route path="/relatorio_estoque_maquina" element = {<RelatorioEstoqueMaquina/>} />
         <Route path="/relatorio_estoque_total" element = {<RelatorioEstoqueTotal/>} />
+        <Route path="/relatorio_estoque_maquinas_alugadas" element = {<RelatorioEstoqueTotalAlugadas/>} />
       </Routes>
     </Router>
   );
