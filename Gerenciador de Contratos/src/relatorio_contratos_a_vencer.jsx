@@ -19,7 +19,7 @@ function RelatorioContratos(){
         setMensagem(""); 
     } catch(error){
         setVetor([]);
-        console.log("[relatorio_contratos.jsx] : ", error);
+        console.log("[relatorio_contratos_a_vencer.jsx] : ", error);
         setMensagem(error);
     }
   }  
