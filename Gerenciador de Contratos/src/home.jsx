@@ -32,7 +32,7 @@ function Home(){
   };
 
   const relatorio_contratos = () => {
-    navigate('/relatorio_contratos');
+    navigate('/relatorio_contratos_a_vencer');
   };
 
   const cadastrar_locatario = () => {
@@ -78,10 +78,10 @@ function Home(){
           <button className="botoesHome" type="button" onClick={cadastrar_locatario}>Cadastrar cliente (Locatario)</button>
           <button className="botoesHome" type="button" onClick={buscar_cliente}>Buscar Cliente (Locatario)</button>
           <p>Relatórios</p>
-          <button className="botoesHome" type="button" onClick={relatorio_contratos}>Relatório de contratos a receber</button>
+          <button className="botoesHome" type="button" onClick={relatorio_contratos}>Todos os contratos a vencer</button>
           <button className="botoesHome" type="button" onClick={relatorio_estoque_total}>Todas as máquinas disponíveis</button>
           <button className="botoesHome" type="button" onClick={relatorio_estoque_maquina}>Máquinas em estoque</button>
-          <button className="botoesHome" type="button" onClick={relatorio_estoque_maquinas_alugadas}>Máquinas alugadas</button>
+          <button className="botoesHome" type="button" onClick={relatorio_estoque_maquinas_alugadas}>Todas as máquinas alugadas</button>
           <p>Usuário</p>
           <button className="botoesHome" type="button" onClick={dados_usuario}>Meus dados</button>
           <p>Outros</p>

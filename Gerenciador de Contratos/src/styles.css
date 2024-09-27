@@ -278,7 +278,8 @@ button {
 .contract-fields {
   display: flex;
   flex-wrap: wrap;
-  padding: 8px;
+  padding: 20px;
+  word-spacing: 5px;
 }
 
 .contract-fields strong {
@@ -287,8 +288,25 @@ button {
 }
 
 .contract-fields div {
-  margin-bottom: 10px;
+  margin-bottom: 20px; 
+  margin-left: 20px;
 }
+
+.boxRelatorioContratos{
+  background-color:   #8797AF;
+  position: fixed;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center;
+  height: calc(90vh);  
+  width: calc(100vh); /*450pcx*/
+  line-height: 60px;
+  filter: blur(0 0 50px);
+  border-radius: 10px;
+  overflow: auto;
+}
+
 
 .boxBuscaCliente{
   background-color:   #8797AF;

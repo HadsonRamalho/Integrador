@@ -64,6 +64,7 @@ fn main() {
             controller::contrato::busca_contrato_nome_maquina,
             controller::contrato::estrutura_contrato,
             controller::contrato::cadastra_contrato,
+            controller::contrato::busca_contratos_a_vencer,
 
             controller::checa_email,
             controller::encontra_email_smtp,

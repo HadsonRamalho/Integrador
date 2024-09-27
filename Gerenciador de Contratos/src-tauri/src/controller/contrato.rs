@@ -272,3 +272,112 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         }
     }
 }
+
+#[tauri::command]
+pub async fn busca_contratos_a_vencer(idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
+    let idusuario = idusuario.trim();
+    if idusuario.is_empty(){
+        return Err("Erro: Um ou mais campos estão vazios".to_string())
+    }
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e.to_string())
+        }
+    };
+    let cnpj = controller::usuario::_busca_cnpj_usuario(&pool, &idusuario).await;
+    let cnpj = match cnpj{
+        Ok(cnpj) => {
+            cnpj
+        }, Err(_) => {
+            return Err("Erro: O usuário não tem um CNPJ cadastrado.".to_string())
+        }
+    };
+    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = _busca_contratos_a_vencer(cnpj).await;
+
+    match resultado_busca{
+        Ok(resultado) => {
+            if !resultado.is_empty(){
+                return Ok(resultado);
+            }
+            return Err("Erro: Não existem contratos a vencer OU não há um contrato cadastrado".to_string());
+        },
+        Err(erro) => {
+            return Err(erro.to_string());
+        }
+    }
+}
+
+fn cria_vetor_contratos(row: Vec<Row>) -> Vec<Contrato>{
+    let contratos: Vec<Contrato> =  row.into_iter().map(|row| {
+        let idcontrato = row.get::<String, _>("idcontrato").unwrap_or_default();
+        let prazolocacao = row.get::<f32, _>("prazolocacao").unwrap_or_default();
+        let dataretirada = formata_data(row.get::<Value, _>("dataretirada").unwrap());
+        let valormensal = row.get::<f32, _>("valormensal").unwrap_or_default();
+        let vencimento = formata_data(row.get::<Value, _>("vencimento").unwrap());
+        let multaatraso = row.get::<f32, _>("multaatraso").unwrap_or_default();
+        let jurosatraso = row.get::<f32, _>("jurosatraso").unwrap_or_default();
+        let avisotransferencia = row.get::<String, _>("avisotransferencia").unwrap();
+        let prazodevolucao = formata_data(row.get::<Value, _>("prazodevolucao").unwrap());
+        let cidadeforo = row.get::<String, _>("cidadeforo").unwrap_or_default();
+        let datacontrato = formata_data(row.get::<Value, _>("datacontrato").unwrap());
+        let idlocatario = row.get::<String, _>("idlocatario").unwrap_or_default();
+        let idlocador = row.get::<String, _>("idlocador").unwrap_or_default();
+        let idmaquina = row.get::<String, _>("idmaquina").unwrap_or_default();
+        let enderecoretirada = row.get::<String, _>("enderecoretirada").unwrap_or_default();
+
+        Contrato {
+            idcontrato,
+            prazolocacao,
+            dataretirada,
+            valormensal,
+            vencimento,
+            multaatraso,
+            jurosatraso,
+            avisotransferencia,
+            prazodevolucao,
+            cidadeforo,
+            datacontrato,
+            idlocatario,
+            idlocador,
+            idmaquina,
+            enderecoretirada,
+        }
+    }).collect();
+    return contratos
+}
+
+pub async fn _busca_contratos_a_vencer(cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error> {
+    let pool = match controller::cria_pool().await {
+        Ok(pool) => {
+            pool
+        }, 
+        Err(e) =>{
+            return Err(e)
+        }
+    };
+    let mut conn = pool.get_conn().await?;
+    let cnpj = cnpj.trim();
+
+
+    let rows: Vec<Row> = conn.exec(
+        "SELECT ca.idcontrato, ca.prazolocacao, ca.dataretirada, ca.valormensal, ca.vencimento,
+       ca.multaatraso, ca.jurosatraso, ca.avisotransferencia, ca.prazodevolucao, 
+       ca.cidadeforo, ca.datacontrato, ca.idlocatario, ca.idlocador, ca.idmaquina, 
+       ca.enderecoretirada
+        FROM contrato_aluguel ca
+        JOIN locadora ld ON ca.idlocador = ld.idlocadora
+        JOIN maquina ma ON ca.idmaquina = ma.idmaquina
+        WHERE ld.cnpj = :cnpj
+        AND ca.vencimento > CURDATE()
+        ORDER BY ca.valormensal DESC;",
+        params! {"cnpj" => cnpj }
+    ).await?;
+
+    let contratos = cria_vetor_contratos(rows);
+    println!("{:?}", contratos);
+
+    Ok(contratos)
+}

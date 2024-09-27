@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::model::params;
 use crate::controller;
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct Contrato{
     pub idcontrato: String,
     pub prazolocacao: f32,

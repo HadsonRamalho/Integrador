@@ -33,7 +33,7 @@ function RelatorioEstoqueMaquina(){
           required          
           className="inputRelatorioEstoqueMaquina"
           onChange={(e) => setNomeMaquina(e.currentTarget.value)}
-          placeholder="Buscar por nome da máquina (Nome completo, igual consta no cadastro da máquina)"
+          placeholder="Buscar pelo nome da máquina"
         />
         <br/>
         <button className="botoesHome" type="button" onClick={buscaMaquina}>Buscar</button>
