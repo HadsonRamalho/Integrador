@@ -11,6 +11,7 @@ use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
 use super::gera_hash;
+use super::maquina::aluga_maquina;
 use super::maquina::formata_valor_f32;
 
 #[tauri::command]
@@ -232,6 +233,8 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         return Err(MeuErro::CamposVazios.to_string())
     }
 
+    let idmaquina_cpy = idmaquina.clone();
+
     let idcontrato = gera_hash(&idlocatario);
     let idcontrato: (&str, &str) = idcontrato.split_at(45 as usize);
     let idcontrato: String = idcontrato.0.to_string();
@@ -251,6 +254,14 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         idmaquina, 
         enderecoretirada        
     };
+    let resultado_aluguel = aluga_maquina(&idmaquina_cpy).await;
+    match resultado_aluguel{
+        Ok(_) => {},
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(e.to_string())
+        }
+    }
     let resultado_cadastro = model::contrato::registra_contrato(contrato).await;
     match resultado_cadastro{
         Ok(_) => {

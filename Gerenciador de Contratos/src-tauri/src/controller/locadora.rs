@@ -35,19 +35,12 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
         || numeroagenciabanco.trim().is_empty() || nomebanco.trim().is_empty() || nomelocadora.trim().is_empty(){
         return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
-    let cnpj = match formata_cnpj(&cnpj){
-        Ok(_) =>{
-            cnpj
-        },
-        Err(e) => {
-            return Err(e);
-        }
-    };
-    let id: String = controller::gera_hash(&cnpj);
+    let cnpjalterado = formata_cnpj(&cnpj)?;
+    let id: String = controller::gera_hash(&cnpjalterado);
     let locadora: serde_json::Value = serde_json::json!({
         "idlocadora": id,
         "idendereco": idendereco,
-        "cnpj": cnpj,
+        "cnpj": cnpjalterado,
         "numerocontabanco": numerocontabanco,
         "numeroagenciabanco": numeroagenciabanco,
         "nomebanco": nomebanco,
@@ -79,7 +72,6 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
     let idlocadora = locadora.idlocadora.clone();
     let resultado_busca: Result<String, mysql_async::Error> =
         model::locadora::_busca_id_locadora(&locadora.cnpj).await;
-
     match resultado_busca {
         Ok(resultado) => {
             if resultado.is_empty() {
@@ -110,15 +102,7 @@ pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
     if cnpj.trim().is_empty(){
         return Err(MeuErro::CnpjVazio.to_string());
     }
-    let cnpj = formata_cnpj(cnpj);
-    let cnpj = match cnpj{
-        Ok(_) => {
-            cnpj.unwrap()
-        },
-         Err(e) => {
-            return Err(e);
-        }
-    };
+    let cnpj = formata_cnpj(cnpj)?;
     let resultado: Result<String, mysql_async::Error> = model::locadora::_busca_id_locadora(&cnpj).await;
     match resultado{
         Ok(id) =>{
@@ -145,10 +129,12 @@ fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
     let idlocadora: String = idlocadora.0.to_string();
+    let cnpj = locadora["cnpj"].as_str().unwrap_or("").to_string();
+    let cnpj = formata_cnpj(&cnpj)?;
     let locadora: model::locadora::Locadora = model::locadora::Locadora {
         idlocadora: idlocadora,
         idendereco: locadora["idendereco"].as_str().unwrap_or("").to_string(),
-        cnpj: locadora["cnpj"].as_str().unwrap_or("").to_string(),
+        cnpj: cnpj,
         numerocontabanco: locadora["numerocontabanco"]
             .as_str()
             .unwrap_or("")

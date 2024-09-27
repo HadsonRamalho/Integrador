@@ -5,6 +5,7 @@ import ChamaContrato from "./pdf_call";
 import { useEffect } from "react";
 import {formataValor} from "./maquina";
 import {selecionaUf, selecionaUfDefinido} from "./endereco";
+import {selecionaEstadoCivil} from "./socioAdm";
 
 
 function CadastrarContrato(){
@@ -682,7 +683,7 @@ function CadastrarContrato(){
             await cadastraDados();
           }}
         >
-        <h3>Cadastro da locadora</h3>
+        <h3>Informações da locadora</h3>
         <input readOnly={true} required
           className="inputContrato"
           placeholder={cnpj || "CNPJ da Locadora (Ex.: 11.222.333/0001-01)"}
@@ -693,7 +694,7 @@ function CadastrarContrato(){
           placeholder={nomelocadora || "Nome da Locadora (Ex.: Mineração XYZ)"}
         />
         <br></br>
-        <h3>Cadastro do endereço da locadora</h3>
+        <h3>Informações do endereço da locadora</h3>
         <input readOnly={true} required
           className="inputContrato"
           placeholder={cep || "CEP da Locadora (Ex.: 40400-400)"}
@@ -755,17 +756,7 @@ function CadastrarContrato(){
           placeholder="Órgão Emissor do Doc. (Ex.: PC-MG)"
         />
         <br></br>
-        <div class= "input-box">
-            <label for= "estadoCivil"> Estado Civil </label>
-            <select id= "estadoCivil" name= "estadoCivil" required aria-label= "Estado civil do socio Administrativo"
-            onChange={(e) => setEstadoCivil(e.currentTarget.value)}>
-                <option value="" disabled selected> Selecione seu estado civil </option>
-                <option value = "Solteiro"> Solteiro(a) </option>
-                <option value = "Casado"> Casado(a) </option>
-                <option value = "Viuvo"> Viuvo(a) </option>
-                <option value = "Divorciado"> Divorciado(a) </option>
-            </select>
-        </div>
+        {selecionaEstadoCivil(setEstadoCivil)}
         <div class= "input-box">
             <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
             onChange={(e) => setNacionalidade(e.currentTarget.value)}>
@@ -855,17 +846,16 @@ function CadastrarContrato(){
         <h3>Cadastro do endereço do locatario</h3>
         <input required readOnly={true}
           className="inputContrato"
+          onChange={(e) => setCepLocatario(e.currentTarget.value)}
+          placeholder={cepLocatario || "CEP (Ex.: 40400-400)"} 
+        />
+        <br></br>
+        <input required readOnly={true}
+          className="inputContrato"
           placeholder={cidadeLocatario || "Cidade (Ex.: Belo Horizonte)" }
         />
         <br></br>
         {selecionaUfDefinido(setUfSocioLocatario, ufLocatario, true)}
-
-        <br></br>
-        <input required readOnly={true}
-          className="inputContrato"
-          onChange={(e) => setCepLocatario(e.currentTarget.value)}
-          placeholder={cepLocatario || "CEP (Ex.: 40400-400)"} 
-        />
         <br></br>
         <input required readOnly={true}
           className="inputContrato"
@@ -883,39 +873,6 @@ function CadastrarContrato(){
           className="inputContrato"
           onChange={(e) => setComplementoLocatario(e.currentTarget.value)}
           placeholder={complementoLocatario || "Complemento do endereço (Ex.: Sala 01)"}
-        />
-        <br></br>
-        <h3>Cadastro do endereço do sócio administrador do locatario</h3>
-          <input required
-          className="inputContrato"
-          onChange={(e) => setCidadeSocioLocatario(e.currentTarget.value)}
-          placeholder={"Cidade (Ex.: Belo Horizonte)"} 
-        />
-        <br></br>
-        {selecionaUf(setUfSocioLocatario)}
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setCepSocioLocatario(e.currentTarget.value)}
-          placeholder={"CEP (Ex.: 40400-400)" }
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setLogradouroSocioLocatario(e.currentTarget.value)}
-          placeholder={"Logradouro (Ex.: Avenida Central)"} 
-        />
-        <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setNumeroSocioLocatario(e.currentTarget.value)}
-          placeholder={"Numero do endereço (Ex.: 101B)"}
-        />
-        <br></br>
-        <input
-          className="inputContrato"
-          onChange={(e) => setComplementoSocioLocatario(e.currentTarget.value)}
-          placeholder={"Complemento do endereço (Ex.: Sala 01)"}
         />
         <br></br>
         <h3>Cadastro do Sócio Administrador do locatario</h3>
@@ -937,16 +894,7 @@ function CadastrarContrato(){
           placeholder="Órgão Emissor do Documento (Ex.: PC-MG)"
         />
         <br></br>
-        <div class= "input-box">
-            <select id= "estadoCivil" name= "estadoCivil" required aria-label= "Estado civil do socio Administrativo"
-            onChange={(e) => setEstadoCivilSocioLocatario(e.currentTarget.value)}>
-                <option value="" disabled selected> Selecione seu estado civil </option>
-                <option value = "Solteiro"> Solteiro(a) </option>
-                <option value = "Casado"> Casado(a) </option>
-                <option value = "Viuvo"> Viuvo(a) </option>
-                <option value = "Divorciado"> Divorciado(a) </option>
-            </select>
-        </div>
+        {selecionaEstadoCivil(setEstadoCivilSocioLocatario)}
         <div class= "input-box">
             <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
             onChange={(e) => setNacionalidadeSocioLocatario(e.currentTarget.value)}>
@@ -959,6 +907,39 @@ function CadastrarContrato(){
                 <option value = "Coreia"> Coreano </option>
             </select>
         </div>
+        <h3>Cadastro do endereço do sócio administrador do locatario</h3>
+        <input required
+          className="inputContrato"
+          onChange={(e) => setCepSocioLocatario(e.currentTarget.value)}
+          placeholder={"CEP (Ex.: 40400-400)" }
+        />
+        <br></br>
+          <input required
+          className="inputContrato"
+          onChange={(e) => setCidadeSocioLocatario(e.currentTarget.value)}
+          placeholder={"Cidade (Ex.: Belo Horizonte)"} 
+        />
+        <br></br>
+        {selecionaUf(setUfSocioLocatario)}
+        <br></br>        
+        <input required
+          className="inputContrato"
+          onChange={(e) => setLogradouroSocioLocatario(e.currentTarget.value)}
+          placeholder={"Logradouro (Ex.: Avenida Central)"} 
+        />
+        <br></br>
+        <input required
+          className="inputContrato"
+          onChange={(e) => setNumeroSocioLocatario(e.currentTarget.value)}
+          placeholder={"Numero do endereço (Ex.: 101B)"}
+        />
+        <br></br>
+        <input
+          className="inputContrato"
+          onChange={(e) => setComplementoSocioLocatario(e.currentTarget.value)}
+          placeholder={"Complemento do endereço (Ex.: Sala 01)"}
+        />
+        <br></br>        
         <h3>Informações do contrato</h3>
         <h4>Data do contrato</h4>
         <input required

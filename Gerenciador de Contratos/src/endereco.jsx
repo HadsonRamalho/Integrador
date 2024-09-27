@@ -31,14 +31,23 @@ export async function cadastraEndereco(cep, logradouro, numeroendereco, compleme
     }
 }
 
-export const selecionaUf = (onUfChange, selectedUf = "", isReadOnly = false) => {
+export function widthstr(valor){
+  let valorvh = valor + "vh";
+  return valorvh
+}
+
+export function marginstr(valor){
+  let valorstr = valor + "%";
+  return valorstr
+}
+
+export const selecionaUf = (onUfChange, isReadOnly = false, widthvh = 65, marginleft = 9) => {
   return (
     <div className="input-box">
       <label htmlFor="estado"></label>
     <select
-      id="estado"
       name="estado"
-
+      style={{width: widthstr(widthvh), marginLeft: marginstr(marginleft)}}
       onChange={(e) => onUfChange(e.target.value)} // Atualiza o valor selecionado
       disabled={isReadOnly} // Define se o campo é somente leitura
       required

@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 import { cadastraEndereco, selecionaUf, selecionaUfDefinido } from "./endereco";
 import { cadastraSocioAdm } from "./socioAdm";
+import {selecionaNacionalidade} from "./socioAdm";
 import InputMask from 'react-input-mask';
 //import "./App.css";
 
@@ -54,6 +55,7 @@ function CriaConta(){
         const numerocontabanco = numeroconta;
         const numeroagenciabanco = agenciaconta;
         const locadora = await invoke("estrutura_locadora", {idendereco, cnpj, numerocontabanco, numeroagenciabanco, nomelocadora, nomebanco, idsocio});
+        console.log(cnpj);
         await invoke("cadastra_locadora", {locadora});
     } catch(error){
       console.log(error);
@@ -100,9 +102,12 @@ function CriaConta(){
   async function criarConta() {
     try{
       if (!locadoraExiste){
+        console.log(cepsocio, logradourosocio, 
+          numeroenderecosocio, complementosocio, cidadesocio, ufsocio);
         const idenderecosocio = await cadastraEndereco(cepsocio, logradourosocio, 
           numeroenderecosocio, complementosocio, cidadesocio, ufsocio
         );
+        
         const idsocio = await cadastraSocioAdm(idenderecosocio, nomeCompleto, cpf, 
           orgaoemissor, estadocivil, nacionalidade)
         await cadastraLocadora(idsocio);
@@ -203,8 +208,8 @@ function CriaConta(){
             <div><input  readOnly className="user-input" placeholder="Nome da Locadora"  value={nomelocadora || ""} /></div>
             <p>Dados bancários da empresa</p>
             <div><input readOnly className="user-input" placeholder="Nome do banco"  value={nomebanco || ""} /></div>
-            <div><input readOnly className="user-input" placeholder="Numero da agencia"  value={agenciaconta || ""} /></div>
             <div><input readOnly className="user-input" placeholder="Numero da conta"  value={numeroconta || ""} /></div>
+            <div><input readOnly className="user-input" placeholder="Numero da agencia"  value={agenciaconta || ""} /></div>
             <p>Endereço da empresa</p>
             <input readOnly className="user-input" placeholder="CEP"  value={cep || ""} />
             <input readOnly className="user-input" placeholder="Logradouro"  value={logradouro || ""} />
@@ -220,15 +225,15 @@ function CriaConta(){
               <div><input className="user-input" placeholder="Nome da Locadora"  value={nomelocadora || ""}  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
             <p>Dados bancários da empresa</p>
             <div><input className="user-input" placeholder="Nome do banco"  value={nomebanco || ""}  onChange={(e) =>setNomeBanco(e.currentTarget.value)} /></div>
-            <div><input className="user-input" placeholder="Numero da agencia"  value={agenciaconta || ""}  onChangeCapture={(e) =>setAgenciaConta(e.currentTarget.value)} /> </div>
             <div><input className="user-input" placeholder="Numero da conta"  value={numeroconta || ""}  onChange={(e) =>setNumeroConta(e.currentTarget.value)}/></div>
+            <div><input className="user-input" placeholder="Numero da agencia"  value={agenciaconta || ""}  onChangeCapture={(e) =>setAgenciaConta(e.currentTarget.value)} /> </div>
             <p>Endereço da empresa</p>
             <input className="user-input" placeholder="CEP"  value={cep || ""}  onChange={(e) =>setCep(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Logradouro"  value={logradouro || ""}  onChange={(e) =>setLogradouro(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Número"  value={numeroendereco || ""}  onChange={(e) =>setNumeroEndereco(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Complemento"  value={complemento || ""}  onChange={(e) =>setComplemento(e.currentTarget.value)} />
             <input className="user-input" placeholder="Cidade"  value={cidade || ""}  onChange={(e) =>setCidade(e.currentTarget.value)}/>
-            {selecionaUf(setUf)}
+            {selecionaUf(setUf, false, 50)}
             <p>Obs.: A locadora precisa de ao menos um sócio cadastrado. Você poderá designar outro sócio após entrar no sistema.</p>
             <p>Cadastre o seu endereço:</p>
             <input className="user-input" placeholder="CEP" onChange={(e) =>setCepSocio(e.currentTarget.value)}/>
@@ -236,7 +241,7 @@ function CriaConta(){
             <input className="user-input" placeholder="Número"  onChange={(e) =>setNumeroEnderecoSocio(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Complemento" onChange={(e) =>setComplementoSocio(e.currentTarget.value)} />
             <input className="user-input" placeholder="Cidade"  onChange={(e) =>setCidadeSocio(e.currentTarget.value)}/>
-            {selecionaUf(setUfSocio)}
+            {selecionaUf(setUfSocio, false, 50)}
             <p></p>
             <p>Continue o cadastro dos seus dados</p>
             <div><input required
@@ -251,12 +256,8 @@ function CriaConta(){
           placeholder="Estado civil"
           />
           </div>
-          <div>
-          <input required
-          className="user-input"
-          onChange={(e) => setNacionalidade(e.currentTarget.value)}
-          placeholder="Nacionalidade"
-          />
+          <div className= "input-box">
+            {selecionaNacionalidade(setNacionalidade, 50, 9)}
           </div>
             <button className="user-input" type="submit">Criar conta e cadastrar Locadora</button>
               

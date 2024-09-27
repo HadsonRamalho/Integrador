@@ -58,15 +58,14 @@ function Home(){
   const relatorio_estoque_total = () => {
     navigate('/relatorio_estoque_total');
   };
-
+  // <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>[DEV] Formulário anterior</button>
     return (
       <div>        
         <div id="boxHome">
           <p>Contrato</p>
           <button className="botoesHome" type="button" onClick={cadastrar_contrato}>Cadastrar contrato</button>
           <button className="botoesHome" type="button" onClick={buscar_contrato}>Buscar Contrato</button>
-          <button className="botoesHome" type="button" onClick={cpdf}>Modelo de contrato (react-pdf/renderer)</button>
-          <button className="botoesHome" type="button" onClick={() => window.location.href = "formulario.html"}>HTML (Obsoleto)</button>
+          <button className="botoesHome" type="button" onClick={cpdf}>[DEV] Contrato padrão</button>
 
           <p>Máquina</p>
           <button className="botoesHome" type="button" onClick={cadastrar_maquina}>Cadastrar maquina</button>

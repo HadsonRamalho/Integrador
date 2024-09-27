@@ -16,6 +16,7 @@ use std::env;
 
 mod controller;
 mod model;
+mod test;
 
 /// Função principal que inicia a aplicação Tauri.
 ///

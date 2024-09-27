@@ -5,6 +5,8 @@ use crate::{
     model::{self, erro::MeuErro},
 };
 
+use super::cria_pool;
+
 #[tauri::command]
 pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numserie: String) -> Result<serde_json::Value, String> {
     if nomemaquina.is_empty() || valoraluguel.is_empty() || numserie.is_empty(){
@@ -149,4 +151,15 @@ pub fn formata_valor_f32(valor: &str) -> Result<f32, String>{
         Err(e) => {return Err(e.to_string())}
     };
     return Ok(valor);
+}
+
+pub async fn aluga_maquina(idmaquina: &str) -> Result<(), mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_atualizacao = conn.exec_drop("UPDATE maquina SET disponibilidade = 0 WHERE idmaquina = :idmaquina", 
+    params! {"idmaquina" => idmaquina}).await;
+    match resultado_atualizacao{
+        Ok(_) => {return Ok(())},
+        Err(e) => {return Err(e)}
+    }
 }
