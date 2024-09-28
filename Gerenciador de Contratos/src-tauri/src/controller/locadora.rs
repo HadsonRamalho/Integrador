@@ -33,9 +33,6 @@ use super::cria_pool;
 ///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
 #[tauri::command]
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String, idsocio: String) -> Result<serde_json::Value, String>{
-    if nomebanco.trim().len() < 4{
-        return Err("Erro: Nome do banco é inválido.".to_string());
-    }
     if idendereco.trim().is_empty() || cnpj.trim().is_empty() || numerocontabanco.trim().is_empty()
         || numeroagenciabanco.trim().is_empty() || nomebanco.trim().is_empty() || nomelocadora.trim().is_empty(){
         return Err("Erro: Um ou mais campos estão vazios.".to_string());

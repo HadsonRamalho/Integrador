@@ -1,6 +1,6 @@
 use mysql_async::Pool;
 
-use crate::{controller::{self, cria_pool, usuario::{atualiza_email, cria_conta, deleta_conta}}, model::usuario::busca_id_usuario};
+use crate::{controller::{self, cria_pool, usuario::{atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha}}, model::usuario::busca_id_usuario};
 #[cfg(test)]
 
 async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
@@ -29,7 +29,7 @@ async fn _busca_id_usuario(email: &str)  -> Result<String, String>{
 
 #[tokio::test]
 async fn test_cria_deleta_usuario_ok(){
-    let email = "usuariotesteX@teste.com";
+    let email = "usuarioteste1@teste.com";
     let nome_completo = "Usuario Teste";        
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
@@ -45,7 +45,7 @@ async fn test_cria_deleta_usuario_ok(){
 
 #[tokio::test]
 async fn test_busca_nome_usuario_ok() {    
-    let email = "usuariotesteY@teste.com";
+    let email = "usuarioteste2@teste.com";
     let nome_completo = "Usuario Teste";        
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
@@ -68,7 +68,7 @@ async fn test_busca_nome_usuario_ok() {
 }
 
 #[tokio::test]
-async fn test_busca_nome_usuario_id_invalido() {
+async fn test_busca_nome_usuario_id_invalido_ok() {
     let mock_pool = _setup_pool().await.expect("Erro ao criar a pool");
 
     let resultado_busca = controller::usuario::_busca_nome_usuario(&mock_pool, "$2b$10$").await;
@@ -76,8 +76,8 @@ async fn test_busca_nome_usuario_id_invalido() {
 }
 
 #[tokio::test]
-async fn test_verifica_email_senha(){
-    let email = "usuariotesteZ@teste.com";
+async fn test_verifica_email_senha_ok(){
+    let email = "usuarioteste3@teste.com";
     let nome_completo = "Usuario Teste";        
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
@@ -98,15 +98,15 @@ async fn test_verifica_email_senha(){
 }
 
 #[tokio::test]
-async fn test_atualiza_email(){
-    let email = "usuarioteste9@teste.com";
+async fn test_atualiza_email_ok(){
+    let email = "usuarioteste4@teste.com";
     let nome_completo = "Usuario Teste";        
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
     assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok());
 
-    assert!(atualiza_email(email.to_string(), "usuariotesteV@teste.com".to_string()).await.is_ok(),
+    assert!(atualiza_email(email.to_string(), "usuariotesteA@teste.com".to_string()).await.is_ok(),
         "Erro ao atualizar o e-mail do usuário");
 
     let idusuario = match _busca_id_usuario(email).await{
@@ -117,6 +117,35 @@ async fn test_atualiza_email(){
         }
     };
 
-    assert!(_limpa_usuario(&idusuario, "usuariotesteV@teste.com").await.is_ok(),
+    assert!(_limpa_usuario(&idusuario, "usuariotesteA@teste.com").await.is_ok(),
         "Erro ao deletar a conta do usuário");
+}
+
+#[tokio::test]
+async fn test_atualiza_senha_ok(){
+    let email = "usuarioteste5@teste.com";
+    let nome_completo = "Usuario Teste";        
+    let senha = "senhausuarioteste1.";
+    let cpf = "12312312301";
+    let cnpj = "11331220000101";
+    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
+        "Erro ao atualizar o e-mail do usuário");
+    let nova_senha = "novasenhausuarioteste1.";
+    assert!(atualiza_senha(email, nova_senha).await.is_ok(),
+        "Erro ao atualizar a senha do usuário");
+    assert!(verifica_senha(email, nova_senha).await.is_ok(),
+        "Erro ao realizar login com a nova senha");
+    let idusuario = match _busca_id_usuario(email).await{
+        Ok(idusuario) => idusuario,
+        Err(e) => {
+            println!("Erro ao buscar o ID do usuário: {}", e);
+            return;
+        }
+    };
+    assert!(_limpa_usuario(&idusuario, email).await.is_ok(),
+        "Erro ao deletar a conta do usuário");
+}
+
+async fn test_verifica_token_ok(){
+
 }
