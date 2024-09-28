@@ -148,13 +148,8 @@ function CriaConta(){
             placeholder="Nome completo"
             />
           </div>
-          <div>
-            <input required
-              className="user-input"
-              onChange={(e) => setCpf(e.currentTarget.value)}
-              placeholder="Seu CPF"
-            />      
-            <InputMask
+          <div>    
+            <InputMask className="user-input"
               mask="999.999.999-99" // Máscara para CPF
               value={cpf}
               onChange={(e) => setCpf(e.target.value)}
@@ -164,19 +159,12 @@ function CriaConta(){
               {(inputProps) => <input {...inputProps} type="text" />}
             </InputMask> 
             <input
-              required
+              required className="user-input"
               type="email"
               onChange={(e) => setEmail(e.target.value)}
               placeholder="E-mail" 
             />
           </div>             
-          <div>
-          <input required
-            className="user-input"
-            onChange={(e) => setEmail(e.currentTarget.value)}
-            placeholder="E-mail " 
-          />
-          </div>
           <div>
           <input required
             className="user-input"            
