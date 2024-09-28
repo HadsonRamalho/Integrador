@@ -1,6 +1,6 @@
 use mysql_async::Pool;
 
-use crate::{controller::{self, cria_pool, usuario::{atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha}}, model::usuario::busca_id_usuario};
+use crate::{controller::{self, cria_pool, usuario::{atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha}}, model::{self, usuario::busca_id_usuario}};
 #[cfg(test)]
 
 async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
@@ -106,10 +106,22 @@ async fn test_atualiza_email_ok(){
     let cnpj = "11331220000101";
     assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok());
 
-    assert!(atualiza_email(email.to_string(), "usuariotesteA@teste.com".to_string()).await.is_ok(),
+    let pool = match _setup_pool().await{
+        Ok(pool) => {pool},
+        Err(e) => {
+            println!("Erro ao criar a pool: {}", e);
+            return;
+        }
+    };
+    let novo_email = "usuariotesteA@teste.com";
+    
+    assert!(model::busca_email(&pool, novo_email).await.is_err(),
+        "Erro ao buscar e-mail existente");
+
+    assert!(atualiza_email(email.to_string(), novo_email.to_string()).await.is_ok(),
         "Erro ao atualizar o e-mail do usuário");
 
-    let idusuario = match _busca_id_usuario(email).await{
+    let idusuario = match _busca_id_usuario(novo_email).await{
         Ok(idusuario) => idusuario,
         Err(e) => {
             println!("Erro ao buscar o ID do usuário: {}", e);
@@ -117,7 +129,7 @@ async fn test_atualiza_email_ok(){
         }
     };
 
-    assert!(_limpa_usuario(&idusuario, "usuariotesteA@teste.com").await.is_ok(),
+    assert!(_limpa_usuario(&idusuario, novo_email).await.is_ok(),
         "Erro ao deletar a conta do usuário");
 }
 
@@ -146,6 +158,62 @@ async fn test_atualiza_senha_ok(){
         "Erro ao deletar a conta do usuário");
 }
 
+#[tokio::test]
 async fn test_verifica_token_ok(){
+    let email = "usuarioteste6@teste.com";
+    let nome_completo = "Usuario Teste";        
+    let senha = "senhausuarioteste1.";
+    let cpf = "12312312301";
+    let cnpj = "11331220000101";
+    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
+        "Erro ao atualizar o e-mail do usuário");
+    let idusuario = match _busca_id_usuario(email).await{
+        Ok(idusuario) => idusuario,
+        Err(e) => {
+            println!("Erro ao buscar o ID do usuário: {}", e);
+            return;
+        }
+    };
+    assert!(controller::usuario::verifica_token(email, &idusuario).await.is_ok(),
+        "Erro ao verificar o token do usuário");
+    assert!(_limpa_usuario(&idusuario, email).await.is_ok(),
+        "Erro ao deletar a conta do usuário");
+}
 
+#[tokio::test]
+async fn test_verifica_token_err(){
+    let email = "usuarioteste7@teste.com";
+    let nome_completo = "Usuario Teste";        
+    let senha = "senhausuarioteste1.";
+    let cpf = "12312312301";
+    let cnpj = "11331220000101";
+    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
+        "Erro ao atualizar o e-mail do usuário");
+    let idusuario = match _busca_id_usuario(email).await{
+        Ok(idusuario) => idusuario,
+        Err(e) => {
+            println!("Erro ao buscar o ID do usuário: {}", e);
+            return;
+        }
+    };
+    let email_2 = "usuarioteste7_2@teste.com";
+    let nome_completo_2 = "Usuario Teste";        
+    let senha_2 = "senhausuarioteste1.";
+    let cpf_2 = "12312312301";
+    let cnpj_2 = "11331220000101";
+    assert!(cria_conta(nome_completo_2, email_2, senha_2, senha_2, cpf_2, cnpj_2).await.is_ok(),
+        "Erro ao atualizar o e-mail do usuário");
+    let idusuario_2 = match _busca_id_usuario(email_2).await{
+        Ok(idusuario) => idusuario,
+        Err(e) => {
+            println!("Erro ao buscar o ID do usuário: {}", e);
+            return;
+        }
+    };
+    assert!(controller::usuario::verifica_token(email_2, &idusuario).await.is_err(),
+        "Erro ao verificar um token inválido do usuário");
+    assert!(_limpa_usuario(&idusuario, email).await.is_ok(),
+        "Erro ao deletar a conta do usuário");
+    assert!(_limpa_usuario(&idusuario_2, email_2).await.is_ok(),
+        "Erro ao deletar a conta do usuário");
 }

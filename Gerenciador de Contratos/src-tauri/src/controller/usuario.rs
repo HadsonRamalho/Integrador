@@ -128,7 +128,7 @@ pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), S
             return Err("Erro ao atualizar o e-mail".to_string());
         }
     }
- 
+    
     let r: Result<(), mysql_async::Error> = model::usuario::atualiza_email(&pool, &email_antigo, email).await;
     match r{
         Ok(()) => {
