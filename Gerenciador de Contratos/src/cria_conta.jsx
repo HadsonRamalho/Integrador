@@ -101,18 +101,18 @@ function CriaConta(){
 
   async function criarConta() {
     try{
+      await invoke("cria_conta", {nomeCompleto, email, senha1, senha2, cpf, cnpj});
+      const idusuario = await invoke("busca_id", {email});
       if (!locadoraExiste){
         console.log(cepsocio, logradourosocio, 
           numeroenderecosocio, complementosocio, cidadesocio, ufsocio);
         const idenderecosocio = await cadastraEndereco(cepsocio, logradourosocio, 
           numeroenderecosocio, complementosocio, cidadesocio, ufsocio
         );
-        
         const idsocio = await cadastraSocioAdm(idenderecosocio, nomeCompleto, cpf, 
-          orgaoemissor, estadocivil, nacionalidade)
+          orgaoemissor, estadocivil, nacionalidade, idusuario)
         await cadastraLocadora(idsocio);
       }      
-      await invoke("cria_conta", {nomeCompleto, email, senha1, senha2, cpf, cnpj});
       setMensagemCriarConta("Conta criada");
     }
     catch(error){

@@ -15,5 +15,11 @@ pub enum MeuErro{
     #[error("O CNPJ está vazio")]
     CnpjVazio,
     #[error("Um ou mais campos estão vazios")]
-    CamposVazios
+    CamposVazios,
+    #[error("ID não encontrado")]
+    IdNaoEncontrado,
+    #[error("Credenciais inválidas")]
+    CredenciaisInvalidas,
+    #[error("Não foi possível apagar o registro")]
+    ImpossivelApagar
 }

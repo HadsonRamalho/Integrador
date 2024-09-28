@@ -45,6 +45,7 @@ fn main() {
             controller::locadora::busca_id_locadora,
             controller::locadora::estrutura_locadora,
             controller::locadora::locadora_existente,
+            controller::locadora::verifica_usuario_socio_locadora,
 
             controller::maquina::estrutura_maquina,
             controller::maquina::busca_maquina_nome,
@@ -55,7 +56,8 @@ fn main() {
             controller::maquina::gera_estoque_total_alugadas,
 
             controller::socioadm::estrutura_socio_adm,
-            controller::socioadm::cadastra_socio_adm,            
+            controller::socioadm::cadastra_socio_adm, 
+            controller::socioadm::estrutura_primeiro_socio,           
 
             controller::endereco::estrutura_endereco,
             controller::endereco::_salva_endereco,

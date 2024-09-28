@@ -78,6 +78,17 @@ function DadosUsuario() {
     }
   }
 
+  async function verifica_usuario_socio_locadora(){
+    try{
+      const idusuario = localStorage.getItem('token');
+      const id = idusuario;
+      const cnpj = await invoke("busca_cnpj_usuario", {id});
+      await invoke("verifica_usuario_socio_locadora", {idusuario, cnpj});
+    } catch(error){
+      console.log(error);
+    }
+  }
+
   return (
     <div id="boxDadosUsuario">
       <h1>Dados do Usuário</h1>
@@ -108,7 +119,7 @@ function DadosUsuario() {
       </div>
       <button onClick={home}>Voltar</button>
       <div>
-        <button> Apagar minha conta </button>
+        <button onClick={verifica_usuario_socio_locadora}> Apagar minha conta </button>
       </div>
     </div>
   );

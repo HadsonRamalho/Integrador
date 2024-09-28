@@ -1,9 +1,13 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import {widthstr, marginstr} from "./endereco";
 
-export async function estruturaSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade){
+export async function estruturaSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade, idsocio = ""){
     try{
-      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade});
+      if (idsocio == ""){
+        const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade});
+        return socio;
+      }
+      const socio = await invoke("estrutura_primeiro_socio", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade, idsocio});
       return socio;
     } catch(error) {
       console.log("[estruturaSocioAdm] : ", error);
@@ -11,15 +15,23 @@ export async function estruturaSocioAdm(idendereco, nome, cpf, orgaoemissor, est
     }
 }
 
-export async function cadastraSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade){
+export async function cadastraSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade, idsocio = ""){
     try{
-      const socioadm = await estruturaSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade);
-      const idsocio = await invoke("cadastra_socio_adm", {socioadm});
-      return idsocio;
+      const socioadm = await estruturaSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade, idsocio);
+      const idsocio_ = await invoke("cadastra_socio_adm", {socioadm});
+      return idsocio_;
     } catch(error){
       console.log("[cadastraSocioAdm] : ", error);
       throw(error);
     }
+}
+
+export async function cadastraPrimeiroSocioLocadora(idsocio, idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade){
+  try{
+    const socioadm = await invoke("");
+  } catch(error){
+    console.log(error);
+  }
 }
 
 export const selecionaNacionalidade = (setNacionalidade, widthvh = 65, marginleft = 9) => {

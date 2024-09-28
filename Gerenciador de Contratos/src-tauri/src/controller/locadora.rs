@@ -1,8 +1,13 @@
+use mysql_async::params;
+use mysql_async::prelude::Queryable;
+
 use crate::model::erro::MeuErro;
 use crate::model::locadora::Locadora;
 use crate::model::locadora::_cadastra_locadora;
 use crate::model;
 use crate::controller;
+
+use super::cria_pool;
 
 /// Função para criar uma estrutura de dados para uma locadora.
 ///
@@ -196,4 +201,36 @@ pub fn formata_cnpj(cnpj: &str) -> Result<String, String>{
         cnpjfinal.push(u);
     }
     return Ok(cnpjfinal);
+}
+
+#[tauri::command]
+pub async fn verifica_usuario_socio_locadora(idusuario: String, cnpj: String) -> Result<(), String>{
+    if idusuario.trim().is_empty() || cnpj.trim().is_empty(){
+       return Err(MeuErro::CamposVazios.to_string())
+    }
+    let cnpj = formata_cnpj(&cnpj)?;
+    let resultado_verificacao = _verifica_usuario_socio_locadora(idusuario, cnpj).await;
+    match resultado_verificacao{
+        Ok(_) => {return Ok(())},
+        Err(e) => {return Err(e.to_string())}
+    }
+}
+
+pub async fn _verifica_usuario_socio_locadora(idusuario: String, cnpj: String) -> Result<(), mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_verificacao: Option<String> = conn.exec_first("SELECT idsocio FROM locadora WHERE cnpj = :cnpj", 
+    params! {"cnpj" => cnpj}).await?;
+    match resultado_verificacao{
+        Some(idsocio) => {
+            println!("{} e {}", idsocio, idusuario);
+            if idsocio != idusuario{
+                return Ok(())
+            }
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::ImpossivelApagar)))
+        }, 
+        None => {
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::IdNaoEncontrado)))
+        }
+    }
 }
