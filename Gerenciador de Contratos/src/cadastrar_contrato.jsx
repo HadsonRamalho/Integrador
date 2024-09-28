@@ -598,10 +598,10 @@ function CadastrarContrato(){
   } 
 
   useEffect(() => {
-    if (valoraluguel && prazolocacao) {
-      calculaValorMensal(valoraluguel, prazolocacao);
+    if (valoraluguel) {
+      calculaValorMensal(valoraluguel);
     }
-  }, [valoraluguel, prazolocacao]);
+  }, [valoraluguel]);
   
   
   useEffect(() => {
@@ -666,8 +666,8 @@ function CadastrarContrato(){
   }
   
 
-  function calculaValorMensal(valoraluguel, meses) {
-    const valor = (valoraluguel * meses) * 100;
+  function calculaValorMensal(valoraluguel) {
+    const valor = (valoraluguel) * 100;
     setValorMensal(formataValor(valor.toString()));
 }
 
@@ -808,7 +808,7 @@ function CadastrarContrato(){
           onChange={(e) => {
             setNumSerie(e.currentTarget.value)
             carregaDadosMaquina;
-            calculaValorMensal(valoraluguel, prazolocacao);
+            calculaValorMensal(valoraluguel);
           }}
           onBlur={carregaDadosMaquina}
           placeholder="Número de série (Ex.: 11444A555B)" 
@@ -984,7 +984,7 @@ function CadastrarContrato(){
             const novaDataDevolucao = e.currentTarget.value;
             setPrazoDevolucao(novaDataDevolucao);
             const novoPrazoLocacao = calculaPrazoLocacao(dataretirada, novaDataDevolucao);
-            calculaValorMensal(valoraluguel, novoPrazoLocacao);
+            calculaValorMensal(valoraluguel);
           }}          
           placeholder="Prazo de devolução" 
         />

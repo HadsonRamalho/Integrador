@@ -117,6 +117,10 @@ pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), S
         }
     };    
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, &email_antigo).await;
+    let resultado_busca2: bool= model::busca_email(&pool, &email).await.is_err();
+    if !resultado_busca2{
+        return Err("E-mail pertence a outro usuário".to_string())
+    }
     match resultado_busca{
         Ok(o) => {
             if o.is_empty() || !valida_email(&o) || o == ""{

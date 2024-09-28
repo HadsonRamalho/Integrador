@@ -299,7 +299,7 @@ CLÁUSULA DÉCIMA SEXTA – DA ELEIÇÃO DO FORO
 E por estarem assim justos e contratados, assinam o presente contrato em 02 (duas) vias de igual teor para o mesmo efeito, juntamente com as duas testemunhas abaixo, declarando ser perfeitamente conhecedores das condições e termos do presente, aceitando-os na forma como se encontram redigidos.
 
 
-${cidadeforo}, 23 de novembro de 2023.
+${cidadeforo}, ${datacontrato}.
 
 LOCADORA:____________________________	
 LOCATÁRIA:____________________________

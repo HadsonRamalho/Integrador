@@ -3,6 +3,8 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 
 function DadosUsuario() {
+  const [mensagem, setMensagem] = useState("");
+
   const [emailAtual, setEmailAtual] = useState("");
   const [emailFixoInterface, setEmailFixoInterface] = useState("");
   const [emailAntigo, setEmailAntigo] = useState("");
@@ -60,6 +62,7 @@ function DadosUsuario() {
       console.log("Email antigo:", emailAntigo, "Email novo:", emailAtual);
       setEmailFixoInterface(email);
     } catch (error) {
+      setMensagem(error);
       console.log(error);
     }
   }
@@ -117,6 +120,8 @@ function DadosUsuario() {
         <input placeholder="**********"></input>
         <button>Atualizar Senha</button>
       </div>
+      {mensagem} 
+      <br></br>
       <button onClick={home}>Voltar</button>
       <div>
         <button onClick={verifica_usuario_socio_locadora}> Apagar minha conta </button>
