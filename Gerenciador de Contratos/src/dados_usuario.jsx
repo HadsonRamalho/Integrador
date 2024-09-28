@@ -81,6 +81,7 @@ function DadosUsuario() {
     }
   }
 
+  //Deve verificar se o usuário é o único sócio da locadora
   async function verifica_usuario_socio_locadora(){
     try{
       const idusuario = localStorage.getItem('token');
@@ -124,7 +125,7 @@ function DadosUsuario() {
       <br></br>
       <button onClick={home}>Voltar</button>
       <div>
-        <button onClick={verifica_usuario_socio_locadora}> Apagar minha conta </button>
+        <button onClick={apagarConta}> Apagar minha conta </button>
       </div>
     </div>
   );

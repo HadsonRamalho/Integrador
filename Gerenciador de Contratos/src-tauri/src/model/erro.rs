@@ -21,5 +21,7 @@ pub enum MeuErro{
     #[error("Credenciais inválidas")]
     CredenciaisInvalidas,
     #[error("Não foi possível apagar o registro")]
-    ImpossivelApagar
+    ImpossivelApagar,
+    #[error("CPF não encontrado")]
+    CpfNaoEncontrado
 }

@@ -34,6 +34,7 @@ fn main() {
             controller::usuario::cria_conta,
             controller::usuario::verifica_senha,
             controller::usuario::atualiza_nome,
+            controller::usuario::deleta_conta,
 
             controller::locatario::busca_id_locatario,
             controller::locatario::cadastra_locatario,

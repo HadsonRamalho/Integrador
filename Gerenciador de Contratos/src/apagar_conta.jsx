@@ -9,8 +9,10 @@ function ApagarConta(){
   async function apagaConta() {
     try{
       const id = localStorage.getItem('token');
+      const idusuario = id;
       const email = await invoke("busca_email_usuario", { id });
       await invoke("verifica_senha", {email, senha});
+      await invoke("deleta_conta", {idusuario, email});
       setMensagem("Saindo da conta!");
       login();
     } catch(error){

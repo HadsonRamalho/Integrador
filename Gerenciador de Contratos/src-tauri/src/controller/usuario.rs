@@ -399,6 +399,24 @@ pub async fn _busca_cnpj_usuario(pool: &Pool, id: &str) -> Result<String, mysql_
     }
 }
 
+pub async fn busca_cpf_usuario(id: &str) -> Result<String, mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let cpf: Option<String> = conn.exec_first("SELECT cpf FROM usuarios WHERE UUID = :id;", 
+    params!{"id" => id}).await?;
+    match cpf{
+        None => {
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::CpfNaoEncontrado)));
+        },
+        Some(cpf) => {
+            if cpf.is_empty(){
+                return Err(mysql_async::Error::Other(Box::new(MeuErro::CpfNaoEncontrado)));
+            }
+            return Ok(cpf);
+        }
+    }
+}
+
 #[tauri::command]
 pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), String>{
     let email = email.trim();
@@ -435,8 +453,12 @@ pub async fn deleta_conta(idusuario: String, email: String) -> Result<(), String
 pub async fn _deleta_conta(idusuario: String, email: String) -> Result <(), mysql_async::Error>{
     let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
+    let id = idusuario.clone();
+    let cpf = busca_cpf_usuario(&idusuario).await?;
+    let _atualizacao_socioadm = conn.exec_drop("UPDATE socioadm SET sociostatus = 0 WHERE cpf = :cpf;", 
+    params!("cpf" => cpf)).await?;
     let resultado = conn.exec_drop("DELETE FROM usuarios WHERE UUID = :id AND email = :email;", 
-    params! {"id" => idusuario, "email" => email}).await;
+    params! {"id" => id, "email" => email}).await;
     match resultado{
         Ok(_) => {return Ok(())},
         Err(e) => {return Err(mysql_async::Error::Other(Box::new(e)))}
