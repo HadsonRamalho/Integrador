@@ -223,7 +223,6 @@ pub async fn _verifica_usuario_socio_locadora(idusuario: String, cnpj: String) -
     params! {"cnpj" => cnpj}).await?;
     match resultado_verificacao{
         Some(idsocio) => {
-            println!("{} e {}", idsocio, idusuario);
             if idsocio != idusuario{
                 return Ok(())
             }

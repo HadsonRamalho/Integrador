@@ -6,7 +6,7 @@ use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::valida_email;
 use crate::controller;
-use super::{gera_hash, verifica_hash};
+use super::{cria_pool, formata_cpf, gera_hash, verifica_hash};
 
 #[tauri::command]
 pub async fn cria_conta(
@@ -18,20 +18,18 @@ pub async fn cria_conta(
     cnpj: &str
 ) -> Result<(), String> {
     let email = email.trim(); // Removendo todos os espaços em branco do email
+    let cpf = cpf.trim();
+    if cpf.trim().is_empty(){
+        return Err("Erro: O CPF não pode estar vazio".to_string());
+    }
+    let cpf = formata_cpf(cpf)?;
     if !valida_email(&email) {
-        return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
+        return Err("Erro: E-mail inválido. Deve conter '@' e '.'".to_string());
     }
     if senha1.trim() != senha2.trim() {
-        return Err("As senhas são diferentes".to_string()); // Conta não criada
+        return Err("Erro: As senhas são diferentes".to_string()); // Conta não criada
     }
-    let cnpj = match controller::locadora::formata_cnpj(cnpj){
-        Ok(cnpj) => {
-            cnpj
-        },
-        Err(e) => {
-            return Err(e)
-        }
-    };
+    let cnpj = controller::locadora::formata_cnpj(cnpj)?;
     match valida_senha(senha1) {
         Ok(_) => {}
         Err(e) => {
@@ -42,9 +40,8 @@ pub async fn cria_conta(
     let mut usuario =
         model::Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), hash); // Cria um novo usuário
     if usuario.ja_cadastrado().await {
-        return Err("Usuário já cadastrado".to_string());
+        return Err("Erro: Usuário já cadastrado".to_string());
     }
-    let cpf = controller::formata_cpf(&cpf)?;
     let resultado_cadastro = cadastra_usuario(nome_completo, &email, usuario.get_hash(), &cpf, &cnpj).await;
     match resultado_cadastro {
         Ok(_) => return Ok(()),
@@ -87,11 +84,13 @@ pub async fn cadastra_usuario(nome: &str, email: &str, senha: &str, cpf: &str, c
 
 #[tauri::command]
 pub async fn verifica_senha(email: &str, senha: &str) -> Result<(), String> {
-    // Retorna uma mensagem para o front e um booleano
     let senha = senha.trim();
     if senha.is_empty() {
-        // Verificação caso o campo do front falhe
         return Err("A senha não pode estar vazia".to_string());
+    }
+    let email = email.trim();
+    if email.is_empty(){
+        return Err("O e-mail não pode estar vazio".to_string());
     }
     let resultado_verificacao: Result<model::Usuario, String> = _verifica_senha(email, &senha).await;
     match resultado_verificacao {
@@ -107,7 +106,7 @@ pub async fn verifica_senha(email: &str, senha: &str) -> Result<(), String> {
 pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), String>{
     let email: &str = email.trim();
     if !valida_email(email){
-        return Err("Erro: Novo email inválido".to_string())
+        return Err("Erro: Novo e-mail inválido".to_string())
     }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
@@ -121,12 +120,12 @@ pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), S
     match resultado_busca{
         Ok(o) => {
             if o.is_empty() || !valida_email(&o) || o == ""{
-                return Err("Email antigo inválido.".to_string()) 
+                return Err("E-mail antigo inválido.".to_string()) 
             }
         },
         Err(_e) => {
             println!("{:?}", _e);
-            return Err("Erro ao atualizar o email".to_string());
+            return Err("Erro ao atualizar o e-mail".to_string());
         }
     }
  
@@ -136,8 +135,8 @@ pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), S
             return Ok(())
         },
         Err(_e) => {
-            println!("Erro ao atualizar o email");
-            return Err("Erro ao atualizar o email".to_string());
+            println!("Erro ao atualizar o e-mail");
+            return Err("Erro ao atualizar o e-mail".to_string());
         }
     }
 }
@@ -163,7 +162,7 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<String, Str
     match resultado_busca{
         Ok(email) => {
             if email.is_empty() || !valida_email(&email) || email == ""{
-                return Err("Erro: Email inválido".to_string())
+                return Err("Erro: E-mail inválido".to_string())
             }
         },
         Err(e) => {
@@ -187,7 +186,7 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
     let email = email.trim();
     let token = token.trim();
     if !valida_email(email){
-        return Err("Erro ao validar o token: E-mail vazio.".to_string());
+        return Err("Erro ao validar o token: E-mail inválido.".to_string());
     }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
@@ -227,6 +226,9 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
 
 #[tauri::command]
 pub async fn busca_id(email: &str) -> Result<String, String>{
+    if email.trim().is_empty(){
+        return Err("Erro: O e-mail está vazio".to_string())
+    }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -267,6 +269,9 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
 
 #[tauri::command]
 pub async fn busca_email_usuario(id: String) -> Result<String, String>{
+    if id.trim().is_empty(){
+        return Err("Erro: O ID está vazio".to_string())
+    }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -305,6 +310,9 @@ pub async fn _busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql
 
 #[tauri::command]
 pub async fn busca_nome_usuario(id: String) -> Result<String, String>{
+    if id.trim().is_empty(){
+        return Err("Erro: O ID está vazio".to_string())
+    }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -343,6 +351,9 @@ pub async fn _busca_nome_usuario(pool: &Pool, id: &str) -> Result<String, mysql_
 
 #[tauri::command]
 pub async fn busca_cnpj_usuario(id: String) -> Result<String, String>{
+    if id.trim().is_empty(){
+        return Err("Erro: O ID está vazio".to_string())
+    }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -402,5 +413,28 @@ pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), String>{
             println!("Erro ao atualizar o nome");
             return Err("Erro ao atualizar o nome".to_string());
         }
+    }
+}
+
+#[tauri::command]
+pub async fn deleta_conta(idusuario: String, email: String) -> Result<(), String>{
+    if idusuario.trim().is_empty() || email.trim().is_empty(){
+        return Err(MeuErro::CamposVazios.to_string())
+    }
+    let resultado_delete = _deleta_conta(idusuario, email).await;
+    match resultado_delete{
+        Ok(_) => {return Ok(())},
+        Err(e) => {return Err(e.to_string())}
+    }
+}
+
+pub async fn _deleta_conta(idusuario: String, email: String) -> Result <(), mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado = conn.exec_drop("DELETE FROM usuarios WHERE UUID = :id AND email = :email;", 
+    params! {"id" => idusuario, "email" => email}).await;
+    match resultado{
+        Ok(_) => {return Ok(())},
+        Err(e) => {return Err(mysql_async::Error::Other(Box::new(e)))}
     }
 }
