@@ -52,7 +52,7 @@ pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::E
         },
         Err(e) => {
             println!("{:?}", e);
-            return Err(mysql_async::Error::Other(Box::new(MeuErro::ErroSalvarEndereco)))
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SalvarEndereco)))
         }
     }
 }

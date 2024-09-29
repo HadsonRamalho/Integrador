@@ -12,7 +12,8 @@ pub async fn atualiza_email(pool: &Pool, email_antigo: &str, email_novo: &str) -
             return Ok(());
         },
         Err(e ) => {
-            return Err(e)
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::AtualziarEmailUsuario)))
         }
     }
 }
@@ -26,7 +27,8 @@ pub async fn atualiza_senha(pool: &Pool, email: &str, senha_nova: &str) -> Resul
             return Ok(());
         },
         Err(e ) => {
-            return Err(e);
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::AtualizarSenhaUsuario)));
         }
     }
 }
@@ -69,7 +71,8 @@ pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), mysql_async::E
             return Ok(());
         },
         Err(e ) => {
-            return Err(e)
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::AtualizarNomeUsuario)))
         }
     }
 }

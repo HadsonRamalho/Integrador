@@ -39,7 +39,13 @@ pub enum MeuErro{
     #[error("Máquina não encontrada no estoque")]
     MaquinaNaoEncontradaNoEstoque,
     #[error("Erro ao salvar o endereço")]
-    ErroSalvarEndereco,
+    SalvarEndereco,
     #[error("Erro ao salvar o contrato")]
-    ErroSalvarContrato
+    SalvarContrato,
+    #[error("Erro ao atualizar o nome do usuário")]
+    AtualizarNomeUsuario,
+    #[error("Erro ao atualizar a senha do usuário")]
+    AtualizarSenhaUsuario,
+    #[error("Erro ao atualizar o e-mail do usuário")]
+    AtualziarEmailUsuario
 }

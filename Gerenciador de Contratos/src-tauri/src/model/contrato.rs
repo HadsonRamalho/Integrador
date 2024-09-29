@@ -59,7 +59,7 @@ pub async fn registra_contrato(contrato: Contrato) -> Result<(), mysql_async::Er
         }, 
         Err(e) => {
             println!("{:?}", e);
-            return Err(mysql_async::Error::Other(Box::new(MeuErro::ErroSalvarContrato)));
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SalvarContrato)));
         }
     }
     return Ok(());
