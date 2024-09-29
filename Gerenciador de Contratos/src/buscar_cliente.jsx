@@ -9,7 +9,9 @@ function BuscarCliente(){
   const [cnpj, setCnpjLocatario] = useState("");
   const [vetor, setVetor] = useState([]);
   const idusuario = localStorage.getItem('token');
-  
+
+  const [filtro, setFiltro] = useState("nome");
+  const [valorBusca, setValorBusca] = useState("");
 
   const navigate = useNavigate();
 
@@ -19,49 +21,66 @@ function BuscarCliente(){
 
   async function buscaClienteNome(){
     try{
+      const nomelocatario = valorBusca;
+      console.log(nomelocatario);
       const locatarios = await buscaLocatarioNome(nomelocatario);
       setVetor(locatarios);
       setMensagem("");
     } catch (error){
       setVetor([]);
-      setMensagem("Erro: Não há nenhum locatário com esse nome. [ " + error + " ]");
+      setMensagem(error);
       console.log(error);
     }
   }
 
   async function buscaClienteCnpj(){
     try{
+      const cnpj = valorBusca;
       const locatarios = await buscaLocatarioCnpj(cnpj);
       setVetor(locatarios);
       setMensagem("");
     } catch (error){
       setVetor([]);
-      setMensagem("Erro: Não há nenhum locatário com esse CNPJ. [ " + error + " ]");
+      setMensagem(error);
       console.log(error);
     }
+  }
+
+  async function busca_cliente(){
+    if (filtro === "nome") {
+      await buscaClienteNome();
+      return;
+    } 
+      await buscaClienteCnpj();
+      return;
   }
 
   return (
     <div>
       <div className="boxBuscaCliente">        
         <div>
-          <input
-            required          
-            className="rowReset"
-            onChange={(e) => setNomeLocatario(e.currentTarget.value)}
-            placeholder="Buscar pelo Nome do cliente"
-          />
-          <button className="botoesHome" type="button" onClick={buscaClienteNome}>Buscar</button>
-        </div>
         <div>
+          Filtro: 
+          <select value={filtro} onChange={(e) => setFiltro(e.target.value)}>
+            <option value="nome">Nome</option>
+            <option value="cnpj">CNPJ</option>
+        </select>
         <input
-            required          
-            className="rowReset"
-            onChange={(e) => setCnpjLocatario(e.currentTarget.value)}
-            placeholder="Buscar pelo CNPJ do cliente"
-          />
-          <button className="botoesHome" type="button" onClick={buscaClienteCnpj}>Buscar pelo CNPJ</button>
+          className="rowReset"
+          type="text"
+          value={valorBusca}
+          onChange={(e) => {setValorBusca(e.currentTarget.value)
+            }
+          }
+          placeholder={`Buscar cliente por ${filtro}`}
+        />
+        <button onClick={async () => {
+          await busca_cliente();
+        }
+        }>Buscar</button>
+      </div>
         </div>
+        
         <button className="botoesHome" type="button" onClick={home}>Voltar</button>     
         
         <div>

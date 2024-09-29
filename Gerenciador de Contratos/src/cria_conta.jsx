@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { cadastraEndereco, selecionaUf, selecionaUfDefinido } from "./endereco";
 import { cadastraSocioAdm } from "./socioAdm";
 import {selecionaNacionalidade} from "./socioAdm";
+import {selecionaEstadoCivil} from "./socioAdm";
 import InputMask from 'react-input-mask';
 //import "./App.css";
 
@@ -238,11 +239,7 @@ function CriaConta(){
           placeholder="Órgão Emissor do CPF"
           /></div>
           <div>
-          <input required
-          className="user-input"
-          onChange={(e) => setEstadoCivil(e.currentTarget.value)}
-          placeholder="Estado civil"
-          />
+          {selecionaEstadoCivil(setEstadoCivil, 50)}
           </div>
           <div className= "input-box">
             {selecionaNacionalidade(setNacionalidade, 50, 9)}

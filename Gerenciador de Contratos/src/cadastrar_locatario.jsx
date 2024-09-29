@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {cadastraEndereco, selecionaUf} from "./endereco";
 import { cadastraSocioAdm } from "./socioAdm";
 import { cadastraLocatario } from "./locatario";
+import {selecionaEstadoCivil, selecionaNacionalidade} from "./socioAdm";
 
 function CadastrarLocatario(){
   const [mensagem, setMensagem] = useState("");
@@ -62,20 +63,18 @@ function CadastrarLocatario(){
           }}
         >
         <p>Cadastro do endereço do sócio administrador</p>
-          <input required
-          className="rowReset"
-          onChange={(e) => setCidade(e.currentTarget.value)}
-          placeholder="Cidade" 
-        />
-        <br></br>
-        {selecionaUf(setUf)}
-        <br></br>
         <input required
           className="rowReset"
           onChange={(e) => setCep(e.currentTarget.value)}
           placeholder="CEP" 
         />
         <br></br>
+          <input required
+          className="rowReset"
+          onChange={(e) => setCidade(e.currentTarget.value)}
+          placeholder="Cidade" 
+        />
+        {selecionaUf(setUf, false, 30, 31)}
         <input required
           className="rowReset"
           onChange={(e) => setLogradouro(e.currentTarget.value)}
@@ -112,28 +111,15 @@ function CadastrarLocatario(){
           onChange={(e) => setOrgaoEmissor(e.currentTarget.value)}
           placeholder="Órgão Emissor do Documento"
         />
-        <br></br>
-        <input
-          className="rowReset"
-          onChange={(e) => setEstadoCivil(e.currentTarget.value)}
-          placeholder="Estado Civil do Sócio"
-        />
-        <br></br>
-        <input
-          className="rowReset"
-          onChange={(e) => setNacionalidade(e.currentTarget.value)}
-          placeholder="Nacionalidade do Sócio"
-        />
-        <br></br>
+        {selecionaEstadoCivil(setEstadoCivil, 30, 31)}
+        {selecionaNacionalidade(setNacionalidade, 30, 31)}
         <p>Cadastro do endereço da empresa</p>
         <input required
           className="rowReset"
           onChange={(e) => setCidadeLocatario(e.currentTarget.value)}
           placeholder="Cidade" 
         />
-        <br></br>
-        {selecionaUf(setUfLocatario)}
-        <br></br>
+        {selecionaUf(setUfLocatario, false, 30, 31)}
         <input required
           className="rowReset"
           onChange={(e) => setCepLocatario(e.currentTarget.value)}

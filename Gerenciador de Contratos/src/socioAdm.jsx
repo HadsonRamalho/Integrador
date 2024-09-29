@@ -38,8 +38,8 @@ export const selecionaNacionalidade = (setNacionalidade, widthvh = 65, marginlef
   return (
     <div className= "input-box">
             <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
-            style={{width: widthstr(widthvh)}}
-            onChange={(e) => setNacionalidade(e.currentTarget.value)}>
+              style={{width: widthstr(widthvh), marginLeft: marginstr(marginleft)}}
+              onChange={(e) => setNacionalidade(e.currentTarget.value)}>
                 <option value="" disabled selected> Selecione a nacionalidade </option>
                 <option value = "Brasil"> Brasileiro </option>
                 <option value = "EUA"> Americano </option>
@@ -52,12 +52,12 @@ export const selecionaNacionalidade = (setNacionalidade, widthvh = 65, marginlef
   );
 };
 
-export const selecionaEstadoCivil = (setEstadoCivil) => {
+export const selecionaEstadoCivil = (setEstadoCivil, widthvh = 65, marginleft = 9) => {
   return (
     <div class= "input-box">
-            <label for= "estadoCivil"> Estado Civil </label>
             <select id= "estadoCivil" name= "estadoCivil" required aria-label= "Estado civil do socio Administrativo"
-            onChange={(e) => setEstadoCivil(e.currentTarget.value)}>
+              style={{width: widthstr(widthvh), marginLeft: marginstr(marginleft)}}
+              onChange={(e) => setEstadoCivil(e.currentTarget.value)}>
                 <option value="" disabled selected> Selecione seu estado civil </option>
                 <option value = "Solteiro"> Solteiro(a) </option>
                 <option value = "Casado"> Casado(a) </option>
