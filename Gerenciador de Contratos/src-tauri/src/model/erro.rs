@@ -25,5 +25,21 @@ pub enum MeuErro{
     #[error("CPF não encontrado")]
     CpfNaoEncontrado,
     #[error("Contrato não encontrado")]
-    ContratoNaoEncontrado
+    ContratoNaoEncontrado,
+    #[error("E-mail não encontrado")]
+    EmailNaoEncontrado,
+    #[error("Senha incorreta")]
+    SenhaIncorreta,
+    #[error("Número de série não encontrado")]
+    NumeroSerieNaoEncontrado,
+    #[error("Não há maquinas em estoque")]
+    SemMaquinasNoEstoque,
+    #[error("Não há maquinas alugadas no momento")]
+    SemMaquinasAlugadas,
+    #[error("Máquina não encontrada no estoque")]
+    MaquinaNaoEncontradaNoEstoque,
+    #[error("Erro ao salvar o endereço")]
+    ErroSalvarEndereco,
+    #[error("Erro ao salvar o contrato")]
+    ErroSalvarContrato
 }

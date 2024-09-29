@@ -1,6 +1,8 @@
 use crate::{controller::cria_pool, model::Pool};
 use mysql_async::{params, prelude::Queryable};
 
+use super::erro::MeuErro;
+
 pub async fn atualiza_email(pool: &Pool, email_antigo: &str, email_novo: &str) -> Result<(), mysql_async::Error>{
     let mut conn = pool.get_conn().await?;
     let resultado_conexao = conn.exec_drop("UPDATE usuarios SET email = :email_novo WHERE email = :email_antigo;", 
@@ -11,9 +13,7 @@ pub async fn atualiza_email(pool: &Pool, email_antigo: &str, email_novo: &str) -
         },
         Err(e ) => {
             return Err(e)
-
         }
-
     }
 }
 
@@ -27,9 +27,7 @@ pub async fn atualiza_senha(pool: &Pool, email: &str, senha_nova: &str) -> Resul
         },
         Err(e ) => {
             return Err(e);
-
         }
-
     }
 }
 
@@ -37,20 +35,13 @@ pub async fn busca_id_usuario(pool: &Pool, email: &str) -> Result<String, mysql_
     let mut conn = pool.get_conn().await?;
     let id_usuario: Option<String> = conn.exec_first("SELECT UUID FROM usuarios WHERE email = :email;", 
     params!{"email" => email}).await?;
-    let server_error = mysql_async::ServerError{
-        code: 1045, //Código de erro
-        message: "ID não encontrado".to_string(),
-        state: "28000".to_string()
-    };
     match id_usuario{
         None => {
-            return Err(mysql_async::Error::Server(server_error));
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::EmailNaoEncontrado)));
         },
         Some(_) => {
             return Ok(id_usuario.unwrap());
-
         }
-
     }
 }
 
@@ -66,9 +57,6 @@ pub async fn verifica_id_usuario(pool: &Pool, id: &str) -> Result<(), mysql_asyn
             return Err(e);
         }
     }
-
-
-
 }
 
 pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), mysql_async::Error>{

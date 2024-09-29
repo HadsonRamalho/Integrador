@@ -1,5 +1,6 @@
 use mysql_async::prelude::{FromRow, Queryable};
 use serde::Serialize;
+use crate::model::erro::MeuErro;
 use crate::model::params;
 use crate::controller;
 
@@ -58,7 +59,7 @@ pub async fn registra_contrato(contrato: Contrato) -> Result<(), mysql_async::Er
         }, 
         Err(e) => {
             println!("{:?}", e);
-            return Err(e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::ErroSalvarContrato)));
         }
     }
     return Ok(());

@@ -5,6 +5,8 @@ use mysql_async::prelude::FromRow;
 use serde::Serialize;
 
 use crate::controller;
+
+use super::erro::MeuErro;
 //Criada estrutura para representar a quantidade de maquinas em estoque
 #[derive(FromRow, Serialize, PartialEq)]
 pub struct EstoqueMaquina{
@@ -77,8 +79,7 @@ pub async fn busca_maquina_serie(serie: &str) -> Result<Vec<Maquina>, mysql_asyn
     match maquina{
         None => {
             //Criando um erro personalizado para a aplicação.
-            return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound, 
-                "Numero de série não encontrado"))));
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::NumeroSerieNaoEncontrado)));
         },
         Some(maquina) => {
             maquina_retorno.push(maquina);
@@ -93,9 +94,7 @@ pub async fn gera_estoque_total() -> Result<Vec<EstoqueMaquina>, mysql_async::Er
     let estoque: Vec<EstoqueMaquina> = conn.exec_map("SELECT nomemaquina, COUNT(*) AS estoque FROM maquina WHERE disponibilidade = 1 AND 
     maquinastatus = 1 GROUP BY nomemaquina;", (), |(nomemaquina, quantidade)| EstoqueMaquina{nomemaquina, quantidade}).await?;
     if estoque.is_empty(){
-        return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            "Não há máquinas em estoque"))));
+        return Err(mysql_async::Error::Other(Box::new(MeuErro::SemMaquinasNoEstoque)));
     }
     Ok(estoque)
 }
@@ -105,9 +104,7 @@ pub async fn gera_estoque_total_alugadas() -> Result<Vec<EstoqueMaquina>, mysql_
     let mut conn = pool.get_conn().await?;
     let estoque: Vec<EstoqueMaquina> = conn.exec_map("SELECT nomemaquina, COUNT(*) AS estoque FROM maquina WHERE disponibilidade = 0 GROUP BY nomemaquina;", (), |(nomemaquina, quantidade)| EstoqueMaquina{nomemaquina, quantidade}).await?;
     if estoque.is_empty(){
-        return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            "Não há máquinas alugadas no momento"))));
+        return Err(mysql_async::Error::Other(Box::new(MeuErro::SemMaquinasAlugadas)));
     }
     Ok(estoque)
 }
@@ -123,8 +120,7 @@ pub async fn gera_estoque_por_nome(nomemaquina: String) -> Result<Vec<EstoqueMaq
          params! {"nome" => nome_like}, |(quantidade, nomemaquina )| 
             EstoqueMaquina{quantidade, nomemaquina}).await?;
     if estoque.is_empty() || estoque.contains(&estoque_invalido){
-        return Err(mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound, 
-            "Máquina não encontrada OU não está em estoque"))));
+        return Err(mysql_async::Error::Other(Box::new(MeuErro::MaquinaNaoEncontradaNoEstoque)));
     }
     return Ok(estoque)
 

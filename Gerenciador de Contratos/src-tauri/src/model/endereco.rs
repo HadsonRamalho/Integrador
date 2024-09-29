@@ -36,18 +36,25 @@ pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::E
     
     let id_retorno = endereco.idendereco.to_string(); // faz uma cópia do id do endereço
     // Insere o endereço na tabela `endereco`
-    conn.exec_drop(
+    let resultado_insert: Result<(), mysql_async::Error> = conn.exec_drop(
         "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf)
          VALUES (:idendereco, :logradouro, :cep, :complemento, :numeroendereco, :cidade, :uf)",
         params! {"idendereco" => endereco.idendereco, "logradouro" => endereco.logradouro,
         "cep" => endereco.cep, "complemento" => endereco.complemento,
         "numeroendereco" => endereco.numeroendereco, "cidade" => endereco.cidade,
         "uf" => endereco.uf},
-    ).await?;
+    ).await;
 
-    println!("Endereço salvo com sucesso");
-
-    return Ok(id_retorno) // retorna o id do endereço
+    match resultado_insert{
+        Ok(_) => {
+            println!("Endereço salvo com sucesso");
+            return Ok(id_retorno)
+        },
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::ErroSalvarEndereco)))
+        }
+    }
 }
 
 pub async fn busca_endereco_id(id: &str) -> Result<Endereco, mysql_async::Error>{

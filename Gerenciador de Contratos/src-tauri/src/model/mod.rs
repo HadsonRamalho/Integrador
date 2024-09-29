@@ -1,5 +1,6 @@
 use crate::controller::{self, gera_hash};
 use dotenv::dotenv;
+use erro::MeuErro;
 use mysql_async::{prelude::*, Pool};
 use std::env;
 pub mod endereco;
@@ -62,16 +63,11 @@ impl Usuario {
     }
 }
 
-/// Cria uma pool de conexões com o banco de dados usando as credenciais do arquivo .env.
-///
-/// # Retornos
-/// - Result<Pool, mysql_async::Error>: Retorna Ok(pool) se a pool for criada com sucesso,
-///   ou Err(mysql_async::Error) se houver um erro na criação da pool.
 pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
     dotenv().ok();
     let dblocal = match env::var("DB_LOCAL"){
         Ok(dblocal) => {dblocal},
-        Err(e) => {"".to_string()}
+        Err(_e) => {"".to_string()}
     };
     if dblocal == "true"{
         let db_local_password = env::var("DB_LOCAL_PASSWORD").unwrap();
@@ -93,18 +89,6 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
     pool
 }
 
-/// Insere um novo usuário no banco de dados.
-///
-/// # Parâmetros
-/// - pool: Pool de conexões com o banco de dados.
-/// - nome: Nome completo do usuário.
-/// - email: Endereço de email do usuário.
-/// - senha: Senha do usuário.
-/// - email_rep: Referência mutável para um contador de emails repetidos.
-///
-/// # Retornos
-/// - Result<(), mysql_async::Error>: Retorna Ok(()) se o usuário for inserido com sucesso,
-///   ou Err(mysql_async::Error) se houver um erro na inserção dos dados.
 pub async fn cadastra_usuario(
     pool: &Pool,
     nome: &str,
@@ -141,18 +125,12 @@ pub async fn busca_email(pool: &Pool, email: &str) -> Result<String, mysql_async
     let mut conn = pool.get_conn().await?; // Conectando no banco
     let email_db: Option<String> = conn
         .exec_first(
-            // emails_db é um vetor de emails que é adquirido do banco de dados
             "SELECT email FROM usuarios WHERE email = :email",
             params! {"email" => email},
         )
         .await?;
-    let server_error = mysql_async::ServerError {
-        code: 1045,                                  // Código de erro (ex: acesso negado)
-        message: "Email não encontrado".to_string(), // Mensagem de erro
-        state: "28000".to_string(),                  // Estado SQL
-    };
     match email_db {
-        None => return Err(mysql_async::Error::Server(server_error)),
+        None => return Err(mysql_async::Error::Other(Box::new(MeuErro::EmailNaoEncontrado))),
         Some(_) => {
             return Ok(email.to_string());
         }
@@ -177,21 +155,15 @@ pub async fn verifica_senha(
 ) -> Result<Usuario, mysql_async::Error> {
     let mut conn = pool.get_conn().await?;
     let email_encontrado;
-    let server_error = mysql_async::ServerError {
-        code: 1045,                                  // Código de erro
-        message: "Email não encontrado".to_string(), // Mensagem de erro
-        state: "28000".to_string(),                  // Estado SQL
-    };
     match busca_email(pool, email).await {
         Ok(data) => {
             email_encontrado = data;
         }
-        Err(_e) => return Err(mysql_async::Error::Server(server_error)),
+        Err(_e) => return Err(mysql_async::Error::Other(Box::new(MeuErro::EmailNaoEncontrado))),
     }
     let senhas_db: Option<String> = conn
         .exec_first(
-            // senhas_db é um vetor que armazena as senhas dos usuários
-            "SELECT senha FROM usuarios WHERE email = :email", // Carrega a senha atual do email selecionado
+            "SELECT senha FROM usuarios WHERE email = :email", // Carrega o hash da senha do email selecionado
             params! {"email" => email_encontrado}, // Parâmetro email_encontrado é utilizado para selecionar o email
         )
         .await?;
@@ -203,12 +175,7 @@ pub async fn verifica_senha(
         // Se o hash estiver correto, valida o login
         return Ok(usuario_autenticado);
     }
-    let senha_error = mysql_async::ServerError {
-        code: 1049,                             // Código de erro (ex: acesso negado)
-        message: "Senha incorreta".to_string(), // Mensagem de erro
-        state: "28000".to_string(),             // Estado SQL
-    };
-    Err(mysql_async::Error::Server(senha_error))
+    Err(mysql_async::Error::Other(Box::new(MeuErro::SenhaIncorreta)))
 }
 
 /// Envia um e-mail de verificação.
