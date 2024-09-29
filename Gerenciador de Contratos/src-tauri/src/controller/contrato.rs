@@ -10,9 +10,12 @@ use crate::model::erro::MeuErro;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
+use super::cria_pool;
 use super::gera_hash;
+use super::locadora::formata_cnpj;
 use super::maquina::aluga_maquina;
 use super::maquina::formata_valor_f32;
+use super::usuario::busca_cnpj_usuario;
 
 #[tauri::command]
 pub async fn busca_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
@@ -101,41 +104,7 @@ pub async fn _busca_contrato_nome_maquina(nome_maquina: String, cnpj: String) ->
         params! { "nome_maquina" => nome_maquina, "cnpj" => cnpj }
     ).await?;
 
-    let contratos: Vec<Contrato> = rows.into_iter().map(|row| {
-        let idcontrato = row.get::<String, _>("idcontrato").unwrap_or_default();
-        let prazolocacao = row.get::<f32, _>("prazolocacao").unwrap_or_default();
-        let dataretirada = formata_data(row.get::<Value, _>("dataretirada").unwrap());
-        let valormensal = row.get::<f32, _>("valormensal").unwrap_or_default();
-        let vencimento = formata_data(row.get::<Value, _>("vencimento").unwrap());
-        let multaatraso = row.get::<f32, _>("multaatraso").unwrap_or_default();
-        let jurosatraso = row.get::<f32, _>("jurosatraso").unwrap_or_default();
-        let avisotransferencia = row.get::<String, _>("avisotransferencia").unwrap();
-        let prazodevolucao = formata_data(row.get::<Value, _>("prazodevolucao").unwrap());
-        let cidadeforo = row.get::<String, _>("cidadeforo").unwrap_or_default();
-        let datacontrato = formata_data(row.get::<Value, _>("datacontrato").unwrap());
-        let idlocatario = row.get::<String, _>("idlocatario").unwrap_or_default();
-        let idlocador = row.get::<String, _>("idlocador").unwrap_or_default();
-        let idmaquina = row.get::<String, _>("idmaquina").unwrap_or_default();
-        let enderecoretirada = row.get::<String, _>("enderecoretirada").unwrap_or_default();
-
-        Contrato {
-            idcontrato,
-            prazolocacao,
-            dataretirada,
-            valormensal,
-            vencimento,
-            multaatraso,
-            jurosatraso,
-            avisotransferencia,
-            prazodevolucao,
-            cidadeforo,
-            datacontrato,
-            idlocatario,
-            idlocador,
-            idmaquina,
-            enderecoretirada,
-        }
-    }).collect();
+    let contratos: Vec<Contrato> = cria_vetor_contratos(rows);
 
     Ok(contratos)
 }
@@ -380,4 +349,28 @@ pub async fn _busca_contratos_a_vencer(cnpj: String) -> Result<Vec<Contrato>, my
     println!("{:?}", contratos);
 
     Ok(contratos)
+}
+
+#[tauri::command]
+pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String) -> Result<Vec<Contrato>, String>{
+    let numserie = numserie.trim().to_string();
+    let cnpj = busca_cnpj_usuario(idusuario).await?;
+    let cnpj = formata_cnpj(&cnpj)?;
+    let resultado_busca = _busca_contrato_numserie_maquina(numserie, cnpj).await;
+    match resultado_busca{
+        Ok(contratos) => {return Ok(contratos)},
+        Err(e) => return Err(e.to_string())
+    }
+}
+
+pub async fn _busca_contrato_numserie_maquina(numserie: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let contrato: Vec<Row> = conn.exec("SELECT * FROM contrato_aluguel JOIN maquina ON contrato_aluguel.idmaquina = maquina.idmaquina
+WHERE maquina.numserie = :numserie;", params!{"numserie" => numserie}, ).await?;
+    if contrato.is_empty(){
+        return Err(mysql_async::Error::Other(Box::new(MeuErro::ContratoNaoEncontrado)))
+    }
+    let contrato = cria_vetor_contratos(contrato);
+    return Ok(contrato)
 }

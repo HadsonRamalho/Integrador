@@ -64,13 +64,12 @@ function BuscarCliente(){
           <select value={filtro} onChange={(e) => setFiltro(e.target.value)}>
             <option value="nome">Nome</option>
             <option value="cnpj">CNPJ</option>
-        </select>
-        <input
-          className="rowReset"
-          type="text"
-          value={valorBusca}
-          onChange={(e) => {setValorBusca(e.currentTarget.value)
-            }
+          </select>
+          <input
+            className="rowReset"
+            type="text"
+            value={valorBusca}
+            onChange={(e) => {setValorBusca(e.currentTarget.value)}
           }
           placeholder={`Buscar cliente por ${filtro}`}
         />

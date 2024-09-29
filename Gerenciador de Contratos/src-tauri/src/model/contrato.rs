@@ -1,9 +1,9 @@
-use mysql_async::prelude::Queryable;
+use mysql_async::prelude::{FromRow, Queryable};
 use serde::Serialize;
 use crate::model::params;
 use crate::controller;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, FromRow)]
 pub struct Contrato{
     pub idcontrato: String,
     pub prazolocacao: f32,

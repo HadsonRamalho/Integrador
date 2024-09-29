@@ -23,5 +23,7 @@ pub enum MeuErro{
     #[error("Não foi possível apagar o registro")]
     ImpossivelApagar,
     #[error("CPF não encontrado")]
-    CpfNaoEncontrado
+    CpfNaoEncontrado,
+    #[error("Contrato não encontrado")]
+    ContratoNaoEncontrado
 }

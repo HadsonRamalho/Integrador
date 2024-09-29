@@ -69,7 +69,11 @@ impl Usuario {
 ///   ou Err(mysql_async::Error) se houver um erro na criação da pool.
 pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
     dotenv().ok();
-    if env::var("DB_LOCAL").unwrap() == "true"{
+    let dblocal = match env::var("DB_LOCAL"){
+        Ok(dblocal) => {dblocal},
+        Err(e) => {"".to_string()}
+    };
+    if dblocal == "true"{
         let url = "mysql://root:0110@127.0.0.1:3307/aws"; // A porta pode ser 3306 em outras máquinas; A senha pode ser diferente
         println!("{}", url);
         let pool = Pool::from_url(url);

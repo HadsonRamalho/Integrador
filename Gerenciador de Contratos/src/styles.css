@@ -246,7 +246,7 @@ button {
   line-height: 60px;
   filter: blur(0 0 50px);
   border-radius: 10px;
-  font-size: 1.5vh;
+  font-size: 2vh;
   overflow: auto;
 }
 
