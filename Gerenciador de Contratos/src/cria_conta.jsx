@@ -184,17 +184,21 @@ function CriaConta(){
           </div>
           <p>Informações da empresa</p>
           <div>
-          <input required
-            className="user-input"
-            onChange={(e) => setCnpj(e.currentTarget.value)}
-            onBlur={async (e) => { await carregaDadosLocadora(e.currentTarget.value); }}
-            placeholder="CNPJ da empresa"
-          />
+          <InputMask className="user-input"
+          mask={"99.999.999/9999-99"}
+          value={cnpj}
+          onChange={(e) => setCnpj(e.target.value)}
+          required
+          placeholder="CNPJ da Empresa "
+          >
+             {(inputProps) => <input {...inputProps} type="text" />}
+          </InputMask>
+          
           <p>{mensagemEmpresa}</p>
           </div>  
           {locadoraExiste ? (
             <div>
-            <div><input  readOnly className="user-input" placeholder="Nome da Locadora"  value={nomelocadora || ""} /></div>
+            <div><input  readOnly className="user-input" placeholder="Nome da Empresa"  value={nomelocadora || ""} /></div>
             <p>Dados bancários da empresa</p>
             <div><input readOnly className="user-input" placeholder="Nome do banco"  value={nomebanco || ""} /></div>
             <div><input readOnly className="user-input" placeholder="Numero da conta"  value={numeroconta || ""} /></div>
@@ -211,13 +215,21 @@ function CriaConta(){
             </div>
 ) : (
             <div>
-              <div><input className="user-input" placeholder="Nome da Locadora"  value={nomelocadora || ""}  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
+              <div><input className="user-input" placeholder="Nome da Empresa"  value={nomelocadora || ""}  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
             <p>Dados bancários da empresa</p>
             <div><input className="user-input" placeholder="Nome do banco"  value={nomebanco || ""}  onChange={(e) =>setNomeBanco(e.currentTarget.value)} /></div>
             <div><input className="user-input" placeholder="Numero da conta"  value={numeroconta || ""}  onChange={(e) =>setNumeroConta(e.currentTarget.value)}/></div>
             <div><input className="user-input" placeholder="Numero da agencia"  value={agenciaconta || ""}  onChangeCapture={(e) =>setAgenciaConta(e.currentTarget.value)} /> </div>
             <p>Endereço da empresa</p>
-            <input className="user-input" placeholder="CEP"  value={cep || ""}  onChange={(e) =>setCep(e.currentTarget.value)}/>
+            <InputMask className="user-input"
+            mask = {"99999-999"}
+            value={cep}
+            onChange={(e) => setCep(e.target.value)}
+            required
+            placeholder="CEP"
+            >
+              {(inputProps) => <input{...inputProps} type= "text"/>}
+            </InputMask>
             <input className="user-input" placeholder="Logradouro"  value={logradouro || ""}  onChange={(e) =>setLogradouro(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Número"  value={numeroendereco || ""}  onChange={(e) =>setNumeroEndereco(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Complemento"  value={complemento || ""}  onChange={(e) =>setComplemento(e.currentTarget.value)} />
@@ -225,7 +237,17 @@ function CriaConta(){
             {selecionaUf(setUf, false, 50)}
             <p>Obs.: A locadora precisa de ao menos um sócio cadastrado. Você poderá designar outro sócio após entrar no sistema.</p>
             <p>Cadastre o seu endereço:</p>
-            <input className="user-input" placeholder="CEP" onChange={(e) =>setCepSocio(e.currentTarget.value)}/>
+
+            <InputMask className="user-input"
+            mask = {"99999-999"}
+            value={cep}
+            onChange={(e) => setCep(e.target.value)}
+            required
+            placeholder="CEP"
+            >
+              {(inputProps) => <input{...inputProps} type= "text"/>}
+            </InputMask>
+            
             <input className="user-input" placeholder="Logradouro" onChange={(e) =>setLogradouroSocio(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Número"  onChange={(e) =>setNumeroEnderecoSocio(e.currentTarget.value)}/>
             <input className="user-input" placeholder="Complemento" onChange={(e) =>setComplementoSocio(e.currentTarget.value)} />

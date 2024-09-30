@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import {formataValor} from "./maquina";
 import {selecionaUf, selecionaUfDefinido} from "./endereco";
 import {selecionaEstadoCivil} from "./socioAdm";
+import InputMask from 'react-input-mask';
 
 
 function CadastrarContrato(){
@@ -683,6 +684,7 @@ function CadastrarContrato(){
             await cadastraDados();
           }}
         >
+          
         <h3>Informações da locadora</h3>
         <input readOnly={true} required
           className="inputContrato"
@@ -744,11 +746,15 @@ function CadastrarContrato(){
           placeholder="Nome do sócio adm. (Ex.: João Carlos Pinheiro)" 
         />
         <br></br>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setCpfAdmLocadora(e.currentTarget.value)}
-          placeholder="CPF do sócio adm. (Ex.: 123.456.789-01)" 
-        />
+        <InputMask className="inputContrato"
+            mask = {"999.999.999-99"}
+            value={cpf}
+            onChange={(e) => setCpfAdmLocadora(e.target.value)}
+            required
+            placeholder="CPF do sócio adm."
+            >
+              {(inputProps) => <input{...inputProps} type= "text"/>}
+            </InputMask>
         <br></br>
         <input
           className="inputContrato"
@@ -770,11 +776,16 @@ function CadastrarContrato(){
             </select>
         </div>
         <h3>Endereço do Sócio Administrador da Locadora</h3>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setCepAdm(e.currentTarget.value)}
-          placeholder="CEP do sócio adm. (Ex.: 40400-400)" 
-        />
+
+        <InputMask className="inputContrato"
+        mask={"99999-999"}
+        value={cepadm}
+        onChange={(e) => setCepAdm(e.target.value)}
+        required
+        placeholder="CEP do sócio adm."
+        >
+          {(inputProps) => <input{...inputProps} type= "text"/>}
+        </InputMask>
         <br></br>
         <input required
           className="inputContrato"
@@ -828,6 +839,7 @@ function CadastrarContrato(){
         />
         <br></br>
         <h3>Cadastro da empresa do locatario</h3>
+
         <input
           className="inputContrato"
           onChange={(e) => {
@@ -835,7 +847,8 @@ function CadastrarContrato(){
             carregaDadosLocatario;}}
           onBlur={carregaDadosLocatario}
           placeholder="CNPJ da Empresa (Ex.: 11.234.567/0001-01)"
-        />
+        />
+        
         <br/>
         {mensagemLocatario}
         <input required readOnly={true}
@@ -882,11 +895,16 @@ function CadastrarContrato(){
           placeholder="Nome do Sócio (Ex.: Carlos Figueiredo Rocha)"
         />
         <br></br>
-        <input
-          className="inputContrato"
-          onChange={(e) => setCpfSocioLocatario(e.currentTarget.value)}
-          placeholder="CPF do Sócio (Ex.: 321.654.987-10)"
-        />
+        <InputMask className="inputContrato"
+        mask={"999.999.999-99"}
+        value={cpfsociolocatario}
+        onChange={(e) => setCpfSocioLocatario(e.target.value)}
+        required
+        placeholder="CPF do Sócio"
+        >
+           {(inputProps) => <input{...inputProps} type= "text"/>}
+        </InputMask>
+        
         <br></br>
         <input
           className="inputContrato"
@@ -908,11 +926,17 @@ function CadastrarContrato(){
             </select>
         </div>
         <h3>Cadastro do endereço do sócio administrador do locatario</h3>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setCepSocioLocatario(e.currentTarget.value)}
-          placeholder={"CEP (Ex.: 40400-400)" }
-        />
+
+        <InputMask className="inputContrato"
+        mask={"99999-999"}
+        value={cepSocioLocatario}
+        onChange={(e) => setCepSocioLocatario(e.target.value)}
+        required
+        placeholder="CEP"
+        >
+          {(inputProps) => <input{...inputProps} type= "text"/>}
+        </InputMask>
+        
         <br></br>
           <input required
           className="inputContrato"
