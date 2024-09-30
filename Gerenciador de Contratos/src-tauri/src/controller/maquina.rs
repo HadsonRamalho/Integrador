@@ -1,11 +1,7 @@
-use mysql_async::{params, prelude::Queryable};
-
 use crate::{
-    controller::{self, gera_hash},
+    controller::gera_hash,
     model::{self, erro::MeuErro},
 };
-
-use super::cria_pool;
 
 #[tauri::command]
 pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numserie: String) -> Result<serde_json::Value, String> {
@@ -71,35 +67,7 @@ pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqui
     }
 }
 
-pub async fn _busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, mysql_async::Error>{
-    let pool = controller::cria_pool().await?;
-    let mut conn = pool.get_conn().await?;
-    let nome_like = format!("%{}%", nome_maquina);
-    let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = conn.exec_map(
-        "SELECT idmaquina, nomemaquina, numserie, valoraluguel, maquinastatus, disponibilidade FROM maquina WHERE nomemaquina LIKE :nome_maquina ORDER BY valoraluguel ".to_owned() + "DESC",
-        params! { "nome_maquina" => nome_like },
-        |(idmaquina, nomemaquina, numserie, valoraluguel, maquinastatus, disponibilidade)| model::maquina::Maquina {
-            idmaquina,
-            nomemaquina,
-            numserie,
-            valoraluguel,
-            maquinastatus,
-            disponibilidade
-        }
-    ).await;
-    
-    match resultado_busca{
-        Ok(valor_mensal) => {            
-            if valor_mensal.is_empty(){
-                return Ok(vec![]);
-            }
-            return Ok(valor_mensal)
-        },
-        Err(e) => {
-            return Err(e);
-        }
-    }
-}
+
 
 #[tauri::command]
 pub async fn busca_maquina_numserie(numserie: String) -> Result<Vec<model::maquina::Maquina>, String>{
@@ -159,15 +127,4 @@ pub fn formata_valor_f32(valor: &str) -> Result<f32, String>{
         Err(e) => {return Err(e.to_string())}
     };
     return Ok(valor);
-}
-
-pub async fn aluga_maquina(idmaquina: &str) -> Result<(), mysql_async::Error>{
-    let pool = cria_pool().await?;
-    let mut conn = pool.get_conn().await?;
-    let resultado_atualizacao = conn.exec_drop("UPDATE maquina SET disponibilidade = 0 WHERE idmaquina = :idmaquina", 
-    params! {"idmaquina" => idmaquina}).await;
-    match resultado_atualizacao{
-        Ok(_) => {return Ok(())},
-        Err(e) => {return Err(e)}
-    }
 }

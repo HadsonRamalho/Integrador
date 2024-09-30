@@ -14,21 +14,6 @@ pub struct Endereco{
     pub uf: String,
 }
 
-
-/// Função para salvar um endereço no banco de dados.
-///
-/// Esta função recebe um objeto `serde_json::Value` contendo os dados de um endereço,
-/// cria uma conexão com o banco de dados, e insere os dados na tabela `endereco`.
-///
-/// # Parâmetros
-/// - `endereco`: Um objeto JSON contendo os dados do endereço, como logradouro, CEP, complemento, número, cidade e UF.
-///
-/// # Retornos
-/// - `Result<bool, mysql_async::Error>`: Retorna `Ok(true)` se o endereço for salvo com sucesso.
-///   Em caso de falha na conexão ou na execução da query, retorna um erro do tipo `mysql_async::Error`.
-///
-/// # Exceções
-/// - Pode retornar um erro se houver problemas ao conectar ao banco de dados ou ao executar a query.
 pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::Error> {
     // Cria uma conexão com o pool do banco de dados
     let pool = controller::cria_pool().await?;

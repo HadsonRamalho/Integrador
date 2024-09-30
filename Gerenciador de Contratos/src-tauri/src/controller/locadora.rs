@@ -1,36 +1,9 @@
-use mysql_async::params;
-use mysql_async::prelude::Queryable;
-
 use crate::model::erro::MeuErro;
 use crate::model::locadora::Locadora;
 use crate::model::locadora::_cadastra_locadora;
 use crate::model;
 use crate::controller;
 
-use super::cria_pool;
-
-/// Função para criar uma estrutura de dados para uma locadora.
-///
-/// # Parâmetros
-/// - idendereco: Identificador do endereço associado à locadora.
-/// - cnpj: Cadastro Nacional da Pessoa Jurídica da locadora.
-/// - numerocontabanco: Número da conta bancária da locadora.
-/// - numeroagenciabanco: Número da agência bancária da locadora.
-/// - nomebanco: Nome do banco onde a locadora possui conta.
-///
-/// # Processo
-/// 1. Criptografa o CNPJ da locadora para criar um identificador único.
-/// 2. Cria um objeto JSON com os seguintes dados:
-///    - `idendereco`: Identificador do endereço.
-///    - `idlocadora`: Identificador único criptografado para a locadora.
-///    - `cnpj`: CNPJ da locadora.
-///    - `numerocontabanco`: Número da conta bancária.
-///    - `numeroagenciabanco`: Número da agência bancária.
-///    - `nomebanco`: Nome do banco.
-///
-/// # Retornos
-/// - Result<serde_json::Value, bool>: Retorna `Ok(locadora)` contendo os dados da locadora em formato JSON.
-///   Retorna `Ok(false)` se houver algum problema na criação do objeto JSON (o que não é esperado neste caso).
 #[tauri::command]
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String, idsocio: String) -> Result<serde_json::Value, String>{
     if idendereco.trim().is_empty() || cnpj.trim().is_empty() || numerocontabanco.trim().is_empty()
@@ -52,17 +25,6 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
     return Ok(locadora);
 }
 
-/// Função para cadastrar uma locadora no banco de dados.
-///
-/// Esta função valida os dados da locadora fornecidos em formato JSON e tenta cadastrar
-/// a locadora no banco de dados, se ainda não existir um registro com o mesmo CNPJ.
-///
-/// # Parâmetros
-/// - `locadora`: Um objeto `serde_json::Value` contendo as informações da locadora a ser cadastrada.
-///
-/// # Retornos
-/// - `Ok(())`: Se a locadora for cadastrada com sucesso ou já existir.
-/// - `Err(String)`: Se ocorrer um erro durante a validação ou no processo de busca/cadastro.
 #[tauri::command]
 pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, String> {
     let locadora: Result<Locadora, String> = valida_locadora(locadora);
@@ -88,17 +50,6 @@ pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, St
     }
 }
 
-/// Função assíncrona para buscar o ID de uma locadora pelo seu CNPJ.
-///
-/// Esta função verifica se o CNPJ fornecido não está vazio e, em seguida,
-/// realiza uma busca no banco de dados para encontrar o ID da locadora correspondente.
-///
-/// # Parâmetros
-/// - `cnpj`: Uma referência para uma string que representa o CNPJ da locadora.
-///
-/// # Retornos
-/// - `Ok(String)`: O ID da locadora se encontrado.
-/// - `Err(String)`: Uma mensagem de erro se o CNPJ estiver vazio ou se ocorrer um erro durante a busca.
 #[tauri::command]
 pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
     if cnpj.trim().is_empty(){
@@ -116,17 +67,6 @@ pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
     }
 }
 
-/// Função para validar e criar uma instância de `Locadora` a partir de um JSON.
-///
-/// A função extrai e verifica os campos necessários de um objeto JSON para criar uma instância
-/// de `Locadora`. Se algum dos campos obrigatórios estiver vazio, retorna um erro.
-///
-/// # Parâmetros
-/// - `locadora`: Um objeto JSON contendo os dados da locadora.
-///
-/// # Retornos
-/// - `Ok(Locadora)`: Retorna uma instância válida de `Locadora` se todos os campos estiverem preenchidos.
-/// - `Err(String)`: Retorna uma mensagem de erro se um ou mais campos obrigatórios estiverem vazios.
 fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
     let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
@@ -206,27 +146,10 @@ pub async fn verifica_usuario_socio_locadora(idusuario: String, cnpj: String) ->
        return Err(MeuErro::CamposVazios.to_string())
     }
     let cnpj = formata_cnpj(&cnpj)?;
-    let resultado_verificacao = _verifica_usuario_socio_locadora(idusuario, cnpj).await;
+    let resultado_verificacao = model::locadora::verifica_usuario_socio_locadora(idusuario, cnpj).await;
     match resultado_verificacao{
         Ok(_) => {return Ok(())},
         Err(e) => {return Err(e.to_string())}
     }
 }
 
-pub async fn _verifica_usuario_socio_locadora(idusuario: String, cnpj: String) -> Result<(), mysql_async::Error>{
-    let pool = cria_pool().await?;
-    let mut conn = pool.get_conn().await?;
-    let resultado_verificacao: Option<String> = conn.exec_first("SELECT idsocio FROM locadora WHERE cnpj = :cnpj", 
-    params! {"cnpj" => cnpj}).await?;
-    match resultado_verificacao{
-        Some(idsocio) => {
-            if idsocio != idusuario{
-                return Ok(())
-            }
-            return Err(mysql_async::Error::Other(Box::new(MeuErro::ImpossivelApagar)))
-        }, 
-        None => {
-            return Err(mysql_async::Error::Other(Box::new(MeuErro::IdNaoEncontrado)))
-        }
-    }
-}

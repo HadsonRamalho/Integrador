@@ -123,5 +123,16 @@ pub async fn gera_estoque_por_nome(nomemaquina: String) -> Result<Vec<EstoqueMaq
         return Err(mysql_async::Error::Other(Box::new(MeuErro::MaquinaNaoEncontradaNoEstoque)));
     }
     return Ok(estoque)
+}
 
+pub async fn aluga_maquina(idmaquina: &str) -> Result<(), mysql_async::Error>{
+    let pool = controller::cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_atualizacao = 
+        conn.exec_drop("UPDATE maquina SET disponibilidade = 0 WHERE idmaquina = :idmaquina", 
+        params! {"idmaquina" => idmaquina}).await;
+    match resultado_atualizacao{
+        Ok(_) => {return Ok(())},
+        Err(e) => {return Err(e)}
+    }
 }

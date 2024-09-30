@@ -95,3 +95,21 @@ pub async fn locadora_existente(cnpj: &str) -> Result<Locadora, mysql_async::Err
         Some(locadora) => {return Ok(locadora)}
     }
 }
+
+pub async fn verifica_usuario_socio_locadora(idusuario: String, cnpj: String) -> Result<(), mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_verificacao: Option<String> = conn.exec_first("SELECT idsocio FROM locadora WHERE cnpj = :cnpj", 
+    params! {"cnpj" => cnpj}).await?;
+    match resultado_verificacao{
+        Some(idsocio) => {
+            if idsocio != idusuario{
+                return Ok(())
+            }
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::ImpossivelApagar)))
+        }, 
+        None => {
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::IdNaoEncontrado)))
+        }
+    }
+}

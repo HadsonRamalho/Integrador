@@ -2,7 +2,6 @@ use crate::controller::{self, gera_hash};
 use dotenv::dotenv;
 use erro::MeuErro;
 use mysql_async::{prelude::*, Pool};
-use core::hash;
 use std::env;
 pub mod endereco;
 pub mod locadora;
@@ -19,11 +18,6 @@ use lettre::transport::smtp::authentication::{Credentials, Mechanism};
 use lettre::{Message, SmtpTransport, Transport};
 
 /// Estrutura que representa um usuário.
-///
-/// A estrutura contém os seguintes campos:
-/// - nome: Nome completo do usuário.
-/// - email: Endereço de email do usuário.
-/// - senha: Senha do usuário.
 #[derive(Default, Debug)]
 pub struct Usuario {
     // Objeto de usuário para unificar dados
@@ -119,17 +113,6 @@ pub async fn cadastra_usuario(
     }
 }
 
-/// Verifica se um email já está cadastrado no banco de dados.
-///
-/// # Parâmetros
-/// - pool: Pool de conexões com o banco de dados.
-/// - email: Endereço de email a ser verificado.
-/// - repetido: Referência mutável para um contador que será incrementado se o email já estiver cadastrado.
-///
-/// # Retornos
-/// - Result<String, mysql_async::Error>: Retorna Ok(email) se o email for encontrado,
-///   ou Err(mysql_async::Error) se houver um erro na verificação.
-
 pub async fn busca_email(pool: &Pool, email: &str) -> Result<String, mysql_async::Error> {
     let mut conn = pool.get_conn().await?; // Conectando no banco
     let email_db: Option<String> = conn
@@ -146,17 +129,6 @@ pub async fn busca_email(pool: &Pool, email: &str) -> Result<String, mysql_async
     }
 }
 
-/// Verifica a senha de um usuário.
-///
-/// # Parâmetros
-/// - pool: Pool de conexões com o banco de dados.
-/// - email: Endereço de email do usuário.
-/// - senha: Senha digitada pelo usuário.
-/// - senha_correta: Referência mutável para um contador que será incrementado se a senha estiver correta.
-///
-/// # Retornos
-/// - Result<(), mysql_async::Error>: Retorna Ok(()) se a senha for verificada com sucesso,
-///   ou Err(mysql_async::Error) se houver um erro na verificação.
 pub async fn verifica_senha(
     pool: &Pool,
     email: &str,

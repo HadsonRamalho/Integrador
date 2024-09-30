@@ -1,5 +1,3 @@
-use mysql_async::{params, prelude::Queryable};
-
 use crate::{controller, model::{self, erro::MeuErro, locatario::Locatario}};
 
 use super::locadora::formata_cnpj;
@@ -52,7 +50,7 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
         return Err(MeuErro::CamposVazios.to_string())
     }
 
-    let resultado_busca: Result<String, mysql_async::Error> = _busca_id_locatario(&locatario.cnpj).await;
+    let resultado_busca: Result<String, mysql_async::Error> = model::locatario::busca_id_locatario(&locatario.cnpj).await;
 
     let id = match resultado_busca{
         Ok(resultado) => {
@@ -83,7 +81,7 @@ pub async fn busca_id_locatario(cnpj: &str) -> Result<String, String>{
     if cnpj.trim().is_empty(){
         return Err(MeuErro::CnpjVazio.to_string())
     }
-    let resultado: Result<String, mysql_async::Error> = _busca_id_locatario(cnpj).await;
+    let resultado: Result<String, mysql_async::Error> = model::locatario::busca_id_locatario(cnpj).await;
     match resultado{
         Ok(id) =>{
             return Ok(id);
@@ -94,28 +92,7 @@ pub async fn busca_id_locatario(cnpj: &str) -> Result<String, String>{
     }
 }
 
-pub async fn _busca_id_locatario(cnpj: &str) -> Result<String, mysql_async::Error>{
-    let pool = controller::cria_pool().await?;
-    let mut conn = pool.get_conn().await?;
-    let resultado_busca: Result<Option<String>, mysql_async::Error> = conn.exec_first("SELECT idlocatario FROM locatario WHERE cnpj = :cnpj",
-        params!{"cnpj" => cnpj}).await;
-    let id = match resultado_busca{
-        Ok(id) => {
-            id
-        },
-        Err(e) => {
-            return Err(e);
-        }
-    };
-    match id {
-        Some(id) => {
-            return Ok(id);
-        }, 
-        None =>{
-            return Ok("".to_string());
-        }
-    }
-}
+
 
 #[tauri::command]
 pub async fn busca_locatario_nome(nomelocatario: String) -> Result<Vec<Locatario>, String>{

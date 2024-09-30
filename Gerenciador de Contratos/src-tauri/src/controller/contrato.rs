@@ -1,8 +1,6 @@
 use chrono::NaiveDate;
 use chrono::NaiveDateTime;
 use chrono::NaiveTime;
-use mysql_async::params;
-use mysql_async::prelude::*;
 use mysql_async::Row;
 use mysql_async::Value;
 
@@ -10,10 +8,8 @@ use crate::model::erro::MeuErro;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
-use super::cria_pool;
 use super::gera_hash;
 use super::locadora::formata_cnpj;
-use super::maquina::aluga_maquina;
 use super::maquina::formata_valor_f32;
 use super::usuario::busca_cnpj_usuario;
 
@@ -31,7 +27,7 @@ pub async fn busca_contrato_nome_maquina(nome_maquina: String, idusuario: String
             return Err(e.to_string())
         }
     };
-    let cnpj = controller::usuario::_busca_cnpj_usuario(&pool, &idusuario).await;
+    let cnpj = model::usuario::busca_cnpj_usuario(&pool, &idusuario).await;
     let cnpj = match cnpj{
         Ok(cnpj) => {
             cnpj
@@ -39,7 +35,7 @@ pub async fn busca_contrato_nome_maquina(nome_maquina: String, idusuario: String
             return Err("Erro: O usuário não tem um CNPJ cadastrado.".to_string())
         }
     };
-    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = _busca_contrato_nome_maquina(nome_maquina, cnpj).await;
+    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = model::contrato::busca_contrato_nome_maquina(nome_maquina, cnpj).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -76,37 +72,6 @@ fn formata_data(value: Value) -> String {
         },
         _ => "Erro: Formato de data inválido".to_string(),
     }
-}
-
-pub async fn _busca_contrato_nome_maquina(nome_maquina: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error> {
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
-    let mut conn = pool.get_conn().await?;
-    let cnpj = cnpj.trim();
-    let nome_like = format!("%{}%", nome_maquina);
-
-    let rows: Vec<Row> = conn.exec(
-        "SELECT ca.idcontrato, ca.prazolocacao, ca.dataretirada, ca.valormensal, ca.vencimento,
-       ca.multaatraso, ca.jurosatraso, ca.avisotransferencia, ca.prazodevolucao, 
-       ca.cidadeforo, ca.datacontrato, ca.idlocatario, ca.idlocador, ca.idmaquina, 
-       ca.enderecoretirada
-        FROM contrato_aluguel ca
-        JOIN locadora ld ON ca.idlocador = ld.idlocadora
-        JOIN maquina ma ON ca.idmaquina = ma.idmaquina
-        WHERE ma.nomemaquina LIKE :nome_maquina AND ld.cnpj = :cnpj
-        ORDER BY ca.valormensal DESC;",
-        params! { "nome_maquina" => nome_like, "cnpj" => cnpj }
-    ).await?;
-
-    let contratos: Vec<Contrato> = cria_vetor_contratos(rows);
-
-    Ok(contratos)
 }
 
 #[tauri::command]
@@ -223,7 +188,7 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
         idmaquina, 
         enderecoretirada        
     };
-    let resultado_aluguel = aluga_maquina(&idmaquina_cpy).await;
+    let resultado_aluguel = model::maquina::aluga_maquina(&idmaquina_cpy).await;
     match resultado_aluguel{
         Ok(_) => {},
         Err(e) => {
@@ -256,7 +221,7 @@ pub async fn busca_contratos_a_vencer(idusuario: String) -> Result<Vec<model::co
             return Err(e.to_string())
         }
     };
-    let cnpj = controller::usuario::_busca_cnpj_usuario(&pool, &idusuario).await;
+    let cnpj = model::usuario::busca_cnpj_usuario(&pool, &idusuario).await;
     let cnpj = match cnpj{
         Ok(cnpj) => {
             cnpj
@@ -264,7 +229,7 @@ pub async fn busca_contratos_a_vencer(idusuario: String) -> Result<Vec<model::co
             return Err("Erro: O usuário não tem um CNPJ cadastrado.".to_string())
         }
     };
-    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = _busca_contratos_a_vencer(cnpj).await;
+    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = model::contrato::busca_contratos_a_vencer(cnpj).await;
 
     match resultado_busca{
         Ok(resultado) => {
@@ -279,7 +244,7 @@ pub async fn busca_contratos_a_vencer(idusuario: String) -> Result<Vec<model::co
     }
 }
 
-fn cria_vetor_contratos(row: Vec<Row>) -> Vec<Contrato>{
+pub fn cria_vetor_contratos(row: Vec<Row>) -> Vec<Contrato>{
     let contratos: Vec<Contrato> =  row.into_iter().map(|row| {
         let idcontrato = row.get::<String, _>("idcontrato").unwrap_or_default();
         let prazolocacao = row.get::<f32, _>("prazolocacao").unwrap_or_default();
@@ -318,63 +283,17 @@ fn cria_vetor_contratos(row: Vec<Row>) -> Vec<Contrato>{
     return contratos
 }
 
-pub async fn _busca_contratos_a_vencer(cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error> {
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
-        }
-    };
-    let mut conn = pool.get_conn().await?;
-    let cnpj = cnpj.trim();
 
-
-    let rows: Vec<Row> = conn.exec(
-        "SELECT ca.idcontrato, ca.prazolocacao, ca.dataretirada, ca.valormensal, ca.vencimento,
-       ca.multaatraso, ca.jurosatraso, ca.avisotransferencia, ca.prazodevolucao, 
-       ca.cidadeforo, ca.datacontrato, ca.idlocatario, ca.idlocador, ca.idmaquina, 
-       ca.enderecoretirada
-        FROM contrato_aluguel ca
-        JOIN locadora ld ON ca.idlocador = ld.idlocadora
-        JOIN maquina ma ON ca.idmaquina = ma.idmaquina
-        WHERE ld.cnpj = :cnpj
-        AND ca.vencimento > CURDATE()
-        ORDER BY ca.valormensal DESC;",
-        params! {"cnpj" => cnpj }
-    ).await?;
-
-    let contratos = cria_vetor_contratos(rows);
-    println!("{:?}", contratos);
-
-    Ok(contratos)
-}
 
 #[tauri::command]
 pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String) -> Result<Vec<Contrato>, String>{
     let numserie = numserie.trim().to_string();
     let cnpj = busca_cnpj_usuario(idusuario).await?;
     let cnpj = formata_cnpj(&cnpj)?;
-    let resultado_busca = _busca_contrato_numserie_maquina(numserie, cnpj).await;
+    let resultado_busca = model::contrato::busca_contrato_numserie_maquina(numserie, cnpj).await;
     match resultado_busca{
         Ok(contratos) => {return Ok(contratos)},
         Err(e) => return Err(e.to_string())
     }
 }
 
-pub async fn _busca_contrato_numserie_maquina(numserie: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error>{
-    let pool = cria_pool().await?;
-    let mut conn = pool.get_conn().await?;
-    let contrato: Vec<Row> = conn.exec("SELECT * FROM contrato_aluguel
-        JOIN maquina ON contrato_aluguel.idmaquina = maquina.idmaquina
-        JOIN locadora ON contrato_aluguel.idlocador = locadora.idlocadora
-        WHERE maquina.numserie = :numserie
-            AND locadora.cnpj = :cnpj;",
-         params!{"numserie" => numserie, "cnpj" => cnpj}, ).await?;
-    if contrato.is_empty(){
-        return Err(mysql_async::Error::Other(Box::new(MeuErro::ContratoNaoEncontrado)))
-    }
-    let contrato = cria_vetor_contratos(contrato);
-    return Ok(contrato)
-}

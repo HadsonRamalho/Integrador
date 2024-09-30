@@ -1,35 +1,6 @@
 use super::gera_hash;
 use crate::{controller, model::{self, erro::MeuErro}};
 
-/// Função para estruturar os dados de um endereço em formato JSON.
-///
-/// Esta função cria um objeto JSON que contém os dados do endereço fornecidos como parâmetros,
-/// gerando um ID único para o endereço com base no CEP. 
-/// Esse JSON pode ser usado para armazenar ou manipular os dados do endereço posteriormente.
-///
-/// # Parâmetros
-/// - `logradouro`: O nome da rua ou avenida do endereço.
-/// - `cep`: O código postal (CEP) do endereço.
-/// - `complemento`: Complemento do endereço, como apartamento, bloco, etc.
-/// - `numeroendereco`: O número do endereço.
-/// - `cidade`: A cidade do endereço.
-/// - `uf`: A unidade federativa (UF) do estado correspondente ao endereço.
-///
-/// # Retornos
-/// - `Result<serde_json::Value, bool>`: Retorna um objeto JSON com os dados estruturados do endereço em caso de sucesso.
-///   Em caso de falha, retorna `Err(false)`.
-///
-/// # Exemplo de uso
-/// ```
-/// let endereco = estrutura_endereco(
-///     "Rua Exemplo".to_string(),
-///     "12345-678".to_string(),
-///     "Apto 101".to_string(),
-///     "10".to_string(),
-///     "Cidade Exemplo".to_string(),
-///     "SP".to_string()
-/// ).unwrap();
-/// ```
 #[tauri::command]
 pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, numeroendereco: String, cidade: String, uf: String) -> Result<serde_json::Value, String>{
     if logradouro.trim().is_empty() || cep.trim().is_empty()
@@ -58,19 +29,6 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
     return Ok(endereco)
 }
 
-/// Função para criar a estrutura de um endereço.
-///
-/// # Parâmetros
-/// - logradouro: Logradouro do endereço.
-/// - cep: Código postal do endereço.
-/// - complemento: Complemento do endereço (opcional).
-/// - numeroendereco: Número do endereço.
-/// - cidade: Cidade do endereço.
-/// - uf: Unidade federativa (estado) do endereço.
-///
-/// # Retornos
-/// - Result<serde_json::Value, bool>: Retorna um objeto JSON com os dados do endereço e um ID criptografado,
-///   ou um erro booleano indicando falha na criação da estrutura.
 #[tauri::command]
 pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, String>{
     // Converte os dados recebidos em um objeto `Endereco`

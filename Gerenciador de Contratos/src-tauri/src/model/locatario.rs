@@ -91,3 +91,27 @@ pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Vec<Locatario>, mysql_as
         }
     }
 }
+
+pub async fn busca_id_locatario(cnpj: &str) -> Result<String, mysql_async::Error>{
+    let pool = controller::cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_busca: Result<Option<String>, mysql_async::Error> = 
+    conn.exec_first("SELECT idlocatario FROM locatario WHERE cnpj = :cnpj",
+        params!{"cnpj" => cnpj}).await;
+    let id = match resultado_busca{
+        Ok(id) => {
+            id
+        },
+        Err(e) => {
+            return Err(e);
+        }
+    };
+    match id {
+        Some(id) => {
+            return Ok(id);
+        }, 
+        None =>{
+            return Ok("".to_string());
+        }
+    }
+}

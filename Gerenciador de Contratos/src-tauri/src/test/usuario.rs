@@ -60,7 +60,7 @@ async fn test_busca_nome_usuario_ok() {
     let mock_pool = _setup_pool().await.expect("Erro ao criar a pool");
 
     let nome_esperado = "Usuario Teste".to_string();
-    let resultado_busca = controller::usuario::_busca_nome_usuario(&mock_pool, &idusuario.unwrap()).await;
+    let resultado_busca = model::usuario::busca_nome_usuario(&mock_pool, &idusuario.unwrap()).await;
     assert_eq!(resultado_busca.unwrap(), nome_esperado);
 
     assert!(_limpa_usuario(&idusuario_cpy.unwrap(), email).await.is_ok(),
@@ -71,7 +71,7 @@ async fn test_busca_nome_usuario_ok() {
 async fn test_busca_nome_usuario_id_invalido_ok() {
     let mock_pool = _setup_pool().await.expect("Erro ao criar a pool");
 
-    let resultado_busca = controller::usuario::_busca_nome_usuario(&mock_pool, "$2b$10$").await;
+    let resultado_busca = model::usuario::busca_nome_usuario(&mock_pool, "$2b$10$").await;
     assert!(resultado_busca.is_err());
 }
 
