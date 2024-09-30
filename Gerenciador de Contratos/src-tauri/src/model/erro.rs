@@ -38,14 +38,32 @@ pub enum MeuErro{
     SemMaquinasAlugadas,
     #[error("Máquina não encontrada no estoque")]
     MaquinaNaoEncontradaNoEstoque,
-    #[error("Erro ao salvar o endereço")]
+    #[error("O endereço não foi salvo")]
     SalvarEndereco,
-    #[error("Erro ao salvar o contrato")]
+    #[error("O contrato não foi salvo")]
     SalvarContrato,
-    #[error("Erro ao atualizar o nome do usuário")]
+    #[error("O nome do usuário não foi atualizado")]
     AtualizarNomeUsuario,
-    #[error("Erro ao atualizar a senha do usuário")]
+    #[error("A senha do usuário não foi atualizada")]
     AtualizarSenhaUsuario,
-    #[error("Erro ao atualizar o e-mail do usuário")]
-    AtualziarEmailUsuario
+    #[error("O e-mail do usuário não foi atualizado")]
+    AtualizarEmailUsuario,
+    #[error("O usuário não foi salvo")]
+    SalvarUsuario,
+    #[error("O sócio não foi salvo")]
+    SalvarSocio,
+    #[error("O hash não foi encontrado")]
+    HashNaoEncontrado,
+    #[error("Não foi encontrada uma máquina com esse nome")]
+    NomeMaquinaNaoEncontrado,
+    #[error("A máquina não foi salva")]
+    SalvarMaquina,
+    #[error("Não foi encontrado um locatário com esse nome")]
+    NomeLocatarioNaoEncontrado,
+    #[error("O locatário não foi salvo")]
+    SalvarLocatario,
+    #[error("Não foi encontrada uma locadora com esse CNPJ")]
+    CnpjLocadoraNaoEncontrado,
+    #[error("A locadora não foi salva")]
+    SalvarLocadora
 }

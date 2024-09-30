@@ -1,4 +1,5 @@
 use mysql_async::prelude::Queryable;
+use crate::model::erro::MeuErro;
 use crate::model::params;
 use crate::controller;
 
@@ -30,7 +31,7 @@ pub async fn _cadastra_socio_adm(socioadm: SocioADM) -> Result<(), mysql_async::
         }, 
         Err(e) => {
             println!("{:?}", e);
-            return Err(e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SalvarSocio)));
         }
     }
     return Ok(());
