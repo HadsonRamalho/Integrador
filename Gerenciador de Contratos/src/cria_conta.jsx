@@ -111,7 +111,7 @@ function CriaConta(){
           numeroenderecosocio, complementosocio, cidadesocio, ufsocio
         );
         const idsocio = await cadastraSocioAdm(idenderecosocio, nomeCompleto, cpf, 
-          orgaoemissor, estadocivil, nacionalidade, idusuario)
+          orgaoemissor, estadocivil, nacionalidade, idusuario, cnpj)
         await cadastraLocadora(idsocio);
       }      
       setMensagemCriarConta("Conta criada");

@@ -58,7 +58,9 @@ fn main() {
 
             controller::socioadm::estrutura_socio_adm,
             controller::socioadm::cadastra_socio_adm, 
-            controller::socioadm::estrutura_primeiro_socio,           
+            controller::socioadm::estrutura_primeiro_socio,      
+            controller::socioadm::busca_socio_adm_id,     
+            controller::socioadm::socio_adm_existente,
 
             controller::endereco::estrutura_endereco,
             controller::endereco::_salva_endereco,

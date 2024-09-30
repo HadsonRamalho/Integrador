@@ -37,7 +37,7 @@ function CadastrarLocatario(){
     try{
       const idendereco = await cadastraEndereco(cep, logradouro, numeroendereco, complemento, cidade, uf);
       const idenderecoLocatario = await cadastraEndereco(cepLocatario, logradouroLocatario, numeroenderecoLocatario, complementoLocatario, cidadeLocatario, ufLocatario);
-      const idsocio = await cadastraSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade);
+      const idsocio = await cadastraSocioAdm(idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade, "", cnpj);
       await cadastraLocatario(idenderecoLocatario, idsocio, cnpj, nomelocatario);
       setMensagem("Locatário cadastrado com sucesso!");
     } catch(error){

@@ -1,13 +1,15 @@
-use crate::{controller, model::{self, erro::MeuErro, socioadm::_cadastra_socio_adm}};
+use std::f32::consts::E;
+
+use crate::{controller, model::{self, erro::MeuErro, socioadm::{SocioADM, _cadastra_socio_adm}}};
 
 use super::formata_cpf;
 
 #[tauri::command]
-pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String) -> Result<serde_json::Value, String>{
+pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, cnpj: String) -> Result<serde_json::Value, String>{
     
-    if idendereco.is_empty() || nome.is_empty() || cpf.is_empty()
-        || orgaoemissor.is_empty() || estadocivil.is_empty() 
-        || nacionalidade.is_empty(){
+    if idendereco.trim().is_empty() || nome.trim().is_empty() || cpf.trim().is_empty()
+        || orgaoemissor.trim().is_empty() || estadocivil.trim().is_empty() 
+        || nacionalidade.trim().is_empty() || cnpj.trim().is_empty(){
             return Err(MeuErro::CamposVazios.to_string());
     }
     
@@ -20,7 +22,8 @@ pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoe
         "cpf": cpf,
         "orgaoemissor": orgaoemissor,
         "estadocivil": estadocivil,
-        "nacionalidade": nacionalidade
+        "nacionalidade": nacionalidade,
+        "cnpj": cnpj
     });
     return Ok(socioadm);
 }
@@ -46,7 +49,8 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
             .unwrap_or("")
             .to_string(),
         nacionalidade: socioadm["nacionalidade"].as_str().unwrap_or("").to_string(),
-        sociostatus: 1
+        sociostatus: 1,
+        cnpj: socioadm["cnpj"].as_str().unwrap_or("").to_string()
     };
 
     // buscar o CPF do socio para não permitir entrada duplicada
@@ -73,11 +77,11 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
 }
 
 #[tauri::command]
-pub fn estrutura_primeiro_socio(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, idsocio: String) -> Result<serde_json::Value, String>{
+pub fn estrutura_primeiro_socio(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, idsocio: String, cnpj: String) -> Result<serde_json::Value, String>{
     
-    if idendereco.is_empty() || nome.is_empty() || cpf.is_empty()
-        || orgaoemissor.is_empty() || estadocivil.is_empty() 
-        || nacionalidade.is_empty(){
+    if idendereco.trim().is_empty() || nome.trim().is_empty() || cpf.trim().is_empty()
+        || orgaoemissor.trim().is_empty() || estadocivil.trim().is_empty() 
+        || nacionalidade.trim().is_empty() || cnpj.trim().is_empty(){
             return Err(MeuErro::CamposVazios.to_string());
     }
     
@@ -89,7 +93,47 @@ pub fn estrutura_primeiro_socio(idendereco: String, nome: String, cpf: String, o
         "cpf": cpf,
         "orgaoemissor": orgaoemissor,
         "estadocivil": estadocivil,
-        "nacionalidade": nacionalidade
+        "nacionalidade": nacionalidade,
+        "cnpj": cnpj
     });
     return Ok(socioadm);
+}
+
+#[tauri::command]
+pub async fn busca_socio_adm_id(idsocio: String) -> Result<Vec<SocioADM>, String>{
+    if idsocio.trim().is_empty(){
+        return Err("ID do sócio está vazio".to_string())
+    }
+    let resultado_busca: Result<Vec<SocioADM>, mysql_async::Error> = model::socioadm::busca_socio_adm_id(idsocio).await;
+    match resultado_busca{
+        Ok(socioadm) => {
+            return Ok(socioadm)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn socio_adm_existente(cpf: String) -> Result<serde_json::Value, String>{
+    println!("{}", cpf);
+    let cpf= formata_cpf(&cpf)?;
+    let resultado_busca = model::socioadm::socio_adm_existente(&cpf).await;
+    let socioadm = match resultado_busca{
+        Ok(socioadm) => {socioadm},
+        Err(e) => return Err(e.to_string())
+    };
+    let socioadm = serde_json::json!({
+        "idsocio": socioadm.idsocio ,
+        "idendereco": socioadm.idendereco,
+        "nome":socioadm.nome ,
+        "cpf": socioadm.cpf ,
+        "orgaoemissor": socioadm.orgaoemissor ,
+        "estadocivil": socioadm.estadocivil ,
+        "nacionalidade": socioadm.nacionalidade ,
+        "sociostatus": socioadm.sociostatus ,
+        "cnpj": socioadm.cnpj 
+    });
+    return Ok(socioadm)
 }

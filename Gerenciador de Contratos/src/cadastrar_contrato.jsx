@@ -5,8 +5,9 @@ import ChamaContrato from "./pdf_call";
 import { useEffect } from "react";
 import {formataValor} from "./maquina";
 import {selecionaUf, selecionaUfDefinido} from "./endereco";
-import {selecionaEstadoCivil} from "./socioAdm";
+import {selecionaEstadoCivil, selecionaEstadoCivilDefinido, selecionaNacionalidadeDefinido} from "./socioAdm";
 import InputMask from 'react-input-mask';
+import { error } from "pdf-lib";
 
 
 function CadastrarContrato(){
@@ -84,6 +85,8 @@ function CadastrarContrato(){
   const [numeroenderecoSocioLocatario, setNumeroSocioLocatario] = useState("");
   const [complementoSocioLocatario, setComplementoSocioLocatario] = useState("");
   const [ufSocioLocatario, setUfSocioLocatario] = useState("");
+
+  const [socioAdmCarregado, setSocioAdmCarregado] = useState(false);
 
   const capturaUfLocadora = (e) => {
     setUfLocadora(e.currentTarget.value); // Atualiza o estado com o valor selecionado
@@ -245,7 +248,7 @@ function CadastrarContrato(){
 
   async function estruturaSocioAdm(idendereco){
     try{
-      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade});
+      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade, cnpj});
       return socio;
     } catch(error) {
       setMensagem(error);
@@ -256,6 +259,11 @@ function CadastrarContrato(){
 
   async function cadastraSocioAdm(idendereco){
     try{
+      if(socioAdmCarregado){
+        const socio = await invoke("socio_adm_existente", {cpf});
+        const idsocio = socio.idsocio;
+        return idsocio;
+      }
       const socioadm = await estruturaSocioAdm(idendereco);
       const idsocio = await invoke("cadastra_socio_adm", {socioadm});
       return idsocio;
@@ -273,7 +281,8 @@ function CadastrarContrato(){
       const orgaoemissor = orgaoemissorsociolocatario;
       const estadocivil = estadocivilsociolocatario;
       const nacionalidade = nacionalidadesociolocatario;
-      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade});
+      const cnpj = cnpjlocatario;
+      const socio = await invoke("estrutura_socio_adm", {idendereco, nome, cpf, orgaoemissor, estadocivil, nacionalidade, cnpj});
       return socio;
     } catch(error) {
       setMensagem(error);
@@ -454,13 +463,42 @@ function CadastrarContrato(){
   const [locatarioCarregado, setLocatarioCarregado] = useState(false);
   const [idlocatario, setIdLocatario] = useState("");
 
-  
+  const carregaDadosSocioLocadora = async () => {
+    try{
+      console.log("CPF SOCIO ADM LOCADORA: ", cpf);
+      const socioadmlocadora = await invoke("socio_adm_existente", {cpf});
+      if (socioadmlocadora.idsocio == ""){
+        return
+      }
+      setCpfAdmLocadora(socioadmlocadora.cpf);
+      setNomeAdmLocadora(socioadmlocadora.nome);
+      setOrgaoEmissor(socioadmlocadora.orgaoemissor);
+      setEstadoCivil(socioadmlocadora.estadocivil);
+      setNacionalidade(socioadmlocadora.nacionalidade);
+      try{
+        const idendereco = socioadmlocadora.idendereco;
+        const enderecosociolocadora = await invoke("busca_endereco_id", {idendereco});
+        setCepAdm(enderecosociolocadora.cep);
+        setLogradouroAdm(enderecosociolocadora.logradouro);
+        setNumeroAdm(enderecosociolocadora.numeroendereco);
+        setComplementoAdm(enderecosociolocadora.complemento);
+        setCidadeAdm(enderecosociolocadora.cidade);
+        setUfAdm(enderecosociolocadora.uf);
+        setSocioAdmCarregado(true);
+      } catch(error){
+        console.log(error);
+        setMensagem(error);
+      }
+    }catch(error){
+      console.log("Erro ao carregar os dados do sócio da locadora: ", error);
+      setMensagem(error);
+    }
+  }  
 
   const carregaDadosLocatario = async () => {
     try{
       const cnpj = cnpjlocatario;
       console.log(cnpj);
-      const idlocatario = await invoke("busca_id_locatario", {cnpj});
       const veclocatario = await invoke("busca_locatario_cnpj", {cnpj});
       const locatario = veclocatario[0];
       console.log(locatario);
@@ -740,49 +778,44 @@ function CadastrarContrato(){
         />
         <br></br>
         <h3>Cadastro do Sócio Administrador da Locadora</h3>
-        <input required
-          className="inputContrato"
-          onChange={(e) => setNomeAdmLocadora(e.currentTarget.value)}
-          placeholder="Nome do sócio adm. (Ex.: João Carlos Pinheiro)" 
-        />
-        <br></br>
         <InputMask className="inputContrato"
             mask = {"999.999.999-99"}
             value={cpf}
-            onChange={(e) => setCpfAdmLocadora(e.target.value)}
+            onChange={(e) => {setCpfAdmLocadora(e.target.value);
+              carregaDadosSocioLocadora
+            }}
+            onBlurCapture={carregaDadosSocioLocadora}
             required
             placeholder="CPF do sócio adm."
             >
               {(inputProps) => <input{...inputProps} type= "text"/>}
             </InputMask>
+        <input required
+          className="inputContrato"
+          onChange={(e) => setNomeAdmLocadora(e.currentTarget.value)}
+          readOnly={socioAdmCarregado}
+          value={nome || ""}
+          placeholder={nome || "Nome do sócio adm. (Ex.: João Carlos Pinheiro)"} 
+        />        
         <br></br>
         <input
           className="inputContrato"
           onChange={(e) => setOrgaoEmissor(e.currentTarget.value)}
-          placeholder="Órgão Emissor do Doc. (Ex.: PC-MG)"
+          readOnly={socioAdmCarregado}
+          value={orgaoemissor || ""}
+          placeholder={orgaoemissor || "Órgão Emissor do Doc. (Ex.: PC-MG)"}
         />
         <br></br>
-        {selecionaEstadoCivil(setEstadoCivil)}
-        <div class= "input-box">
-            <select id= "nacionalidade" name= "nacionalidade" required aria-label= "Nacionalidade do sócio Administrativo"
-            onChange={(e) => setNacionalidade(e.currentTarget.value)}>
-                <option value="" disabled selected> Selecione a nacionalidade </option>
-                <option value = "Brasil"> Brasileiro </option>
-                <option value = "EUA"> Americano </option>
-                <option value = "Argentina"> Argentino </option>
-                <option value = "Chile"> Chileno </option>
-                <option value = "China"> Chinês </option>
-                <option value = "Coreia"> Coreano </option>
-            </select>
-        </div>
+        {selecionaEstadoCivilDefinido(setEstadoCivil, estadocivil, socioAdmCarregado)}
+        {selecionaNacionalidadeDefinido(setNacionalidade, nacionalidade, socioAdmCarregado)}
         <h3>Endereço do Sócio Administrador da Locadora</h3>
-
         <InputMask className="inputContrato"
-        mask={"99999-999"}
-        value={cepadm}
-        onChange={(e) => setCepAdm(e.target.value)}
-        required
-        placeholder="CEP do sócio adm."
+          mask={"99999-999"}
+          readOnly={socioAdmCarregado}
+          value={cepadm || ""}
+          onChange={(e) => setCepAdm(e.target.value)}
+          required
+          placeholder={cepadm || "CEP do sócio adm."}
         >
           {(inputProps) => <input{...inputProps} type= "text"/>}
         </InputMask>
@@ -790,27 +823,33 @@ function CadastrarContrato(){
         <input required
           className="inputContrato"
           onChange={(e) => setCidadeAdm(e.currentTarget.value)}
-          placeholder="Cidade do sócio adm. (Ex.: Belo Horizonte)" 
+          readOnly={socioAdmCarregado}
+          value={cidadeadm || ""}
+          placeholder={cidadeadm || "Cidade do sócio adm. (Ex.: Belo Horizonte)"} 
         />
-        <br></br>
-        {selecionaUf(setUfAdm)}
-        <br></br>
+        {selecionaUfDefinido(setUfAdm, ufadm, socioAdmCarregado)}
         <input required
           className="inputContrato"
           onChange={(e) => setLogradouroAdm(e.currentTarget.value)}
-          placeholder="Logradouro do sócio adm. (Ex.: Avenida Central)" 
+          readOnly={socioAdmCarregado}
+          value={logradouroadm || ""}
+          placeholder={logradouroadm || "Logradouro do sócio adm. (Ex.: Avenida Central)"} 
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setNumeroAdm(e.currentTarget.value)}
-          placeholder="Numero do sócio adm. (Ex.: 101B)" 
+          readOnly={socioAdmCarregado}
+          value={numeroenderecoadm || ""}
+          placeholder={numeroenderecoadm || "Numero do sócio adm. (Ex.: 101B)"}
         />
         <br></br>
         <input required
           className="inputContrato"
           onChange={(e) => setComplementoAdm(e.currentTarget.value)}
-          placeholder="Complemento do sócio adm. (Ex.: Sala 01)" 
+          readOnly={socioAdmCarregado}
+          value={complementoadm || ""}
+          placeholder={complementoadm || "Complemento do sócio adm. (Ex.: Sala 01)"}
         />
         <br></br>
         <h3>Informações da máquina</h3>
