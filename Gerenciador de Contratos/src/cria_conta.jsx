@@ -151,7 +151,7 @@ function CriaConta(){
           </div>
           <div>    
             <InputMask className="user-input"
-              mask="999.999.999-99" // Máscara para CPF
+              mask="999.999.999-99" 
               value={cpf}
               onChange={(e) => setCpf(e.target.value)}
               required
