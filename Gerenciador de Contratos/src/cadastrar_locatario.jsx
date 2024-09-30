@@ -4,6 +4,7 @@ import {cadastraEndereco, selecionaUf} from "./endereco";
 import { cadastraSocioAdm } from "./socioAdm";
 import { cadastraLocatario } from "./locatario";
 import {selecionaEstadoCivil, selecionaNacionalidade} from "./socioAdm";
+import InputMask from 'react-input-mask';
 
 function CadastrarLocatario(){
   const [mensagem, setMensagem] = useState("");
@@ -63,11 +64,16 @@ function CadastrarLocatario(){
           }}
         >
         <p>Cadastro do endereço do sócio administrador</p>
-        <input required
-          className="rowReset"
-          onChange={(e) => setCep(e.currentTarget.value)}
-          placeholder="CEP" 
-        />
+
+        <InputMask className="rowReset"
+        mask ={"99999-999"}
+        value = {cep}
+        onChange ={(e) => setCep(e.target.value)}
+        required
+        placeholder="CEP"
+        >
+          {(inputProps) => <input {...inputProps} type="text" />}
+        </InputMask>
         <br></br>
           <input required
           className="rowReset"
@@ -100,11 +106,16 @@ function CadastrarLocatario(){
           placeholder="Nome do Sócio"
         />
         <br></br>
-        <input
-          className="rowReset"
-          onChange={(e) => setCpf(e.currentTarget.value)}
-          placeholder="CPF do Sócio"
-        />
+        <InputMask className="rowReset"
+        mask={"999.999.999-99"}
+        value={cpf}
+        onChange={(e) => setCpf(e.target.value)}
+        required
+        placeholder="CPF do Sócio"
+        >
+          {(inputProps) => <input {...inputProps} type="text" />}
+        </InputMask>
+        
         <br></br>
         <input
           className="rowReset"
@@ -120,11 +131,16 @@ function CadastrarLocatario(){
           placeholder="Cidade" 
         />
         {selecionaUf(setUfLocatario, false, 30, 31)}
-        <input required
-          className="rowReset"
-          onChange={(e) => setCepLocatario(e.currentTarget.value)}
-          placeholder="CEP" 
-        />
+        <InputMask className="rowReset"
+        mask={"99999-999"}
+        value={cepLocatario}
+        onChange={(e) => setCepLocatario(e.target.value)}
+        required
+        placeholder="CEP"
+        >
+          {(inputProps) => <input {...inputProps} type="text" />}
+        </InputMask>
+        
         <br></br>
         <input required
           className="rowReset"
@@ -145,11 +161,17 @@ function CadastrarLocatario(){
         />
         <br></br>
         <p>Cadastro da empresa</p>
-        <input
-          className="rowReset"
-          onChange={(e) => setCnpj(e.currentTarget.value)}
-          placeholder="CNPJ da Empresa"
-        />
+
+        <InputMask className="rowReset"
+        mask={"99.999.999/9999-99"}
+        value={cnpj}
+        onChange={(e) => setCnpj(e.target.value)}
+        required
+        placeholder="CNPJ da Empresa"
+        >
+          {(inputProps) => <input {...inputProps} type="text" />}
+        </InputMask>
+       
         <br></br>
         <input
           className="rowReset"
