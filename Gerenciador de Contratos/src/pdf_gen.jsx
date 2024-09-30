@@ -3,7 +3,6 @@ import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/re
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
-// Estilos
 const styles = StyleSheet.create({
   page: { flexDirection: 'column', padding: 30 },
   section: { margin: 10, padding: 10, fontSize: 12 },
@@ -14,7 +13,6 @@ const styles = StyleSheet.create({
   tableCell: { margin: 5, fontSize: 10 },
 });
 
-// Função para gerar o contrato com base nos parâmetros fornecidos
 export const gerarTextoContratoP1 = ({
   nomeLocadora,
   cnpjLocadora,
@@ -123,7 +121,7 @@ CLÁUSULA SEGUNDA – PRAZO DE VIGÊNCIA DO CONTRATO
 CLAÚSULA TERCEIRA – DO VALOR E FORMA DE PAGAMENTO
 
 
-        3.1 A LOCATÁRIA pagará à LOCADORA a título de contraprestação pela locação dos equipamentos, o valor mensal de R$ ${valormensal} e, na hipótese de renovação deste contrato, os valores passarão a ser corrigidos anualmente pelo valor positivo do índice IPCA ou por outro que venha eventualmente a substituí-lo.
+        3.1 A LOCATÁRIA pagará à LOCADORA a título de contraprestação pela locação dos equipamentos, o valor mensal de ${valormensal} e, na hipótese de renovação deste contrato, os valores passarão a ser corrigidos anualmente pelo valor positivo do índice IPCA ou por outro que venha eventualmente a substituí-lo.
 
             3.1.1 O pagamento da locação será mensal e adiantado, vencendo todo DIA ${datacontrato}, com início em ${datacontrato}, mediante boleto bancário, com exceção da primeira parcela (entrada).
 
@@ -317,7 +315,6 @@ CPF:____________________________	CPF:____________________________
 };
 
 
-// Documento PDF com o contrato gerado
 const MeuDocumento = (params) => {
   const contratoTexto = gerarTextoContratoP1(params);
   const contratoTexto2 = gerarTextoContratoP2(params);
@@ -334,10 +331,7 @@ const MeuDocumento = (params) => {
             <Text key={index}>{line.trim()}</Text>
           ))}
         </View>
-        {/* Exemplo de uma cláusula específica */}
 
-        
-        {/* Tabela */}
       <View style={styles.table}>
         <View style={styles.tableRow}>
           <View style={styles.tableCol}>
@@ -387,8 +381,6 @@ const MeuDocumento = (params) => {
   );
 };
 
-
-// Componente para exibir o PDF na tela
 const CPDF = () => {
   const { state } = useLocation();
 

@@ -12,6 +12,8 @@ pub enum MeuErro{
     EnderecoNaoEncontrado,
     #[error("O E-mail está vazio")]
     EmailVazio, 
+    #[error("O nome está vazio")]
+    NomeVazio,
     #[error("O CNPJ está vazio")]
     CnpjVazio,
     #[error("Um ou mais campos estão vazios")]

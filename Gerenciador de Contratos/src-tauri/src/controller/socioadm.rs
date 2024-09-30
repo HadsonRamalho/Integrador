@@ -1,5 +1,3 @@
-use std::f32::consts::E;
-
 use crate::{controller, model::{self, erro::MeuErro, socioadm::{SocioADM, _cadastra_socio_adm}}};
 
 use super::formata_cpf;
@@ -57,10 +55,15 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
     let cpf_cpy = socioadm.cpf.clone();
     let resultado_busca: Result<String, mysql_async::Error> = model::socioadm::busca_id_socio_adm(cpf_cpy).await;
     match resultado_busca{
-        Ok(_) => {
-            return Err("Sócio já está cadastrado".to_string())
+        Ok(idsocio) => {
+            println!("IDSOCIO: {}", idsocio);
+            if idsocio != ""{
+                return Err("Sócio já está cadastrado".to_string())
+            }
         },
-        Err(_) => {}
+        Err(e) => {
+            return Err(e.to_string())
+        }
     }
 
     let resultado_cadastro = _cadastra_socio_adm(socioadm).await;

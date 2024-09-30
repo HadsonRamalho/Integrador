@@ -57,7 +57,7 @@ pub async fn busca_id_socio_adm(cpf: String) -> Result<String, mysql_async::Erro
             return Ok(idsocio)
         },
         None => {
-            return Err(mysql_async::Error::Other(Box::new(MeuErro::SocioNaoEncontrado)))
+            return Ok("".to_string())
         }
     }
 }
@@ -96,7 +96,8 @@ pub async fn socio_adm_existente(cpf: &str) -> Result<SocioADM, mysql_async::Err
         }
     };
     match socioadm{
-        None => {return Ok(SocioADM {idsocio: "".to_string(),
+        None => {return Ok(SocioADM {
+            idsocio: "".to_string(),
             idendereco: "".to_string(),
             cnpj:"".to_string(),
             cpf: "".to_string(),
