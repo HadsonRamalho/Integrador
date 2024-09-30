@@ -4,15 +4,15 @@ import { useNavigate } from "react-router-dom";
 
 function BuscarContrato(){
   const [mensagem, setMensagem] = useState("");
-  const [nomeMaquina, setNomeMaquina] = useState("");
   const [vetor, setVetor] = useState([]);
   const idusuario = localStorage.getItem('token');
 
   const [valorBusca, setValorBusca] = useState("");
-  const [filtro, setFiltro] = useState("nome da máquina");
+  const [filtro, setFiltro] = useState("");
 
   async function buscaContratoNomeMaquina(){
-    try{
+    try{        
+        const nomeMaquina = valorBusca;
         const contrato = await invoke("busca_contrato_nome_maquina", {nomeMaquina, idusuario});
         setVetor(contrato);  
         setMensagem(""); 
@@ -44,10 +44,10 @@ function BuscarContrato(){
 
   async function buscaContrato(){
     switch (filtro){
-      case "nomemaquina":
+      case "nome da máquina":
         await buscaContratoNomeMaquina();
         break;
-      case "numserie":
+      case "número de série":
         await buscaContratoNumserieMaquina();
         console.log("numserie");
         break;
@@ -60,19 +60,19 @@ function BuscarContrato(){
       <div>
           Filtro: 
           <select value={filtro} onChange={(e) => setFiltro(e.target.value)}>
-            <option value="nomemaquina">Nome da máquina</option>
-            <option value="numserie">Número de série da máquina</option>
-            <option value="nomecliente">Nome do cliente</option>
-            <option value="cnpjcliente">CNPJ do cliente</option>
-            <option value="nomesociocliente">Nome do sócio do cliente</option>
+            <option value="">Selecione um filtro</option>
+            <option value="nome da máquina">Nome da máquina</option>
+            <option value="número de série">Número de série da máquina</option>
+            <option value="nome do cliente">Nome do cliente</option>
+            <option value="CNPJ do cliente">CNPJ do cliente</option>
+            <option value="nome do sócio do cliente">Nome do sócio do cliente</option>
         </select>
         <input
           className="rowReset"
           style={{width: 350}}
           type="text"
           value={valorBusca}
-          onChange={(e) => {setValorBusca(e.currentTarget.value)
-            }
+          onChange={(e) => {setValorBusca(e.currentTarget.value)}
           }
           placeholder={`Buscar contrato por ${filtro}`}
         />

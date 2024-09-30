@@ -10,7 +10,7 @@ function BuscarCliente(){
   const [vetor, setVetor] = useState([]);
   const idusuario = localStorage.getItem('token');
 
-  const [filtro, setFiltro] = useState("nome");
+  const [filtro, setFiltro] = useState("");
   const [valorBusca, setValorBusca] = useState("");
 
   const navigate = useNavigate();
@@ -62,6 +62,7 @@ function BuscarCliente(){
         <div>
           Filtro: 
           <select value={filtro} onChange={(e) => setFiltro(e.target.value)}>
+            <option value="">Selecione um filtro</option>
             <option value="nome">Nome</option>
             <option value="cnpj">CNPJ</option>
           </select>

@@ -211,9 +211,8 @@ function CriaConta(){
             <input readOnly className="user-input" placeholder="Cidade"  value={cidade || ""} />
             {selecionaUfDefinido(setUf, uf, true)}
             <button className="user-input" type="submit">Criar conta</button>
-
             </div>
-) : (
+      ) : (
             <div>
               <div><input className="user-input" placeholder="Nome da Empresa"  value={nomelocadora || ""}  onChange={(e) =>setNomeLocadora(e.currentTarget.value)}/></div>
             <p>Dados bancários da empresa</p>
@@ -240,8 +239,8 @@ function CriaConta(){
 
             <InputMask className="user-input"
             mask = {"99999-999"}
-            value={cep}
-            onChange={(e) => setCep(e.target.value)}
+            value={cepsocio}
+            onChange={(e) => setCepSocio(e.target.value)}
             required
             placeholder="CEP"
             >

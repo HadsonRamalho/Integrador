@@ -1,7 +1,5 @@
 use crate::model;
 use crate::model::erro::MeuErro;
-use crate::model::Usuario;
-use locadora::formata_cnpj;
 use pwhash::bcrypt;
 use pwhash::unix;
 pub mod endereco;

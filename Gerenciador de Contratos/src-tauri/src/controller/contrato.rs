@@ -89,7 +89,7 @@ pub async fn _busca_contrato_nome_maquina(nome_maquina: String, cnpj: String) ->
     };
     let mut conn = pool.get_conn().await?;
     let cnpj = cnpj.trim();
-
+    let nome_like = format!("%{}%", nome_maquina);
 
     let rows: Vec<Row> = conn.exec(
         "SELECT ca.idcontrato, ca.prazolocacao, ca.dataretirada, ca.valormensal, ca.vencimento,
@@ -99,9 +99,9 @@ pub async fn _busca_contrato_nome_maquina(nome_maquina: String, cnpj: String) ->
         FROM contrato_aluguel ca
         JOIN locadora ld ON ca.idlocador = ld.idlocadora
         JOIN maquina ma ON ca.idmaquina = ma.idmaquina
-        WHERE ma.nomemaquina = :nome_maquina AND ld.cnpj = :cnpj
+        WHERE ma.nomemaquina LIKE :nome_maquina AND ld.cnpj = :cnpj
         ORDER BY ca.valormensal DESC;",
-        params! { "nome_maquina" => nome_maquina, "cnpj" => cnpj }
+        params! { "nome_maquina" => nome_like, "cnpj" => cnpj }
     ).await?;
 
     let contratos: Vec<Contrato> = cria_vetor_contratos(rows);
@@ -366,8 +366,12 @@ pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String
 pub async fn _busca_contrato_numserie_maquina(numserie: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error>{
     let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
-    let contrato: Vec<Row> = conn.exec("SELECT * FROM contrato_aluguel JOIN maquina ON contrato_aluguel.idmaquina = maquina.idmaquina
-WHERE maquina.numserie = :numserie;", params!{"numserie" => numserie}, ).await?;
+    let contrato: Vec<Row> = conn.exec("SELECT * FROM contrato_aluguel
+        JOIN maquina ON contrato_aluguel.idmaquina = maquina.idmaquina
+        JOIN locadora ON contrato_aluguel.idlocador = locadora.idlocadora
+        WHERE maquina.numserie = :numserie
+            AND locadora.cnpj = :cnpj;",
+         params!{"numserie" => numserie, "cnpj" => cnpj}, ).await?;
     if contrato.is_empty(){
         return Err(mysql_async::Error::Other(Box::new(MeuErro::ContratoNaoEncontrado)))
     }

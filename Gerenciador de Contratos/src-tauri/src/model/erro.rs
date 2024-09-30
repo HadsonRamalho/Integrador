@@ -18,8 +18,6 @@ pub enum MeuErro{
     CamposVazios,
     #[error("ID não encontrado")]
     IdNaoEncontrado,
-    #[error("Credenciais inválidas")]
-    CredenciaisInvalidas,
     #[error("Não foi possível apagar o registro")]
     ImpossivelApagar,
     #[error("CPF não encontrado")]
