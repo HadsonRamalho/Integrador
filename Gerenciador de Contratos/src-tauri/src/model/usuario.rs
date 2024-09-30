@@ -13,7 +13,7 @@ pub async fn atualiza_email(pool: &Pool, email_antigo: &str, email_novo: &str) -
         },
         Err(e ) => {
             println!("{:?}", e);
-            return Err(mysql_async::Error::Other(Box::new(MeuErro::AtualziarEmailUsuario)))
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::AtualizarEmailUsuario)))
         }
     }
 }

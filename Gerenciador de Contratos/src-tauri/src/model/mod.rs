@@ -2,6 +2,7 @@ use crate::controller::{self, gera_hash};
 use dotenv::dotenv;
 use erro::MeuErro;
 use mysql_async::{prelude::*, Pool};
+use core::hash;
 use std::env;
 pub mod endereco;
 pub mod locadora;
@@ -101,13 +102,21 @@ pub async fn cadastra_usuario(
 
     let uuid = controller::gera_hash(&email);
     // Se o email não for repetido, crie uma conta nova
-    conn.exec_drop(
+    let resultado_insert = conn.exec_drop(
         "INSERT INTO usuarios (email, nomecompleto, senha, UUID, cpf, cnpj) VALUES (:email, :nome_completo, :senha, :uuid, :cpf, :cnpj)", // Interrogações são substituídas pelos parâmetros
         params! {"email" => email, "nome_completo" => nome, "senha" => senha, "uuid" => uuid,
         "cpf" => cpf, "cnpj" => cnpj} // Parâmetros a serem substituídos na query
-    ).await?;
-    println!("Insert!");
-    Ok(true)
+    ).await;
+    match resultado_insert{
+        Ok(_) => {
+            println!("Conta criada!");
+            return Ok(true)
+        }, 
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SalvarUsuario)))
+        }
+    }
 }
 
 /// Verifica se um email já está cadastrado no banco de dados.
@@ -161,13 +170,27 @@ pub async fn verifica_senha(
         }
         Err(_e) => return Err(mysql_async::Error::Other(Box::new(MeuErro::EmailNaoEncontrado))),
     }
-    let senhas_db: Option<String> = conn
-        .exec_first(
+    let senhas_db: Result<Option<String>, mysql_async::Error> =
+        conn.exec_first(
             "SELECT senha FROM usuarios WHERE email = :email", // Carrega o hash da senha do email selecionado
             params! {"email" => email_encontrado}, // Parâmetro email_encontrado é utilizado para selecionar o email
         )
-        .await?;
-    let hash_senha: String = senhas_db.unwrap();
+        .await;
+    let hash_senha = match senhas_db{
+        Ok(hash_senha) =>{
+            hash_senha
+        },
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::EmailNaoEncontrado)))
+        }
+    };
+    let hash_senha = match hash_senha{
+        Some(hash_senha) => {hash_senha},
+        None => {
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::HashNaoEncontrado)))
+        }
+    };
     let hash_dec = controller::verifica_hash(senha, hash_senha.to_string()); // Verificando o hash da senha
     let usuario_autenticado =
         Usuario::novo_usuario("".to_string(), email.to_string(), hash_senha.to_string());

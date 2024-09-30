@@ -44,7 +44,7 @@ pub async fn cadastrar_maquina(maquina: Maquina) -> Result<String, mysql_async::
         }
         Err(e) => {
             println!("{:?}", e);
-            return Err(e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SalvarMaquina)));
         }
     }
 }
@@ -63,8 +63,8 @@ pub async fn buscar_maquina_nome(nome: &str) -> Result<Vec<Maquina>, mysql_async
             return Ok(maquinas)
         },
         Err(e) => {
-            println!("Erro: Máquina não encontrada | {}", e);
-            return Err(e);
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::NomeMaquinaNaoEncontrado)));
         }
 
     }

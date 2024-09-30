@@ -31,16 +31,13 @@ pub async fn _cadastra_locatario(locatario: Locatario) -> Result<(), mysql_async
         }, 
         Err(e) => {
             println!("{:?}", e);
-            return Err(e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SalvarLocatario)));
         }
     }
     return Ok(());
 }
 
 pub async fn busca_locatario_nome(nome: &str) -> Result<Vec<Locatario>, mysql_async::Error>{
-    let erro_locatario = mysql_async::Error::Other(Box::new(std::io::Error::new(std::io::ErrorKind::NotFound,
-        "Erro: Não foi encontrado um locatario com esse nome.")));
-
     let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let nome_like = format!("%{}%", nome);
@@ -53,13 +50,13 @@ pub async fn busca_locatario_nome(nome: &str) -> Result<Vec<Locatario>, mysql_as
         }
         Err(e) => {
             println!("{:?}", e);
-            return Err(e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::NomeLocatarioNaoEncontrado)));
         }
     }
     if !locatarios.is_empty(){
         return Ok(locatarios)
     }
-    return Err(erro_locatario)
+    return Err(mysql_async::Error::Other(Box::new(MeuErro::NomeLocatarioNaoEncontrado)))
 }
 
 
@@ -69,6 +66,7 @@ pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Vec<Locatario>, mysql_as
     match pool.get_conn().await{
         Ok(conn) => {conn},
         Err(e) => {
+            println!("{:?}", e);
             let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
             return Err(err)
         }
@@ -77,6 +75,7 @@ pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Vec<Locatario>, mysql_as
     match conn.exec_first("SELECT * FROM locatario WHERE cnpj = :cnpj", params!{"cnpj" => cnpj}).await {
         Ok(locatario) => {locatario},
         Err(e) => {
+            println!("{:?}", e);
             let err = mysql_async::Error::Other(Box::new(MeuErro::ConexaoBanco(e)));
             return Err(err);
         }

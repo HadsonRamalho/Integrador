@@ -33,7 +33,7 @@ pub async fn _cadastra_locadora(locadora: Locadora) -> Result<(), mysql_async::E
         }, 
         Err(e) => {
             println!("{:?}", e);
-            return Err(e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SalvarLocadora)));
         }
     }
     return Ok(());
@@ -63,7 +63,8 @@ pub async fn _busca_id_locadora(cnpj: &str) -> Result<String, mysql_async::Error
             }
         },
         Err(e) => {
-            return Err(e);
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::CnpjLocadoraNaoEncontrado)));
         }
     }
 }
@@ -75,7 +76,10 @@ pub async fn locadora_existente(cnpj: &str) -> Result<Locadora, mysql_async::Err
         conn.exec_first("SELECT * FROM locadora WHERE cnpj = :cnpj", params! {"cnpj" => cnpj} ).await;
     let locadora = match locadora{
         Ok(locadora) => {locadora},
-        Err(e) => {return Err(e)}
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::CnpjLocadoraNaoEncontrado)))
+        }
     };
     match locadora{
         None => {return Ok(Locadora {idlocadora: "".to_string(),
