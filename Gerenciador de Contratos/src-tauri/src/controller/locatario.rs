@@ -66,7 +66,6 @@ pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, 
     let resultado_cadastro = model::locatario::_cadastra_locatario(locatario).await;
     match resultado_cadastro{
         Ok(_) => {
-            println!("idlocatario: {}", idlocatario_cpy);
             return Ok(idlocatario_cpy.to_string());
         },
         Err(e) => {

@@ -49,9 +49,15 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
         sociostatus: 1
     };
 
-    // buscar o id do socio para não permitir entrada duplicada
-    // let resultado_busca: Result<String, mysql_async::Error> =
-    // model::socioadm::_busca_id_socio_adm(&socioadm.cpf).await;
+    // buscar o CPF do socio para não permitir entrada duplicada
+    let cpf_cpy = socioadm.cpf.clone();
+    let resultado_busca: Result<String, mysql_async::Error> = model::socioadm::busca_id_socio_adm(cpf_cpy).await;
+    match resultado_busca{
+        Ok(_) => {
+            return Err("Sócio já está cadastrado".to_string())
+        },
+        Err(_) => {}
+    }
 
     let resultado_cadastro = _cadastra_socio_adm(socioadm).await;
     match resultado_cadastro{

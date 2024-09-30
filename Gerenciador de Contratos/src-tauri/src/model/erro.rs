@@ -63,5 +63,7 @@ pub enum MeuErro{
     #[error("Não foi encontrada uma locadora com esse CNPJ")]
     CnpjLocadoraNaoEncontrado,
     #[error("A locadora não foi salva")]
-    SalvarLocadora
+    SalvarLocadora,
+    #[error("Não foi encontrado um sócio cadastrado com esses dados")]
+    SocioNaoEncontrado
 }

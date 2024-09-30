@@ -1,7 +1,9 @@
+use std::result;
+
 use mysql_async::prelude::Queryable;
 use crate::model::erro::MeuErro;
 use crate::model::params;
-use crate::controller;
+use crate::controller::{self, cria_pool};
 
 pub struct SocioADM{
     pub idsocio: String,
@@ -35,4 +37,26 @@ pub async fn _cadastra_socio_adm(socioadm: SocioADM) -> Result<(), mysql_async::
         }
     }
     return Ok(());
+}
+
+pub async fn busca_id_socio_adm(cpf: String) -> Result<String, mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_busca = 
+        conn.exec_first("SELECT idsocio FROM socioadm WHERE cpf = :cpf", params! {"cpf" => cpf}).await;
+    let idsocio: Option<String> = match resultado_busca{
+        Ok(idsocio) => {idsocio},
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::CpfNaoEncontrado)))
+        }
+    };
+    match idsocio{
+        Some(idsocio) =>{
+            return Ok(idsocio)
+        },
+        None => {
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SocioNaoEncontrado)))
+        }
+    }
 }
