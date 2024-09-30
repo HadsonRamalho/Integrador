@@ -96,7 +96,7 @@ function Home(){
           </button>
           </div>
           <br/>
-          <button className="botoesHome" type="button" onClick={login}>Voltar</button>
+          <button className="botoesHome" type="button" onClick={login}>Sair da conta</button>
         </div> 
       </div>
     );
