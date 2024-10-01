@@ -36,6 +36,31 @@ function BuscarContrato(){
     }
   }
 
+  async function buscaContratoNomeLocatario(){
+    try{        
+      const nomelocatario = valorBusca;
+      const contratos = await invoke("busca_contrato_nome_locatario", {nomelocatario, idusuario});
+      setVetor(contratos);  
+      setMensagem(""); 
+  } catch(error){
+      setVetor([]);
+      console.log("[Buscar_contrato.jsx] : ", error);
+      setMensagem(error);
+    }
+  }
+  async function buscaContratoCnpjLocatario(){
+    try{        
+      const cnpjlocatario = valorBusca;
+      const contratos = await invoke("busca_contrato_cnpj_locatario", {cnpjlocatario, idusuario});
+      setVetor(contratos);  
+      setMensagem(""); 
+  } catch(error){
+      setVetor([]);
+      console.log("[Buscar_contrato.jsx] : ", error);
+      setMensagem(error);
+    }
+  }
+
   const navigate = useNavigate();
 
   const home = () => {
@@ -51,6 +76,11 @@ function BuscarContrato(){
         await buscaContratoNumserieMaquina();
         console.log("numserie");
         break;
+      case "nome do cliente":
+        await buscaContratoNomeLocatario();
+        break;
+      case "CNPJ do cliente":
+        await buscaContratoCnpjLocatario();
     }
   }
 
@@ -64,8 +94,7 @@ function BuscarContrato(){
             <option value="nome da máquina">Nome da máquina</option>
             <option value="número de série">Número de série da máquina</option>
             <option value="nome do cliente">Nome do cliente</option>
-            <option value="CNPJ do cliente">CNPJ do cliente</option>
-            <option value="nome do sócio do cliente">Nome do sócio do cliente</option>
+            <option value="CNPJ do cliente">CNPJ do cliente</option>            
         </select>
         <input
           className="rowReset"

@@ -92,7 +92,7 @@ function Home(){
               sendNotification({ title: 'Titulo :)', body: 'Texto da notificação :D' });
             }
           }}>
-            Testar notificação
+            [Dev] Testar notificação
           </button>
           </div>
           <br/>

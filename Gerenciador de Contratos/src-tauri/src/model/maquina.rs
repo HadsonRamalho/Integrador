@@ -7,7 +7,7 @@ use serde::Serialize;
 use crate::controller;
 
 use super::erro::MeuErro;
-//Criada estrutura para representar a quantidade de maquinas em estoque
+//Estrutura para representar a quantidade de maquinas em estoque
 #[derive(FromRow, Serialize, PartialEq)]
 pub struct EstoqueMaquina{
     pub quantidade: i32,

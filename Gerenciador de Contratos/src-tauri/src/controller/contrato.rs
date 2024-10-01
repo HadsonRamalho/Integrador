@@ -287,6 +287,9 @@ pub fn cria_vetor_contratos(row: Vec<Row>) -> Vec<Contrato>{
 
 #[tauri::command]
 pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String) -> Result<Vec<Contrato>, String>{
+    if numserie.trim().is_empty() || idusuario.trim().is_empty(){
+        return Err(MeuErro::CamposVazios.to_string())
+    }
     let numserie = numserie.trim().to_string();
     let cnpj = busca_cnpj_usuario(idusuario).await?;
     let cnpj = formata_cnpj(&cnpj)?;
@@ -297,3 +300,45 @@ pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String
     }
 }
 
+#[tauri::command]
+pub async fn busca_contrato_nome_locatario(nomelocatario: String, idusuario: String) -> Result<Vec<Contrato>, String>{
+    if nomelocatario.trim().is_empty() || idusuario.trim().is_empty(){
+        return Err(MeuErro::CamposVazios.to_string())
+    }
+    let cnpj = busca_cnpj_usuario(idusuario).await?;
+    let cnpj = formata_cnpj(&cnpj)?;
+    let resultado_busca = model::contrato::busca_contrato_nome_locatario(nomelocatario, cnpj).await;
+    match resultado_busca{
+        Ok(contratos) => {
+            if contratos.is_empty(){
+                return Err(MeuErro::ContratoNaoEncontrado.to_string())
+            }
+            return Ok(contratos)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn busca_contrato_cnpj_locatario(cnpjlocatario: String, idusuario: String) -> Result<Vec<Contrato>, String>{
+    if cnpjlocatario.trim().is_empty() || idusuario.trim().is_empty(){
+        return Err(MeuErro::CamposVazios.to_string())
+    }
+    let cnpj = busca_cnpj_usuario(idusuario).await?;
+    let cnpj = formata_cnpj(&cnpj)?;
+    let cnpjlocatario = formata_cnpj(&cnpjlocatario)?;
+    let resultado_busca = model::contrato::busca_contrato_cnpj_locatario(cnpjlocatario, cnpj).await;
+    match resultado_busca{
+        Ok(contratos) => {
+            if contratos.is_empty(){
+                return Err(MeuErro::ContratoNaoEncontrado.to_string())
+            }
+            return Ok(contratos)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}

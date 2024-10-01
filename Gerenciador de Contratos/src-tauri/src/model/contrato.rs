@@ -1,9 +1,10 @@
 use mysql_async::prelude::{FromRow, Queryable};
 use mysql_async::Row;
 use serde::Serialize;
+use crate::controller::contrato::cria_vetor_contratos;
 use crate::model::erro::MeuErro;
 use crate::model::params;
-use crate::controller;
+use crate::controller::{self, cria_pool};
 
 #[derive(Serialize, Debug, FromRow)]
 pub struct Contrato{
@@ -146,4 +147,39 @@ pub async fn busca_contrato_numserie_maquina(numserie: String, cnpj: String) -> 
     }
     let contrato = controller::contrato::cria_vetor_contratos(contrato);
     return Ok(contrato)
+}
+
+pub async fn busca_contrato_nome_locatario(nomelocatario: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let nome_like = format!("%{}%", nomelocatario); 
+    let resultado_busca: Vec<Row> = 
+        conn.exec("SELECT * FROM contrato_aluguel
+        JOIN locatario ON contrato_aluguel.idlocatario = locatario.idlocatario
+        JOIN locadora ON contrato_aluguel.idlocador = locadora.idlocadora
+        WHERE locatario.nomelocatario LIKE :nomelocatario
+            AND locadora.cnpj = :cnpj;", 
+        params! {"nomelocatario" => nome_like, "cnpj" => cnpj}).await?;
+    if resultado_busca.is_empty(){
+        return Err(mysql_async::Error::Other(Box::new(MeuErro::ContratoNaoEncontrado)))
+    }
+    let contratos = cria_vetor_contratos(resultado_busca);
+    return Ok(contratos);
+}
+
+pub async fn busca_contrato_cnpj_locatario(cnpjlocatario: String, cnpj: String) -> Result<Vec<Contrato>, mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_busca: Vec<Row> = 
+        conn.exec("SELECT * FROM contrato_aluguel
+        JOIN locatario ON contrato_aluguel.idlocatario = locatario.idlocatario
+        JOIN locadora ON contrato_aluguel.idlocador = locadora.idlocadora
+        WHERE locatario.cnpj = :cnpjlocatario
+            AND locadora.cnpj = :cnpj;", 
+        params! {"cnpjlocatario" => cnpjlocatario, "cnpj" => cnpj}).await?;
+    if resultado_busca.is_empty(){
+        return Err(mysql_async::Error::Other(Box::new(MeuErro::ContratoNaoEncontrado)))
+    }
+    let contratos = cria_vetor_contratos(resultado_busca);
+    return Ok(contratos);
 }

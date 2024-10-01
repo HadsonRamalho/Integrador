@@ -22,11 +22,14 @@ function DadosUsuario() {
     navigate('/home');
   };
 
-  const apagarConta = () => {
+  const apagar_conta = () => {
     navigate('/apagar_conta');
   };
 
-
+  const atualizar_senha = () => {
+    navigate('/atualiza_senha');
+  }
+ 
   const dados_usuario = async () => {
     setLoading(true);
     try {
@@ -118,14 +121,14 @@ function DadosUsuario() {
             await dados_usuario();
           }}>Atualizar E-mail</button>
         </div>
-        <input placeholder="**********"></input>
-        <button>Atualizar Senha</button>
+        <input type="password" placeholder="**********"></input>
+        <button onClick={atualizar_senha}>Atualizar Senha</button>
       </div>
       {mensagem} 
       <br></br>
       <button onClick={home}>Voltar</button>
       <div>
-        <button onClick={apagarConta}> Apagar minha conta </button>
+        <button onClick={apagar_conta}> Apagar minha conta </button>
       </div>
     </div>
   );

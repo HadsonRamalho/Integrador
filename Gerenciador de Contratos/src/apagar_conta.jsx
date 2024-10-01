@@ -27,8 +27,8 @@ function ApagarConta(){
     navigate('/');
   };
 
-  const home = () => {
-    navigate('/home');
+  const dados_usuario = () => {
+    navigate('/dados_usuario');
   };
 
     return (
@@ -51,7 +51,7 @@ function ApagarConta(){
         <p className="mensagemLogin">{mensagem}</p>        
         <button type="submit" >Apagar minha conta</button>
         <br />
-        <button onClick={home} >Voltar</button>
+        <button onClick={dados_usuario} >Voltar</button>
         </form>
       </div>
     );

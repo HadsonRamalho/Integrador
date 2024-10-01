@@ -18,6 +18,7 @@ import CadastrarMaquina from './cadastrar_maquina';
 import RelatorioEstoqueMaquina from './relatorio_estoque_maquina';
 import RelatorioEstoqueTotal from './relatorio_estoque_total';
 import RelatorioEstoqueTotalAlugadas from './relatorio_estoque_maquinas_alugadas';
+import AtualizaSenha from './atualiza_senha';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/relatorio_estoque_maquina" element = {<RelatorioEstoqueMaquina/>} />
         <Route path="/relatorio_estoque_total" element = {<RelatorioEstoqueTotal/>} />
         <Route path="/relatorio_estoque_maquinas_alugadas" element = {<RelatorioEstoqueTotalAlugadas/>} />
+        <Route path="/atualiza_senha" element= {<AtualizaSenha/>} />
       </Routes>
     </Router>
   );
