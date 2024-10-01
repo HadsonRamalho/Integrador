@@ -252,7 +252,7 @@ pub async fn gera_estoque_total_alugadas() -> Result<Vec<model::maquina::Estoque
 /// ```
 pub fn formata_valor_f32(valor: &str) -> Result<f32, String>{
     let valor:String = valor.trim().split("R$").collect();
-    let valor: f32 = match valor.replace(".", "").replace(",", ".").parse(){
+    let valor: f32 = match valor.trim().replace(".", "").replace(",", ".").parse(){
         Ok(valor) => {valor},
         Err(e) => {return Err(e.to_string())}
     };
