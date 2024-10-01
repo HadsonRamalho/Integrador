@@ -2,6 +2,24 @@ use crate::{controller, model::{self, erro::MeuErro, socioadm::{SocioADM, _cadas
 
 use super::formata_cpf;
 
+/// ## Recebe os campos necessários para criar um objeto do tipo `serde_json::Value` que seja equivalente ao tipo `SocioADM`, retornando o objeto resultante
+/// Primeiro, verifica se algum dos campos está vazio, retornando erro caso ao menos um deles esteja:
+/// ```
+/// if idendereco.trim().is_empty() || nome.trim().is_empty() || cpf.trim().is_empty()
+///     || orgaoemissor.trim().is_empty() || estadocivil.trim().is_empty() 
+///     || nacionalidade.trim().is_empty() || cnpj.trim().is_empty(){
+///    return Err(MeuErro::CamposVazios.to_string());
+/// }
+/// ```
+/// Em seguida, usa o CPF para criar o ID do SocioADM. Após gerar o ID, faz a formatação do CPF e cria o objeto Value que será retornado:
+/// ```
+/// let id: String = controller::gera_hash(&cpf);
+/// let cpf = formata_cpf(&cpf)?;
+/// let socioadm: serde_json::Value = serde_json::json!({
+///    "idsocio": id,
+///    "idendereco": idendereco,
+///     [...]
+/// ```
 #[tauri::command]
 pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, cnpj: String) -> Result<serde_json::Value, String>{
     
@@ -26,6 +44,39 @@ pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoe
     return Ok(socioadm);
 }
 
+/// ## Recebe um `serde_json::Value` contendo campos equivalentes ao tipo `SocioADM`, 
+/// verifica se o Socio está cadastrado no banco e prossegue com o cadastro no banco de dados caso não esteja.
+/// Primeiro, converte os campos do `Value` em um objeto `SocioADM`: 
+/// ```
+/// let cpf = formata_cpf(socioadm["cpf"].as_str().unwrap_or(""))?;
+/// let socioadm: model::socioadm::SocioADM = model::socioadm::SocioADM {
+///    idsocio,
+///    idendereco: socioadm["idendereco"].as_str().unwrap_or("").to_string(),
+///    [...]
+/// ```
+/// Em seguida, faz a cópia do CPF do Socio e usa essa cópia para buscar um registro no banco de dados:
+/// ```
+/// let cpf_cpy = socioadm.cpf.clone();
+/// let resultado_busca: Result<String, mysql_async::Error> = model::socioadm::busca_id_socio_adm(cpf_cpy).await;
+/// ```
+/// Se a busca retornar um registro, a função retorna um erro, pois não podem ser registrados dois sócios com o mesmo CPF:
+/// ```
+/// Ok(idsocio) => {
+///     println!("IDSOCIO: {}", idsocio);
+///     if idsocio != ""{
+///         return Err("Sócio já está cadastrado".to_string())
+///     }
+/// }
+/// ```
+/// Caso não exista um Socio com o mesmo CPF registrado, chama a função responsável por cadastrar o SocioADM no banco de dados, retornando o ID no final:
+/// ```
+/// let resultado_cadastro = _cadastra_socio_adm(socioadm).await;
+/// match resultado_cadastro{
+/// Ok(_) =>{
+///     println!("Socio cadastrado");
+///     return Ok(idsocio_cpy);
+/// }
+/// ```
 #[tauri::command]
 pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, String> {
     let idsocio: String = socioadm["idsocio"].as_str().unwrap_or("").to_string();
@@ -79,6 +130,7 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
     }
 }
 
+/// ## Semelhante a `estrutura_socio_adm`, registra o primeiro sócio de uma empresa
 #[tauri::command]
 pub fn estrutura_primeiro_socio(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, idsocio: String, cnpj: String) -> Result<serde_json::Value, String>{
     
@@ -102,6 +154,19 @@ pub fn estrutura_primeiro_socio(idendereco: String, nome: String, cpf: String, o
     return Ok(socioadm);
 }
 
+/// ## Recebe o ID de um Socio, busca pelo registro no banco de dados e retorna um vetor de `SocioADM` contendo um único valor
+/// Primeiro, verifica se `idsocio` está vazio, retornando erro caso esteja:
+/// ```
+/// if idsocio.trim().is_empty(){
+///     return Err("ID do sócio está vazio".to_string())
+/// }
+/// ```
+/// Se a função de busca não retornar erro, é retornado um vetor de `SocioADM`:
+/// ```
+/// Ok(socioadm) => {
+///     return Ok(socioadm)
+/// }
+/// ```
 #[tauri::command]
 pub async fn busca_socio_adm_id(idsocio: String) -> Result<Vec<SocioADM>, String>{
     if idsocio.trim().is_empty(){
@@ -118,6 +183,21 @@ pub async fn busca_socio_adm_id(idsocio: String) -> Result<Vec<SocioADM>, String
     }
 }
 
+/// ## Recebe o CPF de um SocioADM, busca o registro no banco de dados retorna um `serde_json::Value` contendo os dados recuperados
+/// Primeiro, faz a formatação do CPF e usa o resultado para buscar um registro no banco de dados:
+/// ```
+/// let cpf= formata_cpf(&cpf)?;
+/// let resultado_busca = model::socioadm::socio_adm_existente(&cpf).await;
+/// ```
+/// Se a busca não resultar em um erro, é criado um `Value` com os dados adquiridos, e então o objeto é retornado:
+/// ```
+/// let socioadm = serde_json::json!({
+///     "idsocio": socioadm.idsocio ,
+///     "idendereco": socioadm.idendereco,
+///     [...]
+/// )};
+/// return Ok(socioadm)
+/// ```
 #[tauri::command]
 pub async fn socio_adm_existente(cpf: String) -> Result<serde_json::Value, String>{
     println!("{}", cpf);
