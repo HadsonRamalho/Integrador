@@ -4,6 +4,29 @@ use crate::model::locadora::_cadastra_locadora;
 use crate::model;
 use crate::controller;
 
+/// ## Recebe campos separados e transforma em um serde_json::Value contendo dados de uma Locadora
+/// Primeiro, verifica se algum dos parâmetros está vazio, retornando erro caso ao menos um esteja.
+/// Chama a função responsável por formatar o CNPJ que foi recebido como parâmetro e armazena o valor em `cnpjalterado`:
+/// ```
+/// let cnpjalterado = formata_cnpj(&cnpj)?;
+/// ```
+/// Em seguida, usa `cnpjalterado` para gerar o ID da locadora:
+/// ```
+/// let id: String = controller::gera_hash(&cnpjalterado);
+/// ```
+/// Usa os campos recebidos para montar e retornar um objeto serde_json::Value que contém dados da Locadora:
+/// ```
+/// let locadora: serde_json::Value = serde_json::json!({
+///     "idlocadora": id,
+///     "idendereco": idendereco,
+///     "cnpj": cnpjalterado,
+///     "numerocontabanco": numerocontabanco,
+///     "numeroagenciabanco": numeroagenciabanco,
+///     "nomebanco": nomebanco,
+///     "nomelocadora": nomelocadora,
+///     "idsocio": idsocio
+/// });
+/// ```
 #[tauri::command]
 pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String, idsocio: String) -> Result<serde_json::Value, String>{
     if idendereco.trim().is_empty() || cnpj.trim().is_empty() || numerocontabanco.trim().is_empty()
