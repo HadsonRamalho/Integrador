@@ -1,5 +1,31 @@
+use axum::{http::StatusCode, response::IntoResponse, Json};
+use serde::{Deserialize, Serialize};
+
 use super::gera_hash;
-use crate::{controller, model::{self, erro::MeuErro}};
+use crate::{controller, model::{self, endereco::Endereco, erro::MeuErro}};
+
+#[derive(Deserialize)]
+pub struct EnderecoInput {
+    logradouro: String,
+    cep: String,
+    complemento: String,
+    numeroendereco: String,
+    cidade: String,
+    uf: String,
+}
+
+fn endereco_vazio() -> Endereco{
+    let endereco_vazio = Endereco{
+        idendereco: "".to_string(),
+        logradouro: "".to_string(),
+        cep: "".to_string(),
+        complemento: "".to_string(),
+        numeroendereco: "".to_string(),
+        cidade: "".to_string(),
+        uf: "".to_string()
+    };
+    endereco_vazio
+}
 
 /// ## Transforma campos separados de um endereço em um serde_json::Value
 /// Primeiro, verifica se algum dos campos está vazio, retornando erro caso estejam:
@@ -12,32 +38,38 @@ use crate::{controller, model::{self, erro::MeuErro}};
 /// ```
 /// #### Em seguida, tenta formatar o CEP e usa o resultado para gerar um hash para o ID do endereço, retornando um erro caso a formação falhe.
 /// #### Finalmente, atribui os valores aos campos equivalentes no serde_json::Value e retorna o objeto.
-#[tauri::command]
-pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, numeroendereco: String, cidade: String, uf: String) -> Result<serde_json::Value, String>{
-    if logradouro.trim().is_empty() || cep.trim().is_empty()
-        || numeroendereco.trim().is_empty() ||
-        cidade.trim().is_empty() || uf.trim().is_empty(){
-            return Err(MeuErro::CamposVazios.to_string())
+pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> (StatusCode, axum::Json<Endereco>) {
+    let endereco_vazio = endereco_vazio();
+    if input.logradouro.trim().is_empty()
+        || input.cep.trim().is_empty()
+        || input.numeroendereco.trim().is_empty()
+        || input.cidade.trim().is_empty()
+        || input.uf.trim().is_empty()
+    {
+        return (StatusCode::BAD_REQUEST, axum::Json(endereco_vazio))
     }
     // Gera um ID único para o endereço com base no CEP
-    let cep = match controller::formata_cep(&cep){
-        Ok(cep) => {cep},
-        Err(e) => {return Err(e)}
+    let cep_formatado = match controller::formata_cep(&input.cep) {
+        Ok(cep) => cep,
+        Err(_) => {
+            return (StatusCode::BAD_REQUEST, axum::Json(endereco_vazio))
+        }
     };
-    let id = gera_hash(&cep);
+
+    let id = gera_hash(&cep_formatado);
     // Estrutura os dados do endereço em formato JSON
-    let endereco = serde_json::json!({
-        "idendereco": id,
-        "logradouro": logradouro,
-        "cep": cep,
-        "complemento": complemento,
-        "numeroendereco": numeroendereco,
-        "cidade": cidade,
-        "uf": uf,
-    });
+    let endereco = model::endereco::Endereco {
+        idendereco: id,
+        logradouro: input.logradouro,
+        cep: cep_formatado,
+        complemento: input.complemento,
+        numeroendereco: input.numeroendereco,
+        cidade: input.cidade,
+        uf: input.uf,
+    };
 
     // Retorna o JSON do endereço
-    return Ok(endereco)
+    return (StatusCode::OK, axum::Json(endereco))
 }
 
 /// ## Converte um serde::json::Value em um objeto Endereco
@@ -49,16 +81,21 @@ pub fn estrutura_endereco(logradouro: String, cep: String, complemento: String, 
 /// ```
 /// let resultado_insert = crate::model::endereco::salva_endereco(endereco).await;
 /// ```
-#[tauri::command]
-pub async fn _salva_endereco(endereco: serde_json::Value) -> Result<String, String>{
+pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<String, String>{
+    let resposta = estrutura_endereco(axum::Json(input));
+    let status = resposta.0;
+    if status == StatusCode::BAD_REQUEST{
+        return Err("Algo deu errado :(".to_string())
+    }
+    let mut endereco = resposta.1;
     let endereco = crate::model::endereco::Endereco {
-        idendereco: endereco["idendereco"].as_str().unwrap_or("").to_string().split_off(15 as usize),
-        logradouro: endereco["logradouro"].as_str().unwrap_or("").to_string(),
-        cep: endereco["cep"].as_str().unwrap_or("").to_string(),
-        complemento: endereco["complemento"].as_str().unwrap_or("").to_string(),
-        numeroendereco: endereco["numeroendereco"].as_str().unwrap_or("").to_string(),
-        cidade: endereco["cidade"].as_str().unwrap_or("").to_string(),
-        uf: endereco["uf"].as_str().unwrap_or("").to_string(),
+        idendereco: endereco.idendereco.split_off(15 as usize),
+        logradouro: endereco.logradouro.clone(),
+        cep: endereco.cep.clone(),
+        complemento: endereco.complemento.clone(),
+        numeroendereco: endereco.numeroendereco.clone(),
+        cidade: endereco.cidade.clone(),
+        uf: endereco.uf.clone(),
     };
     let resultado_insert = crate::model::endereco::salva_endereco(endereco).await;
     match resultado_insert{

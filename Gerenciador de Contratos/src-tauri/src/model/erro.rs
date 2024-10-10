@@ -67,5 +67,7 @@ pub enum MeuErro{
     #[error("A locadora não foi salva")]
     SalvarLocadora,
     #[error("Não foi encontrado um sócio cadastrado com esses dados")]
-    SocioNaoEncontrado
+    SocioNaoEncontrado,
+    #[error("O formato do CEP é inválido")]
+    FormatoCepInvalido
 }
