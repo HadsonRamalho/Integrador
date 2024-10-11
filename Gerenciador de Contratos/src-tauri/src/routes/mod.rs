@@ -4,7 +4,7 @@ use axum::{
 };
 
 use crate::controller::{
-    endereco::{_salva_endereco, busca_endereco_id, estrutura_endereco}, usuario::{cria_conta, verifica_senha}
+    endereco::{_salva_endereco, busca_endereco_id}, usuario::{cria_conta, verifica_senha}
 };
 
 pub fn cria_rotas() -> Router<>{

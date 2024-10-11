@@ -55,6 +55,9 @@ pub async fn cria_conta(
     let usuario = input;
     let email = usuario.email.trim(); // Removendo todos os espaços em branco do email
     let cpf = usuario.cpf.trim();
+    if usuario.nome.trim().is_empty(){
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no nome".to_string() });
+    }
     if cpf.trim().is_empty(){
         return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no CPF".to_string() });
     }
@@ -70,7 +73,12 @@ pub async fn cria_conta(
     if usuario.senha1.trim() != usuario.senha2.trim() {
         return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro nas senhas".to_string() });
     }
-    let cnpj = controller::locadora::formata_cnpj(&usuario.cnpj).unwrap();
+    let cnpj = match controller::locadora::formata_cnpj(&usuario.cnpj){
+        Ok(cnpj) => {cnpj}
+        Err(e) => {
+            return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", e) });
+        }
+    };
     match valida_senha(&usuario.senha1) {
         Ok(_) => {}
         Err(e) => {
