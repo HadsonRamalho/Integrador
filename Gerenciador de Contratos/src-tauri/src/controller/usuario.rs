@@ -101,11 +101,11 @@ fn usuario_vazio() -> Usuario{
 
 #[derive(Deserialize, Serialize)]
 pub struct VerificaSenhaInput{
-    email: String,
-    senha: String
+    pub email: String,
+    pub senha: String
 }
 
-pub async fn _verifica_senha(input: Json<VerificaSenhaInput>) -> (StatusCode, axum::Json<Usuario>) {
+pub async fn _verifica_senha(email: String, senha: String) -> (StatusCode, axum::Json<Usuario>) {
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
@@ -114,9 +114,7 @@ pub async fn _verifica_senha(input: Json<VerificaSenhaInput>) -> (StatusCode, ax
             println!("{:?}", e);
             return (StatusCode::SERVICE_UNAVAILABLE, axum::Json(usuario_vazio()))
         }
-    };
-    let email = input.email.clone();
-    let senha = input.senha.clone();
+    };    
     let usuario_autenticado = model::verifica_senha(&pool, &email, &senha)
         .await
         .map_err(|e| format!("{}", e));
@@ -145,7 +143,9 @@ pub async fn cadastra_usuario(nome: &str, email: &str, senha: &str, cpf: &str, c
     Ok(())
 }
 
-pub async fn verifica_senha(email: &str, senha: &str) -> MyResult {
+pub async fn verifica_senha(input: Json<VerificaSenhaInput>) -> MyResult {
+    let email = input.email.clone();
+    let senha = input.senha.clone();
     let senha = senha.trim();
     if senha.is_empty() {
         return MyResult::Error(controller::usuario::MyErrorResponse { error:"Senha tá vazia".to_string() });
@@ -154,13 +154,7 @@ pub async fn verifica_senha(email: &str, senha: &str) -> MyResult {
     if email.is_empty(){
         return MyResult::Error(controller::usuario::MyErrorResponse { error: "E-mail tá vazio".to_string() })
     }
-    let a = axum::Json(
-        VerificaSenhaInput{
-            email: email.to_string(),
-            senha: senha.to_string()
-        }
-    );
-    let resultado_verificacao = _verifica_senha(a).await;
+    let resultado_verificacao = _verifica_senha(email.to_string(), senha.to_string()).await;
     let status = resultado_verificacao.0;
     if status != StatusCode::OK{
         return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro na verificação".to_string() })

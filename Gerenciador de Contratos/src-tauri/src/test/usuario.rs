@@ -1,7 +1,7 @@
 use axum::Json;
 use mysql_async::Pool;
 
-use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, MyResult, UsuarioInput}}, model::{self, usuario::busca_id_usuario}};
+use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, MyResult, UsuarioInput, VerificaSenhaInput}}, model::{self, usuario::busca_id_usuario}};
 #[cfg(test)]
 
 async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> controller::usuario::MyResult {
@@ -128,7 +128,11 @@ async fn test_verifica_email_senha_ok(){
             return;
         } 
     }
-    let resultado_verificacao = controller::usuario::verifica_senha(email, senha).await;
+    let verifica_senha_input = VerificaSenhaInput{
+        email: email.to_string(),
+        senha: senha.to_string()
+    };
+    let resultado_verificacao = controller::usuario::verifica_senha(Json(verifica_senha_input)).await;
     match resultado_verificacao{
         MyResult::Success(_) => {},
         MyResult::Error(e) => {
@@ -208,8 +212,12 @@ async fn test_atualiza_senha_ok(){
     let nova_senha = "novasenhausuarioteste1.";
     assert!(atualiza_senha(email, nova_senha).await.is_ok(),
         "Erro ao atualizar a senha do usuário");
-
-    let resultado_verificacao = controller::usuario::verifica_senha(email, &nova_senha).await;
+    let verifica_senha_input = VerificaSenhaInput{
+        email: email.to_string(),
+        senha: senha.to_string()
+    };
+    let resultado_verificacao 
+        = controller::usuario::verifica_senha(Json(verifica_senha_input)).await;
     match resultado_verificacao{
         MyResult::Success(_) => {},
         MyResult::Error(e) => {

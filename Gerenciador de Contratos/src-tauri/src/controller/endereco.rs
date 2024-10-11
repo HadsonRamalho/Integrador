@@ -112,23 +112,17 @@ pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<String,
 /// Caso contrário, chama a função que faz a busca no banco de dados e que retorna um objeto do tipo Endereco.
 /// Em seguida, converte os valores do objeto retornado para um serde_json::Value, que contém campos semelhantes ao do objeto Endereco.
 /// Por fim, a função retorna um serde_json::Value contendo os dados.
-#[tauri::command]
-pub async fn busca_endereco_id(idendereco: &str) -> Result<serde_json::Value, String>{
+pub async fn busca_endereco_id(input: Json<String>) -> (StatusCode, Json<Endereco>){
+    let idendereco = input.0;
     if idendereco.trim().is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return (StatusCode::BAD_REQUEST, axum::Json(endereco_vazio()))
     }
-    let endereco: model::endereco::Endereco = match model::endereco::busca_endereco_id(idendereco).await{
+    let endereco: model::endereco::Endereco = match model::endereco::busca_endereco_id(&idendereco).await{
         Ok(endereco) => {endereco},
-        Err(e) => {return Err(e.to_string())}
+        Err(e) => {
+            println!("{:?}", e);
+            return (StatusCode::BAD_REQUEST, axum::Json(endereco_vazio()))
+        }
     };
-    let endereco = serde_json::json!({
-        "idendereco": endereco.idendereco,
-        "logradouro": endereco.logradouro,
-        "cep": endereco.cep,
-        "complemento": endereco.complemento,
-        "numeroendereco": endereco.numeroendereco,
-        "cidade": endereco.cidade,
-        "uf": endereco.uf
-    });
-    return Ok(endereco)
+    return (StatusCode::OK, axum::Json(endereco))
 }
