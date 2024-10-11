@@ -56,10 +56,10 @@ pub async fn cria_conta(
     let email = usuario.email.trim(); // Removendo todos os espaços em branco do email
     let cpf = usuario.cpf.trim();
     if usuario.nome.trim().is_empty(){
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no nome".to_string() });
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", MeuErro::NomeVazio) });
     }
     if cpf.trim().is_empty(){
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no CPF".to_string() });
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", MeuErro::CpfVazio) });
     }
     let cpf = match formata_cpf(cpf){
         Ok(cpf) => {cpf},
@@ -68,10 +68,10 @@ pub async fn cria_conta(
         }
     };
     if !valida_email(&email) {
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no E-mail".to_string() });
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", MeuErro::EmailInvalido) });
     }
     if usuario.senha1.trim() != usuario.senha2.trim() {
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro nas senhas".to_string() });
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", MeuErro::SenhasDiferentes) });
     }
     let cnpj = match controller::locadora::formata_cnpj(&usuario.cnpj){
         Ok(cnpj) => {cnpj}
@@ -89,7 +89,7 @@ pub async fn cria_conta(
     let mut novousuario =
         model::Usuario::novo_usuario(usuario.nome.to_string(), email.to_string(), hash); // Cria um novo usuário
     if novousuario.ja_cadastrado().await {
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Já cadastrado".to_string() });
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Esse e-mail já pertence a outra conta.".to_string() });
     }
     let resultado_cadastro = cadastra_usuario(&usuario.nome, &email, novousuario.get_hash(), &cpf, &cnpj).await;
     match resultado_cadastro {
@@ -99,12 +99,11 @@ pub async fn cria_conta(
 }
 
 fn usuario_vazio() -> Usuario{
-    let u = Usuario{
+    Usuario{
         nome: "".to_string(),
         email: "".to_string(),
         senha: "".to_string(),
-    };
-    u
+    }    
 }
 
 #[derive(Deserialize, Serialize)]
@@ -170,10 +169,18 @@ pub async fn verifica_senha(input: Json<VerificaSenhaInput>) -> MyResult {
     return MyResult::Success(controller::usuario::MyResponse { message: "Sucesso no cadastro".to_string() })
 }
 
+#[derive(Deserialize, Serialize)]
+pub struct AtualizaEmailInput{
+    email_antigo: String,
+    email_novo: String
+}
 
+//#[tauri::command]
+pub async fn atualiza_email(input: Json<AtualizaEmailInput>) -> Result<(), String>{
+    let email = input.email_novo.clone();
+    let email_antigo = input.email_antigo.clone();
 
-#[tauri::command]
-pub async fn atualiza_email(email_antigo: String, email: String) -> Result<(), String>{
+    
     let email: &str = email.trim();
     if !valida_email(email){
         return Err("Erro: Novo e-mail inválido".to_string())

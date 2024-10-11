@@ -18,6 +18,12 @@ pub enum MeuErro{
     CnpjVazio,
     #[error("Um ou mais campos estão vazios")]
     CamposVazios,
+    #[error("O CPF está vazio")]
+    CpfVazio,
+    #[error("E-mail inválido")]
+    EmailInvalido,
+    #[error("As senhas são diferentes")]
+    SenhasDiferentes,
     #[error("ID não encontrado")]
     IdNaoEncontrado,
     #[error("Não foi possível apagar o registro")]
