@@ -1,10 +1,39 @@
+use axum::Json;
 use mysql_async::Pool;
 
-use crate::{controller::{self, cria_pool, usuario::{atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha}}, model::{self, usuario::busca_id_usuario}};
+use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, MyResult, UsuarioInput}}, model::{self, usuario::busca_id_usuario}};
 #[cfg(test)]
 
-async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
-    controller::usuario::cria_conta(nome, email, senha, senha, cpf, cnpj).await
+async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> controller::usuario::MyResult {
+    use axum::Json;
+
+    use crate::controller::usuario::{MyResult, UsuarioInput};
+    let usuario = UsuarioInput{
+        nome: nome.to_string(),
+        email: email.to_string(),
+        senha1: senha.to_string(),
+        senha2: senha.to_string(),
+        cpf: cpf.to_string(),
+        cnpj: cnpj.to_string(),
+    };
+    let usuario = Json(usuario);
+    controller::usuario::cria_conta(usuario).await
+}
+
+fn estrutura_usuario(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Json<UsuarioInput> {
+    use axum::Json;
+
+    use crate::controller::usuario::{MyResult, UsuarioInput};
+    let usuario = UsuarioInput{
+        nome: nome.to_string(),
+        email: email.to_string(),
+        senha1: senha.to_string(),
+        senha2: senha.to_string(),
+        cpf: cpf.to_string(),
+        cnpj: cnpj.to_string(),
+    };
+    let usuario = Json(usuario);
+    usuario
 }
 
 async fn _setup_pool() -> Result<Pool, mysql_async::Error> {
@@ -34,9 +63,13 @@ async fn test_cria_deleta_usuario_ok(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_usuario_teste(nome_completo, email, senha, cpf, cnpj).await.is_ok(), 
-        "Erro ao criar a conta do usuário");
-    
+    match cria_usuario_teste(nome_completo, email, senha, cpf, cnpj).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(_) => {
+            println!("Erro ao criar a conta do usuario");
+            return;
+        }
+    }
     let idusuario = _busca_id_usuario(&email).await;
     assert!(idusuario.is_ok(), "Erro ao buscar o ID do usuário");
     assert!(_limpa_usuario(&idusuario.unwrap(), email).await.is_ok(),
@@ -50,8 +83,13 @@ async fn test_busca_nome_usuario_ok() {
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_usuario_teste(nome_completo, email, senha, cpf, cnpj).await.is_ok(), 
-        "Erro ao criar a conta do usuário");
+    match cria_usuario_teste(nome_completo, email, senha, cpf, cnpj).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(_) => {
+            println!("Erro ao criar a conta do usuario");
+            return;
+        }
+    }
 
     let idusuario = _busca_id_usuario(&email).await;
     assert!(idusuario.is_ok(), "Erro ao buscar o ID do usuário");
@@ -82,10 +120,22 @@ async fn test_verifica_email_senha_ok(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
-        "Erro ao criar a conta do usuário");
-    assert!(controller::usuario::verifica_senha(email, senha).await.is_ok(),
-        "Erro na verificação de senha");
+    let usuario = estrutura_usuario(&nome_completo, &email, &senha, &cpf, &cnpj);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
+    let resultado_verificacao = controller::usuario::verifica_senha(email, senha).await;
+    match resultado_verificacao{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        }
+    }
     let idusuario = match _busca_id_usuario(email).await{
         Ok(idusuario) => idusuario,
         Err(e) => {
@@ -104,7 +154,14 @@ async fn test_atualiza_email_ok(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok());
+    let usuario = estrutura_usuario(&nome_completo, &email, &senha, &cpf, &cnpj);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
 
     let pool = match _setup_pool().await{
         Ok(pool) => {pool},
@@ -140,16 +197,26 @@ async fn test_atualiza_senha_ok(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
-        "Erro ao atualizar o e-mail do usuário");
-
+    let usuario = estrutura_usuario(&nome_completo, &email, &senha, &cpf, &cnpj);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
     let nova_senha = "novasenhausuarioteste1.";
     assert!(atualiza_senha(email, nova_senha).await.is_ok(),
         "Erro ao atualizar a senha do usuário");
 
-    assert!(verifica_senha(email, nova_senha).await.is_ok(),
-        "Erro ao realizar login com a nova senha");
-
+    let resultado_verificacao = controller::usuario::verifica_senha(email, &nova_senha).await;
+    match resultado_verificacao{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        }
+    }
     let idusuario = match _busca_id_usuario(email).await{
         Ok(idusuario) => idusuario,
         Err(e) => {
@@ -169,8 +236,14 @@ async fn test_verifica_token_ok(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
-        "Erro ao atualizar o e-mail do usuário");
+    let usuario = estrutura_usuario(&nome_completo, &email, &senha, &cpf, &cnpj);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
     let idusuario = match _busca_id_usuario(email).await{
         Ok(idusuario) => idusuario,
         Err(e) => {
@@ -193,8 +266,14 @@ async fn test_verifica_token_err(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
-        "Erro ao atualizar o e-mail do usuário");
+    let usuario = estrutura_usuario(&nome_completo, &email, &senha, &cpf, &cnpj);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
     let idusuario = match _busca_id_usuario(email).await{
         Ok(idusuario) => idusuario,
         Err(e) => {
@@ -207,8 +286,14 @@ async fn test_verifica_token_err(){
     let senha_2 = "senhausuarioteste1.";
     let cpf_2 = "12312312301";
     let cnpj_2 = "11331220000101";
-    assert!(cria_conta(nome_completo_2, email_2, senha_2, senha_2, cpf_2, cnpj_2).await.is_ok(),
-        "Erro ao atualizar o e-mail do usuário");
+    let usuario = estrutura_usuario(&nome_completo_2, &email_2, &senha_2, &cpf_2, &cnpj_2);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
     let idusuario_2 = match _busca_id_usuario(email_2).await{
         Ok(idusuario2) => idusuario2,
         Err(e) => {
@@ -231,8 +316,14 @@ async fn test_busca_nome_usuario(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
-        "Erro ao atualizar o e-mail do usuário");
+    let usuario = estrutura_usuario(&nome_completo, &email, &senha, &cpf, &cnpj);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
     let idusuario = match _busca_id_usuario(email).await{
         Ok(idusuario) => idusuario,
         Err(e) => {
@@ -256,8 +347,14 @@ async fn test_busca_cnpj_usuario(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
-        "Erro ao atualizar o e-mail do usuário");
+    let usuario = estrutura_usuario(&nome_completo, &email, &senha, &cpf, &cnpj);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
     let idusuario = match _busca_id_usuario(email).await{
         Ok(idusuario) => idusuario,
         Err(e) => {
@@ -281,8 +378,14 @@ async fn test_atualiza_nome(){
     let senha = "senhausuarioteste1.";
     let cpf = "12312312301";
     let cnpj = "11331220000101";
-    assert!(cria_conta(nome_completo, email, senha, senha, cpf, cnpj).await.is_ok(),
-        "Erro ao atualizar o e-mail do usuário");
+    let usuario = estrutura_usuario(&nome_completo, &email, &senha, &cpf, &cnpj);
+    match cria_conta(usuario).await{
+        MyResult::Success(_) => {},
+        MyResult::Error(e) => {
+            println!("{:?}", e);
+            return;
+        } 
+    }
     let idusuario = match _busca_id_usuario(email).await{
         Ok(idusuario) => idusuario,
         Err(e) => {

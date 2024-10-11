@@ -2,6 +2,7 @@ use crate::controller::{self, gera_hash};
 use dotenv::dotenv;
 use erro::MeuErro;
 use mysql_async::{prelude::*, Pool};
+use serde::{Deserialize, Serialize};
 use std::env;
 pub mod endereco;
 pub mod locadora;
@@ -18,12 +19,12 @@ use lettre::transport::smtp::authentication::{Credentials, Mechanism};
 use lettre::{Message, SmtpTransport, Transport};
 
 /// Estrutura que representa um usuário.
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Deserialize, Serialize)]
 pub struct Usuario {
     // Objeto de usuário para unificar dados
-    nome: String,
-    email: String,
-    senha: String,
+    pub nome: String,
+    pub email: String,
+    pub senha: String,
 }
 
 impl Usuario {

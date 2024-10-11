@@ -84,7 +84,7 @@ pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> (StatusCode, axum
 pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<String, String>{
     let resposta = estrutura_endereco(axum::Json(input));
     let status = resposta.0;
-    if status == StatusCode::BAD_REQUEST{
+    if status != StatusCode::OK{
         return Err("Algo deu errado :(".to_string())
     }
     let mut endereco = resposta.1;

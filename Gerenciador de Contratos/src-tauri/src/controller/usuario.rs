@@ -1,65 +1,132 @@
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use axum::Json;
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+
 use crate::model::erro::MeuErro;
 use crate::model::usuario::busca_id_usuario;
-use crate::model::{self, usuario};
+use crate::model::{self, usuario, Usuario};
 use crate::controller::valida_email;
 use crate::controller;
 use super::{formata_cpf, gera_hash, verifica_hash};
 
-#[tauri::command]
-pub async fn cria_conta(
-    nome_completo: &str,
-    email: &str,
-    senha1: &str,
-    senha2: &str,
-    cpf: &str,
-    cnpj: &str
-) -> Result<(), String> {
-    let email = email.trim(); // Removendo todos os espaços em branco do email
-    let cpf = cpf.trim();
-    if cpf.trim().is_empty(){
-        return Err("Erro: O CPF não pode estar vazio".to_string());
-    }
-    let cpf = formata_cpf(cpf)?;
-    if !valida_email(&email) {
-        return Err("Erro: E-mail inválido. Deve conter '@' e '.'".to_string());
-    }
-    if senha1.trim() != senha2.trim() {
-        return Err("Erro: As senhas são diferentes".to_string()); // Conta não criada
-    }
-    let cnpj = controller::locadora::formata_cnpj(cnpj)?;
-    match valida_senha(senha1) {
-        Ok(_) => {}
-        Err(e) => {
-            return Err(e);
-        }
-    }
-    let hash = gera_hash(senha1); // Criptografando a senha (Standard *BSD hash)
-    let mut usuario =
-        model::Usuario::novo_usuario(nome_completo.to_string(), email.to_string(), hash); // Cria um novo usuário
-    if usuario.ja_cadastrado().await {
-        return Err("Erro: Usuário já cadastrado".to_string());
-    }
-    let resultado_cadastro = cadastra_usuario(nome_completo, &email, usuario.get_hash(), &cpf, &cnpj).await;
-    match resultado_cadastro {
-        Ok(_) => return Ok(()),
-        Err(_) => return Err("Erro no cadastro do usuário.".to_string()),
-    }
+#[derive(Deserialize)]
+pub struct UsuarioInput {
+    // Objeto de usuário para unificar dados
+    pub nome: String,
+    pub email: String,
+    pub senha1: String,
+    pub senha2: String,
+    pub cpf: String,
+    pub cnpj: String
+}
+
+#[derive(Serialize, Debug)]
+pub struct MyErrorResponse {
+    error: String,
+}
+
+#[derive(Serialize, Debug)]
+pub struct MyResponse {
+    message: String,
 }
 
 
-pub async fn _verifica_senha(email: &str, senha: &str) -> Result<model::Usuario, String> {
+// Definindo um enum para encapsular os possíveis retornos
+#[derive(Debug)]
+pub enum MyResult {
+    Success(MyResponse),
+    Error(MyErrorResponse),
+}
+
+impl IntoResponse for MyResult {
+    fn into_response(self) -> axum::response::Response {
+        match self {
+            MyResult::Success(res) => (StatusCode::OK, Json(res)).into_response(),
+            MyResult::Error(err) => (StatusCode::BAD_REQUEST, Json(err)).into_response(),
+        }
+    }
+}
+
+pub async fn cria_conta(
+    Json(input): Json<UsuarioInput>
+)  -> MyResult  {
+    let usuario = input;
+    let email = usuario.email.trim(); // Removendo todos os espaços em branco do email
+    let cpf = usuario.cpf.trim();
+    if cpf.trim().is_empty(){
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no CPF".to_string() });
+    }
+    let cpf = match formata_cpf(cpf){
+        Ok(cpf) => {cpf},
+        Err(e) => {
+            return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", e) });
+        }
+    };
+    if !valida_email(&email) {
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no E-mail".to_string() });
+    }
+    if usuario.senha1.trim() != usuario.senha2.trim() {
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro nas senhas".to_string() });
+    }
+    let cnpj = controller::locadora::formata_cnpj(&usuario.cnpj).unwrap();
+    match valida_senha(&usuario.senha1) {
+        Ok(_) => {}
+        Err(e) => {
+            return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", e) });
+        }
+    }
+    let hash = gera_hash(&usuario.senha1); // Criptografando a senha (Standard *BSD hash)
+    let mut novousuario =
+        model::Usuario::novo_usuario(usuario.nome.to_string(), email.to_string(), hash); // Cria um novo usuário
+    if novousuario.ja_cadastrado().await {
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Já cadastrado".to_string() });
+    }
+    let resultado_cadastro = cadastra_usuario(&usuario.nome, &email, novousuario.get_hash(), &cpf, &cnpj).await;
+    match resultado_cadastro {
+        Ok(_) => return MyResult::Success(controller::usuario::MyResponse {message: "".to_string()}),
+        Err(_) => return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no cadastro".to_string() }),
+    }
+}
+
+fn usuario_vazio() -> Usuario{
+    let u = Usuario{
+        nome: "".to_string(),
+        email: "".to_string(),
+        senha: "".to_string(),
+    };
+    u
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct VerificaSenhaInput{
+    email: String,
+    senha: String
+}
+
+pub async fn _verifica_senha(input: Json<VerificaSenhaInput>) -> (StatusCode, axum::Json<Usuario>) {
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
         }, 
         Err(e) =>{
-            return Err(e.to_string())
+            println!("{:?}", e);
+            return (StatusCode::SERVICE_UNAVAILABLE, axum::Json(usuario_vazio()))
         }
     };
-    let usuario_autenticado = model::verifica_senha(&pool, &email, senha)
+    let email = input.email.clone();
+    let senha = input.senha.clone();
+    let usuario_autenticado = model::verifica_senha(&pool, &email, &senha)
         .await
-        .map_err(|e| format!("{}", e))?;
-    Ok(usuario_autenticado)
+        .map_err(|e| format!("{}", e));
+    let usuario_autenticado = match usuario_autenticado{
+        Ok(u) => {u},
+        Err(e) => {
+            println!("{:?}", e);
+            return (StatusCode::SERVICE_UNAVAILABLE, axum::Json(usuario_vazio()))}
+    };
+    (StatusCode::OK, axum::Json(usuario_autenticado))
 }
 
 pub async fn cadastra_usuario(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), String> {
@@ -78,25 +145,29 @@ pub async fn cadastra_usuario(nome: &str, email: &str, senha: &str, cpf: &str, c
     Ok(())
 }
 
-
-#[tauri::command]
-pub async fn verifica_senha(email: &str, senha: &str) -> Result<(), String> {
+pub async fn verifica_senha(email: &str, senha: &str) -> MyResult {
     let senha = senha.trim();
     if senha.is_empty() {
-        return Err("A senha não pode estar vazia".to_string());
+        return MyResult::Error(controller::usuario::MyErrorResponse { error:"Senha tá vazia".to_string() });
     }
     let email = email.trim();
     if email.is_empty(){
-        return Err("O e-mail não pode estar vazio".to_string());
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: "E-mail tá vazio".to_string() })
     }
-    let resultado_verificacao: Result<model::Usuario, String> = _verifica_senha(email, &senha).await;
-    match resultado_verificacao {
-        Ok(_) => return Ok(()),
-        Err(e) => {
-            return Err(e.to_string());
+    let a = axum::Json(
+        VerificaSenhaInput{
+            email: email.to_string(),
+            senha: senha.to_string()
         }
+    );
+    let resultado_verificacao = _verifica_senha(a).await;
+    let status = resultado_verificacao.0;
+    if status != StatusCode::OK{
+        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro na verificação".to_string() })
     }
+    return MyResult::Success(controller::usuario::MyResponse { message: "Sucesso no cadastro".to_string() })
 }
+
 
 
 #[tauri::command]
