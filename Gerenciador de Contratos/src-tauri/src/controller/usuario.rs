@@ -1,15 +1,13 @@
 use axum::http::StatusCode;
-use axum::response::IntoResponse;
 use axum::Json;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 
 use crate::model::erro::MeuErro;
 use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario, Usuario};
 use crate::controller::valida_email;
 use crate::controller;
-use super::{formata_cpf, gera_hash, verifica_hash};
+use super::{cria_pool, formata_cpf, gera_hash, verifica_hash};
 
 #[derive(Deserialize)]
 pub struct UsuarioInput {
@@ -193,13 +191,13 @@ pub async fn atualiza_email(input: Json<AtualizaEmailInput>) -> Result<(), Strin
     }
 }
 
-pub async fn atualiza_senha(input: Json<VerificaSenhaInput>) -> Result<(), String>{
+pub async fn atualiza_senha(input: Json<VerificaSenhaInput>) -> Result<(), (StatusCode, String)>{
     let email = input.email.clone();
     let nova_senha = input.senha.clone();
     match valida_senha(&nova_senha){
         Ok(_) => {},
         Err(e) => {
-            return Err(e)
+            return Err((StatusCode::BAD_REQUEST, format!("{}", e)))
         }
     }
     let nova_senha = gera_hash(nova_senha.trim());
@@ -208,18 +206,18 @@ pub async fn atualiza_senha(input: Json<VerificaSenhaInput>) -> Result<(), Strin
             pool
         }, 
         Err(e) =>{
-            return Err(e.to_string())
+            return Err((StatusCode::BAD_REQUEST, format!("{}", e)))
         }
     };
     let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, &email).await;
     match resultado_busca{
         Ok(email) => {
             if email.is_empty() || !valida_email(&email) || email == ""{
-                return Err("Erro: E-mail inválido".to_string())
+                return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::EmailInvalido)))
             }
         },
         Err(e) => {
-            return Err(e.to_string());
+            return Err((StatusCode::BAD_REQUEST, format!("{}", e)))
         }
     }
     let resultado_atualizacao: Result<(), mysql_async::Error> = model::usuario::atualiza_senha(&pool, &email, &nova_senha).await;
@@ -229,7 +227,7 @@ pub async fn atualiza_senha(input: Json<VerificaSenhaInput>) -> Result<(), Strin
         },
         Err(_e) => {
             println!("Erro ao atualizar a senha");
-            return Err("Erro ao atualizar a senha".to_string());
+            return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::AtualizarSenhaUsuario)))
         }
     }
 }
@@ -399,23 +397,42 @@ pub async fn busca_cnpj_usuario(id: String) -> Result<String, String>{
     }
 }
 
-#[tauri::command]
-pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), String>{
+#[derive(Serialize, Deserialize)]
+pub struct AtualizaNomeInput{
+    pub nome: String,
+    pub email: String
+}
+
+//#[tauri::command]
+pub async fn atualiza_nome(input: Json<AtualizaNomeInput>) -> Result<(), (StatusCode, String)>{
+    let email = input.email.clone();
+    let nome = input.nome.clone();
     let email = email.trim();
     if email.is_empty() {
-        return Err(MeuErro::EmailVazio.to_string());
+        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::EmailVazio)))
     }
     if nome.is_empty(){
-        return Err(MeuErro::NomeVazio.to_string());
+        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::NomeVazio)))
     }
-    let resultado_atualizacao: Result<(), mysql_async::Error> = model::usuario::atualiza_nome(email, nome).await;
+    let pool = match cria_pool().await{
+        Ok(pool) => {pool},
+        Err(e) => {
+            println!("{:?}", e);
+            return Err((StatusCode::BAD_REQUEST, format!("{}", e)))
+        }
+    };
+    let resultado_busca = busca_id_usuario(&pool, email).await.is_ok();
+    if !resultado_busca{
+        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::EmailNaoEncontrado)))      
+    }
+    let resultado_atualizacao: Result<(), mysql_async::Error> = model::usuario::atualiza_nome(email, &nome).await;
     match resultado_atualizacao{
         Ok(()) => {
             return Ok(())
         },
         Err(e) => {
             println!("{:?}", e);
-            return Err(e.to_string());
+            return Err((StatusCode::BAD_REQUEST, format!("{}", e)))
         }
     }
 }

@@ -8,7 +8,7 @@ use crate::controller::{
         _salva_endereco, busca_endereco_id
     }, 
     usuario::{
-        atualiza_email, atualiza_senha, cria_conta, verifica_senha, verifica_token, busca_id
+        atualiza_email, atualiza_nome, atualiza_senha, busca_id, cria_conta, verifica_senha, verifica_token
     }
 };
 
@@ -21,6 +21,7 @@ pub fn cria_rotas() -> Router<>{
         .route("/atualiza_email", put(atualiza_email))
         .route("/atualiza_senha", put(atualiza_senha))
         .route("/verifica_token", get(verifica_token))
-        .route("/busca_id", get(busca_id));
+        .route("/busca_id", get(busca_id))
+        .route("/atualiza_nome", put(atualiza_nome));
     app
 }

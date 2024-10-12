@@ -1,7 +1,7 @@
 use axum::Json;
 use mysql_async::Pool;
 use axum::{http::StatusCode};
-use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, AtualizaEmailInput, UsuarioInput, VerificaSenhaInput, VerificaTokenInput}}, model::{self, usuario::busca_id_usuario}};
+use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, AtualizaEmailInput, AtualizaNomeInput, UsuarioInput, VerificaSenhaInput, VerificaTokenInput}}, model::{self, usuario::busca_id_usuario}};
 #[cfg(test)]
 
 async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), (StatusCode, String)>{
@@ -324,8 +324,8 @@ async fn test_atualiza_nome(){
             return;
         }
     };
-
-    assert!(controller::usuario::atualiza_nome(email, nome_completo).await.is_ok(), 
+    let atualiza_nome_input = AtualizaNomeInput{email: email.to_string(), nome: nome_completo.to_string()};
+    assert!(controller::usuario::atualiza_nome(Json(atualiza_nome_input)).await.is_ok(), 
         "Erro ao atualizar o nome do usuário");
 
     assert!(_limpa_usuario(&idusuario, email).await.is_ok(),
