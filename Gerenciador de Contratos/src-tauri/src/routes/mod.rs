@@ -4,7 +4,12 @@ use axum::{
 };
 
 use crate::controller::{
-    endereco::{_salva_endereco, busca_endereco_id}, usuario::{atualiza_email, cria_conta, verifica_senha}
+    endereco::{
+        _salva_endereco, busca_endereco_id
+    }, 
+    usuario::{
+        atualiza_email, atualiza_senha, cria_conta, verifica_senha, verifica_token, busca_id
+    }
 };
 
 pub fn cria_rotas() -> Router<>{
@@ -13,6 +18,9 @@ pub fn cria_rotas() -> Router<>{
         .route("/verifica_senha", post(verifica_senha))
         .route("/cria_conta", post(cria_conta))
         .route("/busca_endereco_id", get(busca_endereco_id))
-        .route("/atualiza_email", put(atualiza_email));
+        .route("/atualiza_email", put(atualiza_email))
+        .route("/atualiza_senha", put(atualiza_senha))
+        .route("/verifica_token", get(verifica_token))
+        .route("/busca_id", get(busca_id));
     app
 }

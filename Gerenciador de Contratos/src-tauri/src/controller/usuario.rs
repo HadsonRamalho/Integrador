@@ -22,79 +22,52 @@ pub struct UsuarioInput {
     pub cnpj: String
 }
 
-#[derive(Serialize, Debug)]
-pub struct MyErrorResponse {
-    error: String,
-}
-
-#[derive(Serialize, Debug)]
-pub struct MyResponse {
-    message: String,
-}
-
-
-// Definindo um enum para encapsular os possíveis retornos
-#[derive(Debug)]
-pub enum MyResult {
-    Success(MyResponse),
-    Error(MyErrorResponse),
-}
-
-impl IntoResponse for MyResult {
-    fn into_response(self) -> axum::response::Response {
-        match self {
-            MyResult::Success(res) => (StatusCode::OK, Json(res)).into_response(),
-            MyResult::Error(err) => (StatusCode::BAD_REQUEST, Json(err)).into_response(),
-        }
-    }
-}
-
 pub async fn cria_conta(
     Json(input): Json<UsuarioInput>
-)  -> MyResult  {
+)  -> Result<(), (StatusCode, String)>  {
     let usuario = input;
     let email = usuario.email.trim(); // Removendo todos os espaços em branco do email
     let cpf = usuario.cpf.trim();
     if usuario.nome.trim().is_empty(){
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", MeuErro::NomeVazio) });
+        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::NomeVazio)));
     }
     if cpf.trim().is_empty(){
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", MeuErro::CpfVazio) });
+        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::CpfVazio)));
     }
     let cpf = match formata_cpf(cpf){
         Ok(cpf) => {cpf},
         Err(e) => {
-            return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", e) });
+            return Err((StatusCode::BAD_REQUEST, format!("{}", format!("{}", e))));
         }
     };
     if !valida_email(&email) {
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", MeuErro::EmailInvalido) });
+        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::EmailInvalido)));
     }
     if usuario.senha1.trim() != usuario.senha2.trim() {
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", MeuErro::SenhasDiferentes) });
+        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::SenhasDiferentes)));
     }
     let cnpj = match controller::locadora::formata_cnpj(&usuario.cnpj){
         Ok(cnpj) => {cnpj}
         Err(e) => {
-            return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", e) });
+            return Err((StatusCode::BAD_REQUEST, format!("{}", e)));
         }
     };
     match valida_senha(&usuario.senha1) {
         Ok(_) => {}
         Err(e) => {
-            return MyResult::Error(controller::usuario::MyErrorResponse { error: format!("{}", e) });
+            return Err((StatusCode::BAD_REQUEST, format!("{}", e)))
         }
     }
     let hash = gera_hash(&usuario.senha1); // Criptografando a senha (Standard *BSD hash)
     let mut novousuario =
         model::Usuario::novo_usuario(usuario.nome.to_string(), email.to_string(), hash); // Cria um novo usuário
     if novousuario.ja_cadastrado().await {
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Esse e-mail já pertence a outra conta.".to_string() });
+        return Err((StatusCode::BAD_REQUEST, "Esse e-mail já pertence a outra conta".to_string()));
     }
     let resultado_cadastro = cadastra_usuario(&usuario.nome, &email, novousuario.get_hash(), &cpf, &cnpj).await;
     match resultado_cadastro {
-        Ok(_) => return MyResult::Success(controller::usuario::MyResponse {message: "".to_string()}),
-        Err(_) => return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro no cadastro".to_string() }),
+        Ok(_) => return Ok(()),
+        Err(e) => return Err((StatusCode::BAD_REQUEST, format!("Erro no cadastro do usuário: {}", e))),
     }
 }
 
@@ -150,37 +123,35 @@ pub async fn cadastra_usuario(nome: &str, email: &str, senha: &str, cpf: &str, c
     Ok(())
 }
 
-pub async fn verifica_senha(input: Json<VerificaSenhaInput>) -> MyResult {
-    let email = input.email.clone();
+pub async fn verifica_senha(input: Json<VerificaSenhaInput>) -> Result<(), (StatusCode, String)>  {
     let senha = input.senha.clone();
+    let email = input.email.clone();
+
     let senha = senha.trim();
     if senha.is_empty() {
-        return MyResult::Error(controller::usuario::MyErrorResponse { error:"Senha tá vazia".to_string() });
+        return Err((StatusCode::BAD_REQUEST, "A senha não pode estar vazia".to_string()));
     }
     let email = email.trim();
     if email.is_empty(){
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: "E-mail tá vazio".to_string() })
+        return Err((StatusCode::BAD_REQUEST, "O e-mail não pode estar vazio".to_string()));
     }
     let resultado_verificacao = _verifica_senha(email.to_string(), senha.to_string()).await;
-    let status = resultado_verificacao.0;
-    if status != StatusCode::OK{
-        return MyResult::Error(controller::usuario::MyErrorResponse { error: "Erro na verificação".to_string() })
+    if resultado_verificacao.0 != StatusCode::OK{
+        return Err((resultado_verificacao.0, "Erro ao verificar a senha do usuário.".to_string()))
     }
-    return MyResult::Success(controller::usuario::MyResponse { message: "Sucesso no cadastro".to_string() })
+    return Ok(())
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct AtualizaEmailInput{
-    email_antigo: String,
-    email_novo: String
+    pub email_antigo: String,
+    pub email_novo: String
 }
 
-//#[tauri::command]
 pub async fn atualiza_email(input: Json<AtualizaEmailInput>) -> Result<(), String>{
     let email = input.email_novo.clone();
     let email_antigo = input.email_antigo.clone();
 
-    
     let email: &str = email.trim();
     if !valida_email(email){
         return Err("Erro: Novo e-mail inválido".to_string())
@@ -222,9 +193,10 @@ pub async fn atualiza_email(input: Json<AtualizaEmailInput>) -> Result<(), Strin
     }
 }
 
-#[tauri::command]
-pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<String, String>{
-    match valida_senha(nova_senha){
+pub async fn atualiza_senha(input: Json<VerificaSenhaInput>) -> Result<(), String>{
+    let email = input.email.clone();
+    let nova_senha = input.senha.clone();
+    match valida_senha(&nova_senha){
         Ok(_) => {},
         Err(e) => {
             return Err(e)
@@ -239,7 +211,7 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<String, Str
             return Err(e.to_string())
         }
     };
-    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;
+    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&pool, &email).await;
     match resultado_busca{
         Ok(email) => {
             if email.is_empty() || !valida_email(&email) || email == ""{
@@ -250,10 +222,10 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<String, Str
             return Err(e.to_string());
         }
     }
-    let resultado_atualizacao: Result<(), mysql_async::Error> = model::usuario::atualiza_senha(&pool, email, &nova_senha).await;
+    let resultado_atualizacao: Result<(), mysql_async::Error> = model::usuario::atualiza_senha(&pool, &email, &nova_senha).await;
     match resultado_atualizacao{
         Ok(()) => {
-            return Ok("Senha atualizada com sucesso!".to_string())
+            return Ok(())
         },
         Err(_e) => {
             println!("Erro ao atualizar a senha");
@@ -262,8 +234,16 @@ pub async fn atualiza_senha(email: &str, nova_senha: &str) -> Result<String, Str
     }
 }
 
-#[tauri::command]
-pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
+#[derive(Serialize, Deserialize)]
+pub struct VerificaTokenInput{
+    pub email: String,
+    pub token: String
+}
+
+pub async fn verifica_token(input: Json<VerificaTokenInput>) -> Result<(), String>{
+    let email = input.email.clone();
+    let token = input.token.clone();
+
     let email = email.trim();
     let token = token.trim();
     if !valida_email(email){
@@ -295,7 +275,7 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
     match email{
         Ok(_) =>{
             if verifica_hash(&email.unwrap(), uid){
-                return Ok(true);
+                return Ok(());
             }
             return Err("Token inválido".to_string());
         },
@@ -306,7 +286,8 @@ pub async fn verifica_token(email: &str, token: &str) -> Result<bool, String>{
 }
 
 #[tauri::command]
-pub async fn busca_id(email: &str) -> Result<String, String>{
+pub async fn busca_id(input: Json<String>) -> Result<String, String>{
+    let email = input.0;
     if email.trim().is_empty(){
         return Err("Erro: O e-mail está vazio".to_string())
     }
@@ -318,7 +299,7 @@ pub async fn busca_id(email: &str) -> Result<String, String>{
             return Err(e.to_string())
         }
     };
-    let resultado_busca = usuario::busca_id_usuario(&pool, email).await;
+    let resultado_busca = usuario::busca_id_usuario(&pool, &email).await;
     match resultado_busca{
         Ok(id) =>{
             if id.is_empty(){
