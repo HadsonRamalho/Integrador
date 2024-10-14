@@ -1,5 +1,3 @@
-use std::env;
-
 mod controller;
 mod model;
 mod test;

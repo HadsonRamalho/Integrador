@@ -1,5 +1,7 @@
 use crate::model;
 use crate::model::erro::MeuErro;
+use axum::http::StatusCode;
+use axum::Json;
 use pwhash::bcrypt;
 use pwhash::unix;
 pub mod endereco;
@@ -15,10 +17,11 @@ pub mod contrato;
 /// ```
 /// if !valida_email(email.trim())
 /// ```
-#[tauri::command]
-pub fn checa_email(email: &str) -> Result<(), String> {
+//#[tauri::command]
+pub async fn checa_email(input: Json<String>) -> Result<(), (StatusCode, String)> {
+    let email = input.0;
     if !valida_email(email.trim()) {
-        return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
+        return Err((StatusCode::BAD_REQUEST, "E-mail inválido. Deve conter '@' e '.'".to_string()));
     }
     return Ok(());
 }
