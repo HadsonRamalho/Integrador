@@ -327,63 +327,66 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     return Ok(())
 }
 
-#[tauri::command]
-pub async fn busca_email_usuario(id: String) -> Result<String, String>{
+//#[tauri::command]
+pub async fn busca_email_usuario(input: Json<String>) -> Result<String, (StatusCode, String)>{
+    let id = input.0;
     if id.trim().is_empty(){
-        return Err("Erro: O ID está vazio".to_string())
+        return Err((StatusCode::BAD_REQUEST, "O ID está vazio.".to_string()))
     }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
         }, 
         Err(e) =>{
-            return Err(e.to_string())
+            return Err((StatusCode::SERVICE_UNAVAILABLE, e.to_string()))
         }
     };
     let email = model::usuario::busca_email_usuario(&pool, &id).await;
     match email{
         Ok(_) => { return Ok(email.unwrap());
     }, Err(e) => {
-        return Err(e.to_string());
+        return Err((StatusCode::BAD_REQUEST, e.to_string()));
     }
     }
 }
 
 
 
-#[tauri::command]
-pub async fn busca_nome_usuario(id: String) -> Result<String, String>{
+//#[tauri::command]
+pub async fn busca_nome_usuario(input: Json<String>) -> Result<String, (StatusCode, String)>{
+    let id = input.0;
     if id.trim().is_empty(){
-        return Err("Erro: O ID está vazio".to_string())
+        return Err((StatusCode::BAD_REQUEST, "Erro: O ID está vazio".to_string()))
     }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
         }, 
         Err(e) =>{
-            return Err(e.to_string())
+            return Err((StatusCode::SERVICE_UNAVAILABLE, e.to_string()))
         }
     };
     let nome = model::usuario::busca_nome_usuario(&pool, &id).await;
     match nome{
         Ok(_) => { return Ok(nome.unwrap());
     }, Err(e) => {
-        return Err(e.to_string());
-    }
+            return Err((StatusCode::BAD_REQUEST, e.to_string()));
+        }
     }
 }
 
-#[tauri::command]
-pub async fn busca_cnpj_usuario(id: String) -> Result<String, String>{
+//#[tauri::command]
+pub async fn busca_cnpj_usuario(input: Json<String>) -> Result<String, (StatusCode, String)>{
+    let id = input.0;
     if id.trim().is_empty(){
-        return Err("Erro: O ID está vazio".to_string())
+        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
     }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
         }, 
         Err(e) =>{
-            return Err(e.to_string())
+            return Err((StatusCode::SERVICE_UNAVAILABLE, format!("{}", e)))
         }
     };
     let cnpj = model::usuario::busca_cnpj_usuario(&pool, &id).await;
@@ -391,8 +394,8 @@ pub async fn busca_cnpj_usuario(id: String) -> Result<String, String>{
         Ok(_) => { 
             return Ok(cnpj.unwrap());
         }, 
-        Err(e) => {
-            return Err(e.to_string());
+        Err(_) => {
+            return Err((StatusCode::BAD_REQUEST, MeuErro::CnpjNaoEncontrado.to_string()));
         }
     }
 }
@@ -435,17 +438,26 @@ pub async fn atualiza_nome(input: Json<AtualizaNomeInput>) -> Result<(), (Status
             return Err((StatusCode::BAD_REQUEST, format!("{}", e)))
         }
     }
+
 }
 
-#[tauri::command]
-pub async fn deleta_conta(idusuario: String, email: String) -> Result<(), String>{
+#[derive(Serialize, Deserialize)]
+pub struct DeletaContaInput{
+    pub email: String,
+    pub idusuario: String
+}
+
+//#[tauri::command]
+pub async fn deleta_conta(input: Json<DeletaContaInput>) -> Result<(), (StatusCode, String)>{
+    let idusuario = input.idusuario.clone();
+    let email = input.email.clone();
     if idusuario.trim().is_empty() || email.trim().is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
     }
     let resultado_delete = model::usuario::deleta_conta(idusuario, email).await;
     match resultado_delete{
         Ok(_) => {return Ok(())},
-        Err(e) => {return Err(e.to_string())}
+        Err(e) => {return Err((StatusCode::BAD_REQUEST, e.to_string()))}
     }
 }
 

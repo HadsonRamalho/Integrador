@@ -1,3 +1,4 @@
+use axum::Json;
 use chrono::NaiveDate;
 use chrono::NaiveDateTime;
 use chrono::NaiveTime;
@@ -466,7 +467,12 @@ pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String
         return Err(MeuErro::CamposVazios.to_string())
     }
     let numserie = numserie.trim().to_string();
-    let cnpj = busca_cnpj_usuario(idusuario).await?;
+    let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
+        Ok(cnpj) => {cnpj},
+        Err(e) => {
+            return Err(e.1);
+        }
+    };
     let cnpj = formata_cnpj(&cnpj)?;
     let resultado_busca = model::contrato::busca_contrato_numserie_maquina(numserie, cnpj).await;
     match resultado_busca{
@@ -507,7 +513,12 @@ pub async fn busca_contrato_nome_locatario(nomelocatario: String, idusuario: Str
     if nomelocatario.trim().is_empty() || idusuario.trim().is_empty(){
         return Err(MeuErro::CamposVazios.to_string())
     }
-    let cnpj = busca_cnpj_usuario(idusuario).await?;
+    let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
+        Ok(cnpj) => {cnpj},
+        Err(e) => {
+            return Err(e.1);
+        }
+    };
     let cnpj = formata_cnpj(&cnpj)?;
     let resultado_busca = model::contrato::busca_contrato_nome_locatario(nomelocatario, cnpj).await;
     match resultado_busca{
@@ -548,7 +559,12 @@ pub async fn busca_contrato_cnpj_locatario(cnpjlocatario: String, idusuario: Str
     if cnpjlocatario.trim().is_empty() || idusuario.trim().is_empty(){
         return Err(MeuErro::CamposVazios.to_string())
     }
-    let cnpj = busca_cnpj_usuario(idusuario).await?;
+    let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
+        Ok(cnpj) => {cnpj},
+        Err(e) => {
+            return Err(e.1);
+        }
+    };
     let cnpj = formata_cnpj(&cnpj)?;
     let cnpjlocatario = formata_cnpj(&cnpjlocatario)?;
     let resultado_busca = model::contrato::busca_contrato_cnpj_locatario(cnpjlocatario, cnpj).await;

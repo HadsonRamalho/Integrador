@@ -47,20 +47,6 @@ pub async fn busca_id_usuario(pool: &Pool, email: &str) -> Result<String, mysql_
     }
 }
 
-pub async fn verifica_id_usuario(pool: &Pool, id: &str) -> Result<(), mysql_async::Error>{
-    let mut conn = pool.get_conn().await?;
-    let resultado_conexao = conn.exec_drop("SELECT UUID FROM usuarios WHERE UUID = :id",
-    params! {"id" => id}).await;
-    match resultado_conexao{
-        Ok(())=>{
-            return Ok(());
-        },
-        Err(e) => {
-            return Err(e);
-        }
-    }
-}
-
 pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), mysql_async::Error>{
     let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;

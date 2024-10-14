@@ -1,7 +1,7 @@
 use axum::Json;
 use mysql_async::Pool;
 use axum::{http::StatusCode};
-use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, AtualizaEmailInput, AtualizaNomeInput, UsuarioInput, VerificaSenhaInput, VerificaTokenInput}}, model::{self, usuario::busca_id_usuario}};
+use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, AtualizaEmailInput, AtualizaNomeInput, DeletaContaInput, UsuarioInput, VerificaSenhaInput, VerificaTokenInput}}, model::{self, usuario::busca_id_usuario}};
 #[cfg(test)]
 
 async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), (StatusCode, String)>{
@@ -39,8 +39,9 @@ async fn _setup_pool() -> Result<Pool, mysql_async::Error> {
     cria_pool().await
 }
 
-async fn _limpa_usuario(idusuario: &str, email: &str) -> Result<(), String> {
-    controller::usuario::deleta_conta(idusuario.to_string(), email.to_string()).await
+async fn _limpa_usuario(idusuario: &str, email: &str) -> Result<(), (StatusCode, String)> {
+    let input = DeletaContaInput{idusuario: idusuario.to_string(), email: email.to_string()};
+    controller::usuario::deleta_conta(Json(input)).await
 }
 
 async fn _busca_id_usuario(email: &str)  -> Result<String, String>{
@@ -276,7 +277,7 @@ async fn test_busca_nome_usuario(){
     };
     let id = idusuario.clone();
 
-    assert!(controller::usuario::busca_nome_usuario(idusuario).await.is_ok(),
+    assert!(controller::usuario::busca_nome_usuario(Json(idusuario)).await.is_ok(),
         "Erro ao buscar o nome do usuário");
 
     assert!(_limpa_usuario(&id, email).await.is_ok(),
@@ -301,7 +302,7 @@ async fn test_busca_cnpj_usuario(){
     };
     let id = idusuario.clone();
 
-    assert!(controller::usuario::busca_cnpj_usuario(idusuario).await.is_ok(),
+    assert!(controller::usuario::busca_cnpj_usuario(Json(idusuario)).await.is_ok(),
         "Erro ao buscar o CNPJ do usuário");
 
     assert!(_limpa_usuario(&id, email).await.is_ok(),
