@@ -10,19 +10,47 @@ function Login(){
     const [senha, setSenha] = useState("");
   
     async function checaEmail() {
-      setMensagemEmail(await invoke("checa_email", { email }));
+      fetch('http://localhost:3000/checa_email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json' // Define o tipo de conteúdo
+        },
+        body: JSON.stringify(email) // Converte os dados em JSON
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(errorMessage => {
+            setMensagemSenha(errorMessage);
+            throw new Error(`Erro: ${errorMessage}`);
+          });
+        }
+        console.log(response);
+      })
+      .catch(error => console.error(error));
     }
   
     async function verificaToken(){
-      try{
-        const token = localStorage.getItem('token');
-        console.log('Token na verificação:', typeof token, token);
-        const validatoken = await invoke("verifica_token", {email, token});
-        console.log(validatoken);
+      const token = localStorage.getItem('token');
+      console.log('Token na verificação:', typeof token, token);
+      
+      fetch('http://localhost:3000/verifica_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json' // Define o tipo de conteúdo
+        },
+        body: JSON.stringify({email, token}) // Converte os dados em JSON
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(errorMessage => {
+            setMensagemSenha(errorMessage);
+            throw new Error(`Erro: ${errorMessage}`);
+          });
+        }
+        console.log(response);
         home();
-      } catch(error){
-        console.log("[Login.jsx | verificaToken] : ", error);
-      }
+      })
+      .catch(error => console.error(error));
     }
   
     async function realizaLogin(){
@@ -37,7 +65,7 @@ function Login(){
         if (!response.ok) {
           return response.text().then(errorMessage => {
             setMensagemSenha(errorMessage);
-            throw new Error(`Erro do servidor: ${errorMessage}`);
+            throw new Error(`Erro: ${errorMessage}`);
           });
         }
         console.log(response);
@@ -69,9 +97,9 @@ function Login(){
           className="row"
           onSubmit={async(e) => {
             e.preventDefault();
-            //await checaEmail();
+            await checaEmail();
             await realizaLogin();          
-            //await verificaToken();
+            await verificaToken();
           }}
         >
           <input required
