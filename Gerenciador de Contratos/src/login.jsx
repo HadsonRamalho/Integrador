@@ -26,21 +26,25 @@ function Login(){
     }
   
     async function realizaLogin(){
-      try{
-        await invoke("verifica_senha", {email, senha});
-        setMensagemSenha("Entrando na conta!");    
-        const novo_token = await invoke("busca_id", {email}); //Preparando autenticação
-        localStorage.setItem('token', novo_token); // Armazenando token
-        console.log('Token gerado ao entrar:', novo_token);    
-        if (localStorage.getItem('token')){ // Se tiver um token definido, faz login direto no menu
-          console.log("Token foi definido.")
-          home();
+      fetch('http://localhost:3000/verifica_senha', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json' // Define o tipo de conteúdo
+        },
+        body: JSON.stringify({ email, senha }) // Converte os dados em JSON
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(errorMessage => {
+            setMensagemSenha(errorMessage);
+            throw new Error(`Erro do servidor: ${errorMessage}`);
+          });
         }
-      } catch (error){
-        setMensagemSenha("Erro ao entrar na conta. Verifique sua senha."); // Alterar para mensagem de erro personalizada
-        console.log("[Login.jsx | realizaLogin] : ", error);
-        return;
-      }      
+        console.log(response);
+      })
+      .then(_ => console.log('Sucesso no login.'))
+      .catch(error => console.error(error)); 
+      setMensagemSenha('Entrando na conta!');
     }
     
   const navigate = useNavigate();
@@ -65,9 +69,9 @@ function Login(){
           className="row"
           onSubmit={async(e) => {
             e.preventDefault();
-            await checaEmail();
+            //await checaEmail();
             await realizaLogin();          
-            await verificaToken();
+            //await verificaToken();
           }}
         >
           <input required

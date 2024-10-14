@@ -1,7 +1,10 @@
 use axum::{
     routing::{delete, get, post, put},
     Router,
+    http::Method
 };
+use tower_http::cors::{Any, CorsLayer};
+
 
 use crate::controller::{
     endereco::{
@@ -12,7 +15,12 @@ use crate::controller::{
     }
 };
 
+
 pub fn cria_rotas() -> Router<>{
+    let cors = CorsLayer::new()
+        .allow_origin(Any) // Permite requisições de qualquer origem
+        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE]);
+
     let app: Router<_> = Router::new()
         .route("/_salva_endereco", post(_salva_endereco))
         .route("/verifica_senha", post(verifica_senha))
@@ -26,6 +34,12 @@ pub fn cria_rotas() -> Router<>{
         .route("/busca_email_usuario", get(busca_email_usuario))
         .route("/busca_nome_usuario", get(busca_nome_usuario))
         .route("/busca_cnpj_usuario", get(busca_cnpj_usuario))
-        .route("/deleta_conta", delete(deleta_conta));
+        .route("/deleta_conta", delete(deleta_conta))
+        .layer(
+            CorsLayer::new()
+                .allow_origin(Any) // Permite requisições de qualquer origem
+                .allow_methods(Method::POST) // Permite apenas métodos POST
+                .allow_headers(Any), // Permite todos os cabeçalhos
+        );
     app
 }

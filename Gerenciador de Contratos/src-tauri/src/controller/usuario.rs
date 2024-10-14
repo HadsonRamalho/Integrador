@@ -100,7 +100,7 @@ pub async fn _verifica_senha(email: String, senha: String) -> (StatusCode, axum:
         Ok(u) => {u},
         Err(e) => {
             println!("{:?}", e);
-            return (StatusCode::SERVICE_UNAVAILABLE, axum::Json(usuario_vazio()))}
+            return (StatusCode::BAD_REQUEST, axum::Json(usuario_vazio()))}
     };
     (StatusCode::OK, axum::Json(usuario_autenticado))
 }
@@ -121,21 +121,21 @@ pub async fn cadastra_usuario(nome: &str, email: &str, senha: &str, cpf: &str, c
     Ok(())
 }
 
-pub async fn verifica_senha(input: Json<VerificaSenhaInput>) -> Result<(), (StatusCode, String)>  {
+pub async fn verifica_senha(input: Json<VerificaSenhaInput>) -> Result<(), (StatusCode, Json<String>)>  {
     let senha = input.senha.clone();
     let email = input.email.clone();
 
     let senha = senha.trim();
     if senha.is_empty() {
-        return Err((StatusCode::BAD_REQUEST, "A senha não pode estar vazia".to_string()));
+        return Err((StatusCode::BAD_REQUEST, Json("A senha não pode estar vazia".to_string())));
     }
     let email = email.trim();
     if email.is_empty(){
-        return Err((StatusCode::BAD_REQUEST, "O e-mail não pode estar vazio".to_string()));
+        return Err((StatusCode::BAD_REQUEST, Json("O e-mail não pode estar vazio".to_string())));
     }
     let resultado_verificacao = _verifica_senha(email.to_string(), senha.to_string()).await;
     if resultado_verificacao.0 != StatusCode::OK{
-        return Err((resultado_verificacao.0, "Erro ao verificar a senha do usuário.".to_string()))
+        return Err((resultado_verificacao.0, Json("Erro ao verificar a senha do usuário.".to_string())))
     }
     return Ok(())
 }
