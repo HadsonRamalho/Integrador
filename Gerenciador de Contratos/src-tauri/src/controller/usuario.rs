@@ -244,6 +244,9 @@ pub async fn verifica_token(input: Json<VerificaTokenInput>) -> Result<(), Strin
 
     let email = email.trim();
     let token = token.trim();
+
+    let token = token.to_string().replace("\"", "");
+    
     if !valida_email(email){
         return Err("Erro ao validar o token: E-mail inválido.".to_string());
     }
@@ -269,7 +272,7 @@ pub async fn verifica_token(input: Json<VerificaTokenInput>) -> Result<(), Strin
         }
     }
     
-    let email = model::usuario::busca_email_usuario(&pool, token).await;
+    let email = model::usuario::busca_email_usuario(&pool, &token).await;
     match email{
         Ok(_) =>{
             if verifica_hash(&email.unwrap(), uid){
@@ -283,8 +286,8 @@ pub async fn verifica_token(input: Json<VerificaTokenInput>) -> Result<(), Strin
     }
 }
 
-#[tauri::command]
-pub async fn busca_id(input: Json<String>) -> Result<String, String>{
+//#[tauri::command]
+pub async fn busca_id(input: Json<String>) -> Result<Json<String>, String>{
     let email = input.0;
     if email.trim().is_empty(){
         return Err("Erro: O e-mail está vazio".to_string())
@@ -303,7 +306,7 @@ pub async fn busca_id(input: Json<String>) -> Result<String, String>{
             if id.is_empty(){
                 return Err("Erro: ID não encontrado. Verifique o e-mail.".to_string());
             }
-            return Ok(id);
+            return Ok(Json(id));
         },
         Err(e) =>{
             return Err(e.to_string());

@@ -24,7 +24,7 @@ pub fn cria_rotas() -> Router<>{
         .route("/atualiza_email", put(atualiza_email))
         .route("/atualiza_senha", put(atualiza_senha))
         .route("/verifica_token", post(verifica_token))
-        .route("/busca_id", get(busca_id))
+        .route("/busca_id", post(busca_id))
         .route("/atualiza_nome", put(atualiza_nome))
         .route("/busca_email_usuario", get(busca_email_usuario))
         .route("/busca_nome_usuario", get(busca_nome_usuario))
@@ -33,9 +33,9 @@ pub fn cria_rotas() -> Router<>{
         .route("/checa_email", post(checa_email))
         .layer(
             CorsLayer::new()
-                .allow_origin(Any) // Permite requisições de qualquer origem
-                .allow_methods(Method::POST) // Permite apenas métodos POST
-                .allow_headers(Any), // Permite todos os cabeçalhos
+                .allow_origin(Any)
+                .allow_methods(Method::POST) 
+                .allow_headers(Any),
         );
     app
 }

@@ -47,7 +47,7 @@ async fn _limpa_usuario(idusuario: &str, email: &str) -> Result<(), (StatusCode,
 async fn _busca_id_usuario(email: &str)  -> Result<String, String>{
     match controller::usuario::busca_id(Json(email.to_string())).await {
         Ok(idusuario) =>{
-            return Ok(idusuario)
+            return Ok(idusuario.0)
         },
         Err(e) => {
             println!("Erro ao buscar o ID do usuário: {}", e);

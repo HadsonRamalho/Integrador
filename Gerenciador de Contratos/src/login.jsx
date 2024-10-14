@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from 'react-router-dom';
 
 function Login(){
@@ -13,14 +12,14 @@ function Login(){
       fetch('http://localhost:3000/checa_email', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json' // Define o tipo de conteúdo
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(email) // Converte os dados em JSON
+        body: JSON.stringify(email)
       })
       .then(response => {
         if (!response.ok) {
           return response.text().then(errorMessage => {
-            setMensagemSenha(errorMessage);
+            setMensagemEmail(errorMessage);
             throw new Error(`Erro: ${errorMessage}`);
           });
         }
@@ -29,51 +28,81 @@ function Login(){
       .catch(error => console.error(error));
     }
   
-    async function verificaToken(){
-      const token = localStorage.getItem('token');
-      console.log('Token na verificação:', typeof token, token);
-      
-      fetch('http://localhost:3000/verifica_token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json' // Define o tipo de conteúdo
-        },
-        body: JSON.stringify({email, token}) // Converte os dados em JSON
-      })
-      .then(response => {
+    async function verificaToken() {
+      try {
+        const token = localStorage.getItem('token');
+        console.log('Token na verificação:', typeof token, token);
+    
+        const response = await fetch('http://localhost:3000/verifica_token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, token }),
+        });
+    
         if (!response.ok) {
-          return response.text().then(errorMessage => {
-            setMensagemSenha(errorMessage);
-            throw new Error(`Erro: ${errorMessage}`);
-          });
+          const errorMessage = await response.text();
+          setMensagemSenha(errorMessage);
+          throw new Error(`Erro: ${errorMessage}`);
         }
-        console.log(response);
+    
+        console.log('Token válido!');
         home();
-      })
-      .catch(error => console.error(error));
+      } catch (error) {
+        console.error('Erro ao verificar o token:', error);
+      }
     }
   
-    async function realizaLogin(){
-      fetch('http://localhost:3000/verifica_senha', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json' // Define o tipo de conteúdo
-        },
-        body: JSON.stringify({ email, senha }) // Converte os dados em JSON
-      })
-      .then(response => {
+    async function realizaLogin() {
+      try {
+        const response = await fetch('http://localhost:3000/verifica_senha', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, senha })
+        });
+    
         if (!response.ok) {
-          return response.text().then(errorMessage => {
-            setMensagemSenha(errorMessage);
-            throw new Error(`Erro: ${errorMessage}`);
-          });
+          const errorMessage = await response.text();
+          setMensagemSenha(errorMessage);
+          throw new Error(`Erro: ${errorMessage}`);
         }
-        console.log(response);
-      })
-      .then(_ => console.log('Sucesso no login.'))
-      .catch(error => console.error(error)); 
-      setMensagemSenha('Entrando na conta!');
+    
+        console.log('Resposta de verifica_senha:', response);
+    
+        const buscaIdResponse = await fetch('http://localhost:3000/busca_id', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(email)
+        });
+        
+    
+        if (!buscaIdResponse.ok) {
+          const errorMessage = await buscaIdResponse.text();
+          setMensagemSenha(errorMessage);
+          throw new Error(`Erro: ${errorMessage}`);
+        }
+    
+        const novo_token = await buscaIdResponse.text();
+        localStorage.setItem('token', novo_token);
+        console.log("Token gerado ao entrar: ", novo_token);
+    
+        if (localStorage.getItem('token')) {
+          console.log("Token foi definido.");
+          home();
+        }
+    
+        setMensagemSenha('Entrando na conta!');
+    
+      } catch (error) {
+        console.error('Erro no login:', error);
+      }
     }
+    
     
   const navigate = useNavigate();
 
