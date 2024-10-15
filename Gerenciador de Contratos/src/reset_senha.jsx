@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useNavigate } from "react-router-dom";
 
 
@@ -8,14 +7,30 @@ function ResetSenha(){
   const [email, setEmail] = useState("");
 
   async function loginEmail() {
-    try{
-      const codigo = await invoke("encontra_email_smtp", { email });
+    try {  
+      const response = await fetch('http://localhost:3000/encontra_email_smtp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(email),
+      });
+  
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        setMensagemReset(errorMessage);
+        throw new Error(`Erro: ${errorMessage}`);
+      }
+
+      const codigo =  await response.json(); // Supondo que o código esteja nesta chave do JSON
+      console.log("Codigo:", codigo);
       localStorage.setItem('codigoReset', codigo);
       localStorage.setItem('emailReset', email);
       redefinicao_senha();
-    } catch(error){
+    } catch (error) {
       setMensagemReset(error);
-      console.log("[Reset_senha.jsx | loginEmail] : ", error);
+      console.error('Erro ao verificar o token:', error);
+
     }
   }
 

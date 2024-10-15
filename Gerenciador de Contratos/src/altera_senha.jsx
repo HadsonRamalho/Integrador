@@ -8,17 +8,47 @@ function AlteraSenha(){
   const [senha2, setSenha2] = useState("");
 
   async function alteraSenha() {
+
     try{
-      const codigo = await invoke("compara_novas_senhas", { senha1, senha2 });
-      localStorage.setItem('codigoReset', codigo);
-      const email = localStorage.getItem('emailReset');
-      const novaSenha = senha1;
-      await invoke("atualiza_senha", {email, novaSenha});
-      setMensagemAlteracao("Senha alterada!");
-    } catch(error){
-      setMensagemAlteracao(error);
-      console.log("[Altera_Senha.jsx] : ", error);
+      const response = await fetch('http://localhost:3000/compara_novas_senhas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({senha1, senha2}),
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Erro: ${errorMessage}`);
     }
+    
+    const codigo = await response.text();
+    console.log(codigo);
+
+    localStorage.setItem('codigoReset', codigo);
+    const email = localStorage.getItem('emailReset');
+    const novaSenha = senha1;
+
+    const response2 = await fetch('http://localhost:3000/atualiza_senha', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({email, senha: novaSenha}),
+    });
+
+    if (!response2.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Erro: ${errorMessage}`);
+    }
+
+    console.log("Senha alterada!");
+    setMensagemAlteracao("Senha alterada!");
+  } catch (error) {
+    setMensagemAlteracao(error);
+    console.error('Erro ao verificar o token:', error);      
+  }
   }
 
   const navigate = useNavigate();

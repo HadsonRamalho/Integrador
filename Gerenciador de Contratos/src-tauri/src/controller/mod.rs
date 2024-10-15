@@ -4,6 +4,8 @@ use axum::http::StatusCode;
 use axum::Json;
 use pwhash::bcrypt;
 use pwhash::unix;
+use serde::Deserialize;
+use serde::Serialize;
 pub mod endereco;
 pub mod locadora;
 pub mod locatario;
@@ -81,9 +83,10 @@ pub fn valida_email(email: &str) -> bool {
 ///     return Ok(codigo);
 /// }
 /// ```
-#[tauri::command]
-pub async fn encontra_email_smtp(email: &str) -> Result<String, String> {
-    if !valida_email(email) {
+//#[tauri::command]
+pub async fn encontra_email_smtp(input: Json<String>) -> Result<Json<String>, String> {
+    let email = input.0;
+    if !valida_email(&email) {
         return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
     }
     let pool = match cria_pool().await {
@@ -94,20 +97,24 @@ pub async fn encontra_email_smtp(email: &str) -> Result<String, String> {
             return Err(e.to_string())
         }
     };
-    let _consome_result: Result<String, mysql_async::Error> = model::busca_email(&pool, email).await;
+    let _consome_result: Result<String, mysql_async::Error> = model::busca_email(&pool, &email).await;
     match _consome_result {
         Ok(_) => {
             let codigo = model::envia_email(_consome_result.unwrap());
-            return Ok(codigo);
+            return Ok(Json(codigo));
         }
         _ => return Err("Erro: O e-mail não é válido ou pode não estar cadastrado.".to_string()),
     }
 }
 
 /// ## Recebe um e-mail e retorna um token/hash que é gerado a partir da string slice
-#[tauri::command]
-pub async fn gera_token(email: &str) -> Result<String, ()> {
-    let token = gera_hash(email);
+//#[tauri::command]
+pub async fn gera_token(input: Json<String>) -> Result<String, String> {
+    let email = input.0;
+    if !valida_email(&email){
+        return Err("E-mail inválido.".to_string())
+    }
+    let token = gera_hash(&email);
     Ok(token)
 }
 
@@ -121,6 +128,12 @@ pub fn gera_hash(senha: &str) -> String {
 pub fn verifica_hash(senha_digitada: &str, hash: String) -> bool {
     let dec = unix::verify(senha_digitada, &hash);
     return dec;
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CodigosUsuarioBancoInput{
+    pub codigo_usuario: String,
+    pub codigo_banco: String
 }
 
 /// ## Recebe o código digitado pelo usuário e o código armazenado no banco de dados, verifica se são iguais e retorna uma String caso sejam
@@ -137,8 +150,10 @@ pub fn verifica_hash(senha_digitada: &str, hash: String) -> bool {
 ///    return Ok("Codigo correto".to_string())
 /// }
 /// ```
-#[tauri::command]
-pub async fn verifica_codigo_email(codigo_usuario: String, codigo_banco: String) -> Result<String, String> {
+//#[tauri::command]
+pub async fn verifica_codigo_email(input: Json<CodigosUsuarioBancoInput>) -> Result<String, String> {
+    let codigo_usuario = input.codigo_usuario.clone();
+    let codigo_banco = input.codigo_banco.clone();
     if codigo_usuario.trim().is_empty(){
         return Err("Erro: Preencha o código.".to_string())
     }
@@ -149,9 +164,17 @@ pub async fn verifica_codigo_email(codigo_usuario: String, codigo_banco: String)
     return Err("Erro: Codigo incorreto".to_string())
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct ComparaNovasSenhasInput{
+    pub senha1: String,
+    pub senha2: String
+}
+
 /// ## Recebe duas senhas, compara se são iguais e verifica se ambas são fortes o suficiente
-#[tauri::command]
-pub async fn compara_novas_senhas(senha1: String, senha2:String) -> Result<String, String>{
+//#[tauri::command]
+pub async fn compara_novas_senhas(input: Json<ComparaNovasSenhasInput>) -> Result<String, String>{
+    let senha1 = input.senha1.clone();
+    let senha2 = input.senha2.clone();
     if senha1.trim().is_empty() || senha2.trim().is_empty(){
         return Err(MeuErro::CamposVazios.to_string())
     }
