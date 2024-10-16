@@ -204,7 +204,7 @@ pub fn envia_email(email: String) -> String{
     let id = gera_hash(&email);
     let id = id.get(8..12).unwrap().to_string();
     // conteúdo do e-mail
-    let code = format!("Seu código de verificação é {}", id);
+    let code = format!("{}", id);
     let email = Message::builder()
         .from("gerenciadordecontratosgdc@gmail.com".parse().unwrap())
         .to(email.parse().unwrap())
@@ -249,8 +249,8 @@ pub fn envia_email(email: String) -> String{
                         <p>Olá,</p>
                         <p>Você solicitou a redefinição da sua senha. Use o código abaixo para redefinir sua senha:</p>
                         <div class="code">{code}</div>
-                        <p>Se você não solicitou isso, por favor ignore este email.</p>
-                        <p>Atenciosamente,<br>Equipe do Gerenciador de Contratos</p>
+                        <p>Se você não solicitou isso, por favor ignore este e-mail.</p>
+                        <p>Atenciosamente,<br>Equipe do Gerenciador de Contratos | GDC </p>
                     </div>
                 </body>
                 </html>
