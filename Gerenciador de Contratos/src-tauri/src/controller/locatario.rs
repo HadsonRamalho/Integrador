@@ -1,6 +1,17 @@
+use axum::Json;
+
 use crate::{controller, model::{self, erro::MeuErro, locatario::Locatario}};
 
 use super::locadora::formata_cnpj;
+
+pub struct LocatarioInput{
+    pub idendereco: String,
+    pub cnpj: String,
+    pub nomelocatario: String,
+    pub idsocio: String,
+    pub locatariostatus: i16
+}
+
 
 /// ## Recebe campos separados e os junta em um serde_json::Value que representa um Locatario
 /// Primeiro, verifica se algum dos campos recebidos está vazio e retorna erro caso ao menos um esteja: 
@@ -29,8 +40,13 @@ use super::locadora::formata_cnpj;
 /// });
 /// return Ok(locatario)
 /// ```
-#[tauri::command]
-pub fn estrutura_locatario(idendereco: String, cnpj: String, nomelocatario: String, idsocio: String) -> Result<serde_json::Value, String>{
+//#[tauri::command]
+pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<serde_json::Value, String>{
+    let idendereco = input.idendereco.clone();
+    let cnpj = input.cnpj.clone();
+    let nomelocatario = input.nomelocatario.clone();
+    let idsocio = input.idsocio.clone();
+    
     if idendereco.trim().is_empty() || cnpj.trim().is_empty() || 
         nomelocatario.trim().is_empty() || idsocio.trim().is_empty(){
         return Err(MeuErro::CamposVazios.to_string())

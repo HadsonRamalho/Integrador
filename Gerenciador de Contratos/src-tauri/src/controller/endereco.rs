@@ -1,17 +1,32 @@
-use axum::{http::StatusCode, response::IntoResponse, Json};
-use serde::{Deserialize, Serialize};
+use std::fmt::format;
+
+use axum::{http::StatusCode, Json};
+use serde::Deserialize;
 
 use super::gera_hash;
 use crate::{controller, model::{self, endereco::Endereco, erro::MeuErro}};
 
 #[derive(Deserialize)]
 pub struct EnderecoInput {
-    logradouro: String,
-    cep: String,
-    complemento: String,
-    numeroendereco: String,
-    cidade: String,
-    uf: String,
+    pub logradouro: String,
+    pub cep: String,
+    pub complemento: String,
+    pub numeroendereco: String,
+    pub cidade: String,
+    pub uf: String,
+}
+
+impl From<axum::Json<Endereco>> for EnderecoInput{
+    fn from(value: axum::Json<Endereco>) -> Self {
+        EnderecoInput{
+            logradouro: value.logradouro.clone(),
+            cep: value.cep.clone(),
+            complemento: value.cep.clone(),
+            numeroendereco: value.numeroendereco.clone(),
+            cidade: value.cidade.clone(),
+            uf: value.uf.clone()
+        }
+    }
 }
 
 fn endereco_vazio() -> Endereco{
@@ -38,7 +53,7 @@ fn endereco_vazio() -> Endereco{
 /// ```
 /// #### Em seguida, tenta formatar o CEP e usa o resultado para gerar um hash para o ID do endereço, retornando um erro caso a formação falhe.
 /// #### Finalmente, atribui os valores aos campos equivalentes no serde_json::Value e retorna o objeto.
-pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> (StatusCode, axum::Json<Endereco>) {
+pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> Result<(StatusCode, axum::Json<Endereco>), (StatusCode, String)> {
     let endereco_vazio = endereco_vazio();
     if input.logradouro.trim().is_empty()
         || input.cep.trim().is_empty()
@@ -46,17 +61,17 @@ pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> (StatusCode, axum
         || input.cidade.trim().is_empty()
         || input.uf.trim().is_empty()
     {
-        return (StatusCode::BAD_REQUEST, axum::Json(endereco_vazio))
+        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
     }
     // Gera um ID único para o endereço com base no CEP
     let cep_formatado = match controller::formata_cep(&input.cep) {
         Ok(cep) => cep,
-        Err(_) => {
-            return (StatusCode::BAD_REQUEST, axum::Json(endereco_vazio))
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, e))
         }
     };
 
-    let id = gera_hash(&cep_formatado);
+    let id = gera_hash(&cep_formatado).split_off(15 as usize);
     // Estrutura os dados do endereço em formato JSON
     let endereco = model::endereco::Endereco {
         idendereco: id,
@@ -69,7 +84,7 @@ pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> (StatusCode, axum
     };
 
     // Retorna o JSON do endereço
-    return (StatusCode::OK, axum::Json(endereco))
+    return Ok((StatusCode::OK, Json(endereco)))
 }
 
 /// ## Converte um serde::json::Value em um objeto Endereco
@@ -81,15 +96,16 @@ pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> (StatusCode, axum
 /// ```
 /// let resultado_insert = crate::model::endereco::salva_endereco(endereco).await;
 /// ```
-pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<String, String>{
-    let resposta = estrutura_endereco(axum::Json(input));
-    let status = resposta.0;
-    if status != StatusCode::OK{
-        return Err("Algo deu errado :(".to_string())
-    }
+pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<Json<String>, (StatusCode, String)>{
+    let resposta = match estrutura_endereco(axum::Json(input)){
+        Ok(resposta) => {resposta},
+        Err(e) => {
+            return Err(e)
+        }
+    };
     let mut endereco = resposta.1;
     let endereco = crate::model::endereco::Endereco {
-        idendereco: endereco.idendereco.split_off(15 as usize),
+        idendereco: endereco.idendereco.clone(),
         logradouro: endereco.logradouro.clone(),
         cep: endereco.cep.clone(),
         complemento: endereco.complemento.clone(),
@@ -100,10 +116,10 @@ pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<String,
     let resultado_insert = crate::model::endereco::salva_endereco(endereco).await;
     match resultado_insert{
         Ok(id) => {
-            return Ok(id)
+            return Ok(Json(id))
         }
         Err(e) => {
-            return Err(e.to_string());
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string()));
         }
     }
 }
@@ -112,17 +128,17 @@ pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<String,
 /// Caso contrário, chama a função que faz a busca no banco de dados e que retorna um objeto do tipo Endereco.
 /// Em seguida, converte os valores do objeto retornado para um serde_json::Value, que contém campos semelhantes ao do objeto Endereco.
 /// Por fim, a função retorna um serde_json::Value contendo os dados.
-pub async fn busca_endereco_id(input: Json<String>) -> (StatusCode, Json<Endereco>){
+pub async fn busca_endereco_id(input: Json<String>) -> Result<(StatusCode, Json<Endereco>), (StatusCode, String)>{
     let idendereco = input.0;
     if idendereco.trim().is_empty(){
-        return (StatusCode::BAD_REQUEST, axum::Json(endereco_vazio()))
+        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
     }
     let endereco: model::endereco::Endereco = match model::endereco::busca_endereco_id(&idendereco).await{
         Ok(endereco) => {endereco},
         Err(e) => {
             println!("{:?}", e);
-            return (StatusCode::BAD_REQUEST, axum::Json(endereco_vazio()))
+            return  Err((StatusCode::BAD_REQUEST, format!("{}", e)))
         }
     };
-    return (StatusCode::OK, axum::Json(endereco))
+    return Ok((StatusCode::OK, axum::Json(endereco)))
 }

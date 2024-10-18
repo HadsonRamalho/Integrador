@@ -1,3 +1,4 @@
+use diesel::sql_types::Cidr;
 use mysql_async::prelude::*;
 use serde::{Deserialize, Serialize};
 use crate::model::erro::MeuErro;
@@ -12,6 +13,20 @@ pub struct Endereco{
     pub numeroendereco: String,
     pub cidade: String,
     pub uf: String,
+}
+
+impl From<axum::Json<Endereco>> for Endereco{
+    fn from(value: axum::Json<Endereco>) -> Self {
+        Endereco{
+            idendereco: value.idendereco.clone(),
+            logradouro: value.logradouro.clone(),
+            cep: value.cep.clone(),
+            complemento: value.cep.clone(),
+            numeroendereco: value.numeroendereco.clone(),
+            cidade: value.cidade.clone(),
+            uf: value.uf.clone()
+        }
+    }
 }
 
 pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::Error> {
