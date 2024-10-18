@@ -4,7 +4,7 @@ use axum::http::StatusCode;
 use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, AtualizaEmailInput, AtualizaNomeInput, DeletaContaInput, UsuarioInput, VerificaSenhaInput, VerificaTokenInput}, EmailInput}, model::{self, usuario::busca_id_usuario}};
 #[cfg(test)]
 
-pub async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<StatusCode, (StatusCode, String)>{
+pub async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<StatusCode, (StatusCode, Json<String>)>{
     
     use crate::controller::usuario::UsuarioInput;
     let usuario = UsuarioInput{

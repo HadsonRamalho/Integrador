@@ -14,7 +14,7 @@ function Login(){
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(email)
+        body: JSON.stringify({email})
       })
       .then(response => {
         if (!response.ok) {
@@ -77,7 +77,7 @@ function Login(){
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(email)
+          body: JSON.stringify({email})
         });
         
     

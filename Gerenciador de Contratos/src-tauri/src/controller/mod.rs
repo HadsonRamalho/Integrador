@@ -15,26 +15,10 @@ pub mod socioadm;
 pub mod usuario;
 pub mod contrato;
 
-pub struct SenhaInput{
-    pub senha: String
-}
-
 #[derive(Deserialize, Validate)]
 pub struct EmailInput{
     #[validate(email)]
     pub email: String
-}
-
-pub struct NomeInput{
-    pub nome: String
-}
-
-pub struct CpfInput{
-    pub cpf: String
-}
-
-pub struct CnpjInput{
-    pub cnpj: String
 }
 
 /// ## Recebe um e-mail e verifica se ele está formatado corretamente

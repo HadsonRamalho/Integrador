@@ -38,20 +38,20 @@ impl From<axum::Json<Endereco>> for EnderecoInput{
 /// ```
 /// #### Em seguida, tenta formatar o CEP e usa o resultado para gerar um hash para o ID do endereço, retornando um erro caso a formação falhe.
 /// #### Finalmente, atribui os valores aos campos equivalentes no serde_json::Value e retorna o objeto.
-pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> Result<(StatusCode, axum::Json<Endereco>), (StatusCode, String)> {
+pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> Result<(StatusCode, axum::Json<Endereco>), (StatusCode, Json<String>)> {
     if input.logradouro.trim().is_empty()
         || input.cep.trim().is_empty()
         || input.numeroendereco.trim().is_empty()
         || input.cidade.trim().is_empty()
         || input.uf.trim().is_empty()
     {
-        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     // Gera um ID único para o endereço com base no CEP
     let cep_formatado = match controller::formata_cep(&input.cep) {
         Ok(cep) => cep,
         Err(e) => {
-            return Err((StatusCode::BAD_REQUEST, e))
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
         }
     };
 
@@ -80,7 +80,7 @@ pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> Result<(StatusCod
 /// ```
 /// let resultado_insert = crate::model::endereco::salva_endereco(endereco).await;
 /// ```
-pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<Json<String>, (StatusCode, String)>{
+pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<Json<String>, (StatusCode, Json<String>)>{
     let resposta = match estrutura_endereco(axum::Json(input)){
         Ok(resposta) => {resposta},
         Err(e) => {
@@ -103,7 +103,7 @@ pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<Json<St
             return Ok(Json(id))
         }
         Err(e) => {
-            return Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string()));
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }
 }

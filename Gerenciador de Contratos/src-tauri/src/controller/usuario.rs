@@ -22,43 +22,48 @@ pub struct UsuarioInput {
 
 pub async fn cria_conta(
     Json(input): Json<UsuarioInput>
-)  -> Result<StatusCode, (StatusCode, String)>  {
+)  -> Result<StatusCode, (StatusCode, Json<String>)>  {
     let mut usuario = input;
     if usuario.nome.trim().is_empty(){
-        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::NomeVazio)));
+        return Err((StatusCode::BAD_REQUEST, Json(format!("{}", MeuErro::NomeVazio))));
     }
     if usuario.cpf.trim().is_empty(){
-        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::CpfVazio)));
+        return Err((StatusCode::BAD_REQUEST, Json(format!("{}", MeuErro::CpfVazio))));
     }
     let cpf = match formata_cpf(&usuario.cpf){
         Ok(cpf) => {cpf},
         Err(e) => {
-            return Err((StatusCode::BAD_REQUEST, format!("{}", format!("{}", e))));
+            return Err((StatusCode::BAD_REQUEST, Json(format!("{}", format!("{}", e)))));
         }
     };
     
     match controller::usuario::checa_email(Json( EmailInput{email: usuario.email.clone()} )).await{
         Ok(_) => {},
         Err(e) => {
-            return Err(e)
+            let status = e.0;
+            let erro = Json(e.1);
+            return Err((status, erro))
         }
     }
 
     if usuario.senha1.trim() != usuario.senha2.trim() {
-        return Err((StatusCode::BAD_REQUEST, format!("{}", MeuErro::SenhasDiferentes)));
+        return Err((StatusCode::BAD_REQUEST, Json(format!("{}", MeuErro::SenhasDiferentes))));
     }
+
     let cnpj: String = match controller::locadora::formata_cnpj(&usuario.cnpj){
         Ok(cnpj) => {cnpj}
         Err(e) => {
-            return Err((StatusCode::BAD_REQUEST, format!("{}", e)));
+            return Err((StatusCode::BAD_REQUEST, Json(format!("{}", e))));
         }
     };
+
     match valida_senha(&usuario.senha1) {
         Ok(_) => {}
         Err(e) => {
-            return Err((StatusCode::BAD_REQUEST, format!("{}", e)))
+            return Err((StatusCode::BAD_REQUEST, Json(format!("{}", e))))
         }
     }
+    
     let hash = gera_hash(&usuario.senha1); // Criptografando a senha (Standard *BSD hash)
 
     usuario.senha1 = hash.clone();
@@ -68,12 +73,12 @@ pub async fn cria_conta(
 
     let novousuario: model::Usuario = usuario.into();
     if novousuario.ja_cadastrado().await {
-        return Err((StatusCode::BAD_REQUEST, "Esse e-mail já pertence a outra conta".to_string()));
+        return Err((StatusCode::BAD_REQUEST, Json("Esse e-mail já pertence a outra conta".to_string())));
     }
     let resultado_cadastro = model::salva_usuario(novousuario).await;
     match resultado_cadastro {
         Ok(_) => return Ok(StatusCode::OK),
-        Err(e) => return Err((StatusCode::BAD_REQUEST, format!("Erro no cadastro do usuário: {}", e))),
+        Err(e) => return Err((StatusCode::BAD_REQUEST, Json(format!("Erro no cadastro do usuário: {}", e)))),
     }
 }
 
