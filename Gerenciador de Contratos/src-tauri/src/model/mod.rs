@@ -1,4 +1,5 @@
-use crate::controller::{self, gera_hash};
+use crate::controller::usuario::UsuarioInput;
+use crate::controller::{self, cria_pool, gera_hash};
 use dotenv::dotenv;
 use erro::MeuErro;
 use mysql_async::{prelude::*, Pool};
@@ -25,22 +26,23 @@ pub struct Usuario {
     pub nome: String,
     pub email: String,
     pub senha: String,
+    pub cpf: String,
+    pub cnpj: String
+}
+
+impl From<UsuarioInput> for Usuario{
+    fn from(value: UsuarioInput) -> Self {
+        Usuario{
+            nome: value.nome,
+            email: value.email,
+            senha: value.senha1,
+            cpf: value.cpf,
+            cnpj: value.cnpj
+        }
+    }
 }
 
 impl Usuario {
-    /// Cria uma nova instância de um usuário.
-    ///
-    /// # Parâmetros
-    /// - nome: Nome completo do usuário.
-    /// - email: Endereço de email do usuário.
-    /// - senha: Senha do usuário.
-    ///
-    /// # Retornos
-    /// - Usuario: Retorna uma nova instância de `Usuario`.
-    pub fn novo_usuario(nome: String, email: String, senha: String) -> Self {
-        Usuario { nome, email, senha }
-    }
-
     /// Obtém a senha (hash) do usuário.
     ///
     /// # Retornos
@@ -51,7 +53,7 @@ impl Usuario {
 
     pub async fn ja_cadastrado(&self) -> bool {
         let pool = controller::cria_pool().await.unwrap();
-        let email = busca_email(&pool, &self.email).await;
+        let email = busca_email(&self.email).await;
         match email {
             Ok(_ok) => return true,
             Err(_e) => return false,
@@ -85,27 +87,23 @@ pub async fn create_pool() -> Result<Pool, mysql_async::Error> {
     pool
 }
 
-pub async fn cadastra_usuario(
-    pool: &Pool,
-    nome: &str,
-    email: &str,
-    senha: &str,
-    cpf: &str,
-    cnpj: &str
-) -> Result<bool, mysql_async::Error> {
+pub async fn salva_usuario(
+    usuario: Usuario
+) -> Result<(), mysql_async::Error> {
+    let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
 
-    let uuid = controller::gera_hash(&email);
+    let uuid = controller::gera_hash(&usuario.email);
     // Se o email não for repetido, crie uma conta nova
     let resultado_insert = conn.exec_drop(
         "INSERT INTO usuarios (email, nomecompleto, senha, UUID, cpf, cnpj) VALUES (:email, :nome_completo, :senha, :uuid, :cpf, :cnpj)", // Interrogações são substituídas pelos parâmetros
-        params! {"email" => email, "nome_completo" => nome, "senha" => senha, "uuid" => uuid,
-        "cpf" => cpf, "cnpj" => cnpj} // Parâmetros a serem substituídos na query
+        params! {"email" => usuario.email, "nome_completo" => usuario.nome, "senha" => usuario.senha, "uuid" => uuid,
+        "cpf" => usuario.cpf, "cnpj" => usuario.cnpj} // Parâmetros a serem substituídos na query
     ).await;
     match resultado_insert{
         Ok(_) => {
             println!("Conta criada!");
-            return Ok(true)
+            return Ok(())
         }, 
         Err(e) => {
             println!("{:?}", e);
@@ -114,7 +112,8 @@ pub async fn cadastra_usuario(
     }
 }
 
-pub async fn busca_email(pool: &Pool, email: &str) -> Result<String, mysql_async::Error> {
+pub async fn busca_email(email: &str) -> Result<String, mysql_async::Error> {
+    let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?; // Conectando no banco
     let email_db: Option<String> = conn
         .exec_first(
@@ -131,13 +130,13 @@ pub async fn busca_email(pool: &Pool, email: &str) -> Result<String, mysql_async
 }
 
 pub async fn verifica_senha(
-    pool: &Pool,
     email: &str,
     senha: &str,
-) -> Result<Usuario, mysql_async::Error> {
+) -> Result<(), mysql_async::Error> {
+    let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let email_encontrado;
-    match busca_email(pool, email).await {
+    match busca_email(email).await {
         Ok(data) => {
             email_encontrado = data;
         }
@@ -165,11 +164,9 @@ pub async fn verifica_senha(
         }
     };
     let hash_dec = controller::verifica_hash(senha, hash_senha.to_string()); // Verificando o hash da senha
-    let usuario_autenticado =
-        Usuario::novo_usuario("".to_string(), email.to_string(), hash_senha.to_string());
     if hash_dec {
         // Se o hash estiver correto, valida o login
-        return Ok(usuario_autenticado);
+        return Ok(());
     }
     Err(mysql_async::Error::Other(Box::new(MeuErro::SenhaIncorreta)))
 }

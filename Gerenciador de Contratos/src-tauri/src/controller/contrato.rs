@@ -468,7 +468,7 @@ pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String
     }
     let numserie = numserie.trim().to_string();
     let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
-        Ok(cnpj) => {cnpj},
+        Ok(cnpj) => {cnpj.1},
         Err(e) => {
             return Err(e.1);
         }
@@ -514,7 +514,7 @@ pub async fn busca_contrato_nome_locatario(nomelocatario: String, idusuario: Str
         return Err(MeuErro::CamposVazios.to_string())
     }
     let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
-        Ok(cnpj) => {cnpj},
+        Ok(cnpj) => {cnpj.1},
         Err(e) => {
             return Err(e.1);
         }
@@ -565,7 +565,7 @@ pub async fn busca_contrato_cnpj_locatario(cnpjlocatario: String, idusuario: Str
             return Err(e.1);
         }
     };
-    let cnpj = formata_cnpj(&cnpj)?;
+    let cnpj = formata_cnpj(&cnpj.1)?;
     let cnpjlocatario = formata_cnpj(&cnpjlocatario)?;
     let resultado_busca = model::contrato::busca_contrato_cnpj_locatario(cnpjlocatario, cnpj).await;
     match resultado_busca{

@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use axum::{http::StatusCode, Json};
 use serde::Deserialize;
 
@@ -29,19 +27,6 @@ impl From<axum::Json<Endereco>> for EnderecoInput{
     }
 }
 
-fn endereco_vazio() -> Endereco{
-    let endereco_vazio = Endereco{
-        idendereco: "".to_string(),
-        logradouro: "".to_string(),
-        cep: "".to_string(),
-        complemento: "".to_string(),
-        numeroendereco: "".to_string(),
-        cidade: "".to_string(),
-        uf: "".to_string()
-    };
-    endereco_vazio
-}
-
 /// ## Transforma campos separados de um endereço em um serde_json::Value
 /// Primeiro, verifica se algum dos campos está vazio, retornando erro caso estejam:
 /// ```
@@ -54,7 +39,6 @@ fn endereco_vazio() -> Endereco{
 /// #### Em seguida, tenta formatar o CEP e usa o resultado para gerar um hash para o ID do endereço, retornando um erro caso a formação falhe.
 /// #### Finalmente, atribui os valores aos campos equivalentes no serde_json::Value e retorna o objeto.
 pub fn estrutura_endereco(Json(input): Json<EnderecoInput>) -> Result<(StatusCode, axum::Json<Endereco>), (StatusCode, String)> {
-    let endereco_vazio = endereco_vazio();
     if input.logradouro.trim().is_empty()
         || input.cep.trim().is_empty()
         || input.numeroendereco.trim().is_empty()
@@ -103,7 +87,7 @@ pub async fn _salva_endereco(Json(input): Json<EnderecoInput>) -> Result<Json<St
             return Err(e)
         }
     };
-    let mut endereco = resposta.1;
+    let endereco = resposta.1;
     let endereco = crate::model::endereco::Endereco {
         idendereco: endereco.idendereco.clone(),
         logradouro: endereco.logradouro.clone(),

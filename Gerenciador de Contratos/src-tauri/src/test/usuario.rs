@@ -1,12 +1,12 @@
 use axum::Json;
 use mysql_async::Pool;
-use axum::{http::StatusCode};
-use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, AtualizaEmailInput, AtualizaNomeInput, DeletaContaInput, UsuarioInput, VerificaSenhaInput, VerificaTokenInput}}, model::{self, usuario::busca_id_usuario}};
+use axum::http::StatusCode;
+use crate::{controller::{self, cria_pool, usuario::{self, atualiza_email, atualiza_senha, cria_conta, deleta_conta, verifica_senha, AtualizaEmailInput, AtualizaNomeInput, DeletaContaInput, UsuarioInput, VerificaSenhaInput, VerificaTokenInput}, EmailInput}, model::{self, usuario::busca_id_usuario}};
 #[cfg(test)]
 
-pub async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<(), (StatusCode, String)>{
+pub async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Result<StatusCode, (StatusCode, String)>{
     
-    use crate::controller::usuario::{UsuarioInput};
+    use crate::controller::usuario::UsuarioInput;
     let usuario = UsuarioInput{
         nome: nome.to_string(),
         email: email.to_string(),
@@ -45,13 +45,12 @@ async fn _limpa_usuario(idusuario: &str, email: &str) -> Result<(), (StatusCode,
 }
 
 async fn _busca_id_usuario(email: &str)  -> Result<String, String>{
-    match controller::usuario::busca_id(Json(email.to_string())).await {
+    match controller::usuario::busca_id(Json(EmailInput{email: email.to_string()})).await {
         Ok(idusuario) =>{
-            return Ok(idusuario.0)
+            return Ok(idusuario.1.0)
         },
         Err(e) => {
-            println!("Erro ao buscar o ID do usuário: {}", e);
-            return Err(e.to_string());
+            return Err(e.1.to_string());
         }
     };
 }
@@ -146,7 +145,7 @@ async fn test_atualiza_email_ok(){
     };
     let novo_email = "usuariotesteA@teste.com";
     
-    assert!(model::busca_email(&pool, novo_email).await.is_err(),
+    assert!(model::busca_email(novo_email).await.is_err(),
         "Erro ao buscar e-mail existente");
     let emailinput = AtualizaEmailInput{email_antigo: email.to_string(), email_novo: novo_email.to_string()};
     assert!(atualiza_email(Json(emailinput)).await.is_ok(),

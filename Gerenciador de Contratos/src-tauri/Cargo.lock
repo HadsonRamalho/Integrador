@@ -86,12 +86,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anstyle"
-version = "1.0.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1bec1de6f59aedf83baf9ff929c98f2ad654b97c9510f4e70cf6f661d49fd5b1"
-
-[[package]]
 name = "anyhow"
 version = "1.0.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1146,12 +1140,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
 
 [[package]]
-name = "downcast"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1435fa1053d8b2fbbe9be7e97eca7f33d37b28409959813daefc1446a14247f1"
-
-[[package]]
 name = "dsl_auto_type"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1185,12 +1173,6 @@ name = "dunce"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56ce8c6da7551ec6c462cbaf3bfbc75131ebbfa1c944aeaa9dab51ca1c5f0c3b"
-
-[[package]]
-name = "dyn-clone"
-version = "1.0.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d6ef0072f8a535281e4876be788938b528e9a1d43900b82c2569af7da799125"
 
 [[package]]
 name = "either"
@@ -1384,12 +1366,6 @@ checksum = "e13624c2627564efccf4934284bdd98cbaa14e79b0b5a141218e507b3a823456"
 dependencies = [
  "percent-encoding",
 ]
-
-[[package]]
-name = "fragile"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c2141d6d6c8512188a7891b4b01590a45f6dac67afb4f255c4124dbb86d4eaa"
 
 [[package]]
 name = "frunk"
@@ -1673,11 +1649,8 @@ dependencies = [
  "dotenv",
  "dotenvy",
  "lettre",
- "mockall",
  "mysql_async",
  "pwhash",
- "rand 0.9.0-alpha.2",
- "schemars",
  "serde",
  "serde_json",
  "tauri",
@@ -2567,32 +2540,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mockall"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4c28b3fb6d753d28c20e826cd46ee611fda1cf3cde03a443a974043247c065a"
-dependencies = [
- "cfg-if",
- "downcast",
- "fragile",
- "mockall_derive",
- "predicates",
- "predicates-tree",
-]
-
-[[package]]
-name = "mockall_derive"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "341014e7f530314e9a1fdbc7400b244efea7122662c96bfa248c31da5bfb2020"
-dependencies = [
- "cfg-if",
- "proc-macro2",
- "quote",
- "syn 2.0.59",
-]
-
-[[package]]
 name = "mysql-common-derive"
 version = "0.31.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3324,32 +3271,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "925383efa346730478fb4838dbe9137d2a47675ad789c546d150a6e1dd4ab31c"
 
 [[package]]
-name = "predicates"
-version = "3.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e9086cc7640c29a356d1a29fd134380bee9d8f79a17410aa76e7ad295f42c97"
-dependencies = [
- "anstyle",
- "predicates-core",
-]
-
-[[package]]
-name = "predicates-core"
-version = "1.0.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae8177bee8e75d6846599c6b9ff679ed51e882816914eec639944d7c9aa11931"
-
-[[package]]
-name = "predicates-tree"
-version = "1.0.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "41b740d195ed3166cd147c8047ec98db0e22ec019eb8eeb76d343b795304fb13"
-dependencies = [
- "predicates-core",
- "termtree",
-]
-
-[[package]]
 name = "proc-macro-crate"
 version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3507,17 +3428,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rand"
-version = "0.9.0-alpha.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3e256ff62cee3e03def855c4d4260106d2bb1696fdc01af03e9935b993720a5"
-dependencies = [
- "rand_chacha 0.9.0-alpha.2",
- "rand_core 0.9.0-alpha.2",
- "zerocopy",
-]
-
-[[package]]
 name = "rand_chacha"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3538,16 +3448,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rand_chacha"
-version = "0.9.0-alpha.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d299e9db34f6623b2a9e86c015d6e173d5f46d64d4b9b8cc46ae8a982a50b04c"
-dependencies = [
- "ppv-lite86",
- "rand_core 0.9.0-alpha.2",
-]
-
-[[package]]
 name = "rand_core"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3563,16 +3463,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
  "getrandom 0.2.14",
-]
-
-[[package]]
-name = "rand_core"
-version = "0.9.0-alpha.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4e93f5a5e3c528cda9acb0928c31b2ba868c551cc46e67b778075e34aab9906"
-dependencies = [
- "getrandom 0.2.14",
- "zerocopy",
 ]
 
 [[package]]
@@ -3812,31 +3702,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "schemars"
-version = "0.8.21"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09c024468a378b7e36765cd36702b7a90cc3cba11654f6685c8f233408e89e92"
-dependencies = [
- "chrono",
- "dyn-clone",
- "schemars_derive",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "schemars_derive"
-version = "0.8.21"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1eee588578aff73f856ab961cd2f79e36bc45d7ded33a7562adba4667aecc0e"
-dependencies = [
- "proc-macro2",
- "quote",
- "serde_derive_internals",
- "syn 2.0.59",
-]
-
-[[package]]
 name = "scoped-tls"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3920,17 +3785,6 @@ name = "serde_derive"
 version = "1.0.198"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e88edab869b01783ba905e7d0153f9fc1a6505a96e4ad3018011eedb838566d9"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.59",
-]
-
-[[package]]
-name = "serde_derive_internals"
-version = "0.29.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18d26a20a969b9e3fdf2fc2d9f21eda6c40e2de84c9408bb5d3b05d499aae711"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4664,12 +4518,6 @@ checksum = "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755"
 dependencies = [
  "winapi-util",
 ]
-
-[[package]]
-name = "termtree"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3369f5ac52d5eb6ab48c6b4ffdc8efbcad6b89c765749064ba298f2c68a16a76"
 
 [[package]]
 name = "thin-slice"

@@ -3,7 +3,8 @@ use mysql_async::{params, prelude::Queryable};
 
 use super::erro::MeuErro;
 
-pub async fn atualiza_email(pool: &Pool, email_antigo: &str, email_novo: &str) -> Result<(), mysql_async::Error>{
+pub async fn atualiza_email(email_antigo: &str, email_novo: &str) -> Result<(), mysql_async::Error>{
+    let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let resultado_conexao = conn.exec_drop("UPDATE usuarios SET email = :email_novo WHERE email = :email_antigo;", 
     params!{"email_novo" => email_novo, "email_antigo" => email_antigo}).await;
@@ -18,7 +19,8 @@ pub async fn atualiza_email(pool: &Pool, email_antigo: &str, email_novo: &str) -
     }
 }
 
-pub async fn atualiza_senha(pool: &Pool, email: &str, senha_nova: &str) -> Result<(), mysql_async::Error>{
+pub async fn atualiza_senha(email: &str, senha_nova: &str) -> Result<(), mysql_async::Error>{
+    let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let resultado_conexao = conn.exec_drop("UPDATE usuarios SET senha = :senha_nova WHERE email = :email;", 
     params!{"senha_nova" => senha_nova, "email" => email}).await;
@@ -33,7 +35,8 @@ pub async fn atualiza_senha(pool: &Pool, email: &str, senha_nova: &str) -> Resul
     }
 }
 
-pub async fn busca_id_usuario(pool: &Pool, email: &str) -> Result<String, mysql_async::Error>{
+pub async fn busca_id_usuario(email: &str) -> Result<String, mysql_async::Error>{
+    let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let id_usuario: Option<String> = conn.exec_first("SELECT UUID FROM usuarios WHERE email = :email;", 
     params!{"email" => email}).await?;
@@ -63,7 +66,8 @@ pub async fn atualiza_nome(email: &str, nome: &str) -> Result<(), mysql_async::E
     }
 }
 
-pub async fn busca_email_usuario(pool: &Pool, id: &str) -> Result<String, mysql_async::Error>{
+pub async fn busca_email_usuario(id: &str) -> Result<String, mysql_async::Error>{
+    let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let email_usuario: Option<String> = conn.exec_first("SELECT email FROM usuarios WHERE UUID = :id;", 
     params!{"id" => id}).await?;

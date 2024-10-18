@@ -6,6 +6,7 @@ use pwhash::bcrypt;
 use pwhash::unix;
 use serde::Deserialize;
 use serde::Serialize;
+use validator::Validate;
 pub mod endereco;
 pub mod locadora;
 pub mod locatario;
@@ -14,18 +15,44 @@ pub mod socioadm;
 pub mod usuario;
 pub mod contrato;
 
+pub struct SenhaInput{
+    pub senha: String
+}
+
+#[derive(Deserialize, Validate)]
+pub struct EmailInput{
+    #[validate(email)]
+    pub email: String
+}
+
+pub struct NomeInput{
+    pub nome: String
+}
+
+pub struct CpfInput{
+    pub cpf: String
+}
+
+pub struct CnpjInput{
+    pub cnpj: String
+}
+
 /// ## Recebe um e-mail e verifica se ele está formatado corretamente
 /// Chama a função responsável pela validação, passando o e-mail sem espaços como argumento.
 /// ```
 /// if !valida_email(email.trim())
 /// ```
 //#[tauri::command]
-pub async fn checa_email(input: Json<String>) -> Result<(), (StatusCode, String)> {
-    let email = input.0;
-    if !valida_email(email.trim()) {
-        return Err((StatusCode::BAD_REQUEST, "E-mail inválido. Deve conter '@' e '.'".to_string()));
+#[axum::debug_handler]
+pub async fn checa_email(input: Json<EmailInput>) -> Result<(StatusCode, String), (StatusCode, String)> {
+   match input.validate(){
+        Ok(_) => {
+            return Ok((StatusCode::OK, input.0.email))
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, e.to_string()))
+        }
     }
-    return Ok(());
 }
 
 /// ## Cria uma pool de conexões com o banco de dados, retorna um `mysql_async::Pool` ou um `mysql_async::Error`, dependendo do sucesso da operação.
@@ -44,22 +71,6 @@ pub async fn cria_pool() -> Result<mysql_async::Pool, mysql_async::Error> {
             return Err(e)
         }
     }
-}
-
-/// ## Recebe um e-mail e verifica se ele é válido ao checar sua formatação, retornando false caso esteja incorreta.
-/// Remove os espaços em branco do e-mail e verifica se ele possui os caracteres '@' e '.', retornando true caso possua:
-/// ```
-/// let email: String = email.chars().filter(|c| !c.is_whitespace()).collect(); 
-/// if email.contains("@") && email.contains(".") && !email.is_empty() {
-///     return true
-/// }
-/// ```
-pub fn valida_email(email: &str) -> bool {
-    let email: String = email.chars().filter(|c| !c.is_whitespace()).collect(); 
-    if email.contains("@") && email.contains(".") && !email.is_empty() {
-        return true
-    }
-    return false
 }
 
 /// ## Recebe um e-mail e verifica se ele é válido e se está cadastrado no banco. 
@@ -84,38 +95,36 @@ pub fn valida_email(email: &str) -> bool {
 /// }
 /// ```
 //#[tauri::command]
-pub async fn encontra_email_smtp(input: Json<String>) -> Result<Json<String>, String> {
-    let email = input.0;
-    if !valida_email(&email) {
-        return Err("E-mail inválido. Deve conter '@' e '.'".to_string());
-    }
-    let pool = match cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e.to_string())
+pub async fn encontra_email_smtp(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, String)> {
+    let email = match checa_email(input).await{
+        Ok(email) => {email.1},
+        Err(e) => {
+            return Err(e)
         }
     };
-    let _consome_result: Result<String, mysql_async::Error> = model::busca_email(&pool, &email).await;
-    match _consome_result {
+    let resultado_busca: Result<String, mysql_async::Error> = model::busca_email(&email).await;
+    match resultado_busca {
         Ok(_) => {
-            let codigo = model::envia_email(_consome_result.unwrap());
-            return Ok(Json(codigo));
+            let codigo = model::envia_email(resultado_busca.unwrap());
+            return Ok((StatusCode::OK, Json(codigo)));
         }
-        _ => return Err("Erro: O e-mail não é válido ou pode não estar cadastrado.".to_string()),
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
+        }
     }
 }
 
 /// ## Recebe um e-mail e retorna um token/hash que é gerado a partir da string slice
 //#[tauri::command]
-pub async fn gera_token(input: Json<String>) -> Result<String, String> {
-    let email = input.0;
-    if !valida_email(&email){
-        return Err("E-mail inválido.".to_string())
-    }
+pub async fn gera_token(input: Json<EmailInput>) -> Result<(StatusCode, String), (StatusCode, String)> {
+    let email = match checa_email(input).await{
+        Ok(email) => {email.1},
+        Err(e) => {
+            return Err(e)
+        }
+    };
     let token = gera_hash(&email);
-    Ok(token)
+    Ok((StatusCode::OK, token))
 }
 
 /// ## Recebe uma string slice e gera um hash a partir de seu conteúdo
@@ -151,53 +160,55 @@ pub struct CodigosUsuarioBancoInput{
 /// }
 /// ```
 //#[tauri::command]
-pub async fn verifica_codigo_email(input: Json<CodigosUsuarioBancoInput>) -> Result<String, String> {
+pub async fn verifica_codigo_email(input: Json<CodigosUsuarioBancoInput>) -> Result<StatusCode, (StatusCode, String)> {
     let codigo_usuario = input.codigo_usuario.clone();
     let codigo_banco = input.codigo_banco.clone();
+    
     if codigo_usuario.trim().is_empty(){
-        return Err("Erro: Preencha o código.".to_string())
+        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
     }
+
     let eq = codigo_banco == codigo_usuario;
     if eq{
-        return Ok("Codigo correto".to_string())
+        return Ok(StatusCode::OK)
     }
-    return Err("Erro: Codigo incorreto".to_string())
+
+    return Err((StatusCode::BAD_REQUEST, "Código incorreto.".to_string()))
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct ComparaNovasSenhasInput{
+pub struct SenhasInput{
     pub senha1: String,
     pub senha2: String
 }
 
 /// ## Recebe duas senhas, compara se são iguais e verifica se ambas são fortes o suficiente
 //#[tauri::command]
-pub async fn compara_novas_senhas(input: Json<ComparaNovasSenhasInput>) -> Result<String, String>{
+pub async fn compara_novas_senhas(input: Json<SenhasInput>) -> Result<StatusCode, (StatusCode, String)>{
     let senha1 = input.senha1.clone();
     let senha2 = input.senha2.clone();
+
     if senha1.trim().is_empty() || senha2.trim().is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
     }
     if senha1 != senha2 {
-        return Err("Erro: As senhas são diferentes".to_string())
+        return Err((StatusCode::BAD_REQUEST, "As senhas são diferentes.".to_string()))
     }
+
     match usuario::valida_senha(&senha1){
-        Ok(_) => {
-
-        },
+        Ok(_) => { },
         Err(e) => {
-            return Err(e);
+            return Err((StatusCode::BAD_REQUEST, e));
         }
     }
+
     match usuario::valida_senha(&senha2){
-        Ok(_) => {
-
-        },
+        Ok(_) => { },
         Err(e) => {
-            return Err(e);
+            return Err((StatusCode::BAD_REQUEST, e));
         }
     }
-    return Ok("Senhas válidas!".to_string())
+    return Ok(StatusCode::OK)
 }
 
 /// ## Recebe um CEP com ou sem formatação, faz a formatação e retorna o resultado como String
