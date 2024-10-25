@@ -35,7 +35,7 @@ pub struct SocioAdmInput{
 ///     [...]
 /// ```
 //#[tauri::command]
-pub fn estrutura_socio_adm(input: Json<SocioAdmInput>) -> Result<(StatusCode, Json<SocioADM>), String>{
+pub async fn estrutura_socio_adm(input: Json<SocioAdmInput>) -> Result<(StatusCode, Json<SocioADM>), (StatusCode, Json<String>)>{
     let idendereco = input.idendereco.to_string();
     let nome = input.nome.to_string();
     let cpf = input.cpf.to_string();
@@ -46,11 +46,18 @@ pub fn estrutura_socio_adm(input: Json<SocioAdmInput>) -> Result<(StatusCode, Js
     if idendereco.trim().is_empty() || nome.trim().is_empty() || cpf.trim().is_empty()
         || orgaoemissor.trim().is_empty() || estadocivil.trim().is_empty() 
         || nacionalidade.trim().is_empty() || cnpj.trim().is_empty(){
-            return Err(MeuErro::CamposVazios.to_string());
+            return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())));
     }
     let idsocio = gera_hash(&cpf);
 
-    let cpf = formata_cpf(&cpf)?;
+    let cpf = match formata_cpf(&cpf){
+        Ok(cpf) => {
+            cpf
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
     let socioadm = SocioADM{
         nome,
         nacionalidade,

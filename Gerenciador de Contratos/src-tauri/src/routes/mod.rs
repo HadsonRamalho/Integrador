@@ -9,7 +9,7 @@ use tower_http::cors::{Any, CorsLayer};
 use crate::controller::{
     checa_email, compara_novas_senhas, encontra_email_smtp, endereco::{
         _salva_endereco, busca_endereco_id
-    }, gera_token, maquina::estrutura_maquina, usuario::{
+    }, gera_token, maquina::estrutura_maquina, socioadm::estrutura_socio_adm, usuario::{
         atualiza_email, atualiza_nome, atualiza_senha, busca_cnpj_usuario, busca_email_usuario, busca_id, busca_nome_usuario, cria_conta, deleta_conta, verifica_senha, verifica_token
     }, verifica_codigo_email
 };
@@ -37,6 +37,8 @@ pub fn cria_rotas() -> Router<>{
         .route("/compara_novas_senhas", post(compara_novas_senhas))
 
         .route("/estrutura_maquina", post(estrutura_maquina))
+
+        .route("/estrutura_socio_adm", post(estrutura_socio_adm))
 
         .layer(
             CorsLayer::new()

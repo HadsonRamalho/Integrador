@@ -1,10 +1,10 @@
 use mysql_async::prelude::{FromRow, Queryable};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use crate::model::erro::MeuErro;
 use crate::model::params;
 use crate::controller::{self, cria_pool};
 
-#[derive(FromRow, Serialize)]
+#[derive(FromRow, Serialize, Deserialize)]
 pub struct SocioADM{
     pub idsocio: String,
     pub idendereco: String,
