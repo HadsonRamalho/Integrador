@@ -26,6 +26,7 @@ pub async fn _limpa_socio(idsocio: String) -> Result<(), String>{
             return Ok(())
         },
         Err(e) => {
+            println!("{:?}", e);
             return Err(e.to_string())
         }
     }

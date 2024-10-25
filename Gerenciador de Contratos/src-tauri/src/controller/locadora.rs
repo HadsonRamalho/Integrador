@@ -1,3 +1,5 @@
+use axum::Json;
+
 use crate::model::erro::MeuErro;
 use crate::model::locadora::Locadora;
 use crate::model::locadora::_cadastra_locadora;
@@ -27,25 +29,48 @@ use crate::controller;
 ///     "idsocio": idsocio
 /// });
 /// ```
+
+pub struct LocadoraInput{
+    pub idendereco: String,
+    pub cnpj: String,
+    pub numerocontabanco: String,
+    pub numeroagenciabanco: String,
+    pub nomebanco: String,
+    pub nomelocadora: String,
+    pub idsocio: String
+}
+
 #[tauri::command]
-pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: String, numeroagenciabanco: String, nomebanco: String, nomelocadora: String, idsocio: String) -> Result<serde_json::Value, String>{
+pub fn estrutura_locadora(input: Json<LocadoraInput>) -> Result<Json<Locadora>, String>{
+    let idendereco = input.idendereco.to_string();
+    let cnpj = input.cnpj.to_string();
+    let numerocontabanco = input.numerocontabanco.to_string();
+    let numeroagenciabanco = input.numeroagenciabanco.to_string();
+    let nomebanco = input.nomebanco.to_string();
+    let nomelocadora = input.nomelocadora.to_string();
+    let idsocio = input.idsocio.to_string();
+
     if idendereco.trim().is_empty() || cnpj.trim().is_empty() || numerocontabanco.trim().is_empty()
         || numeroagenciabanco.trim().is_empty() || nomebanco.trim().is_empty() || nomelocadora.trim().is_empty(){
         return Err("Erro: Um ou mais campos estão vazios.".to_string());
     }
+
     let cnpjalterado = formata_cnpj(&cnpj)?;
-    let id: String = controller::gera_hash(&cnpjalterado);
-    let locadora: serde_json::Value = serde_json::json!({
-        "idlocadora": id,
-        "idendereco": idendereco,
-        "cnpj": cnpjalterado,
-        "numerocontabanco": numerocontabanco,
-        "numeroagenciabanco": numeroagenciabanco,
-        "nomebanco": nomebanco,
-        "nomelocadora": nomelocadora,
-        "idsocio": idsocio
-    });
-    return Ok(locadora);
+    let idlocadora: String = controller::gera_hash(&cnpjalterado);
+
+    let locadora = Locadora{
+        idendereco,
+        cnpj,
+        idlocadora,
+        numeroagenciabanco,
+        nomebanco,
+        nomelocadora,
+        numerocontabanco,
+        idsocio,
+        locadorastatus: 1
+    };
+
+    return Ok(Json(locadora));
 }
 
 /// ## Recebe um serde_json::Value contendo dados de uma Locadora e retorna o ID após o cadastro dela no banco de dados
@@ -76,13 +101,15 @@ pub fn estrutura_locadora(idendereco: String, cnpj: String, numerocontabanco: St
 /// ```
 
 #[tauri::command]
-pub async fn cadastra_locadora(locadora: serde_json::Value) -> Result<String, String> {
-    let locadora: Result<Locadora, String> = valida_locadora(locadora);
-    match locadora{
-        Ok(_) => {},
-        Err(e) => {return Err(e)}
-    }
-    let locadora: Locadora = locadora.unwrap();
+pub async fn cadastra_locadora(input: Json<Locadora>) -> Result<String, String> {
+    let locadora = match valida_locadora(input){
+        Ok(locadora) => {
+            locadora
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    };
     let idlocadora = locadora.idlocadora.clone();
     let resultado_busca: Result<String, mysql_async::Error> =
         model::locadora::_busca_id_locadora(&locadora.cnpj).await;
@@ -157,27 +184,30 @@ pub async fn busca_id_locadora(cnpj: &str) -> Result<String, String>{
 /// }
 /// return Ok(locadora);
 /// ```
-fn valida_locadora(locadora: serde_json::Value) -> Result<Locadora, String>{
-    let idlocadora: String = locadora["idlocadora"].as_str().unwrap_or("").to_string();
+fn valida_locadora(input: Json<Locadora>) -> Result<Locadora, String>{
+    let idlocadora: String = input.idlocadora.to_string();
     let idlocadora: (&str, &str) = idlocadora.split_at(45 as usize);
     let idlocadora: String = idlocadora.0.to_string();
-    let cnpj = locadora["cnpj"].as_str().unwrap_or("").to_string();
+
+    let cnpj = input.cnpj.to_string();
     let cnpj = formata_cnpj(&cnpj)?;
+
+    let idendereco = input.idendereco.to_string();
+    let numerocontabanco = input.numerocontabanco.to_string();
+    let numeroagenciabanco = input.numeroagenciabanco.to_string();
+    let nomebanco = input.nomebanco.to_string();
+    let nomelocadora = input.nomelocadora.to_string();
+    let idsocio = input.idsocio.to_string();
+
     let locadora: model::locadora::Locadora = model::locadora::Locadora {
-        idlocadora: idlocadora,
-        idendereco: locadora["idendereco"].as_str().unwrap_or("").to_string(),
-        cnpj: cnpj,
-        numerocontabanco: locadora["numerocontabanco"]
-            .as_str()
-            .unwrap_or("")
-            .to_string(),
-        numeroagenciabanco: locadora["numeroagenciabanco"]
-            .as_str()
-            .unwrap_or("")
-            .to_string(),
-        nomebanco: locadora["nomebanco"].as_str().unwrap_or("").to_string(),
-        nomelocadora: locadora["nomelocadora"].as_str().unwrap_or("").to_string(),
-        idsocio: locadora["idsocio"].as_str().unwrap_or("").to_string(),
+        idlocadora,
+        idendereco,
+        cnpj,
+        numerocontabanco,
+        numeroagenciabanco,
+        nomebanco,
+        nomelocadora,
+        idsocio,
         locadorastatus: 1
     };
     if locadora.idendereco.trim().is_empty() || locadora.cnpj.trim().is_empty() || 

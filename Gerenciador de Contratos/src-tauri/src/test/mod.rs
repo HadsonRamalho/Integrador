@@ -9,6 +9,7 @@ mod endereco;
 mod maquina;
 mod locatario;
 mod socioadm;
+mod locadora;
 
 #[tokio::test]
 async fn test_criacao_pool_ok(){
