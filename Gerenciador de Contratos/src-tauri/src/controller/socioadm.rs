@@ -1,6 +1,20 @@
+use axum::{http::StatusCode, Json};
+use serde::{Deserialize, Serialize};
+
 use crate::{controller, model::{self, erro::MeuErro, socioadm::{SocioADM, _cadastra_socio_adm}}};
 
-use super::formata_cpf;
+use super::{formata_cpf, gera_hash};
+
+#[derive(Deserialize, Serialize)]
+pub struct SocioAdmInput{
+    pub idendereco: String,
+    pub nome: String,
+    pub cpf: String,
+    pub orgaoemissor: String,
+    pub estadocivil: String,
+    pub nacionalidade: String,
+    pub cnpj: String
+}
 
 /// ## Recebe os campos necessários para criar um objeto do tipo `serde_json::Value` que seja equivalente ao tipo `SocioADM`, retornando o objeto resultante
 /// Primeiro, verifica se algum dos campos está vazio, retornando erro caso ao menos um deles esteja:
@@ -20,28 +34,35 @@ use super::formata_cpf;
 ///    "idendereco": idendereco,
 ///     [...]
 /// ```
-#[tauri::command]
-pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, cnpj: String) -> Result<serde_json::Value, String>{
-    
+//#[tauri::command]
+pub fn estrutura_socio_adm(input: Json<SocioAdmInput>) -> Result<(StatusCode, Json<SocioADM>), String>{
+    let idendereco = input.idendereco.to_string();
+    let nome = input.nome.to_string();
+    let cpf = input.cpf.to_string();
+    let orgaoemissor = input.orgaoemissor.to_string();
+    let estadocivil = input.estadocivil.to_string();
+    let nacionalidade = input.nacionalidade.to_string();
+    let cnpj = input.cnpj.to_string();
     if idendereco.trim().is_empty() || nome.trim().is_empty() || cpf.trim().is_empty()
         || orgaoemissor.trim().is_empty() || estadocivil.trim().is_empty() 
         || nacionalidade.trim().is_empty() || cnpj.trim().is_empty(){
             return Err(MeuErro::CamposVazios.to_string());
     }
-    
-    let id: String = controller::gera_hash(&cpf);
+    let idsocio = gera_hash(&cpf);
+
     let cpf = formata_cpf(&cpf)?;
-    let socioadm: serde_json::Value = serde_json::json!({
-        "idsocio": id,
-        "idendereco": idendereco,
-        "nome": nome,
-        "cpf": cpf,
-        "orgaoemissor": orgaoemissor,
-        "estadocivil": estadocivil,
-        "nacionalidade": nacionalidade,
-        "cnpj": cnpj
-    });
-    return Ok(socioadm);
+    let socioadm = SocioADM{
+        nome,
+        nacionalidade,
+        idendereco,
+        idsocio,
+        cpf,
+        cnpj,
+        orgaoemissor,
+        estadocivil,
+        sociostatus: 1
+    };
+    return Ok((StatusCode::OK, Json(socioadm)));
 }
 
 /// ## Recebe um `serde_json::Value` contendo campos equivalentes ao tipo `SocioADM`, 
@@ -78,28 +99,28 @@ pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoe
 /// }
 /// ```
 #[tauri::command]
-pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, String> {
-    let idsocio: String = socioadm["idsocio"].as_str().unwrap_or("").to_string();
+pub async fn cadastra_socio_adm(input: Json<SocioADM>) -> Result<String, String> {
+    let idsocio: String = input.idsocio.to_string();
     //let idsocio: (&str, &str) = idsocio.split_at(45 as usize);
     //let idsocio: String = idsocio.0.to_string();
     let idsocio_cpy = idsocio.clone();
-    let cpf = formata_cpf(socioadm["cpf"].as_str().unwrap_or(""))?;
+    let cpf = formata_cpf(&input.cpf)?;
+    let idendereco = input.idendereco.to_string();
+    let nome = input.nome.to_string();
+    let orgaoemissor = input.orgaoemissor.to_string();
+    let estadocivil = input.estadocivil.to_string();
+    let nacionalidade = input.nacionalidade.to_string();
+    let cnpj = input.cnpj.to_string();
     let socioadm: model::socioadm::SocioADM = model::socioadm::SocioADM {
         idsocio,
-        idendereco: socioadm["idendereco"].as_str().unwrap_or("").to_string(),
-        nome: socioadm["nome"].as_str().unwrap_or("").to_string(),
+        idendereco,
+        nome,
         cpf: cpf,
-        orgaoemissor: socioadm["orgaoemissor"]
-            .as_str()
-            .unwrap_or("")
-            .to_string(),
-        estadocivil: socioadm["estadocivil"]
-            .as_str()
-            .unwrap_or("")
-            .to_string(),
-        nacionalidade: socioadm["nacionalidade"].as_str().unwrap_or("").to_string(),
+        orgaoemissor,
+        estadocivil,
+        nacionalidade,
         sociostatus: 1,
-        cnpj: socioadm["cnpj"].as_str().unwrap_or("").to_string()
+        cnpj
     };
 
     // buscar o CPF do socio para não permitir entrada duplicada

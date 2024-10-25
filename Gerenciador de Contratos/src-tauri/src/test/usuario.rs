@@ -16,7 +16,16 @@ pub async fn cria_usuario_teste(nome: &str, email: &str, senha: &str, cpf: &str,
         cnpj: cnpj.to_string(),
     };
     let usuario = Json(usuario);
-    controller::usuario::cria_conta(usuario).await
+    let res = controller::usuario::cria_conta(usuario).await;
+    match res{
+        Ok(r) => {
+            return Ok(r)
+        },
+        Err(e) => {
+            println!("{}", e.1.0);
+            return Err(e)
+        }
+    }
 }
 
 fn estrutura_usuario(nome: &str, email: &str, senha: &str, cpf: &str, cnpj: &str) -> Json<UsuarioInput> {
@@ -39,12 +48,12 @@ async fn _setup_pool() -> Result<Pool, mysql_async::Error> {
     cria_pool().await
 }
 
-async fn _limpa_usuario(idusuario: &str, email: &str) -> Result<(), (StatusCode, String)> {
+pub async fn _limpa_usuario(idusuario: &str, email: &str) -> Result<(), (StatusCode, String)> {
     let input = DeletaContaInput{idusuario: idusuario.to_string(), email: email.to_string()};
     controller::usuario::deleta_conta(Json(input)).await
 }
 
-async fn _busca_id_usuario(email: &str)  -> Result<String, String>{
+pub async fn _busca_id_usuario(email: &str)  -> Result<String, String>{
     match controller::usuario::busca_id(Json(EmailInput{email: email.to_string()})).await {
         Ok(idusuario) =>{
             return Ok(idusuario.1.0)
@@ -56,12 +65,12 @@ async fn _busca_id_usuario(email: &str)  -> Result<String, String>{
 }
 
 #[tokio::test]
-async fn test_cria_deleta_usuario_ok(){
+pub async fn test_cria_deleta_usuario_ok(){
     let email = "usuarioteste1@teste.com";
     let nome_completo = "Usuario Teste";        
     let senha = "senhausuarioteste1.";
-    let cpf = "12312312301";
-    let cnpj = "11331220000101";
+    let cpf = "111.111.111-01";
+    let cnpj = "11.131.113/0001-01";
     assert!(cria_usuario_teste(nome_completo, email, senha, cpf, cnpj).await.is_ok());
     let idusuario = _busca_id_usuario(&email).await;
     assert!(idusuario.is_ok(), "Erro ao buscar o ID do usuário");

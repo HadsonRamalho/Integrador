@@ -2,7 +2,7 @@ use std::vec;
 
 use mysql_async::{params, prelude::Queryable};
 use mysql_async::prelude::FromRow;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::controller;
 
@@ -14,7 +14,7 @@ pub struct EstoqueMaquina{
     pub nomemaquina: Option<String>
 }
 
-#[derive(Serialize, FromRow)]
+#[derive(Serialize, FromRow, Deserialize)]
 pub struct Maquina {
     pub idmaquina: String,
     pub nomemaquina: String,

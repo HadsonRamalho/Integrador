@@ -4,7 +4,7 @@ use serde::Deserialize;
 use super::gera_hash;
 use crate::{controller, model::{self, endereco::Endereco, erro::MeuErro}};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct EnderecoInput {
     pub logradouro: String,
     pub cep: String,

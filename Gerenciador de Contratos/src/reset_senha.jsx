@@ -13,7 +13,7 @@ function ResetSenha(){
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(email),
+        body: JSON.stringify({email}),
       });
   
       if (!response.ok) {
@@ -22,7 +22,7 @@ function ResetSenha(){
         throw new Error(`Erro: ${errorMessage}`);
       }
 
-      const codigo =  await response.json(); // Supondo que o código esteja nesta chave do JSON
+      const codigo =  await response.json();
       console.log("Codigo:", codigo);
       localStorage.setItem('codigoReset', codigo);
       localStorage.setItem('emailReset', email);

@@ -41,7 +41,7 @@ pub struct LocatarioInput{
 /// return Ok(locatario)
 /// ```
 //#[tauri::command]
-pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<serde_json::Value, String>{
+pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<Json<Locatario>, String>{
     let idendereco = input.idendereco.clone();
     let cnpj = input.cnpj.clone();
     let nomelocatario = input.nomelocatario.clone();
@@ -61,14 +61,15 @@ pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<serde_json::Va
     };
     let id: String = controller::gera_hash(&cnpj);
 
-    let locatario: serde_json::Value = serde_json::json!({
-        "idlocatario": id,
-        "idendereco": idendereco,
-        "cnpj": cnpj,
-        "nomelocatario": nomelocatario,
-        "idsocio": idsocio
-    });
-    return Ok(locatario)
+    let locatario = Locatario{
+        idendereco,
+        idlocatario: id,
+        cnpj,
+        nomelocatario,
+        idsocio,
+        locatariostatus: 1
+    };
+    return Ok(Json(locatario))
 }
 
 /// ## Recebe um serde_json::Value contendo dados de um Locatario e registra esses campos no banco após a conversão para o tipo `Locatario`
@@ -105,17 +106,21 @@ pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<serde_json::Va
 /// let resultado_cadastro = model::locatario::_cadastra_locatario(locatario).await;
 /// ```
 #[tauri::command]
-pub async fn cadastra_locatario(locatario: serde_json::Value) -> Result<String, String>{
-    let idlocatario: String = locatario["idlocatario"].as_str().unwrap_or("").to_string();
+pub async fn cadastra_locatario(input: Json<Locatario>) -> Result<String, String>{
+    let idlocatario: String = input.idlocatario.to_string();
     let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
     let idlocatario: String = idlocatario.0.to_string();
     let idlocatario_cpy = idlocatario.clone();
-    let idsocio: String = locatario["idsocio"].as_str().unwrap_or("").to_string();
+    let idsocio: String = input.idsocio.to_string();
+    let idendereco = input.idendereco.to_string();
+    let cnpj = input.cnpj.to_string();
+    let nomelocatario = input.nomelocatario.to_string();
+
     let locatario: model::locatario::Locatario = model::locatario::Locatario {
         idlocatario,
-        idendereco: locatario["idendereco"].as_str().unwrap_or("").to_string(),
-        cnpj: locatario["cnpj"].as_str().unwrap_or("").to_string(),
-        nomelocatario: locatario["nomelocatario"].as_str().unwrap_or("").to_string(),
+        idendereco,
+        cnpj,
+        nomelocatario,
         idsocio,
         locatariostatus: 1
     };

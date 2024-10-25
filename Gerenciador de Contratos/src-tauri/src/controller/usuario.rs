@@ -7,7 +7,7 @@ use crate::model::usuario::busca_id_usuario;
 use crate::model::{self, usuario};
 use crate::controller::checa_email;
 use crate::controller;
-use super::{cria_pool, formata_cpf, gera_hash, verifica_hash, EmailInput};
+use super::{formata_cpf, gera_hash, verifica_hash, EmailInput};
 
 #[derive(Deserialize)]
 pub struct UsuarioInput {
@@ -77,7 +77,7 @@ pub async fn cria_conta(
     }
     let resultado_cadastro = model::salva_usuario(novousuario).await;
     match resultado_cadastro {
-        Ok(_) => return Ok(StatusCode::OK),
+        Ok(_) => return Ok(StatusCode::CREATED),
         Err(e) => return Err((StatusCode::BAD_REQUEST, Json(format!("Erro no cadastro do usuário: {}", e)))),
     }
 }
@@ -89,8 +89,8 @@ pub struct VerificaSenhaInput{
 }
 
 pub async fn verifica_senha(input: Json<VerificaSenhaInput>) -> Result<StatusCode, (StatusCode, Json<String>)>  {
-    let senha = input.senha.clone();
-    let email = input.email.clone();
+    let senha = input.senha.to_string();
+    let email = input.email.to_string();
 
     let senha = senha.trim();
     if senha.is_empty() {

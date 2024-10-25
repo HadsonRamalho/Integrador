@@ -1,6 +1,9 @@
+use axum::{http::StatusCode, Json};
+use serde::{Deserialize, Serialize};
+
 use crate::{
     controller::gera_hash,
-    model::{self, erro::MeuErro},
+    model::{self, erro::MeuErro, maquina::Maquina},
 };
 
 /// ## Recebe dados referentes a uma Maquina e os converte em um objeto do tipo `serde_json::Value`
@@ -22,21 +25,35 @@ use crate::{
 /// });
 /// return Ok(maquina);
 /// ```
-#[tauri::command]
-pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numserie: String) -> Result<serde_json::Value, String> {
+
+#[derive(Serialize, Deserialize)]
+pub struct EstruturaMaquinaInput{
+    pub nomemaquina: String,
+    pub valoraluguel: String,
+    pub numserie: String
+}
+
+//#[tauri::command]
+pub async fn estrutura_maquina(input: Json<EstruturaMaquinaInput>) -> Result<Json<Maquina>, (StatusCode, Json<String>)> {
+    let nomemaquina = input.nomemaquina.to_string();
+    let valoraluguel = input.valoraluguel.to_string();
+    let numserie = input.numserie.to_string();
     if nomemaquina.is_empty() || valoraluguel.is_empty() || numserie.is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     let idmaquina = gera_hash(&numserie)
         .split_at(45 as usize).0
         .to_string();
-    let maquina: serde_json::Value = serde_json::json!({
-        "nomemaquina": nomemaquina,
-        "idmaquina": idmaquina,
-        "valoraluguel": valoraluguel,
-        "numserie": numserie,
-    });
-    return Ok(maquina);
+    
+    let maquina = Maquina{
+        nomemaquina,
+        idmaquina,
+        valoraluguel: formata_valor_f32(&valoraluguel).unwrap(),
+        numserie,
+        disponibilidade: 1,
+        maquinastatus: 1
+    };
+    return Ok(Json(maquina));
 }
 
 /// ## Recebe um serde_json::Value, que é convertido para o tipo `Maquina` e registrado no banco. No final, a função retorna o ID da Maquina.
@@ -65,16 +82,16 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
 /// }
 /// ```
 #[tauri::command]
-pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, String>{
+pub async fn cadastra_maquina(input: Json<Maquina>) -> Result<String, String>{
     
-    let valoraluguel = maquina["valoraluguel"].as_str().unwrap_or("").to_string();
+    let valoraluguel =  input.valoraluguel.to_string();
     let valoraluguel = formata_valor_f32(&valoraluguel)?;
 
     let maquina: model::maquina::Maquina = model::maquina::Maquina {
-        nomemaquina: maquina["nomemaquina"].as_str().unwrap_or("").to_string(),
-        numserie: maquina["numserie"].as_str().unwrap_or("").to_string(),
+        nomemaquina: input.nomemaquina.to_string(),
+        numserie: input.numserie.to_string(),
         valoraluguel,
-        idmaquina: maquina["idmaquina"].as_str().unwrap_or("").to_string(),
+        idmaquina: input.idmaquina.to_string(),
         disponibilidade: 1,
         maquinastatus: 1
     };
