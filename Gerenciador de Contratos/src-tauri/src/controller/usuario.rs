@@ -389,7 +389,7 @@ pub struct DeletaContaInput{
 }
 
 //#[tauri::command]
-pub async fn deleta_conta(input: Json<DeletaContaInput>) -> Result<(), (StatusCode, Json<String>)>{
+pub async fn deleta_conta(input: Json<DeletaContaInput>) -> Result<StatusCode, (StatusCode, Json<String>)>{
     let idusuario = input.idusuario.clone();
     let email = input.email.clone();
     if idusuario.trim().is_empty() || email.trim().is_empty(){
@@ -397,7 +397,7 @@ pub async fn deleta_conta(input: Json<DeletaContaInput>) -> Result<(), (StatusCo
     }
     let resultado_delete = model::usuario::deleta_conta(idusuario, email).await;
     match resultado_delete{
-        Ok(_) => {return Ok(())},
+        Ok(_) => {return Ok(StatusCode::OK)},
         Err(e) => {return Err((StatusCode::BAD_REQUEST, Json(e.to_string())))}
     }
 }
