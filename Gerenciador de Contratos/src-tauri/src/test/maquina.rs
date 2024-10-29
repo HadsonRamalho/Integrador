@@ -28,7 +28,7 @@ pub async fn cria_maquina_teste(nomemaquina: &str, numserie: &str, valoraluguel:
             return Ok(maquina_retorno)
         },
         Err(e) => {
-            return Err(e);
+            return Err(e.1.0);
         }
     }
 }

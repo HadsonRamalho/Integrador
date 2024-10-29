@@ -81,11 +81,18 @@ pub async fn estrutura_maquina(input: Json<EstruturaMaquinaInput>) -> Result<Jso
 ///     return Ok(idmaquina);
 /// }
 /// ```
-#[tauri::command]
-pub async fn cadastra_maquina(input: Json<Maquina>) -> Result<String, String>{
+//#[tauri::command]
+pub async fn cadastra_maquina(input: Json<Maquina>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     
     let valoraluguel =  input.valoraluguel.to_string();
-    let valoraluguel = formata_valor_f32(&valoraluguel)?;
+    let valoraluguel = match formata_valor_f32(&valoraluguel){
+        Ok(valor) => {
+            valor
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e.to_string())))
+        }
+    };
 
     let maquina: model::maquina::Maquina = model::maquina::Maquina {
         nomemaquina: input.nomemaquina.to_string(),
@@ -99,10 +106,10 @@ pub async fn cadastra_maquina(input: Json<Maquina>) -> Result<String, String>{
     let resultado_cadastro = model::maquina::cadastrar_maquina(maquina).await;
     match resultado_cadastro{
         Ok(idmaquina) => {
-            return Ok(idmaquina);
+            return Ok((StatusCode::CREATED, Json(idmaquina)));
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 }
