@@ -28,13 +28,13 @@ pub struct EmailInput{
 /// ```
 //#[tauri::command]
 #[axum::debug_handler]
-pub async fn checa_email(input: Json<EmailInput>) -> Result<(StatusCode, String), (StatusCode, String)> {
+pub async fn checa_email(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {
    match input.validate(){
         Ok(_) => {
-            return Ok((StatusCode::OK, input.0.email))
+            return Ok((StatusCode::OK, Json(input.0.email)))
         },
         Err(e) => {
-            return Err((StatusCode::BAD_REQUEST, e.to_string()))
+            return Err((StatusCode::BAD_REQUEST, Json(e.to_string())))
         }
     }
 }
@@ -79,7 +79,7 @@ pub async fn cria_pool() -> Result<mysql_async::Pool, mysql_async::Error> {
 /// }
 /// ```
 //#[tauri::command]
-pub async fn encontra_email_smtp(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, String)> {
+pub async fn encontra_email_smtp(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {
     let email = match checa_email(input).await{
         Ok(email) => {email.1},
         Err(e) => {
@@ -93,14 +93,14 @@ pub async fn encontra_email_smtp(input: Json<EmailInput>) -> Result<(StatusCode,
             return Ok((StatusCode::OK, Json(codigo)));
         }
         Err(e) => {
-            return Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 }
 
 /// ## Recebe um e-mail e retorna um token/hash que é gerado a partir da string slice
 //#[tauri::command]
-pub async fn gera_token(input: Json<EmailInput>) -> Result<(StatusCode, String), (StatusCode, String)> {
+pub async fn gera_token(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {
     let email = match checa_email(input).await{
         Ok(email) => {email.1},
         Err(e) => {
@@ -108,7 +108,7 @@ pub async fn gera_token(input: Json<EmailInput>) -> Result<(StatusCode, String),
         }
     };
     let token = gera_hash(&email);
-    Ok((StatusCode::OK, token))
+    Ok((StatusCode::OK, Json(token)))
 }
 
 /// ## Recebe uma string slice e gera um hash a partir de seu conteúdo
@@ -144,12 +144,12 @@ pub struct CodigosUsuarioBancoInput{
 /// }
 /// ```
 //#[tauri::command]
-pub async fn verifica_codigo_email(input: Json<CodigosUsuarioBancoInput>) -> Result<StatusCode, (StatusCode, String)> {
+pub async fn verifica_codigo_email(input: Json<CodigosUsuarioBancoInput>) -> Result<StatusCode, (StatusCode, Json<String>)> {
     let codigo_usuario = input.codigo_usuario.clone();
     let codigo_banco = input.codigo_banco.clone();
     
     if codigo_usuario.trim().is_empty(){
-        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
 
     let eq = codigo_banco == codigo_usuario;
@@ -157,7 +157,7 @@ pub async fn verifica_codigo_email(input: Json<CodigosUsuarioBancoInput>) -> Res
         return Ok(StatusCode::OK)
     }
 
-    return Err((StatusCode::BAD_REQUEST, "Código incorreto.".to_string()))
+    return Err((StatusCode::BAD_REQUEST, Json("Código incorreto.".to_string())))
 }
 
 #[derive(Serialize, Deserialize)]
@@ -168,28 +168,28 @@ pub struct SenhasInput{
 
 /// ## Recebe duas senhas, compara se são iguais e verifica se ambas são fortes o suficiente
 //#[tauri::command]
-pub async fn compara_novas_senhas(input: Json<SenhasInput>) -> Result<StatusCode, (StatusCode, String)>{
+pub async fn compara_novas_senhas(input: Json<SenhasInput>) -> Result<StatusCode, (StatusCode, Json<String>)>{
     let senha1 = input.senha1.clone();
     let senha2 = input.senha2.clone();
 
     if senha1.trim().is_empty() || senha2.trim().is_empty(){
-        return Err((StatusCode::BAD_REQUEST, MeuErro::CamposVazios.to_string()))
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     if senha1 != senha2 {
-        return Err((StatusCode::BAD_REQUEST, "As senhas são diferentes.".to_string()))
+        return Err((StatusCode::BAD_REQUEST, Json("As senhas são diferentes.".to_string())))
     }
 
     match usuario::valida_senha(&senha1){
         Ok(_) => { },
         Err(e) => {
-            return Err((StatusCode::BAD_REQUEST, e));
+            return Err((StatusCode::BAD_REQUEST, Json(e)));
         }
     }
 
     match usuario::valida_senha(&senha2){
         Ok(_) => { },
         Err(e) => {
-            return Err((StatusCode::BAD_REQUEST, e));
+            return Err((StatusCode::BAD_REQUEST, Json(e)));
         }
     }
     return Ok(StatusCode::OK)

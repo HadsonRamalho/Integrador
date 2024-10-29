@@ -470,7 +470,7 @@ pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String
     let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
         Ok(cnpj) => {cnpj.1},
         Err(e) => {
-            return Err(e.1);
+            return Err(e.1.0);
         }
     };
     let cnpj = formata_cnpj(&cnpj)?;
@@ -516,7 +516,7 @@ pub async fn busca_contrato_nome_locatario(nomelocatario: String, idusuario: Str
     let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
         Ok(cnpj) => {cnpj.1},
         Err(e) => {
-            return Err(e.1);
+            return Err(e.1.0);
         }
     };
     let cnpj = formata_cnpj(&cnpj)?;
@@ -562,7 +562,7 @@ pub async fn busca_contrato_cnpj_locatario(cnpjlocatario: String, idusuario: Str
     let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
         Ok(cnpj) => {cnpj},
         Err(e) => {
-            return Err(e.1);
+            return Err(e.1.0);
         }
     };
     let cnpj = formata_cnpj(&cnpj.1)?;

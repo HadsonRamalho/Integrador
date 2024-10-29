@@ -48,7 +48,7 @@ async fn _setup_pool() -> Result<Pool, mysql_async::Error> {
     cria_pool().await
 }
 
-pub async fn _limpa_usuario(idusuario: &str, email: &str) -> Result<(), (StatusCode, String)> {
+pub async fn _limpa_usuario(idusuario: &str, email: &str) -> Result<(), (StatusCode, Json<String>)> {
     let input = DeletaContaInput{idusuario: idusuario.to_string(), email: email.to_string()};
     controller::usuario::deleta_conta(Json(input)).await
 }
