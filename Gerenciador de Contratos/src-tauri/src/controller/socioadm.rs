@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
 
-use crate::{controller, model::{self, erro::MeuErro, socioadm::{SocioADM, _cadastra_socio_adm}}};
+use crate::model::{self, erro::MeuErro, socioadm::{SocioADM, _cadastra_socio_adm}};
 
 use super::{formata_cpf, gera_hash};
 
@@ -165,8 +165,6 @@ pub async fn cadastra_socio_adm(input: Json<SocioADM>) -> Result<(StatusCode, Js
     }
 }
 
-
-
 /// ## Recebe o ID de um Socio, busca pelo registro no banco de dados e retorna um vetor de `SocioADM` contendo um único valor
 /// Primeiro, verifica se `idsocio` está vazio, retornando erro caso esteja:
 /// ```
@@ -180,18 +178,19 @@ pub async fn cadastra_socio_adm(input: Json<SocioADM>) -> Result<(StatusCode, Js
 ///     return Ok(socioadm)
 /// }
 /// ```
-#[tauri::command]
-pub async fn busca_socio_adm_id(idsocio: String) -> Result<Vec<SocioADM>, String>{
+//#[tauri::command]
+pub async fn busca_socio_adm_id(input: Json<String>) -> Result<(StatusCode, Json<Vec<SocioADM>>), (StatusCode, Json<String>)>{
+    let idsocio = input.0;
     if idsocio.trim().is_empty(){
-        return Err("ID do sócio está vazio".to_string())
+        return Err((StatusCode::BAD_REQUEST, Json("ID do sócio está vazio".to_string())))
     }
     let resultado_busca: Result<Vec<SocioADM>, mysql_async::Error> = model::socioadm::busca_socio_adm_id(idsocio).await;
     match resultado_busca{
         Ok(socioadm) => {
-            return Ok(socioadm)
+            return Ok((StatusCode::OK, Json(socioadm)))
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 }
@@ -211,25 +210,26 @@ pub async fn busca_socio_adm_id(idsocio: String) -> Result<Vec<SocioADM>, String
 /// )};
 /// return Ok(socioadm)
 /// ```
-#[tauri::command]
-pub async fn socio_adm_existente(cpf: String) -> Result<serde_json::Value, String>{
-    println!("{}", cpf);
-    let cpf= formata_cpf(&cpf)?;
-    let resultado_busca = model::socioadm::socio_adm_existente(&cpf).await;
-    let socioadm = match resultado_busca{
-        Ok(socioadm) => {socioadm},
-        Err(e) => return Err(e.to_string())
+//#[tauri::command]
+pub async fn busca_socio_adm_cpf(input: Json<String>) -> Result<(StatusCode, Json<SocioADM>), (StatusCode, Json<String>)>{
+    let cpf = input.0;
+    let cpf = match formata_cpf(&cpf){
+        Ok(cpf) => {
+            cpf
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
     };
-    let socioadm = serde_json::json!({
-        "idsocio": socioadm.idsocio ,
-        "idendereco": socioadm.idendereco,
-        "nome":socioadm.nome ,
-        "cpf": socioadm.cpf ,
-        "orgaoemissor": socioadm.orgaoemissor ,
-        "estadocivil": socioadm.estadocivil ,
-        "nacionalidade": socioadm.nacionalidade ,
-        "sociostatus": socioadm.sociostatus ,
-        "cnpj": socioadm.cnpj 
-    });
-    return Ok(socioadm)
+    let resultado_busca = model::socioadm::busca_socio_adm_cpf(&cpf).await;
+    let socioadm = match resultado_busca{
+        Ok(socioadm) => {
+            if socioadm.cpf.is_empty(){
+                return Err((StatusCode::BAD_REQUEST, Json(MeuErro::SocioNaoEncontrado.to_string())))
+            }
+            socioadm
+        },
+        Err(e) => return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
+    };
+    return Ok((StatusCode::OK, Json(socioadm)))
 }

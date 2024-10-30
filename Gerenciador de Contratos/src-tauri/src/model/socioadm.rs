@@ -83,7 +83,7 @@ pub async fn busca_socio_adm_id(idsocio: String) -> Result<Vec<SocioADM>, mysql_
     return Ok(socio)    
 }
 
-pub async fn socio_adm_existente(cpf: &str) -> Result<SocioADM, mysql_async::Error>{
+pub async fn busca_socio_adm_cpf(cpf: &str) -> Result<SocioADM, mysql_async::Error>{
     let pool = cria_pool().await?;
     let mut conn = pool.get_conn().await?;
     let socioadm: Result<Option<SocioADM>, mysql_async::Error> = 

@@ -9,7 +9,7 @@ use tower_http::cors::{Any, CorsLayer};
 use crate::controller::{
     checa_email, compara_novas_senhas, encontra_email_smtp, endereco::{
         _salva_endereco, busca_endereco_id
-    }, gera_token, maquina::{cadastra_maquina, estrutura_maquina}, socioadm::estrutura_socio_adm, usuario::{
+    }, gera_token, maquina::{cadastra_maquina, estrutura_maquina}, socioadm::{busca_socio_adm_id, cadastra_socio_adm, estrutura_socio_adm, busca_socio_adm_cpf}, usuario::{
         atualiza_email, atualiza_nome, atualiza_senha, busca_cnpj_usuario, busca_email_usuario, busca_id, busca_nome_usuario, cria_conta, deleta_conta, verifica_senha, verifica_token
     }, verifica_codigo_email
 };
@@ -39,6 +39,9 @@ pub fn cria_rotas() -> Router<>{
         .route("/estrutura_maquina", post(estrutura_maquina))
 
         .route("/estrutura_socio_adm", post(estrutura_socio_adm))
+        .route("/cadastra_socio_adm", post(cadastra_socio_adm))
+        .route("/busca_socio_adm_id", get(busca_socio_adm_id))
+        .route("/busca_socio_adm_cpf", get(busca_socio_adm_cpf))
 
         .route("/cadastra_maquina", post(cadastra_maquina))
 
