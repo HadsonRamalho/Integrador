@@ -105,13 +105,20 @@ pub async fn estrutura_socio_adm(input: Json<SocioAdmInput>) -> Result<(StatusCo
 ///     return Ok(idsocio_cpy);
 /// }
 /// ```
-#[tauri::command]
-pub async fn cadastra_socio_adm(input: Json<SocioADM>) -> Result<String, String> {
+//#[tauri::command]
+pub async fn cadastra_socio_adm(input: Json<SocioADM>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {
     let idsocio: String = input.idsocio.to_string();
     //let idsocio: (&str, &str) = idsocio.split_at(45 as usize);
     //let idsocio: String = idsocio.0.to_string();
     let idsocio_cpy = idsocio.clone();
-    let cpf = formata_cpf(&input.cpf)?;
+    let cpf = match formata_cpf(&input.cpf){
+        Ok(cpf) => {
+            cpf
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
     let idendereco = input.idendereco.to_string();
     let nome = input.nome.to_string();
     let orgaoemissor = input.orgaoemissor.to_string();
@@ -137,11 +144,11 @@ pub async fn cadastra_socio_adm(input: Json<SocioADM>) -> Result<String, String>
         Ok(idsocio) => {
             println!("IDSOCIO: {}", idsocio);
             if idsocio != ""{
-                return Err("Sócio já está cadastrado".to_string())
+                return Err((StatusCode::BAD_REQUEST, Json("Este sócio já está cadastrado.".to_string())))
             }
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 
@@ -149,38 +156,16 @@ pub async fn cadastra_socio_adm(input: Json<SocioADM>) -> Result<String, String>
     match resultado_cadastro{
         Ok(_) =>{
             println!("Socio cadastrado");
-            return Ok(idsocio_cpy);
+            return Ok((StatusCode::CREATED, Json(idsocio_cpy)));
         }, 
         Err(e) => {
             println!("Erro ao cadastrar o socio adm: {:?}", e); 
-            Err(e.to_string())
+            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 }
 
-/// ## Semelhante a `estrutura_socio_adm`, registra o primeiro sócio de uma empresa
-#[tauri::command]
-pub fn estrutura_primeiro_socio(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, idsocio: String, cnpj: String) -> Result<serde_json::Value, String>{
-    
-    if idendereco.trim().is_empty() || nome.trim().is_empty() || cpf.trim().is_empty()
-        || orgaoemissor.trim().is_empty() || estadocivil.trim().is_empty() 
-        || nacionalidade.trim().is_empty() || cnpj.trim().is_empty(){
-            return Err(MeuErro::CamposVazios.to_string());
-    }
-    
-    let cpf = formata_cpf(&cpf)?;
-    let socioadm: serde_json::Value = serde_json::json!({
-        "idsocio": idsocio,
-        "idendereco": idendereco,
-        "nome": nome,
-        "cpf": cpf,
-        "orgaoemissor": orgaoemissor,
-        "estadocivil": estadocivil,
-        "nacionalidade": nacionalidade,
-        "cnpj": cnpj
-    });
-    return Ok(socioadm);
-}
+
 
 /// ## Recebe o ID de um Socio, busca pelo registro no banco de dados e retorna um vetor de `SocioADM` contendo um único valor
 /// Primeiro, verifica se `idsocio` está vazio, retornando erro caso esteja:

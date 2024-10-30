@@ -16,7 +16,7 @@ pub async fn cria_socio_teste(idendereco: &str, nome: &str, cpf: &str, orgaoemis
         cnpj: cnpj.to_string(),
     };
     let socioadm = estrutura_socio_adm(Json(socioadm)).await.unwrap().1;
-    let idsocioadm = cadastra_socio_adm(socioadm).await.unwrap();
+    let idsocioadm = cadastra_socio_adm(socioadm).await.unwrap().1.0;
     return idsocioadm
 }
 
@@ -75,7 +75,7 @@ async fn test_cria_deleta_socio(){
     };
 
     let socio = estrutura_socio_adm(Json(socio)).await.unwrap().1;
-    let idsocio = cadastra_socio_adm(socio).await.unwrap();
+    let idsocio = cadastra_socio_adm(socio).await.unwrap().1.0;
 
     assert!(_limpa_socio(idsocio).await.is_ok());
     assert!(_limpa_endereco(idendereco).await.is_ok())
