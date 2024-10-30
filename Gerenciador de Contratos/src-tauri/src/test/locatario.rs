@@ -4,7 +4,7 @@ use crate::{controller::{cria_pool, locatario::{cadastra_locatario, estrutura_lo
 #[cfg(test)]
 use crate::model::locatario::Locatario;
 
-async fn cria_locatario_teste(nomelocatario: &str, idendereco: &str, cnpj: &str, idsocio: &str, locatariostatus: i16) -> Result<String, String>{
+pub async fn cria_locatario_teste(nomelocatario: &str, idendereco: &str, cnpj: &str, idsocio: &str, locatariostatus: i16) -> Result<String, String>{
     use axum::Json;
     use crate::{controller::locatario::{cadastra_locatario, estrutura_locatario, LocatarioInput}, model::locatario::Locatario};
 
@@ -59,7 +59,7 @@ async fn cria_deleta_locatario(){
     assert!(_limpa_endereco(idenderecosocio).await.is_ok());    
 }
 
-async fn _limpa_locatario(idlocatario: String) -> Result<(), String>{
+pub async fn _limpa_locatario(idlocatario: String) -> Result<(), String>{
     match deleta_locatario(idlocatario).await{
         Ok(_) => {
             return Ok(())

@@ -1,8 +1,9 @@
-use diesel::sql_types::Cidr;
-use mysql_async::prelude::*;
+use mysql_async::params;
 use serde::{Deserialize, Serialize};
 use crate::model::erro::MeuErro;
 use crate::controller::{self, cria_pool};
+use mysql_async::prelude::{FromRow, Queryable};
+
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Endereco{
