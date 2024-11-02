@@ -15,18 +15,18 @@ pub async fn cria_locatario_teste(nomelocatario: &str, idendereco: &str, cnpj: &
         idsocio: idsocio.to_string(),
         locatariostatus
     };
-    let resultado = estrutura_locatario(Json(locatario));
+    let resultado = estrutura_locatario(Json(locatario)).await;
     let idlocatario;
     let locatario = match resultado{
         Ok(locatario) => {
-            idlocatario = locatario.idlocatario.clone();
+            idlocatario = locatario.1.idlocatario.clone();
             locatario
         },
         Err(e) => {
-            return Err(e)
+            return Err(e.1.0)
         }
     };
-    assert!(cadastra_locatario(locatario).await.is_ok());
+    assert!(cadastra_locatario(locatario.1).await.is_ok());
     Ok(idlocatario)
 }
 
