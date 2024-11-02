@@ -136,3 +136,15 @@ pub async fn aluga_maquina(idmaquina: &str) -> Result<(), mysql_async::Error>{
         Err(e) => {return Err(e)}
     }
 }
+
+pub async fn desaluga_maquina(idmaquina: &str) -> Result<(), mysql_async::Error>{
+    let pool = controller::cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_atualizacao = 
+        conn.exec_drop("UPDATE maquina SET disponibilidade = 1 WHERE idmaquina = :idmaquina", 
+        params! {"idmaquina" => idmaquina}).await;
+    match resultado_atualizacao{
+        Ok(_) => {return Ok(())},
+        Err(e) => {return Err(e)}
+    }
+}

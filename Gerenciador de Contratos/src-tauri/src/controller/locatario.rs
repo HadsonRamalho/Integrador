@@ -55,7 +55,7 @@ pub async fn estrutura_locatario(input: Json<LocatarioInput>)
         return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     let cnpj = match controller::locadora::formata_cnpj(&cnpj){
-        Ok(_) => {
+        Ok(cnpj) => {
             cnpj
         },
         Err(e) => {
@@ -244,11 +244,13 @@ pub async fn busca_locatario_cnpj(input: Json<String>)
     -> Result<(StatusCode, Json<Vec<Locatario>>), (StatusCode, Json<String>)>{
     let cnpj = input.0;
     if cnpj.trim().is_empty(){
+        println!("Erro na formatação do CNPJ do Locatario.");
         return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CnpjVazio.to_string())))
     }
     let cnpj = match formata_cnpj(&cnpj){
         Ok(cnpj) => {cnpj},
         Err(e) => {
+            println!("{:?}", e);
             return Err((StatusCode::BAD_REQUEST, Json(e)));
         }
     };
@@ -258,6 +260,7 @@ pub async fn busca_locatario_cnpj(input: Json<String>)
             return Ok((StatusCode::OK, Json(locatario)));
         },
         Err(e) => {
+            println!("{:?}", e);
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }

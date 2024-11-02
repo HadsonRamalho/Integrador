@@ -83,6 +83,7 @@ pub async fn busca_locatario_cnpj(cnpj: &str) -> Result<Vec<Locatario>, mysql_as
     let mut loc: Vec<Locatario> = vec![];
     match locatario{
         None => {
+            println!("CNPJ do Locatario não foi encontrado.");
             return Err(mysql_async::Error::Other(Box::new(MeuErro::CnpjNaoEncontrado)))
         },
         Some(locatario) => {

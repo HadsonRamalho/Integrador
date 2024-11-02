@@ -6,7 +6,7 @@ use crate::controller::{self, usuario::DeletaContaInput, EmailInput};
 
 #[tokio::test]
 async fn test_e2e_ok(){
-    use crate::test::{endereco::{_limpa_endereco, cria_endereco_teste}, locadora::{_limpa_locadora, cria_locadora_teste}, locatario::{_limpa_locatario, cria_locatario_teste}, maquina::{_limpa_maquina, cria_maquina_teste}, socioadm::{_limpa_socio, cria_socio_teste}, usuario::{_busca_id_usuario, _limpa_usuario, cria_usuario_teste}};
+    use crate::{controller::{locatario::{busca_id_locatario, busca_locatario_cnpj, busca_locatario_nome}, maquina::{busca_maquina_nome, busca_maquina_numserie, gera_estoque_por_nome, gera_estoque_total_alugadas}}, model::maquina::{aluga_maquina, desaluga_maquina}, test::{endereco::{_limpa_endereco, cria_endereco_teste}, locadora::{_limpa_locadora, cria_locadora_teste}, locatario::{_limpa_locatario, cria_locatario_teste}, maquina::{_limpa_maquina, cria_maquina_teste}, socioadm::{_limpa_socio, cria_socio_teste}, usuario::{_busca_id_usuario, _limpa_usuario, cria_usuario_teste}}};
 
     let email = "usuariotestee2e1@teste.com";
     let nome_completo = "Usuario Teste";        
@@ -46,7 +46,13 @@ async fn test_e2e_ok(){
     let nomemaquina = "Maquina de Corte";
     let numserie = "MQC123-TEST-E2E0";
     let valoraluguel = "R$ 4000,00";
-    assert!(cria_maquina_teste(nomemaquina, numserie, valoraluguel).await.is_ok());
+    let idmaquina = cria_maquina_teste(nomemaquina, numserie, valoraluguel).await.unwrap().idmaquina;
+    assert!(busca_maquina_nome(Json(nomemaquina.to_string())).await.is_ok());
+    assert!(busca_maquina_numserie(Json(numserie.to_string())).await.is_ok());
+    assert!(gera_estoque_por_nome(Json(nomemaquina.to_string())).await.is_ok());
+    assert!(aluga_maquina(&idmaquina).await.is_ok());
+    assert!(gera_estoque_total_alugadas().await.is_ok());
+    assert!(desaluga_maquina(&idmaquina).await.is_ok());
     
     let cpf = "123.141.123-01";
     let idenderecolocatario = cria_endereco_teste(logradouro, cep, complemento, numeroendereco, cidade, uf).await.unwrap();
@@ -55,7 +61,12 @@ async fn test_e2e_ok(){
     let idsociolocatario = cria_socio_teste(&idenderecosociolocatario, nome_completo, cpf, orgaoemissor, estadocivil, nacionalidade, cnpj).await;
 
     let nomelocatario = "Locatario Z";
+    let cnpj = "11331220000141";
     let idlocatario = cria_locatario_teste(nomelocatario, &idenderecolocatario, cnpj, &idsociolocatario, 1).await.unwrap();
+    assert!(busca_id_locatario(Json(cnpj.to_string())).await.is_ok());
+    assert!(busca_locatario_nome(Json(nomelocatario.to_string())).await.is_ok());
+    assert!(busca_locatario_cnpj(Json(cnpj.to_string())).await.is_ok());
+
 
     assert!(_limpa_maquina(numserie).await.is_ok());
     assert!(_limpa_usuario(&idusuario.unwrap(), email).await.is_ok(),

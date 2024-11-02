@@ -43,14 +43,6 @@ impl From<UsuarioInput> for Usuario{
 }
 
 impl Usuario {
-    /// Obtém a senha (hash) do usuário.
-    ///
-    /// # Retornos
-    /// - &str: Retorna uma referência para a senha (hash) do usuário.
-    pub fn get_hash(&mut self) -> &str {
-        return &self.senha;
-    }
-
     pub async fn ja_cadastrado(&self) -> bool {
         let email = busca_email(&self.email).await;
         match email {
