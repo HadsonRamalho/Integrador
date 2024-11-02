@@ -1,11 +1,11 @@
 use mysql_async::prelude::Queryable;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use crate::model::params;
 use crate::controller;
 use::mysql_async::prelude::FromRow;
 use crate::model::erro::MeuErro;
 
-#[derive(FromRow, Serialize)]
+#[derive(FromRow, Serialize, Deserialize)]
 pub struct Locatario{
     pub idlocatario: String,
     pub idendereco: String,

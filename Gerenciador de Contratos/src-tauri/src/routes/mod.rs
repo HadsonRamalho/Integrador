@@ -9,7 +9,7 @@ use tower_http::cors::{Any, CorsLayer};
 use crate::controller::{
     checa_email, compara_novas_senhas, encontra_email_smtp, endereco::{
         _salva_endereco, busca_endereco_id
-    }, gera_token, maquina::{busca_maquina_nome, busca_maquina_numserie, cadastra_maquina, estrutura_maquina, gera_estoque_por_nome, gera_estoque_total, gera_estoque_total_alugadas}, socioadm::{busca_socio_adm_cpf, busca_socio_adm_id, cadastra_socio_adm, estrutura_socio_adm}, usuario::{
+    }, gera_token, locatario::{busca_id_locatario, busca_locatario_cnpj, busca_locatario_nome, cadastra_locatario, estrutura_locatario}, maquina::{busca_maquina_nome, busca_maquina_numserie, cadastra_maquina, estrutura_maquina, gera_estoque_por_nome, gera_estoque_total, gera_estoque_total_alugadas}, socioadm::{busca_socio_adm_cpf, busca_socio_adm_id, cadastra_socio_adm, estrutura_socio_adm}, usuario::{
         atualiza_email, atualiza_nome, atualiza_senha, busca_cnpj_usuario, busca_email_usuario, busca_id, busca_nome_usuario, cria_conta, deleta_conta, verifica_senha, verifica_token
     }, verifica_codigo_email
 };
@@ -49,6 +49,12 @@ pub fn cria_rotas() -> Router<>{
         .route("/gera_estoque_por_nome", post(gera_estoque_por_nome))
         .route("/gera_estoque_total", post(gera_estoque_total))
         .route("/gera_estoque_total_alugadas", post(gera_estoque_total_alugadas))
+
+        .route("/estrutura_locatario", post(estrutura_locatario))
+        .route("/cadastra_locatario", post(cadastra_locatario))
+        .route("/busca_id_locatario", get(busca_id_locatario))
+        .route("/busca_locatario_nome", get(busca_locatario_nome))
+        .route("/busca_locatario_cnpj", get(busca_locatario_cnpj))
 
         .layer(
             CorsLayer::new()

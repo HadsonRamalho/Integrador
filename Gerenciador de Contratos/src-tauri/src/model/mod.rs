@@ -52,7 +52,6 @@ impl Usuario {
     }
 
     pub async fn ja_cadastrado(&self) -> bool {
-        let pool = controller::cria_pool().await.unwrap();
         let email = busca_email(&self.email).await;
         match email {
             Ok(_ok) => return true,

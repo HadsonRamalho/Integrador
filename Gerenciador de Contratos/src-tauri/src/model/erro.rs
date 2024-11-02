@@ -2,78 +2,82 @@ use::thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum MeuErro{
-    #[error("CNPJ não encontrado")]
+    #[error("CNPJ não encontrado.")]
     CnpjNaoEncontrado,
-    #[error("Máquina não encontrada")]
+    #[error("Máquina não encontrada.")]
     MaquinaNaoEncontrada,
-    #[error("Erro na conexão com o banco de dados: {0}")]
+    #[error("Erro na conexão com o banco de dados: {0}.")]
     ConexaoBanco(#[from] mysql_async::Error),
-    #[error("Endereço não encontrado")]
+    #[error("Endereço não encontrado.")]
     EnderecoNaoEncontrado,
-    #[error("O E-mail está vazio")]
+    #[error("O E-mail está vazio.")]
     EmailVazio, 
-    #[error("O nome está vazio")]
+    #[error("O nome está vazio.")]
     NomeVazio,
-    #[error("O CNPJ está vazio")]
+    #[error("O CNPJ está vazio.")]
     CnpjVazio,
-    #[error("Um ou mais campos estão vazios")]
+    #[error("Um ou mais campos estão vazios.")]
     CamposVazios,
-    #[error("O CPF está vazio")]
+    #[error("O CPF está vazio.")]
     CpfVazio,
-    #[error("E-mail inválido")]
+    #[error("E-mail inválido.")]
     EmailInvalido,
-    #[error("As senhas são diferentes")]
+    #[error("As senhas são diferentes.")]
     SenhasDiferentes,
-    #[error("ID não encontrado")]
+    #[error("ID não encontrado.")]
     IdNaoEncontrado,
-    #[error("Não foi possível apagar o registro")]
+    #[error("Não foi possível apagar o registro.")]
     ImpossivelApagar,
-    #[error("CPF não encontrado")]
+    #[error("CPF não encontrado.")]
     CpfNaoEncontrado,
-    #[error("Contrato não encontrado")]
+    #[error("Contrato não encontrado.")]
     ContratoNaoEncontrado,
-    #[error("E-mail não encontrado")]
+    #[error("E-mail não encontrado.")]
     EmailNaoEncontrado,
-    #[error("Senha incorreta")]
+    #[error("Senha incorreta.")]
     SenhaIncorreta,
-    #[error("Número de série não encontrado")]
+    #[error("Número de série não encontrado.")]
     NumeroSerieNaoEncontrado,
-    #[error("Não há maquinas em estoque")]
+    #[error("Não há maquinas em estoque.")]
     SemMaquinasNoEstoque,
-    #[error("Não há maquinas alugadas no momento")]
+    #[error("Não há maquinas alugadas no momento.")]
     SemMaquinasAlugadas,
-    #[error("Máquina não encontrada no estoque")]
+    #[error("Máquina não encontrada no estoque.")]
     MaquinaNaoEncontradaNoEstoque,
-    #[error("O endereço não foi salvo")]
+    #[error("O endereço não foi salvo.")]
     SalvarEndereco,
-    #[error("O contrato não foi salvo")]
+    #[error("O contrato não foi salvo.")]
     SalvarContrato,
-    #[error("O nome do usuário não foi atualizado")]
+    #[error("O nome do usuário não foi atualizado.")]
     AtualizarNomeUsuario,
-    #[error("A senha do usuário não foi atualizada")]
+    #[error("A senha do usuário não foi atualizada.")]
     AtualizarSenhaUsuario,
-    #[error("O e-mail do usuário não foi atualizado")]
+    #[error("O e-mail do usuário não foi atualizado.")]
     AtualizarEmailUsuario,
-    #[error("O usuário não foi salvo")]
+    #[error("O usuário não foi salvo.")]
     SalvarUsuario,
-    #[error("O sócio não foi salvo")]
+    #[error("O sócio não foi salvo.")]
     SalvarSocio,
-    #[error("O hash não foi encontrado")]
+    #[error("O hash não foi encontrado.")]
     HashNaoEncontrado,
-    #[error("Não foi encontrada uma máquina com esse nome")]
+    #[error("Não foi encontrada uma máquina com esse nome.")]
     NomeMaquinaNaoEncontrado,
-    #[error("A máquina não foi salva")]
+    #[error("A máquina não foi salva.")]
     SalvarMaquina,
-    #[error("Não foi encontrado um locatário com esse nome")]
+    #[error("Não foi encontrado um locatário com esse nome.")]
     NomeLocatarioNaoEncontrado,
-    #[error("O locatário não foi salvo")]
+    #[error("O locatário não foi salvo.")]
     SalvarLocatario,
-    #[error("Não foi encontrada uma locadora com esse CNPJ")]
+    #[error("Não foi encontrada uma locadora com esse CNPJ.")]
     CnpjLocadoraNaoEncontrado,
-    #[error("A locadora não foi salva")]
+    #[error("A locadora não foi salva.")]
     SalvarLocadora,
-    #[error("Não foi encontrado um sócio cadastrado com esses dados")]
+    #[error("Não foi encontrado um sócio cadastrado com esses dados.")]
     SocioNaoEncontrado,
-    #[error("O formato do CEP é inválido")]
-    FormatoCepInvalido
+    #[error("O formato do CEP é inválido.")]
+    FormatoCepInvalido,
+    #[error("O nome da máquina está vazio.")]
+    NomeMaquinaVazio,
+    #[error("O nome do locatário está vazio.")]
+    NomeLocatarioVazio
 }

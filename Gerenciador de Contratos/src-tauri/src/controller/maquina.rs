@@ -144,7 +144,7 @@ pub async fn busca_maquina_nome(nome_maquina: Json<String>)
     let nome_maquina_backup = nome_maquina.clone();
     let nome_maquina = nome_maquina.replace(" ", "");
     if nome_maquina.is_empty(){
-        return Err((StatusCode::BAD_REQUEST, Json("O nome da máquina está vazio.".to_string())));
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::NomeMaquinaVazio.to_string())));
     }
     
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::buscar_maquina_nome(&nome_maquina_backup).await;

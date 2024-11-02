@@ -1,9 +1,11 @@
-use axum::Json;
+use axum::{http::StatusCode, Json};
+use serde::{Deserialize, Serialize};
 
 use crate::{controller, model::{self, erro::MeuErro, locatario::Locatario}};
 
 use super::locadora::formata_cnpj;
 
+#[derive(Serialize, Deserialize)]
 pub struct LocatarioInput{
     pub idendereco: String,
     pub cnpj: String,
@@ -41,7 +43,8 @@ pub struct LocatarioInput{
 /// return Ok(locatario)
 /// ```
 //#[tauri::command]
-pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<Json<Locatario>, String>{
+pub async fn estrutura_locatario(input: Json<LocatarioInput>) 
+    -> Result<(StatusCode, Json<Locatario>), (StatusCode, Json<String>)>{
     let idendereco = input.idendereco.clone();
     let cnpj = input.cnpj.clone();
     let nomelocatario = input.nomelocatario.clone();
@@ -49,14 +52,14 @@ pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<Json<Locatario
     
     if idendereco.trim().is_empty() || cnpj.trim().is_empty() || 
         nomelocatario.trim().is_empty() || idsocio.trim().is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     let cnpj = match controller::locadora::formata_cnpj(&cnpj){
         Ok(_) => {
             cnpj
         },
         Err(e) => {
-            return Err(e);
+            return Err((StatusCode::BAD_REQUEST, Json(e)));
         }
     };
     let id: String = controller::gera_hash(&cnpj);
@@ -69,7 +72,7 @@ pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<Json<Locatario
         idsocio,
         locatariostatus: 1
     };
-    return Ok(Json(locatario))
+    return Ok((StatusCode::OK, Json(locatario)))
 }
 
 /// ## Recebe um serde_json::Value contendo dados de um Locatario e registra esses campos no banco após a conversão para o tipo `Locatario`
@@ -105,8 +108,9 @@ pub fn estrutura_locatario(input: Json<LocatarioInput>) -> Result<Json<Locatario
 /// ```
 /// let resultado_cadastro = model::locatario::_cadastra_locatario(locatario).await;
 /// ```
-#[tauri::command]
-pub async fn cadastra_locatario(input: Json<Locatario>) -> Result<String, String>{
+//#[tauri::command]
+pub async fn cadastra_locatario(input: Json<Locatario>) 
+    -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     let idlocatario: String = input.idlocatario.to_string();
     let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
     let idlocatario: String = idlocatario.0.to_string();
@@ -128,7 +132,7 @@ pub async fn cadastra_locatario(input: Json<Locatario>) -> Result<String, String
     if locatario.idlocatario.is_empty() || locatario.idsocio.is_empty() || 
         locatario.cnpj.is_empty() || locatario.nomelocatario.is_empty() || 
         locatario.idendereco.is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
 
     let resultado_busca: Result<String, mysql_async::Error> = model::locatario::busca_id_locatario(&locatario.cnpj).await;
@@ -137,20 +141,20 @@ pub async fn cadastra_locatario(input: Json<Locatario>) -> Result<String, String
         Ok(resultado) => {
             resultado
         },
-        Err(erro) => {
-            return Err(erro.to_string());
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e.to_string())));
         }
     };
     if !id.is_empty(){
-        return Err("Erro: Locatario já cadastrado".to_string());        
+        return Err((StatusCode::BAD_REQUEST, Json("Locatario já cadastrado".to_string())));        
     }
     let resultado_cadastro = model::locatario::_cadastra_locatario(locatario).await;
     match resultado_cadastro{
         Ok(_) => {
-            return Ok(idlocatario_cpy.to_string());
+            return Ok((StatusCode::BAD_REQUEST, Json(idlocatario_cpy.to_string())));
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 }
@@ -161,19 +165,29 @@ pub async fn cadastra_locatario(input: Json<Locatario>) -> Result<String, String
 /// ```
 /// let resultado: Result<String, mysql_async::Error> = model::locatario::busca_id_locatario(cnpj).await;
 /// ```
-#[tauri::command]
-pub async fn busca_id_locatario(cnpj: &str) -> Result<String, String>{
+//#[tauri::command]
+pub async fn busca_id_locatario(input: Json<String>) 
+    -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    let cnpj = input.0;
     if cnpj.trim().is_empty(){
-        return Err(MeuErro::CnpjVazio.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CnpjVazio.to_string())))
     }
-    let cnpj = formata_cnpj(cnpj)?;
+    let cnpj = match formata_cnpj(&cnpj){
+        Ok(cnpj) => {
+            cnpj
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
+
     let resultado: Result<String, mysql_async::Error> = model::locatario::busca_id_locatario(&cnpj).await;
     match resultado{
         Ok(id) =>{
-            return Ok(id);
+            return Ok((StatusCode::OK, Json(id)));
         },
         Err(e) => {
-            return Err(e.to_string());
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }
 }
@@ -191,21 +205,23 @@ pub async fn busca_id_locatario(cnpj: &str) -> Result<String, String>{
 /// }
 /// return Ok(locatario)
 /// ```
-#[tauri::command]
-pub async fn busca_locatario_nome(nomelocatario: String) -> Result<Vec<Locatario>, String>{
+//#[tauri::command]
+pub async fn busca_locatario_nome(input: Json<String>) 
+    -> Result<(StatusCode, Json<Vec<Locatario>>), (StatusCode, Json<String>)>{
+    let nomelocatario = input.0;
     if nomelocatario.trim().is_empty(){
-        return Err("Erro: O nome do locatário não pode estar vazio.".to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::NomeLocatarioVazio.to_string())))
     }
     let resultado_busca: Result<Vec<Locatario>, mysql_async::Error> = model::locatario::busca_locatario_nome(&nomelocatario).await;
     match resultado_busca {
         Ok(locatario) =>{
             if locatario.is_empty(){
-                return Err("Locatário não encontrado".to_string());
+                return Err((StatusCode::BAD_REQUEST, Json(MeuErro::NomeLocatarioNaoEncontrado.to_string())));
             }
-            return Ok(locatario)
+            return Ok((StatusCode::OK, Json(locatario)))
         },
         Err(e) => {
-            return Err(e.to_string());
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }
 }
@@ -223,24 +239,26 @@ pub async fn busca_locatario_nome(nomelocatario: String) -> Result<Vec<Locatario
 ///     return Ok(locatario);
 /// }
 /// ```
-#[tauri::command]
-pub async fn busca_locatario_cnpj(cnpj: String) -> Result<Vec<Locatario>, String>{
+//#[tauri::command]
+pub async fn busca_locatario_cnpj(input: Json<String>) 
+    -> Result<(StatusCode, Json<Vec<Locatario>>), (StatusCode, Json<String>)>{
+    let cnpj = input.0;
     if cnpj.trim().is_empty(){
-        return Err(MeuErro::CnpjVazio.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CnpjVazio.to_string())))
     }
     let cnpj = match formata_cnpj(&cnpj){
         Ok(cnpj) => {cnpj},
         Err(e) => {
-            return Err(e);
+            return Err((StatusCode::BAD_REQUEST, Json(e)));
         }
     };
     let resultado_busca = model::locatario::busca_locatario_cnpj(&cnpj).await;
     match resultado_busca {
         Ok(locatario) =>{
-            return Ok(locatario);
+            return Ok((StatusCode::OK, Json(locatario)));
         },
         Err(e) => {
-            return Err(e.to_string());
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }
 }
