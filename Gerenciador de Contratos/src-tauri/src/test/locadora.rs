@@ -21,12 +21,12 @@ pub async fn cria_locadora_teste(cnpj: &str, idendereco: &str, numerocontabanco:
 
     let locadora = estrutura_locadora(Json(locadora)).unwrap();
     let locadora_retorno = locadora.clone();
-    match cadastra_locadora(locadora).await{
+    match cadastra_locadora(locadora.1).await{
         Ok(_) => {
-            return Ok(locadora_retorno)
+            return Ok(locadora_retorno.1)
         },
         Err(e) => {
-            return Err(e)
+            return Err(e.1.to_string())
         }
     }
 }
