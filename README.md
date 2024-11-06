@@ -1,11 +1,11 @@
 # Gerenciador de Contratos
 ## Materiais para a equipe
-Frontend:
+#### Frontend:
  - JavaScript
  - TypeScript
  - React
  - Shadcn/ui
-Backend:
+#### Backend:
  - Rust
 Banco de dados:
  - MySQL
