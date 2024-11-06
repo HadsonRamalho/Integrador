@@ -1,5 +1,7 @@
 use axum::http::StatusCode;
 use axum::Json;
+use serde::Deserialize;
+use serde::Serialize;
 
 use crate::model::erro::MeuErro;
 use crate::model::locadora::Locadora;
@@ -31,6 +33,7 @@ use crate::controller;
 /// });
 /// ```
 
+#[derive(Serialize, Deserialize)]
 pub struct LocadoraInput{
     pub idendereco: String,
     pub cnpj: String,
@@ -42,7 +45,7 @@ pub struct LocadoraInput{
 }
 
 //#[tauri::command]
-pub fn estrutura_locadora(input: Json<LocadoraInput>) -> Result<(StatusCode, Json<Locadora>), (StatusCode, Json<String>)>{
+pub async fn estrutura_locadora(input: Json<LocadoraInput>) -> Result<(StatusCode, Json<Locadora>), (StatusCode, Json<String>)>{
     let idendereco = input.idendereco.to_string();
     let cnpj = input.cnpj.to_string();
     let numerocontabanco = input.numerocontabanco.to_string();
@@ -146,7 +149,7 @@ pub async fn cadastra_locadora(input: Json<Locadora>) -> Result<(StatusCode, Jso
 ///     return Ok(id);
 /// }
 /// ```
-#[tauri::command]
+//#[tauri::command]
 pub async fn busca_id_locadora(input: Json<String>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     let cnpj = input.0.to_string();
     if cnpj.trim().is_empty(){
@@ -331,6 +334,12 @@ pub fn formata_cnpj(cnpj: &str) -> Result<String, String>{
     return Ok(cnpjfinal);
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct UsuarioSocioLocadoraInput{
+    pub idusuario: String,
+    pub cnpj: String
+}
+
 /// ## Recebe um idusuario e um CNPJ, que são usados para verificar no banco se o Usuário é o sócio atual de uma Locadora
 /// Verifica se os campos idusuario ou CNPJ estão vazios, e retorna erro caso estejam.
 /// Caso a verificação não faça a função retornar um erro, formata o CNPJ recebido e usa ele e o idusuario para verificar no banco se o usuário é o sócio atual da Locadora. Note que a função não retorna nada após essa verificação:
@@ -338,16 +347,23 @@ pub fn formata_cnpj(cnpj: &str) -> Result<String, String>{
 /// let cnpj = formata_cnpj(&cnpj)?;
 /// let resultado_verificacao = model::locadora::verifica_usuario_socio_locadora(idusuario, cnpj).await;
 /// ```
-#[tauri::command]
-pub async fn verifica_usuario_socio_locadora(idusuario: String, cnpj: String) -> Result<(), String>{
+//#[tauri::command]
+pub async fn verifica_usuario_socio_locadora(input: Json<UsuarioSocioLocadoraInput>) -> Result<StatusCode, (StatusCode, Json<String>)>{
+    let idusuario = input.idusuario.to_string();
+    let cnpj = input.cnpj.to_string();
     if idusuario.trim().is_empty() || cnpj.trim().is_empty(){
-       return Err(MeuErro::CamposVazios.to_string())
+       return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
-    let cnpj = formata_cnpj(&cnpj)?;
+    let cnpj = match formata_cnpj(&cnpj){
+        Ok(cnpj) => {cnpj},
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
     let resultado_verificacao = model::locadora::verifica_usuario_socio_locadora(idusuario, cnpj).await;
     match resultado_verificacao{
-        Ok(_) => {return Ok(())},
-        Err(e) => {return Err(e.to_string())}
+        Ok(_) => {return Ok(StatusCode::OK)},
+        Err(e) => {return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))}
     }
 }
 
