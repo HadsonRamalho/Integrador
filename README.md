@@ -6,7 +6,8 @@
  - React
  - Shadcn/ui
 #### Backend:
- - Rust
+ #### - Rust
+https://rust-br.github.io/rust-book-pt-br/
 #### Banco de dados:
  - MySQL
  - HeidiSQL
