@@ -7,7 +7,7 @@
  - Shadcn/ui
 #### Backend:
  - Rust
-Banco de dados:
+#### Banco de dados:
  - MySQL
  - HeidiSQL
  - AWS
