@@ -7,7 +7,7 @@
  - Shadcn/ui
 #### Backend:
  #### - Rust
-https://rust-br.github.io/rust-book-pt-br/
+  -https://rust-br.github.io/rust-book-pt-br/
 #### Banco de dados:
  - MySQL
  - HeidiSQL
