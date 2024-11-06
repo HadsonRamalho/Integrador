@@ -1,4 +1,5 @@
-# Práticas Profissionais Integradoras I
-## Commits iniciais
-### Configurando o repositório
-### Testando nova branch
+# Gerenciador de Contratos
+## Funcionalidades
+## Guia de uso
+## Requisitos
+## Stack
