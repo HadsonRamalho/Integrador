@@ -20,8 +20,6 @@ pub enum MeuErro{
     CamposVazios,
     #[error("O CPF está vazio.")]
     CpfVazio,
-    #[error("E-mail inválido.")]
-    EmailInvalido,
     #[error("As senhas são diferentes.")]
     SenhasDiferentes,
     #[error("ID não encontrado.")]
@@ -74,8 +72,6 @@ pub enum MeuErro{
     SalvarLocadora,
     #[error("Não foi encontrado um sócio cadastrado com esses dados.")]
     SocioNaoEncontrado,
-    #[error("O formato do CEP é inválido.")]
-    FormatoCepInvalido,
     #[error("O nome da máquina está vazio.")]
     NomeMaquinaVazio,
     #[error("O nome do locatário está vazio.")]

@@ -7,7 +7,7 @@ use tower_http::cors::{Any, CorsLayer};
 
 
 use crate::controller::{
-    checa_email, compara_novas_senhas, encontra_email_smtp, endereco::{
+    checa_email, compara_novas_senhas, contrato::{busca_contrato_cnpj_locatario, busca_contrato_nome_locatario, busca_contrato_nome_maquina, busca_contrato_numserie_maquina, busca_contratos_a_vencer, cadastra_contrato, estrutura_contrato}, encontra_email_smtp, endereco::{
         _salva_endereco, busca_endereco_id
     }, gera_token, locadora::{busca_id_locadora, cadastra_locadora, estrutura_locadora, locadora_existente, verifica_usuario_socio_locadora}, locatario::{busca_id_locatario, busca_locatario_cnpj, busca_locatario_nome, cadastra_locatario, estrutura_locatario}, maquina::{busca_maquina_nome, busca_maquina_numserie, cadastra_maquina, estrutura_maquina, gera_estoque_por_nome, gera_estoque_total, gera_estoque_total_alugadas}, socioadm::{busca_socio_adm_cpf, busca_socio_adm_id, cadastra_socio_adm, estrutura_socio_adm}, usuario::{
         atualiza_email, atualiza_nome, atualiza_senha, busca_cnpj_usuario, busca_email_usuario, busca_id, busca_nome_usuario, cria_conta, deleta_conta, verifica_senha, verifica_token
@@ -61,6 +61,14 @@ pub fn cria_rotas() -> Router<>{
         .route("/busca_id_locadora", post(busca_id_locadora))
         .route("/locadora_existente", post(locadora_existente))
         .route("/verifica_usuario_socio_locadora", post(verifica_usuario_socio_locadora))
+
+        .route("/busca_contrato_nome_maquina", post(busca_contrato_nome_maquina))
+        .route("/estrutura_contrato", post(estrutura_contrato))
+        .route("/cadastra_contrato", post(cadastra_contrato))
+        .route("/busca_contratos_a_vencer", post(busca_contratos_a_vencer))
+        .route("/busca_contrato_numserie_maquina", post(busca_contrato_numserie_maquina))
+        .route("/busca_contrato_nome_locatario", post(busca_contrato_nome_locatario))
+        .route("/busca_contrato_cnpj_locatario", post(busca_contrato_cnpj_locatario))
 
         .layer(
             CorsLayer::new()

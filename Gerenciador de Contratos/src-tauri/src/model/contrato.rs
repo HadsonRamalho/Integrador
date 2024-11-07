@@ -1,12 +1,12 @@
 use mysql_async::prelude::{FromRow, Queryable};
 use mysql_async::Row;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use crate::controller::contrato::cria_vetor_contratos;
 use crate::model::erro::MeuErro;
 use crate::model::params;
 use crate::controller::{self, cria_pool};
 
-#[derive(Serialize, Debug, FromRow)]
+#[derive(Deserialize, Serialize, Debug, FromRow)]
 pub struct Contrato{
     pub idcontrato: String,
     pub prazolocacao: f32,
