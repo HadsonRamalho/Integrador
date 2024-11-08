@@ -4,6 +4,12 @@ use crate::controller::cria_pool;
 use crate::controller::{formata_cpf, locadora::formata_cnpj};
 
 mod usuario;
+mod e2e;
+mod endereco;
+mod maquina;
+mod locatario;
+mod socioadm;
+mod locadora;
 
 #[tokio::test]
 async fn test_criacao_pool_ok(){

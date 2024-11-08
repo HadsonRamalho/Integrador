@@ -1,9 +1,10 @@
 use mysql_async::prelude::{FromRow, Queryable};
+use serde::{Deserialize, Serialize};
 use crate::model::erro::MeuErro;
 use crate::model::params;
 use crate::controller::{self, cria_pool};
 
-#[derive(FromRow)]
+#[derive(FromRow, Serialize, Deserialize, Clone)]
 pub struct Locadora{
     pub idlocadora: String,
     pub idendereco: String,

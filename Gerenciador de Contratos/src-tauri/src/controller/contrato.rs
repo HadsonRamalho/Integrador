@@ -1,17 +1,29 @@
+use axum::http::StatusCode;
+use axum::Json;
 use chrono::NaiveDate;
 use chrono::NaiveDateTime;
 use chrono::NaiveTime;
+use mysql_async::params;
+use mysql_async::prelude::Queryable;
 use mysql_async::Row;
 use mysql_async::Value;
+use serde::Deserialize;
+use serde::Serialize;
 
 use crate::model::erro::MeuErro;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
+use super::cria_pool;
 use super::gera_hash;
 use super::locadora::formata_cnpj;
-use super::maquina::formata_valor_f32;
 use super::usuario::busca_cnpj_usuario;
+
+#[derive(Serialize, Deserialize)]
+pub struct BuscaContratoNomeMaquinaInput{
+    pub nomemaquina: String,
+    pub idusuario: String
+}
 
 /// ## Busca um contrato pelo nome da máquina, selecionando apenas os que pertencerem à empresa do usuário.
 /// 
@@ -43,18 +55,21 @@ use super::usuario::busca_cnpj_usuario;
     /// }
     /// ```
     /// Se essa última verificação não retornar um erro, o vetor de Contrato é retornado para o front.
-#[tauri::command]
-pub async fn busca_contrato_nome_maquina(nome_maquina: String, idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
+//#[tauri::command]
+pub async fn busca_contrato_nome_maquina(input: Json<BuscaContratoNomeMaquinaInput>) 
+    -> Result<(StatusCode, Json<Vec<model::contrato::Contrato>>), (StatusCode, Json<String>)>{
+    let idusuario = input.idusuario.to_string();
+    let nomemaquina = input.nomemaquina.to_string();
     let idusuario = idusuario.trim();
-    if nome_maquina.trim().is_empty() || idusuario.is_empty(){
-        return Err("Erro: Um ou mais campos estão vazios".to_string())
+    if nomemaquina.trim().is_empty() || idusuario.is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
         }, 
         Err(e) =>{
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     };
     let cnpj = model::usuario::busca_cnpj_usuario(&pool, &idusuario).await;
@@ -62,21 +77,21 @@ pub async fn busca_contrato_nome_maquina(nome_maquina: String, idusuario: String
         Ok(cnpj) => {
             cnpj
         }, Err(_) => {
-            return Err("Erro: O usuário não tem um CNPJ cadastrado.".to_string())
+            return Err((StatusCode::BAD_REQUEST, Json("O usuário não tem um CNPJ cadastrado.".to_string())))
         }
     };
 
-    let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = model::contrato::busca_contrato_nome_maquina(nome_maquina, cnpj).await;
+    let resultado_busca = model::contrato::busca_contrato_nome_maquina(nomemaquina, cnpj).await;
 
     match resultado_busca{
         Ok(resultado) => {
             if !resultado.is_empty(){
-                return Ok(resultado);
+                return Ok((StatusCode::OK, Json(resultado)));
             }
-            return Err("Erro: Máquina não encontrada".to_string());
+            return Err((StatusCode::BAD_REQUEST, Json(MeuErro::MaquinaNaoEncontrada.to_string())));
         },
-        Err(erro) => {
-            return Err(erro.to_string());
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }
 }
@@ -130,6 +145,25 @@ fn formata_data(value: Value) -> String {
         _ => "Erro: Formato de data inválido".to_string(),
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct EstruturaContratoInput{
+    pub idlocatario: String, 
+    pub idlocador: String, 
+    pub idmaquina: String, 
+    pub enderecoretirada: String,
+    pub prazolocacao: String,
+    pub avisotransferencia: String,
+    pub cidadeforo: String,
+    pub datacontrato: String,
+    pub dataretirada: String,
+    pub valormensal: String,
+    pub vencimento: String,
+    pub multaatraso: String,
+    pub jurosatraso: String,
+    pub prazodevolucao: String
+}
+
 /// ## Estrutura um contrato, transformando campos separados em um valor do tipo serde_json::Value
 /// Primeiro, verifica se algum dos campos necessários está vazio, retornando um erro caso a verificação detecte campos inválidos.
 /// Em seguida, remove espaços de campos.
@@ -147,30 +181,32 @@ fn formata_data(value: Value) -> String {
 /// ```
 /// 
 /// #### Após tratar os campos, cria um novo objeto do tipo `serde_json::Value`, atribuindo os valores dos campos às chaves adequadas
-#[tauri::command]
-pub async fn estrutura_contrato(
-        idlocatario: String, 
-        idlocador: String, 
-        idmaquina: String, 
-        enderecoretirada: String,
-        prazolocacao: String,
-        avisotransferencia: String,
-        cidadeforo: String,
-        datacontrato: String,
-        dataretirada: String,
-        valormensal: String,
-        vencimento: String,
-        multaatraso: String,
-        jurosatraso: String,
-        prazodevolucao: String) -> Result<serde_json::Value, String>{
+//#[tauri::command]
+pub async fn estrutura_contrato(input: Json<EstruturaContratoInput>
+        ) -> Result<(StatusCode, Json<Contrato>), (StatusCode, Json<String>)>{
+    
+    let idlocatario = input.idlocatario.to_string();
+    let idlocador = input.idlocador.to_string();
+    let idmaquina = input.idmaquina.to_string();
+    let enderecoretirada = input.enderecoretirada.to_string();
+    let prazodevolucao = input.prazodevolucao.to_string();
+    let avisotransferencia = input.avisotransferencia.to_string();
+    let datacontrato = input.datacontrato.to_string();
+    let dataretirada = input.dataretirada.to_string();
+    let valormensal = input.valormensal.to_string();
+    let vencimento = input.vencimento.to_string();
+    let cidadeforo = input.cidadeforo.to_string();
+    let jurosatraso = input.jurosatraso.to_string();
+    let multaatraso = input.multaatraso.to_string();
+    let prazolocacao = input.prazolocacao.to_string();
 
     if idlocatario.trim().is_empty() || idlocador.trim().is_empty()
-     || idlocatario.trim().is_empty() || idmaquina.trim().is_empty() || enderecoretirada.trim().is_empty() ||
+     || idmaquina.trim().is_empty() || enderecoretirada.trim().is_empty() ||
     prazolocacao.trim().is_empty() || avisotransferencia.trim().is_empty() || cidadeforo.trim().is_empty() || 
     datacontrato.trim().is_empty() || dataretirada.trim().is_empty() ||
     valormensal.trim().is_empty() || vencimento.trim().is_empty() || multaatraso.trim().is_empty()
      || jurosatraso.trim().is_empty() || prazodevolucao.trim().is_empty(){
-        return Err("Erro: Um ou mais campos estão vazios.".to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
 
     let idlocatario = idlocatario.trim().to_string();
@@ -178,27 +214,55 @@ pub async fn estrutura_contrato(
     let idmaquina = idmaquina.trim().to_string();
     let enderecoretirada = enderecoretirada.trim().to_string();
 
+    let prazolocacao = match prazolocacao.trim().parse(){
+        Ok(prazolocacao) => {prazolocacao},
+        Err(_e) => {
+            return Err((StatusCode::BAD_REQUEST, Json("Falha ao converter o prazo de locação para float.".to_string())))
+        }
+    };
+
+    let valormensal = match valormensal.trim().parse(){
+        Ok(valormensal) => {valormensal},
+        Err(_e) => {
+            return Err((StatusCode::BAD_REQUEST, Json("Falha ao converter o valor mensal para float.".to_string())))
+        }
+    };
+    
+    let multaatraso = match multaatraso.trim().parse(){
+        Ok(multaatraso) => {multaatraso},
+        Err(_e) => {
+            return Err((StatusCode::BAD_REQUEST, Json("Falha ao converter a multa de atraso para float.".to_string())))
+        }
+    };
+
+    let jurosatraso = match jurosatraso.trim().parse(){
+        Ok(jurosatraso) => {jurosatraso},
+        Err(_e) => {
+            return Err((StatusCode::BAD_REQUEST, Json("Falha ao converter o juros de atraso para float.".to_string())))
+        }
+    };
+
     let idcontrato = gera_hash(&enderecoretirada);
 
-    let contrato =  serde_json::json!({
-        "idcontrato": idcontrato,
-        "idlocador": idlocador, 
-        "idlocatario": idlocatario,
-        "idmaquina": idmaquina,
-        "enderecoretirada": enderecoretirada,
-        "prazolocacao": prazolocacao,
-        "avisotransferencia": avisotransferencia, 
-        "cidadeforo": cidadeforo, 
-        "datacontrato": datacontrato, 
-        "dataretirada": dataretirada,
-        "valormensal": valormensal, 
-        "vencimento": vencimento, 
-        "multaatraso": multaatraso, 
-        "jurosatraso": jurosatraso, 
-        "prazodevolucao": prazodevolucao
-    });
+    let contrato =  model::contrato::Contrato{
+        idcontrato,
+        idlocador, 
+        idlocatario,
+        idmaquina,
+        enderecoretirada,
+        prazolocacao,
+        avisotransferencia, 
+        cidadeforo, 
+        datacontrato, 
+        dataretirada,
+        valormensal, 
+        vencimento, 
+        multaatraso, 
+        jurosatraso, 
+        prazodevolucao
+    };
 
-    return Ok(contrato)
+    return Ok((StatusCode::OK, Json(contrato)))
 }
 
 /// ## Recebe um contrato no formato serde_json::Value e cadastra os dados no banco de dados
@@ -248,91 +312,36 @@ pub async fn estrutura_contrato(
 /// ```
 /// let resultado_cadastro = model::contrato::registra_contrato(contrato).await;
 /// ```
-#[tauri::command]
-pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String>{
-    let idlocatario: String = contrato["idlocatario"].as_str().unwrap_or("").to_string();
-    let idlocatario: (&str, &str) = idlocatario.split_at(45 as usize);
-    let idlocatario: String = idlocatario.0.to_string();
+//#[tauri::command]
+pub async fn cadastra_contrato(input: Json<Contrato>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
 
-    let idlocador: String = contrato["idlocador"].as_str().unwrap_or("").to_string();
-    let idlocador: (&str, &str) = idlocador.split_at(45 as usize);
-    let idlocador: String = idlocador.0.to_string();
-
-    let idmaquina: String = contrato["idmaquina"].as_str().unwrap_or("").to_string();
-    let idmaquina: (&str, &str) = idmaquina.split_at(45 as usize);
-    let idmaquina: String = idmaquina.0.to_string();
-
-    let enderecoretirada: String = contrato["enderecoretirada"].as_str().unwrap_or("").to_string();
-    let enderecoretirada: (&str, &str) = enderecoretirada.split_at(45 as usize);
-    let enderecoretirada: String = enderecoretirada.0.to_string();
-
-    let prazolocacao:f32 = match contrato["prazolocacao"].as_str().unwrap_or("").to_string().trim().parse(){
-        Ok(prazolocacao) => {prazolocacao},
-        Err(e) => {return Err(format!("Erro ao converter prazo de locação: {}", e))}
-    };
-
-    let valormensal= contrato["valormensal"].as_str().unwrap_or("").to_string();
-    let valormensal = formata_valor_f32(&valormensal)?;
-    let multaatraso:f32 = match contrato["multaatraso"].as_str().unwrap_or("").to_string().trim().parse(){
-        Ok(multaatraso) => {multaatraso},
-        Err(e) => {return Err(format!("Erro ao converter multa de atraso: {}", e))}
-    };
-
-    let jurosatraso:f32 = match contrato["jurosatraso"].as_str().unwrap_or("").to_string().trim().parse(){
-        Ok(jurosatraso) => {jurosatraso},
-        Err(e) => {return Err(format!("Erro ao converter juros de atraso: {}", e))}
-    };
-
-    let dataretirada = contrato["dataretirada"].as_str().unwrap_or("").to_string();
-    let vencimento = contrato["vencimento"].as_str().unwrap_or("").to_string();
-    let avisotransferencia = contrato["avisotransferencia"].as_str().unwrap_or("").to_string();
-    let prazodevolucao = contrato["prazodevolucao"].as_str().unwrap_or("").to_string();
-    let cidadeforo = contrato["cidadeforo"].as_str().unwrap_or("").to_string();
-    let datacontrato = contrato["datacontrato"].as_str().unwrap_or("").to_string();
-
-    if idlocatario.is_empty() || idlocador.is_empty() || idmaquina.is_empty() || enderecoretirada.is_empty() ||
-    dataretirada.is_empty() || vencimento.is_empty() || avisotransferencia.is_empty() || 
-    prazodevolucao.is_empty() || cidadeforo.is_empty() || datacontrato.is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+    if input.idlocatario.trim().is_empty() || input.idlocador.trim().is_empty() 
+    || input.idmaquina.trim().is_empty() 
+    || input.enderecoretirada.trim().is_empty() || input.dataretirada.trim().is_empty() 
+    || input.vencimento.trim().is_empty() || input.avisotransferencia.trim().is_empty() 
+    || input.prazodevolucao.trim().is_empty() || input.cidadeforo.trim().is_empty() 
+    || input.datacontrato.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
 
-    let idmaquina_cpy = idmaquina.clone();
+    let idmaquina_cpy = input.idmaquina.clone();
+    let idcontrato = input.idcontrato.clone();
 
-    let idcontrato = gera_hash(&idlocatario);
-    let idcontrato: (&str, &str) = idcontrato.split_at(45 as usize);
-    let idcontrato: String = idcontrato.0.to_string();
-
-    let contrato: Contrato = Contrato {idcontrato,
-        prazolocacao, 
-        dataretirada, 
-        valormensal, 
-        vencimento, 
-        multaatraso, 
-        jurosatraso, 
-        avisotransferencia, 
-        prazodevolucao, 
-        cidadeforo, 
-        datacontrato, 
-        idlocatario, 
-        idlocador, 
-        idmaquina, 
-        enderecoretirada        
-    };
     let resultado_aluguel = model::maquina::aluga_maquina(&idmaquina_cpy).await;
     match resultado_aluguel{
         Ok(_) => {},
         Err(e) => {
             println!("{:?}", e);
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
-    let resultado_cadastro = model::contrato::registra_contrato(contrato).await;
+    let resultado_cadastro = model::contrato::registra_contrato(input.0).await;
     match resultado_cadastro{
         Ok(_) => {
-            return Ok(());
+            return Ok((StatusCode::OK, Json(idcontrato)));
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 }
@@ -356,18 +365,20 @@ pub async fn cadastra_contrato(contrato: serde_json::Value) -> Result<(), String
 /// let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = model::contrato::busca_contratos_a_vencer(cnpj).await;
 /// ```
 /// #### Enfim, a função verifica se o vetor de Contrato está vazio, e retorna um erro caso esteja. Se o vetor possuir ao menos um registro, retorna esse registro dentro do vetor.
-#[tauri::command]
-pub async fn busca_contratos_a_vencer(idusuario: String) -> Result<Vec<model::contrato::Contrato>, String>{
+//#[tauri::command]
+pub async fn busca_contratos_a_vencer(input: Json<String>) 
+    -> Result<(StatusCode, Json<Vec<model::contrato::Contrato>>), (StatusCode, Json<String>)>{
+    let idusuario = input.0.to_string();
     let idusuario = idusuario.trim();
     if idusuario.is_empty(){
-        return Err("Erro: Um ou mais campos estão vazios".to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     let pool = match controller::cria_pool().await {
         Ok(pool) => {
             pool
         }, 
         Err(e) =>{
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     };
     let cnpj = model::usuario::busca_cnpj_usuario(&pool, &idusuario).await;
@@ -375,7 +386,7 @@ pub async fn busca_contratos_a_vencer(idusuario: String) -> Result<Vec<model::co
         Ok(cnpj) => {
             cnpj
         }, Err(_) => {
-            return Err("Erro: O usuário não tem um CNPJ cadastrado.".to_string())
+            return Err((StatusCode::BAD_REQUEST, Json("O usuário não tem um CNPJ cadastrado.".to_string())))
         }
     };
     let resultado_busca: Result<Vec<model::contrato::Contrato>, mysql_async::Error> = model::contrato::busca_contratos_a_vencer(cnpj).await;
@@ -383,12 +394,12 @@ pub async fn busca_contratos_a_vencer(idusuario: String) -> Result<Vec<model::co
     match resultado_busca{
         Ok(resultado) => {
             if !resultado.is_empty(){
-                return Ok(resultado);
+                return Ok((StatusCode::OK, Json(resultado)));
             }
-            return Err("Erro: Não existem contratos a vencer OU não há um contrato cadastrado".to_string());
+            return Err((StatusCode::BAD_REQUEST, Json("Não existem contratos a vencer OU não há um contrato cadastrado".to_string())));
         },
-        Err(erro) => {
-            return Err(erro.to_string());
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }
 }
@@ -439,6 +450,11 @@ pub fn cria_vetor_contratos(row: Vec<Row>) -> Vec<Contrato>{
     return contratos
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct BuscaContratoNumSerieInput{
+    numserie: String,
+    idusuario: String
+}
 
 /// ## Busca contratos pelo número de série da máquina e pelo CNPJ da empresa do usuário.
 /// Verifica se os parâmetros estão vazios e retorna um erro caso estejam.
@@ -460,19 +476,44 @@ pub fn cria_vetor_contratos(row: Vec<Row>) -> Vec<Contrato>{
 ///    Err(e) => return Err(e.to_string())
 /// }
 /// ```
-#[tauri::command]
-pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String) -> Result<Vec<Contrato>, String>{
+//#[tauri::command]
+pub async fn busca_contrato_numserie_maquina(input: Json<BuscaContratoNumSerieInput>) 
+    -> Result<(StatusCode, Json<Vec<Contrato>>), (StatusCode, Json<String>)>{
+    let numserie = input.numserie.to_string();
+    let idusuario = input.idusuario.to_string();
     if numserie.trim().is_empty() || idusuario.trim().is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     let numserie = numserie.trim().to_string();
-    let cnpj = busca_cnpj_usuario(idusuario).await?;
-    let cnpj = formata_cnpj(&cnpj)?;
+    let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
+        Ok(cnpj) => {cnpj.1},
+        Err(e) => {
+            return Err(e);
+        }
+    };
+    let cnpj = match formata_cnpj(&cnpj){
+        Ok(cnpj ) => {
+            cnpj
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
     let resultado_busca = model::contrato::busca_contrato_numserie_maquina(numserie, cnpj).await;
     match resultado_busca{
-        Ok(contratos) => {return Ok(contratos)},
-        Err(e) => return Err(e.to_string())
+        Ok(contratos) => {
+            return Ok((StatusCode::OK, Json(contratos)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
+        }
     }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct BuscaContratoNomeLocatarioInput{
+    nomelocatario: String,
+    idusuario: String
 }
 
 /// ## Busca contratos pelo nome do locatário/empresa cliente.
@@ -502,25 +543,46 @@ pub async fn busca_contrato_numserie_maquina(numserie: String, idusuario: String
 ///    }
 /// }
 /// ```
-#[tauri::command]
-pub async fn busca_contrato_nome_locatario(nomelocatario: String, idusuario: String) -> Result<Vec<Contrato>, String>{
+//#[tauri::command]
+pub async fn busca_contrato_nome_locatario(input: Json<BuscaContratoNomeLocatarioInput>) 
+    -> Result<(StatusCode, Json<Vec<Contrato>>), (StatusCode, Json<String>)>{
+    let nomelocatario = input.nomelocatario.to_string();
+    let idusuario = input.idusuario.to_string();
     if nomelocatario.trim().is_empty() || idusuario.trim().is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
-    let cnpj = busca_cnpj_usuario(idusuario).await?;
-    let cnpj = formata_cnpj(&cnpj)?;
+    let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
+        Ok(cnpj) => {cnpj.1},
+        Err(e) => {
+            return Err(e);
+        }
+    };
+    let cnpj = match formata_cnpj(&cnpj){
+        Ok(cnpj) => {
+            cnpj
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
     let resultado_busca = model::contrato::busca_contrato_nome_locatario(nomelocatario, cnpj).await;
     match resultado_busca{
         Ok(contratos) => {
             if contratos.is_empty(){
-                return Err(MeuErro::ContratoNaoEncontrado.to_string())
+                return Err((StatusCode::BAD_REQUEST, Json(MeuErro::ContratoNaoEncontrado.to_string())))
             }
-            return Ok(contratos)
+            return Ok((StatusCode::OK, Json(contratos)))
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct BuscaContratoCnpjLocatarioInput{
+    cnpjlocatario: String,
+    idusuario: String
 }
 
 /// ## Busca contratos pelo CNPJ do locatário/empresa cliente
@@ -543,22 +605,65 @@ pub async fn busca_contrato_nome_locatario(nomelocatario: String, idusuario: Str
 ///    },
 ///    Err(e) => { return Err(e.to_string()) }
 /// ```
-#[tauri::command]
-pub async fn busca_contrato_cnpj_locatario(cnpjlocatario: String, idusuario: String) -> Result<Vec<Contrato>, String>{
+//#[tauri::command]
+pub async fn busca_contrato_cnpj_locatario(input: Json<BuscaContratoCnpjLocatarioInput>) 
+    -> Result<(StatusCode, Json<Vec<Contrato>>), (StatusCode, Json<String>)>{
+    let cnpjlocatario = input.cnpjlocatario.to_string();
+    let idusuario = input.idusuario.to_string();
     if cnpjlocatario.trim().is_empty() || idusuario.trim().is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
-    let cnpj = busca_cnpj_usuario(idusuario).await?;
-    let cnpj = formata_cnpj(&cnpj)?;
-    let cnpjlocatario = formata_cnpj(&cnpjlocatario)?;
+    let cnpj = match busca_cnpj_usuario(Json(idusuario)).await{
+        Ok(cnpj) => {cnpj},
+        Err(e) => {
+            return Err(e);
+        }
+    };
+
+    let cnpj = match formata_cnpj(&cnpj.1){
+        Ok(cnpj ) => {
+            cnpj
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
+    let cnpjlocatario = match formata_cnpj(&cnpjlocatario){
+        Ok(cnpj ) => {
+            cnpj
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
+
     let resultado_busca = model::contrato::busca_contrato_cnpj_locatario(cnpjlocatario, cnpj).await;
     match resultado_busca{
         Ok(contratos) => {
             if contratos.is_empty(){
-                return Err(MeuErro::ContratoNaoEncontrado.to_string())
+                return Err((StatusCode::BAD_REQUEST, Json(MeuErro::ContratoNaoEncontrado.to_string())))
             }
-            return Ok(contratos)
+            return Ok((StatusCode::OK, Json(contratos)))
         },
-        Err(e) => { return Err(e.to_string()) }
+        Err(e) => { 
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string()))) 
+        }
+    }
+}
+
+pub async fn deleta_contrato(input: Json<String>) -> Result<(), mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let idcontrato = input.0.to_string();
+    let res = 
+        conn.exec_drop("DELETE FROM contrato_aluguel WHERE idcontrato = :idcontrato;", 
+        params! {"idcontrato" => idcontrato}).await;
+    match res{
+        Ok(()) => {
+            return Ok(())
+        },
+        Err(e) => {
+            return Err(e)
+        }
     }
 }

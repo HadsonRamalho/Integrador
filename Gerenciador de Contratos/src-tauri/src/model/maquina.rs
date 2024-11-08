@@ -2,7 +2,7 @@ use std::vec;
 
 use mysql_async::{params, prelude::Queryable};
 use mysql_async::prelude::FromRow;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::controller;
 
@@ -14,7 +14,7 @@ pub struct EstoqueMaquina{
     pub nomemaquina: Option<String>
 }
 
-#[derive(Serialize, FromRow)]
+#[derive(Serialize, FromRow, Deserialize)]
 pub struct Maquina {
     pub idmaquina: String,
     pub nomemaquina: String,
@@ -130,6 +130,18 @@ pub async fn aluga_maquina(idmaquina: &str) -> Result<(), mysql_async::Error>{
     let mut conn = pool.get_conn().await?;
     let resultado_atualizacao = 
         conn.exec_drop("UPDATE maquina SET disponibilidade = 0 WHERE idmaquina = :idmaquina", 
+        params! {"idmaquina" => idmaquina}).await;
+    match resultado_atualizacao{
+        Ok(_) => {return Ok(())},
+        Err(e) => {return Err(e)}
+    }
+}
+
+pub async fn desaluga_maquina(idmaquina: &str) -> Result<(), mysql_async::Error>{
+    let pool = controller::cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_atualizacao = 
+        conn.exec_drop("UPDATE maquina SET disponibilidade = 1 WHERE idmaquina = :idmaquina", 
         params! {"idmaquina" => idmaquina}).await;
     match resultado_atualizacao{
         Ok(_) => {return Ok(())},

@@ -1,6 +1,20 @@
-use crate::{controller, model::{self, erro::MeuErro, socioadm::{SocioADM, _cadastra_socio_adm}}};
+use axum::{http::StatusCode, Json};
+use serde::{Deserialize, Serialize};
 
-use super::formata_cpf;
+use crate::model::{self, erro::MeuErro, socioadm::{SocioADM, _cadastra_socio_adm}};
+
+use super::{formata_cpf, gera_hash};
+
+#[derive(Deserialize, Serialize)]
+pub struct SocioAdmInput{
+    pub idendereco: String,
+    pub nome: String,
+    pub cpf: String,
+    pub orgaoemissor: String,
+    pub estadocivil: String,
+    pub nacionalidade: String,
+    pub cnpj: String
+}
 
 /// ## Recebe os campos necessários para criar um objeto do tipo `serde_json::Value` que seja equivalente ao tipo `SocioADM`, retornando o objeto resultante
 /// Primeiro, verifica se algum dos campos está vazio, retornando erro caso ao menos um deles esteja:
@@ -20,28 +34,42 @@ use super::formata_cpf;
 ///    "idendereco": idendereco,
 ///     [...]
 /// ```
-#[tauri::command]
-pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, cnpj: String) -> Result<serde_json::Value, String>{
-    
+//#[tauri::command]
+pub async fn estrutura_socio_adm(input: Json<SocioAdmInput>) -> Result<(StatusCode, Json<SocioADM>), (StatusCode, Json<String>)>{
+    let idendereco = input.idendereco.to_string();
+    let nome = input.nome.to_string();
+    let cpf = input.cpf.to_string();
+    let orgaoemissor = input.orgaoemissor.to_string();
+    let estadocivil = input.estadocivil.to_string();
+    let nacionalidade = input.nacionalidade.to_string();
+    let cnpj = input.cnpj.to_string();
     if idendereco.trim().is_empty() || nome.trim().is_empty() || cpf.trim().is_empty()
         || orgaoemissor.trim().is_empty() || estadocivil.trim().is_empty() 
         || nacionalidade.trim().is_empty() || cnpj.trim().is_empty(){
-            return Err(MeuErro::CamposVazios.to_string());
+            return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())));
     }
-    
-    let id: String = controller::gera_hash(&cpf);
-    let cpf = formata_cpf(&cpf)?;
-    let socioadm: serde_json::Value = serde_json::json!({
-        "idsocio": id,
-        "idendereco": idendereco,
-        "nome": nome,
-        "cpf": cpf,
-        "orgaoemissor": orgaoemissor,
-        "estadocivil": estadocivil,
-        "nacionalidade": nacionalidade,
-        "cnpj": cnpj
-    });
-    return Ok(socioadm);
+    let idsocio = gera_hash(&cpf);
+
+    let cpf = match formata_cpf(&cpf){
+        Ok(cpf) => {
+            cpf
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
+    let socioadm = SocioADM{
+        nome,
+        nacionalidade,
+        idendereco,
+        idsocio,
+        cpf,
+        cnpj,
+        orgaoemissor,
+        estadocivil,
+        sociostatus: 1
+    };
+    return Ok((StatusCode::OK, Json(socioadm)));
 }
 
 /// ## Recebe um `serde_json::Value` contendo campos equivalentes ao tipo `SocioADM`, 
@@ -77,29 +105,36 @@ pub fn estrutura_socio_adm(idendereco: String, nome: String, cpf: String, orgaoe
 ///     return Ok(idsocio_cpy);
 /// }
 /// ```
-#[tauri::command]
-pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, String> {
-    let idsocio: String = socioadm["idsocio"].as_str().unwrap_or("").to_string();
+//#[tauri::command]
+pub async fn cadastra_socio_adm(input: Json<SocioADM>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {
+    let idsocio: String = input.idsocio.to_string();
     //let idsocio: (&str, &str) = idsocio.split_at(45 as usize);
     //let idsocio: String = idsocio.0.to_string();
     let idsocio_cpy = idsocio.clone();
-    let cpf = formata_cpf(socioadm["cpf"].as_str().unwrap_or(""))?;
+    let cpf = match formata_cpf(&input.cpf){
+        Ok(cpf) => {
+            cpf
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    };
+    let idendereco = input.idendereco.to_string();
+    let nome = input.nome.to_string();
+    let orgaoemissor = input.orgaoemissor.to_string();
+    let estadocivil = input.estadocivil.to_string();
+    let nacionalidade = input.nacionalidade.to_string();
+    let cnpj = input.cnpj.to_string();
     let socioadm: model::socioadm::SocioADM = model::socioadm::SocioADM {
         idsocio,
-        idendereco: socioadm["idendereco"].as_str().unwrap_or("").to_string(),
-        nome: socioadm["nome"].as_str().unwrap_or("").to_string(),
+        idendereco,
+        nome,
         cpf: cpf,
-        orgaoemissor: socioadm["orgaoemissor"]
-            .as_str()
-            .unwrap_or("")
-            .to_string(),
-        estadocivil: socioadm["estadocivil"]
-            .as_str()
-            .unwrap_or("")
-            .to_string(),
-        nacionalidade: socioadm["nacionalidade"].as_str().unwrap_or("").to_string(),
+        orgaoemissor,
+        estadocivil,
+        nacionalidade,
         sociostatus: 1,
-        cnpj: socioadm["cnpj"].as_str().unwrap_or("").to_string()
+        cnpj
     };
 
     // buscar o CPF do socio para não permitir entrada duplicada
@@ -109,11 +144,11 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
         Ok(idsocio) => {
             println!("IDSOCIO: {}", idsocio);
             if idsocio != ""{
-                return Err("Sócio já está cadastrado".to_string())
+                return Err((StatusCode::BAD_REQUEST, Json("Este sócio já está cadastrado.".to_string())))
             }
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 
@@ -121,37 +156,13 @@ pub async fn cadastra_socio_adm(socioadm: serde_json::Value) -> Result<String, S
     match resultado_cadastro{
         Ok(_) =>{
             println!("Socio cadastrado");
-            return Ok(idsocio_cpy);
+            return Ok((StatusCode::CREATED, Json(idsocio_cpy)));
         }, 
         Err(e) => {
             println!("Erro ao cadastrar o socio adm: {:?}", e); 
-            Err(e.to_string())
+            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
-}
-
-/// ## Semelhante a `estrutura_socio_adm`, registra o primeiro sócio de uma empresa
-#[tauri::command]
-pub fn estrutura_primeiro_socio(idendereco: String, nome: String, cpf: String, orgaoemissor: String, estadocivil: String, nacionalidade: String, idsocio: String, cnpj: String) -> Result<serde_json::Value, String>{
-    
-    if idendereco.trim().is_empty() || nome.trim().is_empty() || cpf.trim().is_empty()
-        || orgaoemissor.trim().is_empty() || estadocivil.trim().is_empty() 
-        || nacionalidade.trim().is_empty() || cnpj.trim().is_empty(){
-            return Err(MeuErro::CamposVazios.to_string());
-    }
-    
-    let cpf = formata_cpf(&cpf)?;
-    let socioadm: serde_json::Value = serde_json::json!({
-        "idsocio": idsocio,
-        "idendereco": idendereco,
-        "nome": nome,
-        "cpf": cpf,
-        "orgaoemissor": orgaoemissor,
-        "estadocivil": estadocivil,
-        "nacionalidade": nacionalidade,
-        "cnpj": cnpj
-    });
-    return Ok(socioadm);
 }
 
 /// ## Recebe o ID de um Socio, busca pelo registro no banco de dados e retorna um vetor de `SocioADM` contendo um único valor
@@ -167,18 +178,19 @@ pub fn estrutura_primeiro_socio(idendereco: String, nome: String, cpf: String, o
 ///     return Ok(socioadm)
 /// }
 /// ```
-#[tauri::command]
-pub async fn busca_socio_adm_id(idsocio: String) -> Result<Vec<SocioADM>, String>{
+//#[tauri::command]
+pub async fn busca_socio_adm_id(input: Json<String>) -> Result<(StatusCode, Json<Vec<SocioADM>>), (StatusCode, Json<String>)>{
+    let idsocio = input.0;
     if idsocio.trim().is_empty(){
-        return Err("ID do sócio está vazio".to_string())
+        return Err((StatusCode::BAD_REQUEST, Json("ID do sócio está vazio".to_string())))
     }
     let resultado_busca: Result<Vec<SocioADM>, mysql_async::Error> = model::socioadm::busca_socio_adm_id(idsocio).await;
     match resultado_busca{
         Ok(socioadm) => {
-            return Ok(socioadm)
+            return Ok((StatusCode::OK, Json(socioadm)))
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 }
@@ -198,25 +210,26 @@ pub async fn busca_socio_adm_id(idsocio: String) -> Result<Vec<SocioADM>, String
 /// )};
 /// return Ok(socioadm)
 /// ```
-#[tauri::command]
-pub async fn socio_adm_existente(cpf: String) -> Result<serde_json::Value, String>{
-    println!("{}", cpf);
-    let cpf= formata_cpf(&cpf)?;
-    let resultado_busca = model::socioadm::socio_adm_existente(&cpf).await;
-    let socioadm = match resultado_busca{
-        Ok(socioadm) => {socioadm},
-        Err(e) => return Err(e.to_string())
+//#[tauri::command]
+pub async fn busca_socio_adm_cpf(input: Json<String>) -> Result<(StatusCode, Json<SocioADM>), (StatusCode, Json<String>)>{
+    let cpf = input.0;
+    let cpf = match formata_cpf(&cpf){
+        Ok(cpf) => {
+            cpf
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
     };
-    let socioadm = serde_json::json!({
-        "idsocio": socioadm.idsocio ,
-        "idendereco": socioadm.idendereco,
-        "nome":socioadm.nome ,
-        "cpf": socioadm.cpf ,
-        "orgaoemissor": socioadm.orgaoemissor ,
-        "estadocivil": socioadm.estadocivil ,
-        "nacionalidade": socioadm.nacionalidade ,
-        "sociostatus": socioadm.sociostatus ,
-        "cnpj": socioadm.cnpj 
-    });
-    return Ok(socioadm)
+    let resultado_busca = model::socioadm::busca_socio_adm_cpf(&cpf).await;
+    let socioadm = match resultado_busca{
+        Ok(socioadm) => {
+            if socioadm.cpf.is_empty(){
+                return Err((StatusCode::BAD_REQUEST, Json(MeuErro::SocioNaoEncontrado.to_string())))
+            }
+            socioadm
+        },
+        Err(e) => return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
+    };
+    return Ok((StatusCode::OK, Json(socioadm)))
 }

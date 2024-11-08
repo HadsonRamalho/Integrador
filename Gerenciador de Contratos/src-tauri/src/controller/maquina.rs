@@ -1,6 +1,9 @@
+use axum::{http::StatusCode, Json};
+use serde::{Deserialize, Serialize};
+
 use crate::{
     controller::gera_hash,
-    model::{self, erro::MeuErro},
+    model::{self, erro::MeuErro, maquina::Maquina},
 };
 
 /// ## Recebe dados referentes a uma Maquina e os converte em um objeto do tipo `serde_json::Value`
@@ -22,21 +25,35 @@ use crate::{
 /// });
 /// return Ok(maquina);
 /// ```
-#[tauri::command]
-pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numserie: String) -> Result<serde_json::Value, String> {
+
+#[derive(Serialize, Deserialize)]
+pub struct EstruturaMaquinaInput{
+    pub nomemaquina: String,
+    pub valoraluguel: String,
+    pub numserie: String
+}
+
+//#[tauri::command]
+pub async fn estrutura_maquina(input: Json<EstruturaMaquinaInput>) -> Result<Json<Maquina>, (StatusCode, Json<String>)> {
+    let nomemaquina = input.nomemaquina.to_string();
+    let valoraluguel = input.valoraluguel.to_string();
+    let numserie = input.numserie.to_string();
     if nomemaquina.is_empty() || valoraluguel.is_empty() || numserie.is_empty(){
-        return Err(MeuErro::CamposVazios.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::CamposVazios.to_string())))
     }
     let idmaquina = gera_hash(&numserie)
         .split_at(45 as usize).0
         .to_string();
-    let maquina: serde_json::Value = serde_json::json!({
-        "nomemaquina": nomemaquina,
-        "idmaquina": idmaquina,
-        "valoraluguel": valoraluguel,
-        "numserie": numserie,
-    });
-    return Ok(maquina);
+    
+    let maquina = Maquina{
+        nomemaquina,
+        idmaquina,
+        valoraluguel: formata_valor_f32(&valoraluguel).unwrap(),
+        numserie,
+        disponibilidade: 1,
+        maquinastatus: 1
+    };
+    return Ok(Json(maquina));
 }
 
 /// ## Recebe um serde_json::Value, que é convertido para o tipo `Maquina` e registrado no banco. No final, a função retorna o ID da Maquina.
@@ -64,17 +81,24 @@ pub async fn estrutura_maquina(nomemaquina: String, valoraluguel: String, numser
 ///     return Ok(idmaquina);
 /// }
 /// ```
-#[tauri::command]
-pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, String>{
+//#[tauri::command]
+pub async fn cadastra_maquina(input: Json<Maquina>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     
-    let valoraluguel = maquina["valoraluguel"].as_str().unwrap_or("").to_string();
-    let valoraluguel = formata_valor_f32(&valoraluguel)?;
+    let valoraluguel =  input.valoraluguel.to_string();
+    let valoraluguel = match formata_valor_f32(&valoraluguel){
+        Ok(valor) => {
+            valor
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e.to_string())))
+        }
+    };
 
     let maquina: model::maquina::Maquina = model::maquina::Maquina {
-        nomemaquina: maquina["nomemaquina"].as_str().unwrap_or("").to_string(),
-        numserie: maquina["numserie"].as_str().unwrap_or("").to_string(),
+        nomemaquina: input.nomemaquina.to_string(),
+        numserie: input.numserie.to_string(),
         valoraluguel,
-        idmaquina: maquina["idmaquina"].as_str().unwrap_or("").to_string(),
+        idmaquina: input.idmaquina.to_string(),
         disponibilidade: 1,
         maquinastatus: 1
     };
@@ -82,10 +106,10 @@ pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, Stri
     let resultado_cadastro = model::maquina::cadastrar_maquina(maquina).await;
     match resultado_cadastro{
         Ok(idmaquina) => {
-            return Ok(idmaquina);
+            return Ok((StatusCode::CREATED, Json(idmaquina)));
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
         }
     }
 }
@@ -114,12 +138,13 @@ pub async fn cadastra_maquina(maquina: serde_json::Value) -> Result<String, Stri
 ///    return Err(MeuErro::MaquinaNaoEncontrada.to_string());
 /// }
 /// ```
-#[tauri::command]
-pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maquina::Maquina>, String>{
+//#[tauri::command]
+pub async fn busca_maquina_nome(nome_maquina: Json<String>) 
+    -> Result<(StatusCode, Json<Vec<model::maquina::Maquina>>), (StatusCode, Json<String>)>{
     let nome_maquina_backup = nome_maquina.clone();
     let nome_maquina = nome_maquina.replace(" ", "");
     if nome_maquina.is_empty(){
-        return Err("Erro: O nome da máquina está vazio.".to_string());
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::NomeMaquinaVazio.to_string())));
     }
     
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::buscar_maquina_nome(&nome_maquina_backup).await;
@@ -127,12 +152,12 @@ pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqui
     match resultado_busca{
         Ok(resultado) => {
             if !resultado.is_empty(){
-                return Ok(resultado);
+                return Ok((StatusCode::OK, Json(resultado)));
             }
-            return Err(MeuErro::MaquinaNaoEncontrada.to_string());
+            return Err((StatusCode::BAD_REQUEST, Json(MeuErro::MaquinaNaoEncontrada.to_string())));
         },
-        Err(erro) => {
-            return Err(erro.to_string());
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }
 }
@@ -160,24 +185,25 @@ pub async fn busca_maquina_nome(nome_maquina: String) -> Result<Vec<model::maqui
 ///     return Err(MeuErro::MaquinaNaoEncontrada.to_string());
 /// }
 /// ```
-#[tauri::command]
-pub async fn busca_maquina_numserie(numserie: String) -> Result<Vec<model::maquina::Maquina>, String>{
+//#[tauri::command]
+pub async fn busca_maquina_numserie(numserie: Json<String>) 
+    -> Result<(StatusCode, Json<Vec<model::maquina::Maquina>>), (StatusCode, Json<String>)>{
     let numserie_backup = numserie.clone();
     let numserie = numserie.replace(" ", "");
     if numserie.is_empty(){
-        return Err("Erro: O número de série está vazio.".to_string());
+        return Err((StatusCode::BAD_REQUEST, Json("O número de série está vazio.".to_string())));
     }
     let resultado_busca: Result<Vec<model::maquina::Maquina>, mysql_async::Error> = model::maquina::busca_maquina_serie(&numserie_backup).await;
 
     match resultado_busca{
         Ok(resultado) => {
             if !resultado.is_empty(){
-                return Ok(resultado);
+                return Ok((StatusCode::OK, Json(resultado)));
             }
-            return Err(MeuErro::MaquinaNaoEncontrada.to_string());
+            return Err((StatusCode::BAD_REQUEST, Json(MeuErro::MaquinaNaoEncontrada.to_string())));
         },
-        Err(erro) => {
-            return Err(erro.to_string());
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())));
         }
     }
 }
@@ -204,39 +230,42 @@ pub async fn busca_maquina_numserie(numserie: String) -> Result<Vec<model::maqui
 /// }
 /// return Ok(estoque_maquina)
 /// ```
-#[tauri::command]
-pub async fn gera_estoque_por_nome(nomemaquina: String) -> Result<Vec<model::maquina::EstoqueMaquina>, String>{
+//#[tauri::command]
+pub async fn gera_estoque_por_nome(nomemaquina: Json<String>)
+    -> Result<(StatusCode, Json<Vec<model::maquina::EstoqueMaquina>>), (StatusCode, Json<String>)>{
     let nomemaquina_backup = nomemaquina.clone();
     let nomemaquina = nomemaquina.replace(" ", "");
     if nomemaquina.is_empty(){
-        return Err("Erro: O nome da máquina está vazio.".to_string());
+        return Err((StatusCode::BAD_REQUEST, Json("O nome da máquina está vazio.".to_string())));
     }
 
-    let estoque_maquina = match model::maquina::gera_estoque_por_nome(nomemaquina_backup).await{
+    let estoque_maquina = match model::maquina::gera_estoque_por_nome(nomemaquina_backup.0).await{
         Ok(maquina) => {maquina},
-        Err(e) => {return Err(e.to_string())}
+        Err(e) => {return Err((StatusCode::BAD_REQUEST, Json(e.to_string())))}
     };
     if estoque_maquina.is_empty(){
-        return Err(MeuErro::MaquinaNaoEncontrada.to_string())
+        return Err((StatusCode::BAD_REQUEST, Json(MeuErro::MaquinaNaoEncontrada.to_string())))
     }
-    return Ok(estoque_maquina)
+    return Ok((StatusCode::OK, Json(estoque_maquina)))
 }
 
 /// ## Gera o estoque total de todas as máquinas disponíveis atualmente no banco de dados, retornando um vetor do tipo `EstoqueMaquina`
-#[tauri::command]
-pub async fn gera_estoque_total() -> Result<Vec<model::maquina::EstoqueMaquina>, String>{
+//#[tauri::command]
+pub async fn gera_estoque_total() 
+    -> Result<(StatusCode, Json<Vec<model::maquina::EstoqueMaquina>>), (StatusCode, Json<String>)>{
     match model::maquina::gera_estoque_total().await{
-        Ok(estoque_total) => {return Ok(estoque_total)},
-        Err(e) => return Err(e.to_string())
+        Ok(estoque_total) => {return Ok((StatusCode::OK, Json(estoque_total)))},
+        Err(e) => return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
     };
 }
 
 /// ## Gera o estoque total de todas as máquinas alugadas atualmente no banco de dados, retornando um vetor do tipo `EstoqueMaquina`
-#[tauri::command]
-pub async fn gera_estoque_total_alugadas() -> Result<Vec<model::maquina::EstoqueMaquina>, String>{
+//#[tauri::command]
+pub async fn gera_estoque_total_alugadas() 
+    -> Result<(StatusCode, Json<Vec<model::maquina::EstoqueMaquina>>), (StatusCode, Json<String>)>{
     match model::maquina::gera_estoque_total_alugadas().await{
-        Ok(estoque_total) => {return Ok(estoque_total)},
-        Err(e) => return Err(e.to_string())
+        Ok(estoque_total) => {return Ok((StatusCode::OK, Json(estoque_total)))},
+        Err(e) => return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string())))
     };
 }
 

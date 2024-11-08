@@ -1,7 +1,9 @@
-use mysql_async::prelude::*;
+use mysql_async::params;
 use serde::{Deserialize, Serialize};
 use crate::model::erro::MeuErro;
 use crate::controller::{self, cria_pool};
+use mysql_async::prelude::{FromRow, Queryable};
+
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Endereco{
@@ -12,6 +14,20 @@ pub struct Endereco{
     pub numeroendereco: String,
     pub cidade: String,
     pub uf: String,
+}
+
+impl From<axum::Json<Endereco>> for Endereco{
+    fn from(value: axum::Json<Endereco>) -> Self {
+        Endereco{
+            idendereco: value.idendereco.clone(),
+            logradouro: value.logradouro.clone(),
+            cep: value.cep.clone(),
+            complemento: value.cep.clone(),
+            numeroendereco: value.numeroendereco.clone(),
+            cidade: value.cidade.clone(),
+            uf: value.uf.clone()
+        }
+    }
 }
 
 pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::Error> {
