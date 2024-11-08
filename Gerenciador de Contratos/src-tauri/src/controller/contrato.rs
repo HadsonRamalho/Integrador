@@ -3,6 +3,8 @@ use axum::Json;
 use chrono::NaiveDate;
 use chrono::NaiveDateTime;
 use chrono::NaiveTime;
+use mysql_async::params;
+use mysql_async::prelude::Queryable;
 use mysql_async::Row;
 use mysql_async::Value;
 use serde::Deserialize;
@@ -12,6 +14,7 @@ use crate::model::erro::MeuErro;
 use crate::model::{self, contrato::Contrato};
 use crate::controller;
 
+use super::cria_pool;
 use super::gera_hash;
 use super::locadora::formata_cnpj;
 use super::usuario::busca_cnpj_usuario;
@@ -145,20 +148,20 @@ fn formata_data(value: Value) -> String {
 
 #[derive(Serialize, Deserialize)]
 pub struct EstruturaContratoInput{
-    idlocatario: String, 
-    idlocador: String, 
-    idmaquina: String, 
-    enderecoretirada: String,
-    prazolocacao: String,
-    avisotransferencia: String,
-    cidadeforo: String,
-    datacontrato: String,
-    dataretirada: String,
-    valormensal: String,
-    vencimento: String,
-    multaatraso: String,
-    jurosatraso: String,
-    prazodevolucao: String
+    pub idlocatario: String, 
+    pub idlocador: String, 
+    pub idmaquina: String, 
+    pub enderecoretirada: String,
+    pub prazolocacao: String,
+    pub avisotransferencia: String,
+    pub cidadeforo: String,
+    pub datacontrato: String,
+    pub dataretirada: String,
+    pub valormensal: String,
+    pub vencimento: String,
+    pub multaatraso: String,
+    pub jurosatraso: String,
+    pub prazodevolucao: String
 }
 
 /// ## Estrutura um contrato, transformando campos separados em um valor do tipo serde_json::Value
@@ -211,7 +214,7 @@ pub async fn estrutura_contrato(input: Json<EstruturaContratoInput>
     let idmaquina = idmaquina.trim().to_string();
     let enderecoretirada = enderecoretirada.trim().to_string();
 
-    let prazolocacao = match prazodevolucao.trim().parse(){
+    let prazolocacao = match prazolocacao.trim().parse(){
         Ok(prazolocacao) => {prazolocacao},
         Err(_e) => {
             return Err((StatusCode::BAD_REQUEST, Json("Falha ao converter o prazo de locação para float.".to_string())))
@@ -644,6 +647,23 @@ pub async fn busca_contrato_cnpj_locatario(input: Json<BuscaContratoCnpjLocatari
         },
         Err(e) => { 
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e.to_string()))) 
+        }
+    }
+}
+
+pub async fn deleta_contrato(input: Json<String>) -> Result<(), mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let idcontrato = input.0.to_string();
+    let res = 
+        conn.exec_drop("DELETE FROM contrato_aluguel WHERE idcontrato = :idcontrato;", 
+        params! {"idcontrato" => idcontrato}).await;
+    match res{
+        Ok(()) => {
+            return Ok(())
+        },
+        Err(e) => {
+            return Err(e)
         }
     }
 }

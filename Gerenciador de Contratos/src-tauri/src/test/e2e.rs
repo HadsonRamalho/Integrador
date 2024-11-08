@@ -6,7 +6,7 @@ use crate::controller::{self, usuario::DeletaContaInput, EmailInput};
 
 #[tokio::test]
 async fn test_e2e_ok(){
-    use crate::{controller::{locatario::{busca_id_locatario, busca_locatario_cnpj, busca_locatario_nome}, maquina::{busca_maquina_nome, busca_maquina_numserie, gera_estoque_por_nome, gera_estoque_total_alugadas}}, model::maquina::{aluga_maquina, desaluga_maquina}, test::{endereco::{_limpa_endereco, cria_endereco_teste}, locadora::{_limpa_locadora, cria_locadora_teste}, locatario::{_limpa_locatario, cria_locatario_teste}, maquina::{_limpa_maquina, cria_maquina_teste}, socioadm::{_limpa_socio, cria_socio_teste}, usuario::{_busca_id_usuario, _limpa_usuario, cria_usuario_teste}}};
+    use crate::{controller::{contrato::{deleta_contrato, estrutura_contrato, EstruturaContratoInput}, locatario::{busca_id_locatario, busca_locatario_cnpj, busca_locatario_nome}, maquina::{busca_maquina_nome, busca_maquina_numserie, gera_estoque_por_nome, gera_estoque_total_alugadas}}, model::{contrato::Contrato, maquina::{aluga_maquina, desaluga_maquina}}, test::{endereco::{_limpa_endereco, cria_endereco_teste}, locadora::{_limpa_locadora, cria_locadora_teste}, locatario::{_limpa_locatario, cria_locatario_teste}, maquina::{_limpa_maquina, cria_maquina_teste}, socioadm::{_limpa_socio, cria_socio_teste}, usuario::{_busca_id_usuario, _limpa_usuario, cria_usuario_teste}}};
 
     let email = "usuariotestee2e1@teste.com";
     let nome_completo = "Usuario Teste";        
@@ -67,6 +67,34 @@ async fn test_e2e_ok(){
     assert!(busca_locatario_nome(Json(nomelocatario.to_string())).await.is_ok());
     assert!(busca_locatario_cnpj(Json(cnpj.to_string())).await.is_ok());
 
+    let prazolocacao = "3.0".to_string();
+    let avisotransferencia = "Não se aplica no momento.".to_string();
+    let cidadeforo = cidade.to_string();
+    let datacontrato = "2024-12-12".to_string();
+    let dataretirada = datacontrato.clone();
+    let prazodevolucao = datacontrato.clone();
+    let valormensal = "4000.00".to_string();
+    let multaatraso = "0.4".to_string();
+    let jurosatraso = "0.4".to_string();
+    let vencimento = prazodevolucao.clone().to_string();
+    let contrato = EstruturaContratoInput{
+        idlocatario: idlocatario.clone(),
+        idlocador: idlocadora.clone(),
+        idmaquina,
+        enderecoretirada: idenderecolocadora.clone(),
+        prazolocacao,
+        avisotransferencia,
+        cidadeforo,
+        datacontrato,
+        dataretirada,
+        valormensal,
+        vencimento,
+        multaatraso,
+        jurosatraso,
+        prazodevolucao
+    };
+    let idcontrato = estrutura_contrato(Json(contrato)).await.unwrap().1.idcontrato.clone();
+    
 
     assert!(_limpa_maquina(numserie).await.is_ok());
     assert!(_limpa_usuario(&idusuario.unwrap(), email).await.is_ok(),
@@ -79,5 +107,8 @@ async fn test_e2e_ok(){
     assert!(_limpa_endereco(idenderecolocatario).await.is_ok());
     assert!(_limpa_socio(idsociolocatario).await.is_ok());
     assert!(_limpa_endereco(idenderecosociolocatario).await.is_ok());
+    
+    let res = deleta_contrato(Json(idcontrato)).await.unwrap();
+    println!("{:?}", res);
 
 }
