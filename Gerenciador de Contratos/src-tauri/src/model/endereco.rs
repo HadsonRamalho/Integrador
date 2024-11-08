@@ -1,54 +1,71 @@
-use mysql_async::prelude::*;
-use crate::{controller, model};
-use crate::controller::endereco::Endereco;
+use mysql_async::params;
+use serde::{Deserialize, Serialize};
+use crate::model::erro::MeuErro;
+use crate::controller::{self, cria_pool};
+use mysql_async::prelude::{FromRow, Queryable};
 
-/// Função para salvar um endereço no banco de dados.
-///
-/// Esta função recebe um objeto `serde_json::Value` contendo os dados de um endereço,
-/// cria uma conexão com o banco de dados, e insere os dados na tabela `endereco`.
-///
-/// # Parâmetros
-/// - `endereco`: Um objeto JSON contendo os dados do endereço, como logradouro, CEP, complemento, número, cidade e UF.
-///
-/// # Retornos
-/// - `Result<bool, mysql_async::Error>`: Retorna `Ok(true)` se o endereço for salvo com sucesso.
-///   Em caso de falha na conexão ou na execução da query, retorna um erro do tipo `mysql_async::Error`.
-///
-/// # Exceções
-/// - Pode retornar um erro se houver problemas ao conectar ao banco de dados ou ao executar a query.
-pub async fn salva_endereco(endereco: serde_json::Value) -> Result<String, mysql_async::Error> {
-    // Cria uma conexão com o pool do banco de dados
-    let pool = match controller::cria_pool().await {
-        Ok(pool) => {
-            pool
-        }, 
-        Err(e) =>{
-            return Err(e)
+
+#[derive(Serialize, Deserialize, FromRow)]
+pub struct Endereco{
+    pub idendereco: String,
+    pub logradouro: String,
+    pub cep: String,
+    pub complemento: String,
+    pub numeroendereco: String,
+    pub cidade: String,
+    pub uf: String,
+}
+
+impl From<axum::Json<Endereco>> for Endereco{
+    fn from(value: axum::Json<Endereco>) -> Self {
+        Endereco{
+            idendereco: value.idendereco.clone(),
+            logradouro: value.logradouro.clone(),
+            cep: value.cep.clone(),
+            complemento: value.cep.clone(),
+            numeroendereco: value.numeroendereco.clone(),
+            cidade: value.cidade.clone(),
+            uf: value.uf.clone()
         }
-    };
+    }
+}
+
+pub async fn salva_endereco(endereco: Endereco) -> Result<String, mysql_async::Error> {
+    // Cria uma conexão com o pool do banco de dados
+    let pool = controller::cria_pool().await?;
     let mut conn = pool.get_conn().await?; 
-    // Converte os dados recebidos em um objeto `Endereco`
-    let endereco = Endereco {
-        id: endereco["id"].as_str().unwrap_or("").to_string().split_off(15 as usize),
-        logradouro: endereco["logradouro"].as_str().unwrap_or("").to_string(),
-        cep: endereco["cep"].as_str().unwrap_or("").to_string(),
-        complemento: endereco["complemento"].as_str().unwrap_or("").to_string(),
-        numeroendereco: endereco["numeroendereco"].as_str().unwrap_or("").to_string(),
-        cidade: endereco["cidade"].as_str().unwrap_or("").to_string(),
-        uf: endereco["uf"].as_str().unwrap_or("").to_string(),
-    };
-    let id_retorno = endereco.id.to_string(); // faz uma cópia do id do endereço
+    
+    let id_retorno = endereco.idendereco.to_string(); // faz uma cópia do id do endereço
     // Insere o endereço na tabela `endereco`
-    conn.exec_drop(
+    let resultado_insert: Result<(), mysql_async::Error> = conn.exec_drop(
         "INSERT INTO endereco (idendereco, logradouro, cep, complemento, numeroendereco, cidade, uf)
          VALUES (:idendereco, :logradouro, :cep, :complemento, :numeroendereco, :cidade, :uf)",
-        params! {"idendereco" => endereco.id, "logradouro" => endereco.logradouro,
+        params! {"idendereco" => endereco.idendereco, "logradouro" => endereco.logradouro,
         "cep" => endereco.cep, "complemento" => endereco.complemento,
         "numeroendereco" => endereco.numeroendereco, "cidade" => endereco.cidade,
         "uf" => endereco.uf},
-    ).await?;
+    ).await;
 
-    println!("Endereço salvo com sucesso");
+    match resultado_insert{
+        Ok(_) => {
+            println!("Endereço salvo com sucesso");
+            return Ok(id_retorno)
+        },
+        Err(e) => {
+            println!("{:?}", e);
+            return Err(mysql_async::Error::Other(Box::new(MeuErro::SalvarEndereco)))
+        }
+    }
+}
 
-    return Ok(id_retorno) // retorna o id do endereço
+pub async fn busca_endereco_id(id: &str) -> Result<Endereco, mysql_async::Error>{
+    let pool = cria_pool().await?;
+    let mut conn = pool.get_conn().await?;
+    let resultado_busca = 
+        conn.exec_first("SELECT * FROM endereco WHERE idendereco = :id",
+        params! {"id" => id} ).await?;
+    match resultado_busca{
+        None => {return Err(mysql_async::Error::Other(Box::new(MeuErro::EnderecoNaoEncontrado)))},
+        Some(endereco) => {return Ok(endereco)}
+    }
 }
