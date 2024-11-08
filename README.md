@@ -16,7 +16,7 @@
  #### Versionamento:
   - [Git](https://git-scm.com/downloads)
   - [GitHub/Repositório](https://github.com/HadsonRamalho/Integrador)
- #### IDEs:
+ #### IDE:
   - [Visual Studio Code](https://code.visualstudio.com/)
-   ##### Extensões:
-    [Rust-Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+   #### Extensões para a IDE:
+   [(Backend) Rust-Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
