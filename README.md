@@ -4,9 +4,9 @@
  - JavaScript
  - TypeScript
  - React
- - Shadcn/ui: https://ui.shadcn.com/docs/installation/vite
+ - Styled-components💅: https://styled-components.com/docs/basics#getting-started
 #### Backend:
-- Rust: https://rust-br.github.io/rust-book-pt-br/
+- [Rust-book](https://rust-br.github.io/rust-book-pt-br/)
 - Rust: https://doc.rust-lang.org/stable/rust-by-example/
 - Rust: https://github.com/rust-lang/rustlings
 #### Banco de dados:
