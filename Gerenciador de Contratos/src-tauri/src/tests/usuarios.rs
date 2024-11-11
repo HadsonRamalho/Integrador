@@ -1,6 +1,6 @@
 use axum::Json;
 
-use crate::{controllers::usuarios::{busca_email_usuario, cadastra_usuario, estrutura_usuario, valida_email, valida_senha, EmailInput, UsuarioInput}, models::usuarios::deleta_usuario};
+use crate::{controllers::usuarios::{busca_email_usuario, cadastra_usuario, estrutura_usuario, formata_documento, valida_email, valida_senha, EmailInput, UsuarioInput}, models::usuarios::deleta_usuario};
 
 #[tokio::test]
 async fn test_estrutura_usuario_ok(){
@@ -111,5 +111,64 @@ async fn test_valida_email_ok(){
             email: email3.to_string()
         }
     })).await.is_ok());
+}
 
+#[tokio::test]
+async fn test_valida_email_err(){
+    let email1 = "e@.";
+    assert!(valida_email(Json({
+        EmailInput{
+            email: email1.to_string()
+        }
+    })).await.is_err());
+
+    let email2 = "email@";
+    assert!(valida_email(Json({
+        EmailInput{
+            email: email2.to_string()
+        }
+    })).await.is_err());
+
+    let email3 = "@email.c";
+    assert!(valida_email(Json({
+        EmailInput{
+            email: email3.to_string()
+        }
+    })).await.is_err());
+}
+
+#[tokio::test]
+async fn test_formata_documento_ok(){
+    let doc1 = "11.123.123/0001-01";
+    assert!(formata_documento(doc1).is_ok());
+
+    let doc2 = "11.421a213x0001p01";
+    assert!(formata_documento(doc2).is_ok());
+
+    let doc3 = "11421123000101";
+    assert!(formata_documento(doc3).is_ok());
+
+    let doc4 = "123.456.789-01";
+    assert!(formata_documento(doc4).is_ok());
+
+    let doc5 = "123x456xyz789x01";
+    assert!(formata_documento(doc5).is_ok());
+
+    let doc6 = "12345678901";
+    assert!(formata_documento(doc6).is_ok());
+}
+
+#[tokio::test]
+async fn test_formata_documento_err(){
+    let doc1 = "11.123.123/0001-";
+    assert!(formata_documento(doc1).is_err());
+
+    let doc2 = "123.412.131-";
+    assert!(formata_documento(doc2).is_err());
+
+    let doc3 = "123x123xxxxxxx";
+    assert!(formata_documento(doc3).is_err());
+
+    let doc4 = "11.123.123/0001-011111";
+    assert!(formata_documento(doc4).is_err());
 }
