@@ -76,6 +76,40 @@ pub async fn cadastra_usuario(usuario: Json<Usuario>)
 
 }
 
+pub async fn busca_email_usuario(input: Json<String>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    let id = input.0;
+    if id.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("O ID está vazio.".to_string())))
+    }
+    let resultado_busca = models::usuarios::busca_email_usuario(id).await;
+    match resultado_busca{
+        Ok(email) => {
+            return Ok((StatusCode::OK, Json(email)))
+    }, Err(e) => {
+        return Err((StatusCode::BAD_REQUEST, Json(e.to_string())));
+    }
+    }
+}
+
+pub fn valida_senha(senha: &str) -> Result<(), String>{
+    if senha.trim().is_empty(){
+        return Err("A senha está vazia.".to_string())
+    }
+    if senha.len() < 8{
+        return Err("A senha é muito curta.".to_string())
+    }
+    if !senha.chars().any(|c| c.is_ascii_digit()){
+        return Err("A senha deve conter ao menos um número".to_string())
+    }
+    if !senha.chars().any(|c| c.is_ascii_punctuation()){
+        return Err("A senha deve conter ao menos um símbolo".to_string())
+    }
+    if !senha.chars().any(|c| c.is_uppercase()){
+        return Err("A senha deve conter ao menos uma letra maiúscula.".to_string())
+    }
+    return Ok(())
+}
+
 pub async fn valida_usuario(usuario: UsuarioInput) -> Result<(), String>{
     let nome = usuario.nome.to_string();
     if nome.trim().is_empty(){
@@ -92,6 +126,13 @@ pub async fn valida_usuario(usuario: UsuarioInput) -> Result<(), String>{
 
     let senha = usuario.senha.to_string();
     let senha = gera_hash(&senha);
+    match valida_senha(&senha){
+        Ok(()) => {
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    }
 
     let documento_ = usuario.documento.to_string();
     let documento_ = match formata_documento(&documento_){
@@ -129,7 +170,7 @@ pub fn formata_documento(documento_: &str) -> Result<String, String>{
             return Ok(cnpj)
         },
         Err(_) => {
-            return Err("Não é um documento válido.".to_string())
+            return Err("O documento não é válido.".to_string())
         }
     }
 }
