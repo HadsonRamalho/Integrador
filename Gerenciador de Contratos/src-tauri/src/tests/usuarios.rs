@@ -1,6 +1,6 @@
 use axum::Json;
 
-use crate::{controllers::usuarios::{busca_email_usuario, cadastra_usuario, estrutura_usuario, valida_senha, UsuarioInput}, models::usuarios::deleta_usuario};
+use crate::{controllers::usuarios::{busca_email_usuario, cadastra_usuario, estrutura_usuario, valida_email, valida_senha, EmailInput, UsuarioInput}, models::usuarios::deleta_usuario};
 
 #[tokio::test]
 async fn test_estrutura_usuario_ok(){
@@ -62,7 +62,8 @@ async fn test_busca_email_usuario_ok(){
     assert!(deleta_usuario(id).await.is_ok());
 }
 
-fn test_valida_senha_ok(){
+#[tokio::test]
+async fn test_valida_senha_ok(){
     let senha1 = "SenhaForte01_";
     assert!(valida_senha(senha1).is_ok());
     
@@ -70,7 +71,8 @@ fn test_valida_senha_ok(){
     assert!(valida_senha(senha2).is_ok());
 }
 
-fn test_valida_senha_err(){
+#[tokio::test]
+async fn test_valida_senha_err(){
     let senha1 = "senhafraca1";
     assert!(valida_senha(senha1).is_err());
 
@@ -85,4 +87,29 @@ fn test_valida_senha_err(){
 
     let senha5 = ".-=+_+.@==.!@";
     assert!(valida_senha(senha5).is_err());
+}
+
+#[tokio::test]
+async fn test_valida_email_ok(){
+    let email1 = "test@test.com";
+    assert!(valida_email(Json({
+        EmailInput{
+            email: email1.to_string()
+        }
+    })).await.is_ok());
+
+    let email2 = "test2@t.com";
+    assert!(valida_email(Json({
+        EmailInput{
+            email: email2.to_string()
+        }
+    })).await.is_ok());
+
+    let email3 = "t@t.c";
+    assert!(valida_email(Json({
+        EmailInput{
+            email: email3.to_string()
+        }
+    })).await.is_ok());
+
 }
