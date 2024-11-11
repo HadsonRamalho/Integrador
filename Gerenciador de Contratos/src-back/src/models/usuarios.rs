@@ -1,9 +1,7 @@
-use std::process::id;
-
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::{controllers::{cria_conn, usuarios::UsuarioInput}, schema::usuarios::{self, idusuario}};
+use crate::{controllers::cria_conn, schema::usuarios::{self, idusuario}};
 
 #[derive(Queryable, Selectable, Serialize, Deserialize, Insertable)]
 #[diesel(table_name = crate::schema::usuarios)]

@@ -2,7 +2,7 @@ use axum::{http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::{models::{self, usuarios::{Usuario}}, schema::usuarios::documento};
+use crate::models::{self, usuarios::Usuario};
 
 use super::{formata_cnpj, formata_cpf, gera_hash};
 
@@ -65,7 +65,7 @@ pub async fn cadastra_usuario(usuario: Json<Usuario>)
 
     let idusuario = usuario.0.idusuario.clone();
     let usuario = usuario.0;
-    match models::usuarios::cadastra_usuario((usuario)).await{
+    match models::usuarios::cadastra_usuario(usuario).await{
         Ok(_) => {
             return Ok((StatusCode::CREATED, Json(idusuario)))
         },
@@ -135,9 +135,9 @@ pub async fn valida_usuario(usuario: UsuarioInput) -> Result<(), String>{
     }
 
     let documento_ = usuario.documento.to_string();
-    let documento_ = match formata_documento(&documento_){
-        Ok(documento_) => {
-            documento_
+    match formata_documento(&documento_){
+        Ok(_) => {
+            
         },
         Err(e) => {
             return Err(e)
