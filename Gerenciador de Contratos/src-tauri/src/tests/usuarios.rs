@@ -1,6 +1,6 @@
 use axum::Json;
 
-use crate::{controllers::usuarios::{busca_email_usuario, cadastra_usuario, estrutura_usuario, formata_documento, valida_email, valida_senha, EmailInput, UsuarioInput}, models::usuarios::deleta_usuario};
+use crate::{controllers::usuarios::{busca_email_usuario, cadastra_usuario, estrutura_usuario, formata_documento, valida_email, valida_senha, EmailInput, UsuarioInput}, models::usuarios::{deleta_usuario, Usuario}};
 
 #[tokio::test]
 async fn test_estrutura_usuario_ok(){
@@ -41,6 +41,26 @@ async fn test_cadastra_usuario_ok(){
 }
 
 #[tokio::test]
+async fn test_cadastra_usuario_err(){
+    let email_invalido = "@gmail.com".to_string();
+    let nome = "Usuario Teste 2".to_string();
+    let senha = "senhateste2.".to_string();
+    let documento = "002.123.113-10".to_string();
+
+    let usuario = Usuario{
+        email: email_invalido,
+        nome,
+        senha,
+        documento,
+        idusuario: "123145123".to_string()
+    };
+    let id = usuario.idusuario.clone();
+    assert!(cadastra_usuario(Json(usuario)).await.is_err());
+
+    assert!(deleta_usuario(id).await.is_err());
+}
+
+#[tokio::test]
 async fn test_busca_email_usuario_ok(){
     let email = "testeunit3@gmail.com".to_string();
     let nome = "Usuario Teste 3".to_string();
@@ -60,6 +80,12 @@ async fn test_busca_email_usuario_ok(){
     assert!(busca_email_usuario(Json(id.clone())).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_busca_email_usuario_err(){
+    let id = "123456789";
+    assert!(busca_email_usuario(Json(id.to_string())).await.is_err());
 }
 
 #[tokio::test]
