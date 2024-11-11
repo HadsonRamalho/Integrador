@@ -10,8 +10,7 @@
 - [Rust-by-example](https://doc.rust-lang.org/stable/rust-by-example/) 
 - [Rustlings](https://github.com/rust-lang/rustlings)
 #### Banco de dados:
- - [MySQL/MariaDB](https://mariadb.org/download/)
- - [HeidiSQL](https://www.heidisql.com/download.php)
+ - [PostgreSQL + pgAdmin](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
  - AWS
  #### Versionamento:
   - [Git](https://git-scm.com/downloads)
