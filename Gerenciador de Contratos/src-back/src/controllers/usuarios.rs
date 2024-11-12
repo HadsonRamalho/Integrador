@@ -125,7 +125,6 @@ pub async fn valida_usuario(usuario: UsuarioInput) -> Result<(), String>{
     }
 
     let senha = usuario.senha.to_string();
-    let senha = gera_hash(&senha);
     match valida_senha(&senha){
         Ok(()) => {
         },
@@ -144,6 +143,93 @@ pub async fn valida_usuario(usuario: UsuarioInput) -> Result<(), String>{
         }
     };
     return Ok(())
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct AtualizaEmailInput{
+    pub email_antigo: String,
+    pub email_novo: String
+}
+
+
+pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    let email_antigo = input.email_antigo.to_string();
+    let email_novo = input.email_novo.to_string();
+
+    match valida_email(Json(
+        EmailInput{
+            email: email_antigo.clone()
+        }
+    )).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+    match valida_email(Json(
+        EmailInput{
+            email: email_novo.clone()
+        }
+    )).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+    
+    match busca_usuario_email(Json(EmailInput{
+        email: email_antigo.clone()
+    })).await{
+        Ok(_) => {
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    }
+    
+    match busca_usuario_email(Json(EmailInput{
+        email: email_novo.clone()
+    })).await{
+        Ok(_) => {
+            return Err((StatusCode::BAD_REQUEST, Json("Esse e-mail pertence a outro usuário.".to_string())))
+        },
+        Err(_) => {
+            
+        }
+    }
+
+    match models::usuarios::atualiza_email_usuario(email_antigo, email_novo).await{
+        Ok(email_atualizado) => {
+            return Ok((StatusCode::OK, Json(email_atualizado)))
+        },
+        Err(e) =>{
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    }
+}
+
+pub async fn busca_usuario_email(email: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    match valida_email(Json(EmailInput{
+        email: email.email.clone()
+    })).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+    let email = email.email.to_string();
+
+    let res = models::usuarios::busca_usuario_email(email).await;
+    match res{
+        Ok(idusuario) => {
+            return Ok((StatusCode::OK, Json(idusuario)))
+        },
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    }
 }
 
 pub async fn valida_email(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {

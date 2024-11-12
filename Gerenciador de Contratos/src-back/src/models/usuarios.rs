@@ -61,3 +61,49 @@ pub async fn busca_email_usuario(id: String) -> Result<String, String>{
         }
     }
 }
+
+pub async fn atualiza_email_usuario(email_antigo: String, email_novo: String) -> Result<String, String>{
+ use self::usuarios::dsl::*;
+    let conn = &mut cria_conn()?;
+
+    let res = usuarios.filter(email.eq(email_antigo)).select(Usuario::as_select()).first(conn);
+    let id = match res{
+        Ok(usuario) => {
+            usuario.idusuario
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    };
+
+    let usuario_atualizado = diesel::update(usuarios.find(id))
+        .set(email.eq(email_novo))
+        .returning(Usuario::as_returning())
+        .get_result(conn);
+
+    match usuario_atualizado{
+        Ok(usuario_atualizado) => {
+            return Ok(usuario_atualizado.idusuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+
+}
+
+pub async fn busca_usuario_email(email_: String) -> Result<String, String>{
+    use self::usuarios::dsl::*;
+
+    let conn = &mut cria_conn()?;
+
+    let res: Result<Usuario, diesel::result::Error> = usuarios.filter(email.eq(email_)).first(conn);
+    match res{
+        Ok(usuario) => {
+            return Ok(usuario.idusuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}
