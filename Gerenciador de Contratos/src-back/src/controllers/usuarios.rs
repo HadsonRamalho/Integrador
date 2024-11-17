@@ -308,6 +308,12 @@ pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
     }
 
     let senha_nova = input.senha_nova.to_string();
+    match valida_senha(&senha_nova){
+        Ok(_) => {},
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    }
     let senha_nova = gera_hash(&senha_nova);
 
     match models::usuarios::atualiza_senha_usuario(email, senha_nova).await{
@@ -318,7 +324,6 @@ pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
         }
     }
-
 }
 
 pub async fn busca_usuario_email(email: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{

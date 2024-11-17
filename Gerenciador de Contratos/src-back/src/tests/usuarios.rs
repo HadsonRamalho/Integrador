@@ -397,3 +397,45 @@ async fn test_atualiza_senha_usuario_ok(){
 
     assert!(deleta_usuario(id).await.is_ok());
 }
+
+#[tokio::test]
+async fn test_atualiza_senha_usuario_err(){
+    let usuario = usuario_padrao("014");
+    let email = usuario.email.clone();
+    let senha = usuario.senha.clone();
+
+    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.idusuario.clone();
+
+    assert!(cadastra_usuario(usuario).await.is_ok());
+
+    assert!(realiza_login(Json(
+        CredenciaisUsuario{
+            email: email.clone(),
+            senha: senha.clone()
+        }
+    )).await.is_ok());
+
+    let senha_nova = "SenhaTeste14.Nova".to_string();
+    let email_invalido = "email_invalido@gmai.com".to_string();
+
+    assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
+        email: email_invalido,
+        senha_antiga: senha.clone(),
+        senha_nova: senha_nova.clone()
+    })).await.is_err());
+
+    let senha_invalida = "senhainvalida".to_string();
+    assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
+        email: email.clone(),
+        senha_antiga: senha.clone(),
+        senha_nova: senha_invalida
+    })).await.is_err());
+
+    assert!(realiza_login(Json(CredenciaisUsuario{
+        email: email,
+        senha: senha_nova
+    })).await.is_err());
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
