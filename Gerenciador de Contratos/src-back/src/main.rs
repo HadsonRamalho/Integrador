@@ -1,7 +1,8 @@
-mod controller;
-mod model;
-mod test;
-mod routes;
+pub mod controllers;
+pub mod models;
+pub mod tests;
+pub mod routes;
+pub mod schema;
 
 #[tokio::main]
 async fn main() {
