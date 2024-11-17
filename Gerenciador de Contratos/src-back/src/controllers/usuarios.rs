@@ -1,4 +1,5 @@
 use axum::{http::StatusCode, Json};
+use pwhash::unix::verify;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -64,7 +65,9 @@ pub async fn cadastra_usuario(usuario: Json<Usuario>)
     }
 
     let idusuario = usuario.0.idusuario.clone();
-    let usuario = usuario.0;
+    let mut usuario = usuario.0;
+    usuario.senha = gera_hash(&usuario.senha);
+
     match models::usuarios::cadastra_usuario(usuario).await{
         Ok(_) => {
             return Ok((StatusCode::CREATED, Json(idusuario)))
@@ -74,6 +77,62 @@ pub async fn cadastra_usuario(usuario: Json<Usuario>)
         }
     }
 
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CredenciaisUsuairo{
+    pub email: String,
+    pub senha: String
+}
+
+pub async fn realiza_login(input: Json<CredenciaisUsuairo>)
+    -> Result<StatusCode, (StatusCode, Json<String>)>{
+    let email = input.email.to_string();
+    let senha = input.senha.to_string();
+
+    match valida_email(Json(EmailInput{
+        email: email.clone()
+    })).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+    let hash_senha = match busca_senha_usuario(Json(EmailInput{
+        email
+    })).await{
+        Ok(hash) => {hash},
+        Err(e) => {
+            return Err(e)
+        }
+    };
+    let hash_senha = hash_senha.1.to_string();
+    
+    if verify(senha, &hash_senha){
+        return Ok(StatusCode::OK)
+    }
+    return Err((StatusCode::BAD_REQUEST, Json("Erro no login.".to_string())))
+}
+
+pub async fn busca_senha_usuario(email: Json<EmailInput>) 
+    -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    let email_clone = email.email.clone();
+    match valida_email(email).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+    match models::usuarios::busca_senha_usuario(email_clone).await{
+        Ok(hash) => {
+            return Ok((StatusCode::OK, Json(hash)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
 }
 
 pub async fn busca_email_usuario(input: Json<String>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{

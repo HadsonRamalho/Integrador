@@ -1,6 +1,7 @@
 use axum::Json;
+use pwhash::bcrypt::verify;
 
-use crate::{controllers::usuarios::{atualiza_email_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, estrutura_usuario, formata_documento, valida_email, valida_senha, AtualizaEmailInput, EmailInput, UsuarioInput}, models::usuarios::{deleta_usuario, Usuario}};
+use crate::{controllers::usuarios::{atualiza_email_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, estrutura_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, CredenciaisUsuairo, EmailInput, UsuarioInput}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
 
 #[tokio::test]
 async fn test_estrutura_usuario_ok(){
@@ -321,12 +322,89 @@ pub async fn busca_usuario_email_err(){
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
     assert!(cadastra_usuario(usuario).await.is_ok());
-    
     assert!(busca_usuario_email(Json(
         EmailInput{
             email: "emailinvalido1@gmail.com".to_string()
         }
     )).await.is_err());
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_busca_senha_usuario_ok(){
+    let email = "testeunit9@gmail.com".to_string();
+    let nome = "Usuario Teste 9".to_string();
+    let senha = "Senhateste9.".to_string();
+    let documento = "009.123.113-10".to_string();
+
+    let usuario = UsuarioInput{
+        nome,
+        email: email.clone(),
+        senha: senha.clone(),
+        documento
+    };
+
+    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.idusuario.clone();
+    assert!(cadastra_usuario(usuario).await.is_ok());
+    let hash = busca_senha_usuario(email).await.unwrap();
+    assert!(verify(senha, &hash));
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_busca_senha_usuario_err(){
+    let email = "testeunit10@gmail.com".to_string();
+    let nome = "Usuario Teste 10".to_string();
+    let senha = "Senhateste10.".to_string();
+    let documento = "010.123.113-10".to_string();
+
+    let usuario = UsuarioInput{
+        nome,
+        email: email.clone(),
+        senha: senha.clone(),
+        documento
+    };
+
+    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.idusuario.clone();
+
+    assert!(cadastra_usuario(usuario).await.is_ok());
+
+    let hash = busca_senha_usuario(email).await.unwrap();
+    let senha_incorreta = "SenhaIncorreta1.";
+    assert!(!verify(senha_incorreta, &hash));
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_realiza_login_ok(){
+    let email = "testeunit11@gmail.com".to_string();
+    let nome = "Usuario Teste 11".to_string();
+    let senha = "Senhateste11.".to_string();
+    let documento = "011.123.113-10".to_string();
+
+    let usuario = UsuarioInput{
+        nome,
+        email: email.clone(),
+        senha: senha.clone(),
+        documento
+    };
+
+    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.idusuario.clone();
+
+    assert!(cadastra_usuario(usuario).await.is_ok());
+
+    assert!(realiza_login(Json(
+        CredenciaisUsuairo{
+            email,
+            senha
+        }
+    )).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
 }

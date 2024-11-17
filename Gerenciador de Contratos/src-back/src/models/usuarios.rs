@@ -107,3 +107,19 @@ pub async fn busca_usuario_email(email_: String) -> Result<String, String>{
         }
     }
 }
+
+pub async fn busca_senha_usuario(email_: String) -> Result<String, String>{
+    use self::usuarios::dsl::*;
+
+    let conn = &mut cria_conn()?;
+
+    let res: Result<Usuario, diesel::result::Error> = usuarios.filter(email.eq(email_)).first(conn);
+    match res{
+        Ok(usuario) => {
+            return Ok(usuario.senha)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}
