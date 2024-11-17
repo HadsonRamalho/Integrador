@@ -5,34 +5,14 @@ use crate::{controllers::usuarios::{atualiza_email_usuario, busca_email_usuario,
 
 #[tokio::test]
 async fn test_estrutura_usuario_ok(){
-    let email = "testeunit1@user.com".to_string();
-    let nome = "Usuario Teste 1".to_string();
-    let senha = "Senhateste1.".to_string();
-    let documento = "113.123.113-10".to_string();
-
-    let usuario = UsuarioInput{
-        nome,
-        email,
-        senha,
-        documento
-    };
+    let usuario = usuario_padrao("001");
 
     assert!(estrutura_usuario(Json(usuario)).await.is_ok());
 }
 
 #[tokio::test]
 async fn test_cadastra_usuario_ok(){
-    let email = "testeunit2@gmail.com".to_string();
-    let nome = "Usuario Teste 2".to_string();
-    let senha = "Senhateste2.".to_string();
-    let documento = "002.123.113-10".to_string();
-
-    let usuario = UsuarioInput{
-        nome,
-        email,
-        senha,
-        documento
-    };
+    let usuario = usuario_padrao("002");
 
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
@@ -63,17 +43,7 @@ async fn test_cadastra_usuario_err(){
 
 #[tokio::test]
 async fn test_busca_email_usuario_ok(){
-    let email = "testeunit3@gmail.com".to_string();
-    let nome = "Usuario Teste 3".to_string();
-    let senha = "Senhateste3.".to_string();
-    let documento = "003.123.113-10".to_string();
-
-    let usuario = UsuarioInput{
-        nome,
-        email,
-        senha,
-        documento
-    };
+    let usuario = usuario_padrao("003");
 
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
@@ -210,17 +180,8 @@ async fn test_formata_documento_err(){
 
 #[tokio::test]
 async fn test_atualiza_email_usuario_ok(){
-    let email = "testeunit4@gmail.com".to_string();
-    let nome = "Usuario Teste 4".to_string();
-    let senha = "Senhateste4.".to_string();
-    let documento = "004.123.113-10".to_string();
-
-    let usuario = UsuarioInput{
-        nome,
-        email: email.clone(),
-        senha,
-        documento
-    };
+    let usuario = usuario_padrao("004");
+    let email = usuario.email.clone();
 
     let email_novo = "xtesteunit4@gmail.comx".to_string();
 
@@ -280,17 +241,8 @@ async fn test_atualiza_email_usuario_err(){
 
 #[tokio::test]
 pub async fn busca_usuario_email_ok(){
-    let email = "testeunit7@gmail.com".to_string();
-    let nome = "Usuario Teste 7".to_string();
-    let senha = "Senhateste7.".to_string();
-    let documento = "007.123.113-10".to_string();
-
-    let usuario = UsuarioInput{
-        nome,
-        email: email.clone(),
-        senha,
-        documento
-    };
+    let usuario = usuario_padrao("007");
+    let email = usuario.email.clone();
 
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
@@ -307,17 +259,7 @@ pub async fn busca_usuario_email_ok(){
 
 #[tokio::test]
 pub async fn busca_usuario_email_err(){
-    let email = "testeunit8@gmail.com".to_string();
-    let nome = "Usuario Teste 8".to_string();
-    let senha = "Senhateste8.".to_string();
-    let documento = "008.123.113-10".to_string();
-
-    let usuario = UsuarioInput{
-        nome,
-        email: email.clone(),
-        senha,
-        documento
-    };
+    let usuario = usuario_padrao("008");
 
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
@@ -333,17 +275,9 @@ pub async fn busca_usuario_email_err(){
 
 #[tokio::test]
 async fn test_busca_senha_usuario_ok(){
-    let email = "testeunit9@gmail.com".to_string();
-    let nome = "Usuario Teste 9".to_string();
-    let senha = "Senhateste9.".to_string();
-    let documento = "009.123.113-10".to_string();
-
-    let usuario = UsuarioInput{
-        nome,
-        email: email.clone(),
-        senha: senha.clone(),
-        documento
-    };
+    let usuario = usuario_padrao("009");
+    let email = usuario.email.clone();
+    let senha = usuario.senha.clone();
 
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
@@ -356,17 +290,8 @@ async fn test_busca_senha_usuario_ok(){
 
 #[tokio::test]
 async fn test_busca_senha_usuario_err(){
-    let email = "testeunit10@gmail.com".to_string();
-    let nome = "Usuario Teste 10".to_string();
-    let senha = "Senhateste10.".to_string();
-    let documento = "010.123.113-10".to_string();
-
-    let usuario = UsuarioInput{
-        nome,
-        email: email.clone(),
-        senha: senha.clone(),
-        documento
-    };
+    let usuario = usuario_padrao("010");
+    let email = usuario.email.clone();
 
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
@@ -382,17 +307,44 @@ async fn test_busca_senha_usuario_err(){
 
 #[tokio::test]
 async fn test_realiza_login_ok(){
-    let email = "testeunit11@gmail.com".to_string();
-    let nome = "Usuario Teste 11".to_string();
-    let senha = "Senhateste11.".to_string();
-    let documento = "011.123.113-10".to_string();
+    let usuario = usuario_padrao("011");
+    let email = usuario.email.clone();
+    let senha = usuario.senha.clone();
 
-    let usuario = UsuarioInput{
+    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.idusuario.clone();
+
+    assert!(cadastra_usuario(usuario).await.is_ok());
+
+    assert!(realiza_login(Json(
+        CredenciaisUsuairo{
+            email,
+            senha
+        }
+    )).await.is_ok());
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
+    let email = format!("testeunit{}@gmail.com", numeroteste);
+    let nome = format!("Usuario Teste {}", numeroteste);
+    let senha = format!("SenhaTeste{}.", numeroteste);
+    let documento = format!("{}.123.113-10", numeroteste);
+
+    UsuarioInput{
+        email,
         nome,
-        email: email.clone(),
-        senha: senha.clone(),
+        senha,
         documento
-    };
+    }
+}
+
+#[tokio::test]
+async fn test_realiza_login_err(){
+    let usuario = usuario_padrao("012");
+    let email = usuario.email.clone();
+    let senha = usuario.senha.clone();
 
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
