@@ -1,7 +1,21 @@
 use axum::Json;
 use pwhash::bcrypt::verify;
 
-use crate::{controllers::usuarios::{atualiza_email_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, estrutura_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, CredenciaisUsuairo, EmailInput, UsuarioInput}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
+use crate::{controllers::usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, estrutura_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, UsuarioInput}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
+
+fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
+    let email = format!("testeunit{}@gmail.com", numeroteste);
+    let nome = format!("Usuario Teste {}", numeroteste);
+    let senha = format!("SenhaTeste{}.", numeroteste);
+    let documento = format!("{}.123.113-10", numeroteste);
+
+    UsuarioInput{
+        email,
+        nome,
+        senha,
+        documento
+    }
+}
 
 #[tokio::test]
 async fn test_estrutura_usuario_ok(){
@@ -182,6 +196,7 @@ async fn test_formata_documento_err(){
 async fn test_atualiza_email_usuario_ok(){
     let usuario = usuario_padrao("004");
     let email = usuario.email.clone();
+    let senha = usuario.senha.clone();
 
     let email_novo = "xtesteunit4@gmail.comx".to_string();
 
@@ -190,7 +205,8 @@ async fn test_atualiza_email_usuario_ok(){
     assert!(cadastra_usuario(usuario).await.is_ok());
     assert!(atualiza_email_usuario(Json(AtualizaEmailInput{
         email_antigo: email,
-        email_novo
+        email_novo,
+        senha
     })).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
@@ -222,7 +238,7 @@ async fn test_atualiza_email_usuario_err(){
     let usuario = UsuarioInput{
         nome,
         email: email2.clone(),
-        senha,
+        senha: senha.clone(),
         documento
     };
 
@@ -232,7 +248,8 @@ async fn test_atualiza_email_usuario_err(){
 
     assert!(atualiza_email_usuario(Json(AtualizaEmailInput{
         email_antigo: email1,
-        email_novo: email2
+        email_novo: email2,
+        senha
     })).await.is_err());
 
     assert!(deleta_usuario(id1).await.is_ok());
@@ -317,27 +334,13 @@ async fn test_realiza_login_ok(){
     assert!(cadastra_usuario(usuario).await.is_ok());
 
     assert!(realiza_login(Json(
-        CredenciaisUsuairo{
+        CredenciaisUsuario{
             email,
             senha
         }
     )).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
-}
-
-fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
-    let email = format!("testeunit{}@gmail.com", numeroteste);
-    let nome = format!("Usuario Teste {}", numeroteste);
-    let senha = format!("SenhaTeste{}.", numeroteste);
-    let documento = format!("{}.123.113-10", numeroteste);
-
-    UsuarioInput{
-        email,
-        nome,
-        senha,
-        documento
-    }
 }
 
 #[tokio::test]
@@ -352,11 +355,45 @@ async fn test_realiza_login_err(){
     assert!(cadastra_usuario(usuario).await.is_ok());
 
     assert!(realiza_login(Json(
-        CredenciaisUsuairo{
+        CredenciaisUsuario{
             email,
             senha
         }
     )).await.is_ok());
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_atualiza_senha_usuario_ok(){
+    let usuario = usuario_padrao("013");
+    let email = usuario.email.clone();
+    let senha = usuario.senha.clone();
+
+    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.idusuario.clone();
+
+    assert!(cadastra_usuario(usuario).await.is_ok());
+
+    assert!(realiza_login(Json(
+        CredenciaisUsuario{
+            email: email.clone(),
+            senha: senha.clone()
+        }
+    )).await.is_ok());
+
+    let senha_nova = "SenhaTeste13.Nova".to_string();
+
+    assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
+        email: email.clone(),
+        senha_antiga: senha,
+        senha_nova: senha_nova.clone()
+    })).await.is_ok());
+
+    assert!(realiza_login(Json(CredenciaisUsuario{
+        email: email,
+        senha: senha_nova
+    })).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
 }

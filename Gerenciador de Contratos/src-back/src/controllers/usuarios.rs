@@ -80,12 +80,12 @@ pub async fn cadastra_usuario(usuario: Json<Usuario>)
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct CredenciaisUsuairo{
+pub struct CredenciaisUsuario{
     pub email: String,
     pub senha: String
 }
 
-pub async fn realiza_login(input: Json<CredenciaisUsuairo>)
+pub async fn realiza_login(input: Json<CredenciaisUsuario>)
     -> Result<StatusCode, (StatusCode, Json<String>)>{
     let email = input.email.to_string();
     let senha = input.senha.to_string();
@@ -207,7 +207,8 @@ pub async fn valida_usuario(usuario: UsuarioInput) -> Result<(), String>{
 #[derive(Deserialize, Serialize)]
 pub struct AtualizaEmailInput{
     pub email_antigo: String,
-    pub email_novo: String
+    pub email_novo: String,
+    pub senha: String
 }
 
 
@@ -231,6 +232,16 @@ pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(
             email: email_novo.clone()
         }
     )).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+    match realiza_login(Json(CredenciaisUsuario{
+        email: email_antigo.clone(),
+        senha: input.senha.to_string()
+    })).await{
         Ok(_) => {},
         Err(e) => {
             return Err(e)
@@ -266,6 +277,48 @@ pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(
             return Err((StatusCode::BAD_REQUEST, Json(e)))
         }
     }
+}
+
+pub struct AtualizaSenhaInput{
+    pub email: String,
+    pub senha_antiga: String,
+    pub senha_nova: String
+}
+
+pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
+    -> Result<StatusCode, (StatusCode, Json<String>)>{
+    let email = input.email.to_string();
+    match valida_email(Json(EmailInput{
+        email: email.clone()
+    })).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+    match realiza_login(Json(CredenciaisUsuario{
+        email: email.clone(),
+        senha: input.senha_antiga.to_string()
+    })).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+    let senha_nova = input.senha_nova.to_string();
+    let senha_nova = gera_hash(&senha_nova);
+
+    match models::usuarios::atualiza_senha_usuario(email, senha_nova).await{
+        Ok(_) => {
+            return Ok(StatusCode::OK)
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+
 }
 
 pub async fn busca_usuario_email(email: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{

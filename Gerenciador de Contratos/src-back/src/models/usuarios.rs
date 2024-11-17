@@ -123,3 +123,32 @@ pub async fn busca_senha_usuario(email_: String) -> Result<String, String>{
         }
     }
 }
+
+pub async fn atualiza_senha_usuario(email_: String, senha_nova: String) -> Result<String, String>{
+    use self::usuarios::dsl::*;
+    let conn = &mut cria_conn()?;
+   
+    let res = usuarios.filter(email.eq(email_)).select(Usuario::as_select()).first(conn);
+    let id = match res{
+        Ok(usuario) => {
+            usuario.idusuario
+        },
+        Err(e) => {
+           return Err(e.to_string())
+        }
+    };
+   
+    let usuario_atualizado = diesel::update(usuarios.find(id))
+        .set(senha.eq(senha_nova))
+        .returning(Usuario::as_returning())
+        .get_result(conn);
+   
+    match usuario_atualizado{
+        Ok(usuario_atualizado) => {
+           return Ok(usuario_atualizado.idusuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+   }
+}
