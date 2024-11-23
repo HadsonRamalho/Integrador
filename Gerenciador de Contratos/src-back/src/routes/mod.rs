@@ -1,7 +1,5 @@
 use axum::{
-    routing::{get, post},
-    Router,
-    http::Method
+    http::Method, routing::{get, patch, post, put}, Router
 };
 use tower_http::cors::{Any, CorsLayer};
 
@@ -14,14 +12,13 @@ pub fn cria_rotas() -> Router<>{
         .route("/busca_email_usuario", get(busca_email_usuario))
         .route("/realiza_login", post(realiza_login))
         .route("/busca_senha_usuario", post(busca_senha_usuario))
-        .route("/atualiza_senha_usuario", post(atualiza_senha_usuario))
-        .route("/realiza_login",  post(realiza_login))
-        .route("/atualiza_email_usuario", post(atualiza_email_usuario))
+        .route("/atualiza_senha_usuario", patch(atualiza_senha_usuario))
+        .route("/atualiza_email_usuario", patch(atualiza_email_usuario))
 
         .layer(
             CorsLayer::new()
                 .allow_origin(Any)
-                .allow_methods(vec![Method::POST, Method::PUT]) 
+                .allow_methods(vec![Method::POST, Method::PUT, Method::PATCH]) 
                 .allow_headers(Any),
         );
     app

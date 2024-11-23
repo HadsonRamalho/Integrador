@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
 use serde::{Serialize, Deserialize};
 
-use super::{envia_email::envia_email_codigo, usuarios::{busca_usuario_email, valida_email, EmailInput}};
+use super::{envia_emails::envia_email_codigo, usuarios::{busca_usuario_email, valida_email, EmailInput}};
 
 #[derive(Serialize, Deserialize)]
 pub struct CodigoRecuperacaoInput{

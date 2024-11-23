@@ -4,7 +4,7 @@ use pwhash::bcrypt;
 use std::env;
 
 pub mod codigos_recuperacao;
-pub mod envia_email;
+pub mod envia_emails;
 pub mod usuarios;
 
 
