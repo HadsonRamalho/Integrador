@@ -38,12 +38,13 @@ pub async fn estrutura_usuario(usuario: Json<UsuarioInput>)
     let documento_ = usuario.documento.to_string();
 
     let idusuario = gera_hash(&email);
-
+    let now = chrono::Utc::now().naive_utc();
     let usuario = Usuario{
         nome,
         email,
         senha,
         documento: documento_,
+        datacadastro: now,
         idusuario
     };
     return  Ok((StatusCode::OK, Json(usuario)));
@@ -88,8 +89,12 @@ pub struct CredenciaisUsuario{
 pub async fn realiza_login(input: Json<CredenciaisUsuario>)
     -> Result<StatusCode, (StatusCode, Json<String>)>{
     let email = input.email.to_string();
-    let senha = input.senha.to_string();
+    let senha: String = input.senha.to_string();
 
+    if senha.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("A senha está vazia.".to_string())))
+    }
+    
     match valida_email(Json(EmailInput{
         email: email.clone()
     })).await{
@@ -279,6 +284,7 @@ pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct AtualizaSenhaInput{
     pub email: String,
     pub senha_antiga: String,

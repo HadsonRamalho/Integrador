@@ -41,12 +41,13 @@ async fn test_cadastra_usuario_err(){
     let nome = "Usuario Teste 2".to_string();
     let senha = "Senhateste2.".to_string();
     let documento = "002.123.113-10".to_string();
-
+    let now = chrono::Utc::now().naive_utc();
     let usuario = Usuario{
         email: email_invalido,
         nome,
         senha,
         documento,
+        datacadastro: now,
         idusuario: "123145123".to_string()
     };
     let id = usuario.idusuario.clone();

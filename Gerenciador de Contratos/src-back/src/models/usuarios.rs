@@ -1,9 +1,10 @@
+use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
-
 use crate::{controllers::cria_conn, schema::usuarios::{self, idusuario}};
 
-#[derive(Queryable, Selectable, Serialize, Deserialize, Insertable)]
+
+#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::usuarios)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Usuario {
@@ -11,12 +12,12 @@ pub struct Usuario {
     pub email: String,
     pub senha: String,
     pub documento: String,
+    pub datacadastro: NaiveDateTime,
     pub idusuario: String
 }
 
 pub async fn cadastra_usuario(usuario: Usuario) -> Result<(), String>{
     let conn = &mut cria_conn()?;
-
     let res: Result<Usuario, diesel::result::Error> = diesel::insert_into(usuarios::table)
         .values(usuario)
         .get_result(conn);
