@@ -4,6 +4,7 @@ use pwhash::bcrypt;
 use std::env;
 
 pub mod usuarios;
+pub mod codigos_recuperacao;
 
 pub fn cria_conn() -> Result<PgConnection, String> {
     dotenv().ok();
