@@ -10,6 +10,7 @@ diesel::table! {
         senha -> Varchar,
         #[max_length = 64]
         documento -> Varchar,
+        datacadastro -> Timestamp,
         #[max_length = 64]
         idusuario -> Varchar,
     }

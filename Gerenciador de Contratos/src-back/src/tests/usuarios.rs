@@ -3,7 +3,7 @@ use pwhash::bcrypt::verify;
 
 use crate::{controllers::usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, estrutura_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, UsuarioInput}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
 
-fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
+pub fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
     let email = format!("testeunit{}@gmail.com", numeroteste);
     let nome = format!("Usuario Teste {}", numeroteste);
     let senha = format!("SenhaTeste{}.", numeroteste);
@@ -41,12 +41,13 @@ async fn test_cadastra_usuario_err(){
     let nome = "Usuario Teste 2".to_string();
     let senha = "Senhateste2.".to_string();
     let documento = "002.123.113-10".to_string();
-
+    let now = chrono::Utc::now().naive_utc();
     let usuario = Usuario{
         email: email_invalido,
         nome,
         senha,
         documento,
+        datacadastro: now,
         idusuario: "123145123".to_string()
     };
     let id = usuario.idusuario.clone();

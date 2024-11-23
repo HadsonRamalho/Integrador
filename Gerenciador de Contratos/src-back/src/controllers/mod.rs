@@ -3,7 +3,10 @@ use dotenvy::dotenv;
 use pwhash::bcrypt;
 use std::env;
 
+pub mod codigos_recuperacao;
+pub mod envia_email;
 pub mod usuarios;
+
 
 pub fn cria_conn() -> Result<PgConnection, String> {
     dotenv().ok();
