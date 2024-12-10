@@ -8,4 +8,5 @@ interface ButtonProps
 
 export default function ButtonComponent({ children, ...rest }: ButtonProps) {
   return <button {...rest}>{children}</button>;
+ 
 }
