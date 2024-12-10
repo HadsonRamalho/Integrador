@@ -23,3 +23,11 @@ src-back/target
 *.njsproj
 *.sln
 *.sw?
+
+#Gerenciador de Contratos/src-tauri/target
+*.pdb
+*.rlib
+*.rmeta
+
+src-back/target 
+src-tauri/target 

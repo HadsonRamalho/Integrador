@@ -1,11 +1,10 @@
 import Layout from "@/layouts/default";
 
-
-export default function About() {
+export default function Machine() {
   return (
     <Layout>
       <main>
-        <h1>Página de sobre</h1>
+        <h1>Maquinas Disponiveis</h1>
       </main>
     </Layout>
   );
