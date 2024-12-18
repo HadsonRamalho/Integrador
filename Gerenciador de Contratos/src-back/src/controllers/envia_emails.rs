@@ -1,8 +1,12 @@
+use axum::{http::StatusCode, Json};
+use chrono::Days;
 use dotenv::dotenv;
 use std::env;
 use lettre::{message::header::ContentType, transport::smtp::authentication::{Credentials, Mechanism}, Message, SmtpTransport, Transport};
 
-use super::gera_hash;
+use crate::models::codigos_recuperacao::{cadastra_codigo_recuperacao_db, CodigoRecuperacao};
+
+use super::{cria_conn, gera_hash, usuarios::{busca_usuario_email, EmailInput}};
 
 pub fn verifica_credenciais_email() -> Result<(String, String), String>{
     dotenv().ok();
@@ -23,9 +27,18 @@ pub fn verifica_credenciais_email() -> Result<(String, String), String>{
     Ok(credenciais)
 }
 
-pub fn envia_email_codigo(email: String, assunto: &str) -> Result<String, String>{
+pub async fn envia_email_codigo(email: String, assunto: &str) 
+    -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     // carregando as credenciais SMTP
-    let credenciais = verifica_credenciais_email()?;
+    let credenciais = match verifica_credenciais_email(){
+        Ok(credenciais) => {
+            credenciais
+        },
+        Err(e) => {
+            return Err((StatusCode::SERVICE_UNAVAILABLE, Json(e)))
+        }
+    };
+
     let smtp_username = credenciais.0;
     let smtp_password = credenciais.1;
 
@@ -38,10 +51,10 @@ pub fn envia_email_codigo(email: String, assunto: &str) -> Result<String, String
         },
         "ativação de conta" => {
             assunto_titulo = "Ativação de Conta";
-            assunto_corpo = "Bem-Vindo(a) ao Gerenciador de Contratos! Use o código abaixo para ativar sua conta:"
+            assunto_corpo = "Bem-Vindo(a) ao MaqExpress! Use o código abaixo para ativar sua conta:"
         },
         _ => {
-            return Err("Assunto inválido.".to_string())
+            return Err((StatusCode::BAD_REQUEST, Json("Assunto inválido.".to_string())))
         }
     }
 
@@ -64,10 +77,44 @@ pub fn envia_email_codigo(email: String, assunto: &str) -> Result<String, String
     let codigo = codigo.get(8..12).unwrap().to_string();
     // conteúdo do e-mail
     let code = format!("{}", codigo);
+
+    let conn = &mut cria_conn()?;
+
+    let datacriacao = chrono::Utc::now().naive_utc();
+    let dia = Days::new(1);
+    let dataexpiracao = chrono::Utc::now().checked_add_days(dia).unwrap().naive_utc();
+    let idcodigo = gera_hash(&codigo);
+
+    let idusuario = match busca_usuario_email(Json(EmailInput{
+        email: email.clone()
+    })).await{
+        Ok(id) =>{
+            id.1.0
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    };
+
+    match cadastra_codigo_recuperacao_db(conn, CodigoRecuperacao{
+        codigo: codigo.clone(),
+        datacriacao,
+        dataexpiracao,
+        status: "Não utilizado".to_string(),
+        idusuario,
+        idcodigo,
+    }).await{
+        Ok(_) => {            
+        },
+        Err(e) => {
+            return Err((StatusCode::SERVICE_UNAVAILABLE, Json(e)))
+        }
+    }
+
     let email = Message::builder()
         .from("gerenciadordecontratosgdc@gmail.com".parse().unwrap())
         .to(email.parse().unwrap())
-        .subject(format!("Gerenciador de Contratos | {}", assunto_titulo))
+        .subject(format!("MaqExpress | {}", assunto_titulo))
         .header(ContentType::parse("text/html").unwrap()) // Define o tipo de conteúdo como HTML
         .body(
             format!(
@@ -104,12 +151,12 @@ pub fn envia_email_codigo(email: String, assunto: &str) -> Result<String, String
                 </head>
                 <body>
                     <div class="container">
-                        <div class="header">Reset de Senha</div>
+                        <div class="header">{assunto_titulo}</div>
                         <p>Olá,</p>
                         <p>{assunto_corpo}</p>
                         <div class="code">{code}</div>
                         <p>Se você não solicitou isso, por favor ignore este e-mail.</p>
-                        <p>Atenciosamente,<br>Equipe do Gerenciador de Contratos | GDC </p>
+                        <p>Atenciosamente,<br>Equipe do MaqExpress </p>
                     </div>
                 </body>
                 </html>
@@ -124,5 +171,5 @@ pub fn envia_email_codigo(email: String, assunto: &str) -> Result<String, String
         Ok(_) => println!("E-mail enviado com sucesso!"),
         Err(err) => eprintln!("Erro ao enviar e-mail: {:?}", err),
     }
-    return Ok(codigo)
+    return Ok((StatusCode::CREATED, Json(codigo)))
 }

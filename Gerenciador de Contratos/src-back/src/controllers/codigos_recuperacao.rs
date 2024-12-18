@@ -49,22 +49,9 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
     }
     let email_ = email_clone.clone();
     let input = Json(EmailInput{email: email_clone});
-    let idusuario = match busca_usuario_email(input).await{
-        Ok(id) => {id.1.0},
-        Err(e) => {
-            return Err(e)
-        }
-    };
+    let idusuario = busca_usuario_email(input).await?.1.0;
 
-    let codigo = match envia_email_codigo(email_, "recuperação de senha"){
-        Ok(codigo) => {codigo},
-        Err(e) => {
-            return Err((
-                StatusCode::SERVICE_UNAVAILABLE,
-                Json(format!("Não foi possível enviar o e-mail: {}", e))
-            ))
-        }
-    };
+    let codigo = envia_email_codigo(email_, "recuperação de senha").await?.1.0;
 
     let conn = &mut cria_conn()?;
 

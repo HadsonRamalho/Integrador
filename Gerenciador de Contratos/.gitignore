@@ -31,3 +31,5 @@ src-back/target
 
 src-back/target 
 src-tauri/target 
+
+node_modules

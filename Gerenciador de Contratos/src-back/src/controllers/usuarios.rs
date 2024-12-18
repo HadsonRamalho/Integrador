@@ -5,7 +5,7 @@ use validator::Validate;
 
 use crate::models::{self, usuarios::Usuario};
 
-use super::{cria_conn, formata_cnpj, formata_cpf, gera_hash};
+use super::{cria_conn, envia_emails::envia_email_codigo, formata_cnpj, formata_cpf, gera_hash};
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct UsuarioInput{
@@ -53,7 +53,7 @@ pub async fn estrutura_usuario(usuario: Json<UsuarioInput>)
 pub async fn cadastra_usuario(usuario: Json<Usuario>)
     -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     match valida_usuario(UsuarioInput{
-      email: usuario.email.to_string(),
+      email: usuario.email.clone(),
       nome: usuario.nome.to_string(),
       senha: usuario.senha.to_string(),
       documento: usuario.documento.to_string()  
@@ -65,18 +65,31 @@ pub async fn cadastra_usuario(usuario: Json<Usuario>)
         }
     }
 
+    let email_clone = usuario.email.to_string();
+
     let idusuario = usuario.0.idusuario.clone();
     let mut usuario = usuario.0;
     usuario.senha = gera_hash(&usuario.senha);
+
 
     let conn = &mut cria_conn()?;
 
     match models::usuarios::cadastra_usuario(conn, usuario).await{
         Ok(_) => {
-            return Ok((StatusCode::CREATED, Json(idusuario)))
+            
         },
         Err(e) => {
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+
+    match envia_email_codigo(email_clone, "ativação de conta").await{
+        Ok(codigoativacao) => {
+            println!("Código de ativação: {}", codigoativacao.1.0);
+            return Ok((StatusCode::OK, Json(idusuario)))
+        },
+        Err(e) => {
+            return Err(e)
         }
     }
 
