@@ -51,7 +51,7 @@ pub async fn verifica_codigo_recuperacao_db(conn: &mut PgConnection, idusuario_:
     };
 
     let res: Result<CodigoRecuperacao, diesel::result::Error> = diesel::update(codigos_recuperacao.find(idcodigo_))
-        .set(status.eq("utilizado"))
+        .set(status.eq("Utilizado"))
         .returning(CodigoRecuperacao::as_returning())
         .get_result(conn);
     match res{

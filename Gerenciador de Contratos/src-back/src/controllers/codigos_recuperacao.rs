@@ -45,7 +45,7 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
         Ok(_) => {},
         Err(e) => {
             return Err(e)
-        }
+        } 
     }
     let email_ = email_clone.clone();
     let input = Json(EmailInput{email: email_clone});
@@ -81,7 +81,7 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
 
 pub async fn deleta_codigo(id: String)
     -> Result<String, String>{
-    // usar apenas em testes
+    // Só utilizar em testes
     use crate::schema::codigos_recuperacao::dsl::*;
 
     let conn = &mut cria_conn().unwrap();

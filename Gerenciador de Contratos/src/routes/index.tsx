@@ -6,6 +6,7 @@ import Login from "@/pages/login";
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./privateRoute";
 import { Prohibited } from "@/pages/prohibited";
+import PasswordRecovery from "@/pages/password-recovery/index.js";
 
 
 const router = createBrowserRouter([
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/machine",
     element: <Machine/>,
+  },
+  {
+    path: "/password-recovery",
+    element: <PasswordRecovery/>,
   },
   {
     path: "/login",

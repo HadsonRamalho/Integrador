@@ -31,6 +31,8 @@ diesel::table! {
     }
 }
 
+diesel::joinable!(codigos_recuperacao -> usuarios (idusuario));
+
 diesel::allow_tables_to_appear_in_same_query!(
     codigos_recuperacao,
     usuarios,

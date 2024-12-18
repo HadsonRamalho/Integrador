@@ -5,5 +5,6 @@ CREATE TABLE codigos_recuperacao(
     dataexpiracao TIMESTAMP NOT NULL,
     status VARCHAR(32) NOT NULL,
     idusuario VARCHAR(64) NOT NULL,
-    idcodigo VARCHAR(64) PRIMARY KEY
+    idcodigo VARCHAR(64) PRIMARY KEY,
+    CONSTRAINT fk_usuarios FOREIGN KEY (idusuario) REFERENCES usuarios(idusuario) ON DELETE CASCADE
 );
