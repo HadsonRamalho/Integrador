@@ -16,8 +16,8 @@ pub struct Usuario {
     pub idusuario: String
 }
 
-pub async fn cadastra_usuario(usuario: Usuario) -> Result<(), String>{
-    let conn = &mut cria_conn()?;
+pub async fn cadastra_usuario(conn: &mut PgConnection, usuario: Usuario) 
+    -> Result<(), String>{
     let res: Result<Usuario, diesel::result::Error> = diesel::insert_into(usuarios::table)
         .values(usuario)
         .get_result(conn);
@@ -32,8 +32,10 @@ pub async fn cadastra_usuario(usuario: Usuario) -> Result<(), String>{
 }
 
 // Só utilizar em testes
-pub async fn deleta_usuario(id: String) -> Result<(), String>{
-    let conn = &mut cria_conn()?;
+pub async fn deleta_usuario(id: String) 
+    -> Result<(), String>{
+
+    let conn = &mut cria_conn().unwrap();
 
     let res: Result<Usuario, diesel::result::Error> = diesel::delete(usuarios::table)
         .filter(idusuario.eq(id))
@@ -48,9 +50,9 @@ pub async fn deleta_usuario(id: String) -> Result<(), String>{
     }
 }
 
-pub async fn busca_email_usuario(id: String) -> Result<String, String>{
+pub async fn busca_email_usuario(conn: &mut PgConnection, id: String) 
+    -> Result<String, String>{
     use self::usuarios::dsl::*;
-    let conn = &mut cria_conn()?;
 
     let res = usuarios.filter(idusuario.eq(id)).select(Usuario::as_select()).first(conn);
     match res{
@@ -63,9 +65,9 @@ pub async fn busca_email_usuario(id: String) -> Result<String, String>{
     }
 }
 
-pub async fn atualiza_email_usuario(email_antigo: String, email_novo: String) -> Result<String, String>{
- use self::usuarios::dsl::*;
-    let conn = &mut cria_conn()?;
+pub async fn atualiza_email_usuario(conn: &mut PgConnection, email_antigo: String, email_novo: String)
+     -> Result<String, String>{
+    use self::usuarios::dsl::*;
 
     let res = usuarios.filter(email.eq(email_antigo)).select(Usuario::as_select()).first(conn);
     let id = match res{
@@ -93,10 +95,9 @@ pub async fn atualiza_email_usuario(email_antigo: String, email_novo: String) ->
 
 }
 
-pub async fn busca_usuario_email(email_: String) -> Result<String, String>{
+pub async fn busca_usuario_email(conn: &mut PgConnection, email_: String)
+    -> Result<String, String>{
     use self::usuarios::dsl::*;
-
-    let conn = &mut cria_conn()?;
 
     let res: Result<Usuario, diesel::result::Error> = usuarios.filter(email.eq(email_)).first(conn);
     match res{
@@ -109,10 +110,9 @@ pub async fn busca_usuario_email(email_: String) -> Result<String, String>{
     }
 }
 
-pub async fn busca_senha_usuario(email_: String) -> Result<String, String>{
+pub async fn busca_senha_usuario(conn: &mut PgConnection, email_: String) 
+    -> Result<String, String>{
     use self::usuarios::dsl::*;
-
-    let conn = &mut cria_conn()?;
 
     let res: Result<Usuario, diesel::result::Error> = usuarios.filter(email.eq(email_)).first(conn);
     match res{
@@ -125,10 +125,10 @@ pub async fn busca_senha_usuario(email_: String) -> Result<String, String>{
     }
 }
 
-pub async fn atualiza_senha_usuario(email_: String, senha_nova: String) -> Result<String, String>{
+pub async fn atualiza_senha_usuario(conn: &mut PgConnection, email_: String, senha_nova: String) 
+    -> Result<String, String>{
     use self::usuarios::dsl::*;
-    let conn = &mut cria_conn()?;
-   
+
     let res = usuarios.filter(email.eq(email_)).select(Usuario::as_select()).first(conn);
     let id = match res{
         Ok(usuario) => {

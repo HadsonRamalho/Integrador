@@ -1,3 +1,4 @@
+use axum::{http::StatusCode, Json};
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use pwhash::bcrypt;
@@ -8,7 +9,7 @@ pub mod envia_emails;
 pub mod usuarios;
 
 
-pub fn cria_conn() -> Result<PgConnection, String> {
+pub fn cria_conn() -> Result<PgConnection, (StatusCode, Json<String>)> {
     dotenv().ok();
 
     let database_url = match env::var("DATABASE_URL"){
@@ -16,7 +17,7 @@ pub fn cria_conn() -> Result<PgConnection, String> {
             url
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::SERVICE_UNAVAILABLE, Json(e.to_string())))
         }
     };
     let conn = PgConnection::establish(&database_url);
@@ -25,7 +26,7 @@ pub fn cria_conn() -> Result<PgConnection, String> {
             return Ok(conn)
         },
         Err(e) => {
-            return Err(e.to_string())
+            return Err((StatusCode::SERVICE_UNAVAILABLE, Json(e.to_string())))
         }
     }
 }

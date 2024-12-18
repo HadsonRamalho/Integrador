@@ -5,7 +5,7 @@ use validator::Validate;
 
 use crate::models::{self, usuarios::Usuario};
 
-use super::{formata_cnpj, formata_cpf, gera_hash};
+use super::{cria_conn, formata_cnpj, formata_cpf, gera_hash};
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct UsuarioInput{
@@ -69,7 +69,9 @@ pub async fn cadastra_usuario(usuario: Json<Usuario>)
     let mut usuario = usuario.0;
     usuario.senha = gera_hash(&usuario.senha);
 
-    match models::usuarios::cadastra_usuario(usuario).await{
+    let conn = &mut cria_conn()?;
+
+    match models::usuarios::cadastra_usuario(conn, usuario).await{
         Ok(_) => {
             return Ok((StatusCode::CREATED, Json(idusuario)))
         },
@@ -130,7 +132,9 @@ pub async fn busca_senha_usuario(email: Json<EmailInput>)
         }
     }
 
-    match models::usuarios::busca_senha_usuario(email_clone).await{
+    let conn = &mut cria_conn()?;
+
+    match models::usuarios::busca_senha_usuario(conn, email_clone).await{
         Ok(hash) => {
             return Ok((StatusCode::OK, Json(hash)))
         },
@@ -145,7 +149,10 @@ pub async fn busca_email_usuario(input: Json<String>) -> Result<(StatusCode, Jso
     if id.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("O ID está vazio.".to_string())))
     }
-    let resultado_busca = models::usuarios::busca_email_usuario(id).await;
+    
+    let conn = &mut cria_conn()?;
+
+    let resultado_busca = models::usuarios::busca_email_usuario(conn, id).await;
     match resultado_busca{
         Ok(email) => {
             return Ok((StatusCode::OK, Json(email)))
@@ -274,7 +281,9 @@ pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(
         }
     }
 
-    match models::usuarios::atualiza_email_usuario(email_antigo, email_novo).await{
+    let conn = &mut cria_conn()?;
+
+    match models::usuarios::atualiza_email_usuario(conn, email_antigo, email_novo).await{
         Ok(email_atualizado) => {
             return Ok((StatusCode::OK, Json(email_atualizado)))
         },
@@ -322,7 +331,9 @@ pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
     }
     let senha_nova = gera_hash(&senha_nova);
 
-    match models::usuarios::atualiza_senha_usuario(email, senha_nova).await{
+    let conn = &mut cria_conn()?;
+
+    match models::usuarios::atualiza_senha_usuario(conn, email, senha_nova).await{
         Ok(_) => {
             return Ok(StatusCode::OK)
         },
@@ -343,8 +354,10 @@ pub async fn busca_usuario_email(email: Json<EmailInput>) -> Result<(StatusCode,
     }
 
     let email = email.email.to_string();
+    
+    let conn = &mut cria_conn()?;
 
-    let res = models::usuarios::busca_usuario_email(email).await;
+    let res = models::usuarios::busca_usuario_email(conn, email).await;
     match res{
         Ok(idusuario) => {
             return Ok((StatusCode::OK, Json(idusuario)))

@@ -1,7 +1,7 @@
 use axum::Json;
 use pwhash::bcrypt::verify;
 
-use crate::{controllers::usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, estrutura_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, UsuarioInput}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
+use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, estrutura_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
 
 pub fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
     let email = format!("testeunit{}@gmail.com", numeroteste);
@@ -300,7 +300,10 @@ async fn test_busca_senha_usuario_ok(){
     let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.idusuario.clone();
     assert!(cadastra_usuario(usuario).await.is_ok());
-    let hash = busca_senha_usuario(email).await.unwrap();
+
+    let conn = &mut cria_conn().unwrap();
+
+    let hash = busca_senha_usuario(conn, email).await.unwrap();
     assert!(verify(senha, &hash));
 
     assert!(deleta_usuario(id).await.is_ok());
@@ -316,7 +319,9 @@ async fn test_busca_senha_usuario_err(){
 
     assert!(cadastra_usuario(usuario).await.is_ok());
 
-    let hash = busca_senha_usuario(email).await.unwrap();
+    let conn = &mut cria_conn().unwrap();
+
+    let hash = busca_senha_usuario(conn, email).await.unwrap();
     let senha_incorreta = "SenhaIncorreta1.";
     assert!(!verify(senha_incorreta, &hash));
 

@@ -1,6 +1,21 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    codigos_recuperacao (idcodigo) {
+        #[max_length = 6]
+        codigo -> Varchar,
+        datacriacao -> Timestamp,
+        dataexpiracao -> Timestamp,
+        #[max_length = 32]
+        status -> Varchar,
+        #[max_length = 64]
+        idusuario -> Varchar,
+        #[max_length = 64]
+        idcodigo -> Varchar,
+    }
+}
+
+diesel::table! {
     usuarios (idusuario) {
         #[max_length = 64]
         nome -> Varchar,
@@ -15,3 +30,8 @@ diesel::table! {
         idusuario -> Varchar,
     }
 }
+
+diesel::allow_tables_to_appear_in_same_query!(
+    codigos_recuperacao,
+    usuarios,
+);
