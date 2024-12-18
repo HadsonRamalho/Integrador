@@ -1,5 +1,5 @@
 import Layout from "@/layouts/default";
-import "@/components/passoword/password-recovery.css";
+import "@/components/password-recovery/password-recovery.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "@/components/Input/Input";
