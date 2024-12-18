@@ -21,56 +21,30 @@ pub struct EmailInput{
     pub email: String
 }
 
-pub async fn estrutura_usuario(usuario: Json<UsuarioInput>)
-    ->Result<(StatusCode, Json<Usuario>), (StatusCode, Json<String>)>{
-
-    match valida_usuario(usuario.0.clone()).await{
-        Ok(_) => {},
-        Err(e) => {
-            return Err((StatusCode::BAD_REQUEST, Json(e)))
-        }
-    }
-
-
-    let email = usuario.email.to_string();
-    let nome = usuario.nome.to_string();
-    let senha = usuario.senha.to_string();
-    let documento_ = usuario.documento.to_string();
-
-    let idusuario = gera_hash(&email);
-    let now = chrono::Utc::now().naive_utc();
-    let usuario = Usuario{
-        nome,
-        email,
-        senha,
-        documento: documento_,
-        datacadastro: now,
-        idusuario
-    };
-    return  Ok((StatusCode::OK, Json(usuario)));
-}
-
-pub async fn cadastra_usuario(usuario: Json<Usuario>)
+pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
     -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
-    match valida_usuario(UsuarioInput{
-      email: usuario.email.clone(),
-      nome: usuario.nome.to_string(),
-      senha: usuario.senha.to_string(),
-      documento: usuario.documento.to_string()  
-    }).await{
+    match valida_usuario(&usuario.0).await{
         Ok(_) => {},
         Err(e) => {
             println!("{:?}", e);
             return Err((StatusCode::BAD_REQUEST, Json(e)))
         }
-    }
+    }    
 
     let email_clone = usuario.email.to_string();
+    let senha = gera_hash(&usuario.senha);
 
-    let idusuario = usuario.0.idusuario.clone();
-    let mut usuario = usuario.0;
-    usuario.senha = gera_hash(&usuario.senha);
-
+    let idusuario = gera_hash(&usuario.email);
+    let idusuario_clone = idusuario.clone();
+    let now = chrono::Utc::now().naive_utc();
+    let usuario = Usuario{
+        nome: usuario.nome.to_string(),
+        email: usuario.email.to_string(),
+        senha,
+        documento: usuario.documento.to_string(),
+        datacadastro: now,
+        idusuario
+    };
 
     let conn = &mut cria_conn()?;
 
@@ -86,7 +60,7 @@ pub async fn cadastra_usuario(usuario: Json<Usuario>)
     match envia_email_codigo(email_clone, "ativação de conta").await{
         Ok(codigoativacao) => {
             println!("Código de ativação: {}", codigoativacao.1.0);
-            return Ok((StatusCode::OK, Json(idusuario)))
+            return Ok((StatusCode::OK, Json(idusuario_clone)))
         },
         Err(e) => {
             return Err(e)
@@ -194,7 +168,7 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
     return Ok(())
 }
 
-pub async fn valida_usuario(usuario: UsuarioInput) -> Result<(), String>{
+pub async fn valida_usuario(usuario: &UsuarioInput) -> Result<(), String>{
     let nome = usuario.nome.to_string();
     if nome.trim().is_empty(){
         return Err("Erro ao validar o e-mail.".to_string())

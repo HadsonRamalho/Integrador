@@ -3,11 +3,10 @@ use axum::{
 };
 use tower_http::cors::{Any, CorsLayer};
 
-use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, cadastra_usuario, estrutura_usuario, realiza_login}};
+use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, cadastra_usuario, realiza_login}};
 
 pub fn cria_rotas() -> Router<>{
     let app: Router<_> = Router::new()
-        .route("/estrutura_usuario", post(estrutura_usuario))
         .route("/cadastra_usuario", post(cadastra_usuario))
         .route("/busca_email_usuario", get(busca_email_usuario))
         .route("/realiza_login", post(realiza_login))

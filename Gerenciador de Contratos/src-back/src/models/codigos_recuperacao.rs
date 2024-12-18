@@ -24,7 +24,7 @@ pub async fn cadastra_codigo_recuperacao_db(conn: &mut PgConnection, dados: Codi
 
     match res{
         Ok(codigorecuperacao) => {
-            return Ok(codigorecuperacao.idcodigo)
+            return Ok(codigorecuperacao.codigo)
         },
         Err(e) => {
             return Err(e.to_string())

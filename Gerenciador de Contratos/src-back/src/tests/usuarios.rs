@@ -1,7 +1,7 @@
 use axum::Json;
 use pwhash::bcrypt::verify;
 
-use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, estrutura_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
+use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
 
 pub fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
     let email = format!("testeunit{}@gmail.com", numeroteste);
@@ -18,19 +18,11 @@ pub fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
 }
 
 #[tokio::test]
-async fn test_estrutura_usuario_ok(){
-    let usuario = usuario_padrao("001");
-
-    assert!(estrutura_usuario(Json(usuario)).await.is_ok());
-}
-
-#[tokio::test]
 async fn test_cadastra_usuario_ok(){
     let usuario = usuario_padrao("002");
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
 
     assert!(deleta_usuario(id).await.is_ok());
 }
@@ -41,17 +33,14 @@ async fn test_cadastra_usuario_err(){
     let nome = "Usuario Teste 2".to_string();
     let senha = "Senhateste2.".to_string();
     let documento = "002.123.113-10".to_string();
-    let now = chrono::Utc::now().naive_utc();
-    let usuario = Usuario{
+    let usuario = UsuarioInput{
         email: email_invalido,
         nome,
         senha,
-        documento,
-        datacadastro: now,
-        idusuario: "123145123".to_string()
+        documento
     };
-    let id = usuario.idusuario.clone();
-    assert!(cadastra_usuario(Json(usuario)).await.is_err());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap_err().1.to_string();
+    let id = usuario.clone();
 
     assert!(deleta_usuario(id).await.is_err());
 }
@@ -60,9 +49,8 @@ async fn test_cadastra_usuario_err(){
 async fn test_busca_email_usuario_ok(){
     let usuario = usuario_padrao("003");
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
     assert!(busca_email_usuario(Json(id.clone())).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
@@ -201,9 +189,8 @@ async fn test_atualiza_email_usuario_ok(){
 
     let email_novo = "xtesteunit4@gmail.comx".to_string();
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
     assert!(atualiza_email_usuario(Json(AtualizaEmailInput{
         email_antigo: email,
         email_novo,
@@ -227,9 +214,8 @@ async fn test_atualiza_email_usuario_err(){
         documento
     };
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id1 = usuario.idusuario.clone();
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id1 = usuario.0.clone();
 
     let email2 = "testeunit6@gmail.com".to_string();
     let nome = "Usuario Teste 6".to_string();
@@ -243,9 +229,8 @@ async fn test_atualiza_email_usuario_err(){
         documento
     };
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id2 = usuario.idusuario.clone();
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id2 = usuario.0.clone();
 
     assert!(atualiza_email_usuario(Json(AtualizaEmailInput{
         email_antigo: email1,
@@ -262,9 +247,8 @@ pub async fn busca_usuario_email_ok(){
     let usuario = usuario_padrao("007");
     let email = usuario.email.clone();
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
     
     assert!(busca_usuario_email(Json(
         EmailInput{
@@ -279,9 +263,9 @@ pub async fn busca_usuario_email_ok(){
 pub async fn busca_usuario_email_err(){
     let usuario = usuario_padrao("008");
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
+
     assert!(busca_usuario_email(Json(
         EmailInput{
             email: "emailinvalido1@gmail.com".to_string()
@@ -297,9 +281,8 @@ async fn test_busca_senha_usuario_ok(){
     let email = usuario.email.clone();
     let senha = usuario.senha.clone();
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-    assert!(cadastra_usuario(usuario).await.is_ok());
+        let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
 
     let conn = &mut cria_conn().unwrap();
 
@@ -314,10 +297,8 @@ async fn test_busca_senha_usuario_err(){
     let usuario = usuario_padrao("010");
     let email = usuario.email.clone();
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
 
     let conn = &mut cria_conn().unwrap();
 
@@ -334,10 +315,8 @@ async fn test_realiza_login_ok(){
     let email = usuario.email.clone();
     let senha = usuario.senha.clone();
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -355,10 +334,8 @@ async fn test_realiza_login_err(){
     let email = usuario.email.clone();
     let senha = usuario.senha.clone();
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -376,10 +353,8 @@ async fn test_atualiza_senha_usuario_ok(){
     let email = usuario.email.clone();
     let senha = usuario.senha.clone();
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -410,10 +385,8 @@ async fn test_atualiza_senha_usuario_err(){
     let email = usuario.email.clone();
     let senha = usuario.senha.clone();
 
-    let usuario = estrutura_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.idusuario.clone();
-
-    assert!(cadastra_usuario(usuario).await.is_ok());
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{

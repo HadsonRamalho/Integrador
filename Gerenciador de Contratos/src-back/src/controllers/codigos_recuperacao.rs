@@ -39,7 +39,7 @@ pub async fn verifica_codigo_recuperacao(input: Json<CodigoRecuperacaoInput>)
 }
 
 pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
-    -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    -> Result<(StatusCode, Json<(String, String)>), (StatusCode, Json<String>)>{
     let email_clone = input.email.to_string();
     match valida_email(input).await{
         Ok(_) => {},
@@ -59,6 +59,7 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
     let dia = Days::new(1);
     let dataexpiracao = chrono::Utc::now().checked_add_days(dia).unwrap().naive_utc();
     let idcodigo = gera_hash(&codigo);
+    let idcodigo_clone = idcodigo.clone();
 
     let codigorecuperacao = CodigoRecuperacao{
         codigo,
@@ -70,8 +71,8 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
     };
 
     match cadastra_codigo_recuperacao_db(conn, codigorecuperacao).await{
-        Ok(idcodigo) => {
-            return Ok((StatusCode::OK, Json(idcodigo)))
+        Ok(codigo) => {
+            return Ok((StatusCode::OK, Json((idcodigo_clone, codigo))))
         },
         Err(e) => {
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
