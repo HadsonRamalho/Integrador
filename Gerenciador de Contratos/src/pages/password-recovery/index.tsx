@@ -1,11 +1,13 @@
 import Layout from "@/layouts/default";
 import "@/pages/password-recovery/password-recovery.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function PasswordRecovery() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const navigate = useNavigate();
 
   const API_URL = "https://g6v9psc0-3003.brs.devtunnels.ms";
 
@@ -51,6 +53,7 @@ export default function PasswordRecovery() {
         <main>
           <div className="password-recovery">
             <div className="input-box">
+              <h2 className="title">Recuperação de senha</h2>
               <input
                 type="email"
                 value={email}
@@ -65,7 +68,10 @@ export default function PasswordRecovery() {
                 {isUpdating ? "Enviando código..." : "Enviar código"}
               </button>
               <span>{message}</span>
-            </div>
+              <button onClick={() => {navigate(-1)}}>
+                Voltar
+              </button>
+            </div>            
           </div>
         </main>
       </Layout>

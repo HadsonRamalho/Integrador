@@ -2,10 +2,12 @@ import Layout from "@/layouts/default";
 import  "@/components/navbar/navbar.css";
 import "@/assets/teste.jpg";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email , setEmail ] = useState ("");
   const [senha , setSenha ] = useState ("");
+  const navigate = useNavigate();
 
   const RealizaLogin = async () => {
     try{
@@ -43,6 +45,7 @@ export default function Login() {
           <input type="password" name="" id="" value={senha} onChange={(e) => setSenha(e.target.value)} />
           <button type="submit" onClick={RealizaLogin}>Entrar</button>
           <button type="submit">Entrar com o Google</button>
+          <button type="button" onClick={() => {navigate("/password-recovery")}}>Esqueci a senha</button>
           <span>Não possui conta?<a href="">clique aqui</a>para se cadastrar</span>
         </div>
         </div>
