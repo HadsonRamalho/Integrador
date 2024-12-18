@@ -6,15 +6,15 @@ use serde::{Deserialize, Serialize};
 #[diesel(table_name = crate::schema::codigos_recuperacao)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct CodigoRecuperacao{
-    codigo: String,
-    datacriacao: NaiveDateTime,
-    dataexpiracao: NaiveDateTime,
-    status: String,
-    idusuario: String,
-    idcodigo: String
+    pub codigo: String,
+    pub datacriacao: NaiveDateTime,
+    pub dataexpiracao: NaiveDateTime,
+    pub status: String,
+    pub idusuario: String,
+    pub idcodigo: String
 }
 
-pub async fn cadastra_codigo_recuperacao(conn: &mut PgConnection, dados: CodigoRecuperacao)
+pub async fn cadastra_codigo_recuperacao_db(conn: &mut PgConnection, dados: CodigoRecuperacao)
     -> Result<String, String>{
     use crate::schema::codigos_recuperacao::dsl::*;
 
@@ -33,7 +33,7 @@ pub async fn cadastra_codigo_recuperacao(conn: &mut PgConnection, dados: CodigoR
 }
 
 
-pub async fn verifica_codigo_recuperacao(conn: &mut PgConnection, idusuario_: String, codigo_: String) -> Result<String, String>{
+pub async fn verifica_codigo_recuperacao_db(conn: &mut PgConnection, idusuario_: String, codigo_: String) -> Result<String, String>{
     use crate::schema::codigos_recuperacao::dsl::*;
 
     let res: Result<CodigoRecuperacao, diesel::result::Error> = codigos_recuperacao
