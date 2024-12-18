@@ -33,11 +33,10 @@ export default function PasswordRecovery() {
         throw new Error(await res.text());
       }
 
-      const idcodigo = await res.text();
-      console.log("idcodigo: ", idcodigo);
-
+      const idcodigo = await res.json();
+      console.log("idcodigo: ", idcodigo[0]);
       
-      setTimeout(() => setIsUpdating(false), 5000);
+      setTimeout(() => setIsUpdating(false));
 
       setMessage("Código enviado com sucesso. Verifique seu e-mail!");
       // exibir input pra inserir o código
