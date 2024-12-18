@@ -3,7 +3,8 @@ import  "@/components/navbar/navbar.css";
 import "@/assets/teste.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+ import {Input} from "@/components/Input/Input";
+ 
 export default function Login() {
   const [email , setEmail ] = useState ("");
   const [senha , setSenha ] = useState ("");
@@ -25,6 +26,7 @@ export default function Login() {
         throw new Error(erro || "Erro ao realizar o login.");
       }
       console.log("Login realizado.");
+      navigate("/");
     }
 
     catch (erro){
@@ -32,6 +34,7 @@ export default function Login() {
 
     }
   }
+ 
   return (
     <Layout>
       <main>
@@ -41,8 +44,22 @@ export default function Login() {
         </div>
         <div className="grid">
         <div className="login">
-          <input type="email" name="" id="" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" name="" id="" value={senha} onChange={(e) => setSenha(e.target.value)} />
+
+          <Input 
+          type="email" 
+          name="" id="" 
+           placeholder= "E-mail"
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} />
+
+          <Input
+           type="password" 
+           name="" 
+           id="" 
+           placeholder="Senha"
+            value={senha}
+             onChange={(e) => setSenha(e.target.value)} />
+
           <button type="submit" onClick={RealizaLogin}>Entrar</button>
           <button type="submit">Entrar com o Google</button>
           <button type="button" onClick={() => {navigate("/password-recovery")}}>Esqueci a senha</button>
@@ -55,5 +72,6 @@ export default function Login() {
         </div>
       </main>
     </Layout>
+    
   );
 }

@@ -2,6 +2,7 @@ import Layout from "@/layouts/default";
 import "@/components/passoword/password-recovery.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Input from "@/components/Input/Input";
 
 export default function PasswordRecovery() {
   const [email, setEmail] = useState("");
@@ -54,7 +55,7 @@ export default function PasswordRecovery() {
           <div className="password-recovery">
             <div className="input-box">
               <h2 className="title">Recuperação de senha</h2>
-              <input
+              <Input
                 type="email"
                 value={email}
                 placeholder="E-mail"
