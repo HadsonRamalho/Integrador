@@ -1,6 +1,6 @@
 import Layout from "@/layouts/default";
-import  "@/components/navbar/navbar.css";
-import "@/assets/teste.jpg";
+import  "@/components/login/login.css";
+import maquina from "@/assets/teste.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
  import {Input} from "@/components/Input/Input";
@@ -44,7 +44,6 @@ export default function Login() {
         </div>
         <div className="grid">
         <div className="login">
-
           <Input 
           type="email" 
           name="" id="" 
@@ -60,15 +59,14 @@ export default function Login() {
             value={senha}
              onChange={(e) => setSenha(e.target.value)} />
 
-          <button type="submit" onClick={RealizaLogin}>Entrar</button>
+         <a className="password" href=""onClick={() => {navigate("/password-recovery")}}>Esqueci a senha</a>
           <button type="submit">Entrar com o Google</button>
-          <button type="button" onClick={() => {navigate("/password-recovery")}}>Esqueci a senha</button>
-          <span>Não possui conta?<a href="">clique aqui</a>para se cadastrar</span>
-        </div>
+          <button type="submit" onClick={RealizaLogin}>Entrar</button>
+          <span>Não possui conta?<a href="#" onClick={()=> {navigate("/create-account")}}>clique aqui</a>para se cadastrar</span>
         </div>
         <div>
-          <img src="" alt="" />
-          
+          <img src={maquina} alt="" />
+        </div>
         </div>
       </main>
     </Layout>

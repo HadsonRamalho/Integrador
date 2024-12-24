@@ -8,22 +8,6 @@ body{
   text-decoration: none;
   color: #ffffff;
 }
-
-/* .login{
- display: grid;
- justify-content: center;
- gap: 15px;
- color: #ffffff;
- width: 500px;
- height: 350px;
-
-}  */
-
-
-.titulo{
-  color: #ffffff;  
-}
-
 .home{
   color: #ffffff;
   margin: 5px;
@@ -58,9 +42,6 @@ body{
   
  
 }
-/* .grid{
-  
-} */
 
 
 

@@ -1,0 +1,38 @@
+.grid {
+  display: flex;
+  height: 100vh; 
+}
+  
+.login {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  color: white;
+}
+  
+.img-container {
+  width: 60%; 
+  overflow: hidden; 
+    
+}
+  
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Faz a imagem preencher o contêiner proporcionalmente */
+}
+
+.password {
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  color: #ffffff;
+}
+  
+.password:hover {
+  text-decoration: underline;
+}
+
