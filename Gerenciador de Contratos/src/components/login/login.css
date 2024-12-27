@@ -1,28 +1,42 @@
+.titulo{
+  color: #ffffff;
+  text-align:justify;
+  margin-bottom: 20px;
+
+}
 .grid {
   display: flex;
+  flex-direction: row;
   height: 100vh; 
 }
   
 .login {
-  width: 100%;
+  width: 50%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 30px;
   color: white;
+  background-color: #1a1a1a;
+
 }
   
-.img-container {
-  width: 60%; 
-  overflow: hidden; 
-    
-}
+
   
 .img {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.img img{
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Faz a imagem preencher o contêiner proporcionalmente */
+  object-fit: cover;
 }
 
 .password {
@@ -30,6 +44,8 @@
   text-decoration: none;
   cursor: pointer;
   color: #ffffff;
+  align-self: center;
+  margin-top: -25px;
 }
   
 .password:hover {

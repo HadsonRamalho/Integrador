@@ -1,4 +1,3 @@
-import Layout from "@/layouts/default";
 import  "@/components/login/login.css";
 import maquina from "@/assets/teste.jpg";
 import { useState } from "react";
@@ -36,7 +35,6 @@ export default function Login() {
   }
  
   return (
-    <Layout>
       <main>
         <div className="titulo">
         <h1>MaqExpress</h1>
@@ -68,8 +66,6 @@ export default function Login() {
           <img src={maquina} alt="" />
         </div>
         </div>
-      </main>
-    </Layout>
-    
+      </main> 
   );
 }
