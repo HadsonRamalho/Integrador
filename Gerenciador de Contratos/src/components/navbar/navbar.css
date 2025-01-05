@@ -1,11 +1,11 @@
-
+@import url("../../index.css");
 
 .class1{
   text-decoration: none;
   color: #ffffff;
 }
 .home{
-  color: #ffffff;
+  color: hsl(var());
   margin: 5px;
   justify-content: center;
 }
@@ -16,12 +16,12 @@
 
 }
 
-.teste{
-  color: #ffffff;
+.info{
+  color: hsl(var(--text));
 }
 
 .quadro{
-  background-color: bisque;
+  background-color: hsl(var(--destructive));
   width: 200px;
   height: 200px;
   margin: 5px;
@@ -29,16 +29,9 @@
  
 }
 .quadro2{
-  background-color: bisque;
+  background-color: hsl(var(--destructive));
   width: 200px;
   height: 200px;
   margin: 5px;
   display: flex;
-  
-  
- 
 }
-
-
-
-

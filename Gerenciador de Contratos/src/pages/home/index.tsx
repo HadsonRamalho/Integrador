@@ -10,7 +10,7 @@ function App() {
           <p className="descricao">Lorem ipsum dolor sit, amet consectetur a.</p>
           </div>
           <div className="grid">
-            <h2 className="teste">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime tempore omnis sunt! odio?</h2>
+            <h2 className="info">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime tempore omnis sunt! odio?</h2>
             <div className="quadro">
               <img src="" alt="" />
               

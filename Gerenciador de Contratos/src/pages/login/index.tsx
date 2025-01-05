@@ -3,6 +3,8 @@ import maquina from "@/assets/teste.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
  import {Input} from "@/components/Input/Input";
+import Layout from "@/layouts/default";
+import { Button } from "@/components/ui/button";
  
 export default function Login() {
   const [email , setEmail ] = useState ("");
@@ -35,11 +37,13 @@ export default function Login() {
   }
  
   return (
+    <Layout>
       <main>
         <div className="titulo">
         <h1>MaqExpress</h1>
         <p>Faça login ou cadastre para continuar</p>
         </div>
+        
         <div className="grid">
         <div className="login">
           <Input 
@@ -47,6 +51,7 @@ export default function Login() {
           name="" id="" 
            placeholder= "E-mail"
           value={email} 
+          className="input-login"
           onChange={(e) => setEmail(e.target.value)} />
 
           <Input
@@ -54,18 +59,20 @@ export default function Login() {
            name="" 
            id="" 
            placeholder="Senha"
+           className="input-login"
             value={senha}
              onChange={(e) => setSenha(e.target.value)} />
 
          <a className="password" href=""onClick={() => {navigate("/password-recovery")}}>Esqueci a senha</a>
-          <button type="submit">Entrar com o Google</button>
-          <button type="submit" onClick={RealizaLogin}>Entrar</button>
-          <span>Não possui conta?<a href="#" onClick={()=> {navigate("/create-account")}}>clique aqui</a>para se cadastrar</span>
+          <Button type="submit">Entrar com o Google</Button>
+          <Button type="submit" onClick={RealizaLogin}>Entrar</Button>
+          <span>Não possui conta?<a className="link-login" href="#" onClick={()=> {navigate("/create-account")}}> Clique aqui </a>para se cadastrar</span>
         </div>
         <div>
           <img src={maquina} alt="" />
         </div>
         </div>
       </main> 
+      </Layout>
   );
 }

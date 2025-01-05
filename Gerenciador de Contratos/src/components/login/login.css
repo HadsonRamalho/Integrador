@@ -1,5 +1,5 @@
 .titulo{
-  color: #ffffff;
+  color: hsl(var(--text));
   text-align:justify;
   margin-bottom: 20px;
 
@@ -18,19 +18,18 @@
   justify-content: center;
   align-items: center;
   gap: 30px;
-  color: white;
+  color: hsl(var(--text));
   background-color: #1a1a1a;
+  padding: 12px 15px;
 
 }
-  
-
   
 .img {
   width: 50%;
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; 
 }
 
 .img img{
@@ -43,7 +42,7 @@
   font-size: 0.9rem;
   text-decoration: none;
   cursor: pointer;
-  color: #ffffff;
+  color: hsl(var(--text));
   align-self: center;
   margin-top: -25px;
 }
@@ -52,3 +51,10 @@
   text-decoration: underline;
 }
 
+.input-login{
+  border-radius: 5px;
+}
+
+.link-login{
+  color: hsl(var(--primary));
+}

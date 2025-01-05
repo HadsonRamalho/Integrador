@@ -3,6 +3,7 @@ import "@/components/password-recovery/password-recovery.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "@/components/Input/Input";
+import { Button } from "@/components/ui/button";
 
 export default function PasswordRecovery() {
   const [email, setEmail] = useState("");
@@ -62,15 +63,15 @@ export default function PasswordRecovery() {
                 required
               />
               
-              <button 
+              <Button 
               onClick={handleSubmit}
               disabled={isUpdating}>
                 {isUpdating ? "Enviando código..." : "Enviar código"}
-              </button>
+              </Button>
               <span>{message}</span>
-              <button onClick={() => {navigate(-1)}}>
+              <Button onClick={() => {navigate(-1)}}>
                 Voltar
-              </button>
+              </Button>
             </div>            
           </div>
         </main>

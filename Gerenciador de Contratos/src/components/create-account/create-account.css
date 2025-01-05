@@ -1,0 +1,4 @@
+.create-account-box{
+    background-color: hsl(var(--teste));
+    color: hsl(var(--text));
+}
