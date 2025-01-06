@@ -2,7 +2,7 @@ import Layout from "@/layouts/default";
 import "@/components/password-recovery/password-recovery.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Input from "@/components/Input/Input";
+import Input from "@/layouts/Input";
 import { Button } from "@/components/ui/button";
 
 export default function PasswordRecovery() {

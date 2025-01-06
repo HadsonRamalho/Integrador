@@ -2,7 +2,7 @@ import  "@/components/login/login.css";
 import maquina from "@/assets/teste.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
- import {Input} from "@/components/Input/Input";
+ import {Input} from "@/layouts/Input";
 import Layout from "@/layouts/default";
 import { Button } from "@/components/ui/button";
  
