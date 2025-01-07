@@ -7,6 +7,7 @@ use std::env;
 pub mod codigos_recuperacao;
 pub mod envia_emails;
 pub mod usuarios;
+pub mod maquinas;
 
 
 pub fn cria_conn() -> Result<PgConnection, (StatusCode, Json<String>)> {
