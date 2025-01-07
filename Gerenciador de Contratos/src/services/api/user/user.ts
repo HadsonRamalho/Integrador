@@ -1,14 +1,13 @@
-import { User } from "@/interfaces/user";
+import { UserId } from "@/interfaces/user";
 import { client } from "..";
 
 export async function loginUser(
   email: string,
   password: string
-): Promise<User> {
-  const { data } = await client.post<User>("/login", {
+): Promise<UserId> {
+  const { data } = await client.post<UserId>("/realiza_login", {
     email,
-    password,
+    senha: password,
   });
   return data;
 }
-

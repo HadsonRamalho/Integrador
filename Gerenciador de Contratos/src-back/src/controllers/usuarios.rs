@@ -74,9 +74,13 @@ pub struct CredenciaisUsuario{
     pub email: String,
     pub senha: String
 }
+#[derive(Serialize, Deserialize)]
+pub struct UserId{
+    idusuario: String
+}
 
 pub async fn realiza_login(input: Json<CredenciaisUsuario>)
-    -> Result<StatusCode, (StatusCode, Json<String>)>{
+    -> Result<(StatusCode, Json<UserId>), (StatusCode, Json<String>)>{
     let email = input.email.to_string();
     let senha: String = input.senha.to_string();
 
@@ -94,7 +98,7 @@ pub async fn realiza_login(input: Json<CredenciaisUsuario>)
     }
 
     let hash_senha = match busca_senha_usuario(Json(EmailInput{
-        email
+        email: email.clone()
     })).await{
         Ok(hash) => {hash},
         Err(e) => {
@@ -103,8 +107,14 @@ pub async fn realiza_login(input: Json<CredenciaisUsuario>)
     };
     let hash_senha = hash_senha.1.to_string();
     
+    let id = busca_usuario_email(Query(EmailInput{
+        email
+    })).await?.1.0;
+
     if verify(senha, &hash_senha){
-        return Ok(StatusCode::OK)
+        return Ok((StatusCode::OK, Json(UserId{
+            idusuario: id
+        })))
     }
     return Err((StatusCode::BAD_REQUEST, Json("Erro no login.".to_string())))
 }

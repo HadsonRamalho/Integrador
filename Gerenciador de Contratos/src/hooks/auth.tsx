@@ -1,4 +1,4 @@
-import { User } from "@/interfaces/user";
+import { UserId } from "@/interfaces/user";
 import { loginUser } from "@/services/api/user/user";
 import {
   createContext,
@@ -14,7 +14,7 @@ interface AuthCredentials {
 }
 
 interface AuthContextData {
-  user: User | null;
+  user: UserId | null;
   signIn(credentials: AuthCredentials): void;
   signOut(): void;
 }
@@ -26,7 +26,7 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<UserId | null>(() => {
     const user = localStorage.getItem("user");
 
     if (!user) {

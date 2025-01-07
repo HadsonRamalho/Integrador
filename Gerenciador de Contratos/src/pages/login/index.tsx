@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
  import {Input} from "@/layouts/Input";
 import Layout from "@/layouts/default";
 import { Button } from "@/components/ui/button";
-
+import { loginUser } from "@/services/api/user/user";
+import { handleAxiosError } from "@/services/api/error/error";
 
  
 export default function AuthPage() {
@@ -19,25 +20,14 @@ export default function AuthPage() {
 
   const RealizaLogin = async () => {
     try{
-      const res = await fetch("https://g6v9psc0-3003.brs.devtunnels.ms/realiza_login",{
-        method: "POST" ,
-        headers:{
-          'Content-Type' : "application/json"
-        }
-        , body: JSON.stringify({email , senha})
-
-      });
-      if(!res.ok){
-        const erro = await res.text();
-        console.log(erro);
-        throw new Error(erro || "Erro ao realizar o login.");
-      }
+      const res = await loginUser(email, senha);
+      const id = res.idusuario;
+      localStorage.setItem("USER_ID", id);
       console.log("Login realizado.");
       navigate("/");
     }
     catch (erro){
-      console.error("Erro no Login: ", erro);
-
+      handleAxiosError(erro);
     }
   };
 

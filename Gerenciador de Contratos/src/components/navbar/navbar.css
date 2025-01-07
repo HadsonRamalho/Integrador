@@ -35,3 +35,8 @@
   margin: 5px;
   display: flex;
 }
+
+.quadro3{
+  background-color: hsl(var(--teste));
+  color: hsl(var(--text))
+}
