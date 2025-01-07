@@ -2,6 +2,7 @@ import Layout from "@/layouts/default";
 import "@/components/create-account/create-account.css";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {Input} from "@/layouts/Input";
 
 export default function Create() {
   const [name, setName] = useState("");
@@ -38,27 +39,27 @@ export default function Create() {
         <div className="create-account-box">
           <span className="pl-[45%]">Crie sua conta</span>
           <div className="create-account ml-[40px]">
-            <input
+            <Input
               placeholder="Nome"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
             />
-            <input
+            <Input
               placeholder="E-mail"
               value={email}
               type={'email'}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <input
+            <Input
               placeholder="Senha"
               value={password}
               type={'password'}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <input
+            <Input
               placeholder="Documento"
               value={document}
               onChange={(e) => setDocument(e.target.value)}
