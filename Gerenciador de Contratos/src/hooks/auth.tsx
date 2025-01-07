@@ -40,7 +40,7 @@ export default function AuthProvider({
   const signIn = useCallback(async ({ email, password }: AuthCredentials) => {
     const data = await loginUser(email, password);
 
-    localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("USER_ID", data.idusuario);
     setUser(data);
   }, []);
 

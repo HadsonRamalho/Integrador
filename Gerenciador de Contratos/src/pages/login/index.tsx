@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
  import {Input} from "@/layouts/Input";
 import Layout from "@/layouts/default";
 import { Button } from "@/components/ui/button";
-import { loginUser } from "@/services/api/user/user";
+//import { loginUser } from "@/services/api/user/user";
 import { handleAxiosError } from "@/services/api/error/error";
-
+import { useAuth } from "@/hooks/auth";
  
 export default function AuthPage() {
   const [mode, setMode] = useState("login"); 
@@ -17,12 +17,12 @@ export default function AuthPage() {
   const [document, setDocument] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  const {signIn} = useAuth();
   const RealizaLogin = async () => {
+    
     try{
-      const res = await loginUser(email, senha);
-      const id = res.idusuario;
-      localStorage.setItem("USER_ID", id);
+      const credentials = { email: email, password: senha};
+      signIn(credentials);
       console.log("Login realizado.");
       navigate("/");
     }
