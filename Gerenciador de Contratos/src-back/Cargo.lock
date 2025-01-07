@@ -189,13 +189,24 @@ checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
 name = "bigdecimal"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1374191e2dd25f9ae02e3aa95041ed5d747fc77b3c102b49fe2dd9a8117a6244"
+dependencies = [
+ "num-bigint 0.2.6",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
+name = "bigdecimal"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9324c8014cd04590682b34f1e9448d38f0674d0f7b2dc553331016ef0e4e9ebc"
 dependencies = [
  "autocfg",
  "libm",
- "num-bigint",
+ "num-bigint 0.4.4",
  "num-integer",
  "num-traits",
 ]
@@ -893,6 +904,7 @@ name = "gerenciador-de-contratos"
 version = "0.0.0"
 dependencies = [
  "axum",
+ "bigdecimal 0.1.2",
  "bincode",
  "chrono",
  "diesel",
@@ -903,6 +915,7 @@ dependencies = [
  "openssl-sys",
  "pq-sys",
  "pwhash",
+ "rand",
  "serde",
  "serde_json",
  "thiserror",
@@ -1340,7 +1353,7 @@ checksum = "afe0450cc9344afff34915f8328600ab5ae19260802a334d0f72d2d5bdda3bfe"
 dependencies = [
  "darling",
  "heck 0.4.1",
- "num-bigint",
+ "num-bigint 0.4.4",
  "proc-macro-crate",
  "proc-macro-error",
  "proc-macro2",
@@ -1391,7 +1404,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ccdc1fe2bb3ef97e07ba4397327ed45509a1e2e499e2f8265243879cbc7313c"
 dependencies = [
  "base64 0.21.7",
- "bigdecimal",
+ "bigdecimal 0.4.3",
  "bindgen",
  "bitflags 2.5.0",
  "bitvec",
@@ -1405,7 +1418,7 @@ dependencies = [
  "frunk",
  "lazy_static",
  "mysql-common-derive",
- "num-bigint",
+ "num-bigint 0.4.4",
  "num-traits",
  "rand",
  "regex",
@@ -1459,6 +1472,17 @@ checksum = "77a8165726e8236064dbb45459242600304b42a5ea24ee2948e18e023bf7ba84"
 dependencies = [
  "overload",
  "winapi",
+]
+
+[[package]]
+name = "num-bigint"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "090c7f9998ee0ff65aa5b723e4009f7b217707f1fb5ea551329cc4d6231fb304"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
 ]
 
 [[package]]

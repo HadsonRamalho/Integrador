@@ -16,6 +16,26 @@ diesel::table! {
 }
 
 diesel::table! {
+    maquinas (idmaquina) {
+        #[max_length = 64]
+        idmaquina -> Varchar,
+        #[max_length = 64]
+        idpublico -> Varchar,
+        #[max_length = 64]
+        nome -> Varchar,
+        #[max_length = 64]
+        numeroserie -> Varchar,
+        valoraluguel -> Float8,
+        #[max_length = 64]
+        disponivelaluguel -> Varchar,
+        #[max_length = 64]
+        status -> Varchar,
+        datacadastro -> Timestamp,
+        dataatualizacao -> Timestamp,
+    }
+}
+
+diesel::table! {
     usuarios (idusuario) {
         #[max_length = 64]
         nome -> Varchar,
@@ -35,5 +55,6 @@ diesel::joinable!(codigos_recuperacao -> usuarios (idusuario));
 
 diesel::allow_tables_to_appear_in_same_query!(
     codigos_recuperacao,
+    maquinas,
     usuarios,
 );
