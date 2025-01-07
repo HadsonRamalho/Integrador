@@ -1,4 +1,4 @@
-use axum::Json;
+use axum::{extract::Query, Json};
 use pwhash::bcrypt::verify;
 
 use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
@@ -250,7 +250,7 @@ pub async fn busca_usuario_email_ok(){
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.0.clone();
     
-    assert!(busca_usuario_email(Json(
+    assert!(busca_usuario_email(Query(
         EmailInput{
             email
         }
@@ -266,7 +266,7 @@ pub async fn busca_usuario_email_err(){
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.0.clone();
 
-    assert!(busca_usuario_email(Json(
+    assert!(busca_usuario_email(Query(
         EmailInput{
             email: "emailinvalido1@gmail.com".to_string()
         }

@@ -1,4 +1,4 @@
-use axum::{http::StatusCode, Json};
+use axum::{extract::Query, http::StatusCode, Json};
 use chrono::Days;
 use diesel::{ExpressionMethods, RunQueryDsl};
 use serde::{Serialize, Deserialize};
@@ -48,7 +48,7 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
         } 
     }
     let email_ = email_clone.clone();
-    let input = Json(EmailInput{email: email_clone});
+    let input = Query(EmailInput{email: email_clone});
     let idusuario = busca_usuario_email(input).await?.1.0;
 
     let codigo = envia_email_codigo(email_, "recuperação de senha").await?.1.0;

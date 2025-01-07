@@ -1,4 +1,4 @@
-use axum::{http::StatusCode, Json};
+use axum::{extract::Query, http::StatusCode, Json};
 use pwhash::unix::verify;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
@@ -247,7 +247,7 @@ pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(
         }
     }
     
-    match busca_usuario_email(Json(EmailInput{
+    match busca_usuario_email(Query(EmailInput{
         email: email_antigo.clone()
     })).await{
         Ok(_) => {
@@ -257,7 +257,7 @@ pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(
         }
     }
     
-    match busca_usuario_email(Json(EmailInput{
+    match busca_usuario_email(Query(EmailInput{
         email: email_novo.clone()
     })).await{
         Ok(_) => {
@@ -330,9 +330,9 @@ pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
     }
 }
 
-pub async fn busca_usuario_email(email: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+pub async fn busca_usuario_email(Query(params): Query<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     match valida_email(Json(EmailInput{
-        email: email.email.clone()
+        email: params.email.clone()
     })).await{
         Ok(_) => {},
         Err(e) => {
@@ -340,7 +340,7 @@ pub async fn busca_usuario_email(email: Json<EmailInput>) -> Result<(StatusCode,
         }
     }
 
-    let email = email.email.to_string();
+    let email = params.email.to_string();
     
     let conn = &mut cria_conn()?;
 

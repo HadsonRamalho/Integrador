@@ -1,4 +1,4 @@
-use axum::{http::StatusCode, Json};
+use axum::{extract::Query, http::StatusCode, Json};
 use chrono::Days;
 use dotenv::dotenv;
 use std::env;
@@ -85,7 +85,7 @@ pub async fn envia_email_codigo(email: String, assunto: &str)
     let dataexpiracao = chrono::Utc::now().checked_add_days(dia).unwrap().naive_utc();
     let idcodigo = gera_hash(&codigo);
 
-    let idusuario = match busca_usuario_email(Json(EmailInput{
+    let idusuario = match busca_usuario_email(Query(EmailInput{
         email: email.clone()
     })).await{
         Ok(id) =>{
