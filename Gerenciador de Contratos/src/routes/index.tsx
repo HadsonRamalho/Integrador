@@ -1,7 +1,6 @@
 import About from "@/pages/about";
 import Logged from "@/pages/logged";
 import Home from "@/pages/home";
-import Create from "@/pages/create-account";
 import  Machine  from "@/pages/machine";
 import Login from "@/pages/login";
 import { createBrowserRouter } from "react-router-dom";
@@ -32,10 +31,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login/>,
   },
-  {
-    path: "/create-account",
-    element: <Create/>
-  },
+  
   {
     path: "/logado",
     element: (

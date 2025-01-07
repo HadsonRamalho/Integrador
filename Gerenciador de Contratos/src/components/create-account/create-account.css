@@ -1,8 +1,0 @@
-.create-account-box{
-    background-color: hsl(var(--teste));
-    color: hsl(var(--text));
-}
-
-.create-account input{
-    color: hsl(var(--teste));
-}
