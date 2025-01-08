@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import "./navbar.css";
 import maq from "@/assets/maq.png";
 
+
 export function NavBar() {
   return (
     <nav>
@@ -14,6 +15,7 @@ export function NavBar() {
             }
           >
             <img className="imagem" src={maq} alt="" />
+          
           </NavLink>
         </li>
       
