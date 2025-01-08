@@ -59,7 +59,9 @@ export default function AuthPage() {
    return (
     <Layout>
       <main>
+        <div>
         <div className="titulo">
+        {/* <img className="imagem" src={maq} alt="" /> */}
           <h1>MaqExpress</h1>
           <p>{mode === "login" ? "Faça login para continuar" : "Crie sua conta para acessar"}</p>
         </div>
@@ -150,6 +152,7 @@ export default function AuthPage() {
           <div>
             <img src={maquina} alt="Máquina" />
           </div>
+        </div>
         </div>
       </main>
     </Layout>
