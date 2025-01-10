@@ -16,20 +16,30 @@ export default function AuthPage() {
   const [senha , setSenha ] = useState ("");
   const [document, setDocument] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
   const {signIn} = useAuth();
+
   const RealizaLogin = async () => {
+    try {
+      const credentials = { email: email, password: senha };
+
+      await signIn(credentials);
+      console.log("Login realizado com sucesso.");
     
-    try{
-      const credentials = { email: email, password: senha};
-      signIn(credentials);
-      console.log("Login realizado.");
       navigate("/");
-    }
-    catch (erro){
-      handleAxiosError(erro);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (erro: any) {
+      console.error("Erro ao realizar login:", erro);
+      if (erro.response) {        
+        handleAxiosError(erro);
+        return;
+      } 
+      console.error(erro.message || erro);
+      alert(erro.message || erro);
     }
   };
+  
 
     const createAccount = async () => {
       try{
@@ -53,8 +63,6 @@ export default function AuthPage() {
         console.error(erro);
       }
     };
-  
-  
  
    return (
     <Layout>

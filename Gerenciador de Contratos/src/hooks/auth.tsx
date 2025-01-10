@@ -38,10 +38,24 @@ export default function AuthProvider({
   });
 
   const signIn = useCallback(async ({ email, password }: AuthCredentials) => {
-    const data = await loginUser(email, password);
+    try{
+      const data = await loginUser(email, password);
 
-    localStorage.setItem("USER_ID", data.idusuario);
-    setUser(data);
+      localStorage.setItem("USER_ID", data.idusuario);
+      setUser(data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const statusCode = error.response?.status;
+  
+      // Lança exceções com base no código de status
+      if (statusCode === 401) {
+        throw new Error("Credenciais inválidas. Verifique seu e-mail e senha.");
+      } else if (statusCode === 500) {
+        throw new Error("Erro no servidor. Por favor, tente novamente mais tarde.");
+      } else {
+        throw new Error(`Erro inesperado: ${statusCode || error.message}`);
+      }
+    }    
   }, []);
 
   const signOut = useCallback(() => {
