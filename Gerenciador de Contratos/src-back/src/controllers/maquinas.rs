@@ -72,3 +72,16 @@ pub async fn deleta_maquina_id(id: String)
         }
     }
 }
+
+pub async fn lista_todas_maquinas()
+    -> Result<(StatusCode, Json<Vec<Maquina>>), (StatusCode, Json<String>)>{
+    let conn = &mut cria_conn()?;
+    match models::maquinas::lista_todas_maquinas(conn).await{
+        Ok(maquinas) => {
+            return Ok((StatusCode::OK, Json(maquinas)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    };
+}

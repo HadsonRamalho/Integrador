@@ -1,6 +1,6 @@
 use axum::Json;
 
-use crate::controllers::maquinas::{cadastra_maquina, deleta_maquina_id, MaquinaInput};
+use crate::controllers::maquinas::{cadastra_maquina, deleta_maquina_id, lista_todas_maquinas, MaquinaInput};
 
 pub fn maquina_padrao(numeroteste: &str) -> MaquinaInput{
     let nome = format!("Maquina Teste {}", numeroteste);
@@ -26,4 +26,22 @@ async fn test_cadastra_maquina_ok(){
     let id = idsmaquina.0.idmaquina.to_string();
 
     assert!(deleta_maquina_id(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_lista_todas_maquinas_ok(){
+    let maquina = maquina_padrao("002");
+
+    let idsmaquina = cadastra_maquina(Json(maquina)).await.unwrap().1;
+    let id = idsmaquina.0.idmaquina.to_string();
+
+    assert!(lista_todas_maquinas().await.is_ok());
+
+    assert!(deleta_maquina_id(id).await.is_ok());
+}
+
+#[tokio::test]
+
+async fn test_lista_todas_maquinas_err(){
+    assert!(lista_todas_maquinas().await.is_err());
 }
