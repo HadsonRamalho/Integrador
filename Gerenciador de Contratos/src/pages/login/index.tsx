@@ -38,12 +38,11 @@ export default function AuthPage() {
       console.error(erro.message || erro);
       alert(erro.message || erro);
     }
-  };
-  
+  };  
 
-    const createAccount = async () => {
-      try{
-        const res = await fetch ("https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_usuario",{
+  const createAccount = async () => {
+    try{
+      const res = await fetch ("https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_usuario",{
         method: "POST",
         headers:{
           'Content-Type' : "application/json"
