@@ -5,38 +5,24 @@
   color: #ffffff;
 }
 .home{
-  color: hsl(var());
+  color: hsl(var(--text));
   margin: 5px;
   justify-content: center;
-}
-.descricao{
-  text-align: center;
-  font-family: Arial, Helvetica, sans-serif;
   padding: 20px;
-
+  text-transform: uppercase;
 }
+
 
 .info{
   color: hsl(var(--text));
 }
 
-.quadro{
-  background-color: hsl(var(--destructive));
-  width: 200px;
-  height: 200px;
-  margin: 5px;
-  
- 
-}
-.quadro2{
-  background-color: hsl(var(--destructive));
-  width: 200px;
-  height: 200px;
-  margin: 5px;
-  display: flex;
-}
+
 
 .quadro3{
   background-color: hsl(var(--teste));
-  color: hsl(var(--text))
+  color: hsl(var(--text));
+  margin: 10px;
+  
+  
 }

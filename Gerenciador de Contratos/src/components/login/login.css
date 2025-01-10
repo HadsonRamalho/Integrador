@@ -2,6 +2,10 @@
   color: hsl(var(--text));
   text-align:justify;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
 
 }
 .grid {
@@ -57,4 +61,8 @@
 
 .link-login{
   color: hsl(var(--primary));
+}
+.imagem{
+  width: 130px;
+  height: 100px;
 }
