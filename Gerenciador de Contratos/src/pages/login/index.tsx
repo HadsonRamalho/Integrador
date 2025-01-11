@@ -15,49 +15,53 @@ export default function AuthPage() {
   const [senha, setSenha] = useState("");
   const [document, setDocument] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const {signIn} = useAuth();
+
   const RealizaLogin = async () => {
     try {
       const credentials = { email: email, password: senha };
-      signIn(credentials);
-      console.log("Login realizado.");
+
+      await signIn(credentials);
+      console.log("Login realizado com sucesso.");
+    
       navigate("/");
-    } catch (erro) {
-      handleAxiosError(erro);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (erro: any) {
+      console.error("Erro ao realizar login:", erro);
+      if (erro.response) {        
+        handleAxiosError(erro);
+        return;
+      } 
+      console.error(erro.message || erro);
+      alert(erro.message || erro);
     }
-  };
+  };  
 
   const createAccount = async () => {
-    try {
-      const res = await fetch(
-        "https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_usuario",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nome: name,
-            email,
-            documento: document,
-            senha: password,
-          }),
-        }
-      );
-      if (!res.ok) {
+    try{
+      const res = await fetch ("https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_usuario",{
+        method: "POST",
+        headers:{
+          'Content-Type' : "application/json"
+        },
+        body: JSON.stringify({nome: name , email , documento: document, senha: password})
+      });
+      if(!res.ok){
         const erro = await res.text();
         console.log("Erro ao tentar criar a conta:", erro);
         throw new Error(erro);
       }
       console.log("Conta criada!");
       setMode("login");
-    } catch (erro) {
-      console.error(erro);
-    }
-  };
-
-  return (
+      }
+      catch (erro){
+        console.error(erro);
+      }
+    };
+ 
+   return (
     <Layout>
       <main>
         
