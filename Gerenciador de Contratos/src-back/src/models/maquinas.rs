@@ -4,6 +4,13 @@ use serde::{Deserialize, Serialize};
 
 use crate::controllers::cria_conn;
 
+#[derive(Serialize, Deserialize)]
+pub struct IdsMaquina{
+    pub idmaquina: String,
+    pub idpublico: String
+}
+
+
 #[derive(Queryable, Selectable, Insertable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::maquinas)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -17,11 +24,6 @@ pub struct Maquina{
     pub status: String,
     pub datacadastro: NaiveDateTime,
     pub dataatualizacao: NaiveDateTime
-}
-
-pub struct IdsMaquina{
-    pub idmaquina: String,
-    pub idpublico: String
 }
 
 pub async fn cadastra_maquina(conn: &mut PgConnection, maquina: Maquina)
