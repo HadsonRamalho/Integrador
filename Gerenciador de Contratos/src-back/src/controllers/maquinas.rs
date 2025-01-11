@@ -1,11 +1,13 @@
 use axum::{http::StatusCode, Json};
 use diesel::{ExpressionMethods, RunQueryDsl};
 use rand::random;
+use serde::{Deserialize, Serialize};
 
 use crate::models::{self, maquinas::Maquina, str_to_f64_bigdecimal};
 
 use super::{cria_conn, gera_hash};
 
+#[derive(Serialize, Deserialize)]
 pub struct MaquinaInput{
     pub nome: String,
     pub numeroserie: String,
