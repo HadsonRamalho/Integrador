@@ -71,7 +71,7 @@ export default function AuthPage() {
               : "Crie sua conta para acessar"}
           </p>
         </div>
-            <div className="login">cd
+            <div className="login">
               <Input
                 type="email"
                 placeholder="E-mail"
