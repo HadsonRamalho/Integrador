@@ -32,3 +32,6 @@ openssl-sys = { version = "0.9.100", features = ["vendored"] }
 
 bigdecimal = "0.1.2"
 rand = "0.8.5"
+
+hyper = "1"
+axum_typed_multipart = "0.13.2"

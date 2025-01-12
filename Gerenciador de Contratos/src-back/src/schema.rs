@@ -16,6 +16,29 @@ diesel::table! {
 }
 
 diesel::table! {
+    imagens (idimagem) {
+        #[max_length = 64]
+        idimagem -> Varchar,
+        #[max_length = 128]
+        nome -> Varchar,
+        bin -> Bytea,
+        #[max_length = 128]
+        link -> Varchar,
+    }
+}
+
+diesel::table! {
+    imagens_maquinas (idimagemmaquina) {
+        #[max_length = 64]
+        idimagemmaquina -> Varchar,
+        #[max_length = 64]
+        idimagem -> Varchar,
+        #[max_length = 64]
+        idmaquina -> Varchar,
+    }
+}
+
+diesel::table! {
     maquinas (idmaquina) {
         #[max_length = 64]
         idmaquina -> Varchar,
@@ -25,6 +48,8 @@ diesel::table! {
         nome -> Varchar,
         #[max_length = 64]
         numeroserie -> Varchar,
+        #[max_length = 64]
+        categoria -> Varchar,
         valoraluguel -> Float8,
         #[max_length = 64]
         disponivelaluguel -> Varchar,
@@ -32,6 +57,8 @@ diesel::table! {
         status -> Varchar,
         datacadastro -> Timestamp,
         dataatualizacao -> Timestamp,
+        #[max_length = 64]
+        descricao -> Varchar,
     }
 }
 
@@ -55,6 +82,8 @@ diesel::joinable!(codigos_recuperacao -> usuarios (idusuario));
 
 diesel::allow_tables_to_appear_in_same_query!(
     codigos_recuperacao,
+    imagens,
+    imagens_maquinas,
     maquinas,
     usuarios,
 );

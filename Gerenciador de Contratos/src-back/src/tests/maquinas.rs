@@ -8,13 +8,17 @@ pub fn maquina_padrao(numeroteste: &str) -> MaquinaInput{
     let valoraluguel: f64 = numeroteste.parse().unwrap_or(169.1);
     let disponivelaluguel = "Sim".to_string();
     let status = "Ativo".to_string();
+    let descricao =  format!("Descrição N{}", numeroteste);
+    let categoria = "Máquina de Teste".to_string();
 
     MaquinaInput{
         nome,
         numeroserie,
         valoraluguel,
         disponivelaluguel,
-        status
+        status,
+        descricao,
+        categoria
     }
 }
 

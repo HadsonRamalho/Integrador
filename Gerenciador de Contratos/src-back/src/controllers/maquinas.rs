@@ -13,7 +13,9 @@ pub struct MaquinaInput{
     pub numeroserie: String,
     pub valoraluguel: f64,
     pub disponivelaluguel: String,
-    pub status: String
+    pub status: String,
+    pub categoria: String,
+    pub descricao: String
 }
 
 pub async fn cadastra_maquina(input: Json<MaquinaInput>)
@@ -28,7 +30,7 @@ pub async fn cadastra_maquina(input: Json<MaquinaInput>)
         return Err((StatusCode::BAD_REQUEST,
             Json("O valor do aluguel não pode ser menor ou igual a zero.".to_string())))
     }
-    let id: i32 = random();
+    let id: u32 = random();
     let datacadastro = chrono::Utc::now().naive_utc();
     let dataatualizacao = chrono::Utc::now().naive_utc();
     let maquina = Maquina{
@@ -41,7 +43,8 @@ pub async fn cadastra_maquina(input: Json<MaquinaInput>)
         status: input.status.to_string(),
         datacadastro,
         dataatualizacao,
-        
+        descricao: input.descricao.to_string(),
+        categoria: input.categoria.to_string()        
     };
     let conn = &mut cria_conn()?;
     match models::maquinas::cadastra_maquina(conn, maquina).await{
