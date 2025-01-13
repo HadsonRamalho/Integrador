@@ -1,12 +1,13 @@
 import About from "@/pages/about";
 import Logged from "@/pages/logged";
 import Home from "@/pages/home";
-import  Machine  from "@/pages/machine";
+import Machine  from "@/pages/machine";
 import Login from "@/pages/login";
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./privateRoute";
 import { Prohibited } from "@/pages/prohibited";
 import PasswordRecovery from "@/pages/password-recovery/index.js";
+import CreateMachine from "@/pages/create-machine";
 
 
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login/>,
+  },
+  {
+    path: "/create-machine",
+    element: <CreateMachine/>
   },
   
   {

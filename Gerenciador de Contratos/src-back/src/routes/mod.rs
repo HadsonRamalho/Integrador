@@ -1,9 +1,9 @@
 use axum::{
-    http::Method, routing::{get, patch, post}, Router
+    http::Method, routing::{get, get_service, patch, post}, Router
 };
 use tower_http::cors::{Any, CorsLayer};
-
-use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, cadastra_usuario, realiza_login}};
+use tower_http::services::ServeDir;
+use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, cadastra_usuario, realiza_login}};
 use crate::controllers::usuarios::busca_usuario_email;
 
 pub fn cria_rotas() -> Router<>{
@@ -23,6 +23,10 @@ pub fn cria_rotas() -> Router<>{
         .route("/lista_todas_maquinas", get(lista_todas_maquinas))
 
         .route("/cadastra_imagem", post(cadastra_imagem))
+        .route("/cadastra_imagem_maquina", post(cadastra_imagem_maquina))
+        .route("/recupera_imagem_maquina", post(recupera_imagem_maquina))
+
+        .nest_service("/images", get_service(ServeDir::new("./images")))
 
         .layer(
             CorsLayer::new()

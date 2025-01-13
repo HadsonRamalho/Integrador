@@ -1,5 +1,5 @@
-use axum::{http::HeaderValue, response::Response, Json};
-use hyper::{header::CONTENT_TYPE, StatusCode};
+use axum::Json;
+use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 
 use crate::models::{self, imagens_maquinas::{self}};
@@ -15,7 +15,7 @@ pub struct ImagemMaquinaInput{
 pub async fn cadastra_imagem_maquina(input: Json<ImagemMaquinaInput>)
     -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     let idimagem = input.idimagem.to_string();
-    let idmaquina = input.idimagem.to_string();
+    let idmaquina = input.idmaquina.to_string();
 
     let conn = &mut cria_conn()?;
 
@@ -33,11 +33,11 @@ pub async fn cadastra_imagem_maquina(input: Json<ImagemMaquinaInput>)
 pub async fn recupera_imagem_maquina(input: Json<String>)
     -> Result<Json<String>, (StatusCode, Json<String>)> {
 
-    let idproduto = input.0.to_string();
+    let idmaquina = input.0.to_string();
 
     let conn = &mut cria_conn()?;
 
-    match imagens_maquinas::recupera_imagem_maquina(conn, idproduto).await {
+    match imagens_maquinas::recupera_imagem_maquina(conn, idmaquina).await {
         Ok(img) => {
             Ok(Json(img.1))
         },

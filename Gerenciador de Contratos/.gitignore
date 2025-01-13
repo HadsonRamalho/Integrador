@@ -31,5 +31,6 @@ src-back/target
 
 src-back/target 
 src-tauri/target 
+src-back/images
 
 node_modules

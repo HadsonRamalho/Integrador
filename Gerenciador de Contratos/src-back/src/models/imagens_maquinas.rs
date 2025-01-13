@@ -3,7 +3,7 @@ use diesel::prelude::*;
 use hyper::HeaderMap;
 use serde::{Deserialize, Serialize};
 
-use crate::controllers::{cria_conn, gera_hash};
+use crate::controllers::gera_hash;
 use crate::models::imagens::recupera_imagem;
 use crate::schema::imagens_maquinas::{self};
 use diesel::Queryable;

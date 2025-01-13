@@ -1,8 +1,6 @@
 use chrono::NaiveDateTime;
-use diesel::{prelude::{Insertable, Queryable}, BoolExpressionMethods, ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl, Selectable, SelectableHelper};
+use diesel::{prelude::{Insertable, Queryable}, BoolExpressionMethods, ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl, Selectable};
 use serde::{Deserialize, Serialize};
-
-use crate::controllers::cria_conn;
 
 #[derive(Serialize, Deserialize)]
 pub struct IdsMaquina{

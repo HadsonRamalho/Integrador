@@ -1,9 +1,8 @@
-use axum::Json;
 use diesel::prelude::*;
 use hyper::HeaderMap;
 use serde::{Deserialize, Serialize};
 
-use crate::controllers::{cria_conn, gera_hash};
+use crate::controllers::gera_hash;
 use crate::schema::imagens::{self};
 use diesel::Queryable;
 
