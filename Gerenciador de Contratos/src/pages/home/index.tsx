@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { listMachine } from "@/services/api/machine/machine";
 import { Machine } from "@/interfaces/machine";
+
 function App() {
   const navigate = useNavigate();
   const [machines, setMachines] = useState<Machine[]>([]);

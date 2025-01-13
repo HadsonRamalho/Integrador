@@ -29,6 +29,8 @@
   background: hsl(var(--primary));
   width: 40%;
   height: 100%;
+  border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
 }
 .firts-content {
   display: flex;
