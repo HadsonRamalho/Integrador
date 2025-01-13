@@ -55,8 +55,6 @@
                         <i class="fas fa-lock icon-modify"></i>
                         <input type="password" placeholder="Password">
                     </label>
-                    
-                    
                     <button class="btn btn-second">sign up</button>        
                 </form>
             </div><!-- second column -->
