@@ -44,12 +44,14 @@ function App() {
                 </CardHeader>
                 <CardContent>  
                   <h1>{machine.nome}</h1>    
+                  <p>Descrição: {machine.descricao}</p>
                   <CardDescription className="quadro3">
                     Preço: R$ {machine.valoraluguel}
                   </CardDescription>
                   <CardDescription>
                     <Button onClick={()=> {navigate("/logado")}}>Ver mais</Button>
                   </CardDescription>
+                  <p>Categoria: {machine.categoria}</p>
                 </CardContent>
               </Card>
               </div>

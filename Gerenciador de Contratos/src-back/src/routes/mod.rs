@@ -3,7 +3,7 @@ use axum::{
 };
 use tower_http::cors::{Any, CorsLayer};
 
-use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, maquinas::{cadastra_maquina, lista_todas_maquinas}, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, cadastra_usuario, realiza_login}};
+use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, cadastra_usuario, realiza_login}};
 use crate::controllers::usuarios::busca_usuario_email;
 
 pub fn cria_rotas() -> Router<>{
@@ -21,6 +21,8 @@ pub fn cria_rotas() -> Router<>{
 
         .route("/cadastra_maquina", post(cadastra_maquina))
         .route("/lista_todas_maquinas", get(lista_todas_maquinas))
+
+        .route("/cadastra_imagem", post(cadastra_imagem))
 
         .layer(
             CorsLayer::new()

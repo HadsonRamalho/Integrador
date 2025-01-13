@@ -19,11 +19,13 @@ pub struct Maquina{
     pub idpublico: String,
     pub nome: String,
     pub numeroserie: String,
+    pub categoria: String,
     pub valoraluguel: f64,
     pub disponivelaluguel: String,
     pub status: String,
     pub datacadastro: NaiveDateTime,
-    pub dataatualizacao: NaiveDateTime
+    pub dataatualizacao: NaiveDateTime,
+    pub descricao: String
 }
 
 pub async fn cadastra_maquina(conn: &mut PgConnection, maquina: Maquina)
