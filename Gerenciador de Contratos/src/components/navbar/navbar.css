@@ -22,7 +22,5 @@
 .quadro3{
   background-color: hsl(var(--teste));
   color: hsl(var(--text));
-  margin: 10px;
-  
-  
+  margin: 10px; 
 }

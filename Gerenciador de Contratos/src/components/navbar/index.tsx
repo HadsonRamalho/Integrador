@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import "./navbar.css";
 import maq from "@/assets/maq.png";
+import { ModeToggle } from "../mode-toggle/mode-toggle";
 
 
 export function NavBar() {
@@ -46,6 +47,10 @@ export function NavBar() {
            >
               Entrar
           </NavLink>
+        </li>
+
+        <li>
+          <ModeToggle></ModeToggle>
         </li>
 
       </ul>
