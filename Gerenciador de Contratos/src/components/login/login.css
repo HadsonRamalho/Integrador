@@ -1,10 +1,10 @@
 .titulo {
   color: hsl(var(--text));
-
   text-transform: uppercase;
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 20px;
   text-align: center;
+  
 
 }
 
@@ -29,7 +29,7 @@ body {
   position: relative;
   border-radius: 38px;
   height: 762px;
-  border: 2px solid #249BD3;
+  border: 2px solid hsl(var(--primary));
   /* background-size: cover;
   background-repeat: no-repeat;
   background-position: top; */
@@ -38,18 +38,19 @@ body {
   object-fit: cover;
 }
 
-.content {
-  justify-content: space-between; 
-  align-items: center; 
+.content { 
+  
   width: 50%;
   position: absolute;
-  /* border-radius: 100px; */
   background-color: rgba(0, 0, 0, 0.9);
-  height: 450px;
+  border: 2px solid hsl(var(--primary));
+  border-radius: 100px;
+  height: 480px;
   z-index: 2;
-  /* top: 50%;
-  left: 50%; */
-  /* transform: translate(-50%, -50%); */
+  opacity: 90%;
+   top: 50%;
+  left: 50%; 
+   transform: translate(-50%, -50%); 
 
 }
 
