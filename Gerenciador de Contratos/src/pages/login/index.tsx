@@ -73,17 +73,17 @@ export default function AuthPage() {
     <Layout>
       <main>
         <div className="container">
-          <div className="content first-content">
-            
+          <div className="content ">
+
             <div className="login">
-            <div className="titulo">
-              <h1>MaqExpress</h1>
-              <p>
-                {mode === "login"
-                  ? "Faça login para  continuar"
-                  : "Crie sua conta para acessar"}
-              </p>
-            </div>
+              <div className="titulo">
+                <h1>MaqExpress</h1>
+                <p>
+                  {mode === "login"
+                    ? "Faça login para  continuar"
+                    : "Crie sua conta para acessar"}
+                </p>
+              </div>
               {mode === "login" ? (
                 <>
                   <Input
@@ -107,7 +107,7 @@ export default function AuthPage() {
                   >
                     Esqueci a senha
                   </a>
-                  <Button className="button" onClick={RealizaLogin}>
+                  <Button className="button " onClick={RealizaLogin}>
                     Entrar
                   </Button>
                   <Button>Entrar com o Google</Button>
@@ -125,51 +125,48 @@ export default function AuthPage() {
                 </>
               ) : (
                 <>
-                  <div className="content second-content">
-                    <div className="login-create">
-                      <Input
-                        placeholder="Nome"
-                        value={name}
-                        className="input-login"
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                      />
-                      <Input
-                        placeholder="E-mail"
-                        value={email}
-                        type="email"
-                        className="input-login"
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                      <Input
-                        placeholder="CPF/CNPJ"
-                        value={document}
-                        className="input-login"
-                        onChange={(e) => setDocument(e.target.value)}
-                        required
-                      />
-                      <Input
-                        placeholder="Senha"
-                        value={password}
-                        type="password"
-                        className="input-login"
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                      <Button onClick={createAccount}>Criar Conta</Button>
-                      <span>
-                        Já possui conta?{" "}
-                        <a
-                          className="link-login"
-                          href="#"
-                          onClick={() => setMode("login")}
-                        >
-                          clique aqui!
-                        </a>{" "}
-                        para entrar
-                      </span>
-                    </div>
-                  </div>
+                  <Input
+                    placeholder="Nome"
+                    value={name}
+                    className="input-login"
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                  <Input
+                    placeholder="E-mail"
+                    value={email}
+                    type="email"
+                    className="input-login"
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                  <Input
+                    placeholder="CPF/CNPJ"
+                    value={document}
+                    className="input-login"
+                    onChange={(e) => setDocument(e.target.value)}
+                    required
+                  />
+                  <Input
+                    placeholder="Senha"
+                    value={password}
+                    type="password"
+                    className="input-login"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <Button onClick={createAccount}>Criar Conta</Button>
+                  <span>
+                    Já possui conta?{" "}
+                    <a
+                      className="link-login"
+                      href="#"
+                      onClick={() => setMode("login")}
+                    >
+                      clique aqui!
+                    </a>{" "}
+                    para entrar
+                  </span>
+
                 </>
               )}
             </div>
