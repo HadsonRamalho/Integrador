@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import "@/components/login/login.css";
+import "@/components/create-machine/index.css";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import Layout from "@/layouts/default";
 import { useState } from "react";
 
@@ -124,74 +124,107 @@ export default function CreateMachine() {
 
   return (
     <Layout>
-      <Card className="quadro3">
+      <h2 style={{color: 'hsl(var(--text))', fontSize: "25px"}}>Cadastro de Máquina</h2>
+      <div className="container-maquinas">
+      <Card className="form-maquinas">
         <CardHeader>
-          <CardTitle>Cadastro de Máquina</CardTitle>
         </CardHeader>
-        <CardContent>
-          <CardDescription className="quadro3">
-            <div>
-              <input
+        <CardContent className="form-content">
+          <CardDescription>
+            <label htmlFor="machine-name">Nome da Máquina</label>
+            <input
+              id="machine-name"
               placeholder="Nome da Máquina"
-              onChange={(e) => {setName(e.target.value)}}
+              onChange={(e) => setName(e.target.value)}
               value={name}
-              />
-              <input
+            />
+          </CardDescription>
+          <CardDescription>
+            <label htmlFor="serial-number">Número de Série</label>
+            <input
+              id="serial-number"
               placeholder="Número de Série"
-              onChange={(e) => {setSerialNumber(e.target.value)}}
+              onChange={(e) => setSerialNumber(e.target.value)}
               value={serialNumber}
-              />
-              <input
-               type="number"
-               value={rentValue}
-               onChange={(e) => setRentValue(e.target.value ? Number(e.target.value) : 0)}
-               min="0.01"
-               step="0.01"
-               required
-              />
-              <input
-              placeholder="Está disponível pra aluguel?"
-              onChange={(e) => {setRentDisponibility(e.target.value)}}
+            />
+          </CardDescription>
+          <CardDescription>
+            <label htmlFor="rent-value">Valor de Aluguel</label>
+            <input
+              id="rent-value"
+              type="number"
+              value={rentValue}
+              onChange={(e) => setRentValue(e.target.value ? Number(e.target.value) : 0)}
+              min="0.01"
+              step="0.01"
+              required
+            />
+          </CardDescription>
+          <CardDescription>
+            <label htmlFor="rent-disponibility">Disponível para Aluguel?</label>
+            <select
+              id="rent-disponibility"
+              onChange={(e) => setRentDisponibility(e.target.value)}
               value={rentDisponibility}
-              />
-              <input
+            >
+              <option value="sim">Sim</option>
+              <option value="não">Não</option>
+            </select>
+          </CardDescription>
+          <CardDescription>
+            <label htmlFor="status">Status</label>
+            <input
+              id="status"
               placeholder="Status"
-              onChange={(e) => {setStatus(e.target.value)}}
+              onChange={(e) => setStatus(e.target.value)}
               value={status}
-              />
-              <textarea
+            />
+          </CardDescription>
+          <CardDescription>
+            <label htmlFor="description">Descrição da Máquina</label>
+            <textarea
+              id="description"
               placeholder="Descrição da Máquina"
-              onChange={(e) => {setDescription(e.target.value)}}
+              onChange={(e) => setDescription(e.target.value)}
               value={description}
-              />
-              <input
+            />
+          </CardDescription>
+          <CardDescription>
+            <label htmlFor="category">Categoria da Máquina</label>
+            <input
+              id="category"
               placeholder="Categoria da Máquina"
-              onChange={(e) => {setCategory(e.target.value)}}
+              onChange={(e) => setCategory(e.target.value)}
               value={category}
-              />
-              <label>Imagens da Máquina</label>
-              {machineImages.map((image, index) => (
-                <div key={index}>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    aria-label={`Upload da imagem ${index + 1}`}
-                    onChange={(e) => {
-                      const files = e.target.files;
-                      if (files && files[0]) {
-                        handleImageChange(index, files[0]);
-                      }
-                    }}
-                  />
-                  {image && <p>Imagem {index + 1} selecionada.</p>}
-                </div>
-              ))}
-              <Button onClick={addImageInput}>Adicionar Imagem</Button>
-              <Button onClick={tryCreateMachine}>Cadastrar Máquina</Button>
-            </div>
+            />
+          </CardDescription>
+          <CardDescription>
+            <label>Imagens da Máquina</label>
+            {machineImages.map((image, index) => (
+              <div key={index}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  aria-label={`Upload da imagem ${index + 1}`}
+                  onChange={(e) => {
+                    const files = e.target.files;
+                    if (files && files[0]) {
+                      handleImageChange(index, files[0]);
+                    }
+                  }}
+                />
+                {image && <p>Imagem {index + 1} selecionada.</p>}
+              </div>
+            ))}
+          </CardDescription>
+          <CardDescription className="button-group-maquinas">
+            <Button onClick={addImageInput}>Adicionar Imagem</Button>
+            <Button onClick={tryCreateMachine}>Cadastrar Máquina</Button>
           </CardDescription>
         </CardContent>
       </Card>
+      </div>
     </Layout>
   );
+  
 }

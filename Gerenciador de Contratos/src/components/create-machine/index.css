@@ -1,0 +1,33 @@
+.form-content {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+}
+  
+.button-group-maquinas {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.container-maquinas {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-color: #000000; 
+    height: 50vh;
+    width: 100%;
+}
+
+.form-maquinas {
+    width: 30%;
+    background-color: #020303;
+    padding: 20px; 
+    border-radius: 8px; 
+}
+
+.form-maquinas input{
+    margin-left: 10%;
+}
