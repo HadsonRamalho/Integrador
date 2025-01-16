@@ -47,5 +47,6 @@ async fn test_lista_todas_maquinas_ok(){
 #[tokio::test]
 
 async fn test_lista_todas_maquinas_err(){
+    // Esse teste falha quando temos máquinas cadastradas no banco :)
     assert!(lista_todas_maquinas().await.is_err());
 }

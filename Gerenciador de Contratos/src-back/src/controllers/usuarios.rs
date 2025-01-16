@@ -367,7 +367,7 @@ pub async fn busca_usuario_email(Query(params): Query<EmailInput>) -> Result<(St
 
 #[derive(Serialize, Deserialize)]
 pub struct IdInput{
-    id: String
+    pub id: String
 }
 
 pub async fn busca_usuario_id(Query(params): Query<IdInput>)

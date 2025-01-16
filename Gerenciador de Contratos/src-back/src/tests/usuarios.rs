@@ -1,7 +1,7 @@
 use axum::{extract::Query, Json};
 use pwhash::bcrypt::verify;
 
-use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, cadastra_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
+use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, busca_usuario_id, cadastra_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, IdInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
 
 pub fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
     let email = format!("testeunit{}@gmail.com", numeroteste);
@@ -415,6 +415,38 @@ async fn test_atualiza_senha_usuario_err(){
         email: email,
         senha: senha_nova
     })).await.is_err());
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_busca_usuario_id_ok(){
+    let usuario = usuario_padrao("015");
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
+    
+    assert!(busca_usuario_id(Query(
+        IdInput{
+            id: id.clone()
+        }
+    )).await.is_ok());
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_busca_usuario_id_err(){
+    let usuario = usuario_padrao("016");
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let id = usuario.0.clone();
+    
+    assert!(busca_usuario_id(Query(
+        IdInput{
+            id: "randomId".to_string()
+        }
+    )).await.is_err());
 
     assert!(deleta_usuario(id).await.is_ok());
 }
