@@ -3,7 +3,7 @@ use axum::{
 };
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
-use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, cadastra_usuario, realiza_login}};
+use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, busca_usuario_id, cadastra_usuario, realiza_login}};
 use crate::controllers::usuarios::busca_usuario_email;
 
 pub fn cria_rotas() -> Router<>{
@@ -15,6 +15,7 @@ pub fn cria_rotas() -> Router<>{
         .route("/atualiza_senha_usuario", patch(atualiza_senha_usuario))
         .route("/atualiza_email_usuario", patch(atualiza_email_usuario))
         .route("/busca_usuario_email", get(busca_usuario_email))
+        .route("/busca_usuario_id", get(busca_usuario_id))
 
         .route("/verifica_codigo_recuperacao", post(verifica_codigo_recuperacao))
         .route("/envia_codigo_recuperacao", post(envia_codigo_recuperacao))

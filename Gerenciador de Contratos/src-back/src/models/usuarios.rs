@@ -153,3 +153,17 @@ pub async fn atualiza_senha_usuario(conn: &mut PgConnection, email_: String, sen
         }
    }
 }
+pub async fn busca_usuario_id(conn: &mut PgConnection, id: String)
+    -> Result<Usuario, String>{
+    use self::usuarios::dsl::*;
+
+    let res: Result<Usuario, diesel::result::Error> = usuarios.filter(idusuario.eq(id)).first(conn);
+    match res{
+        Ok(usuario) => {
+            return Ok(usuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}

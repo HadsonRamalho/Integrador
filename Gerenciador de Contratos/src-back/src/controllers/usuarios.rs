@@ -365,6 +365,28 @@ pub async fn busca_usuario_email(Query(params): Query<EmailInput>) -> Result<(St
     }
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct IdInput{
+    id: String
+}
+
+pub async fn busca_usuario_id(Query(params): Query<IdInput>)
+    -> Result<(StatusCode, Json<Usuario>), (StatusCode, Json<String>)>{
+    if params.id.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    let id = params.id.to_string();
+    let conn = &mut cria_conn()?;
+    match models::usuarios::busca_usuario_id(conn, id).await{
+        Ok(usuario) => {
+            return Ok((StatusCode::OK, Json(usuario)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
+
 pub async fn valida_email(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {
     match input.validate(){
          Ok(_) => {
