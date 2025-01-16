@@ -1,4 +1,4 @@
-import { UserId } from "@/interfaces/user";
+import { User, UserId } from "@/interfaces/user";
 import { client } from "..";
 
 export async function loginUser(
@@ -13,10 +13,9 @@ export async function loginUser(
 
     if (response.status === 200) {
       return response.data;
-    } else {
-      console.warn("Resposta inesperada:", response.status);
-      throw new Error(`Erro ao realizar login. Status code: ${response.status}`);
     }
+    console.warn("Resposta inesperada:", response.status);
+    throw new Error(`Erro ao realizar login. Status code: ${response.status}`);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Erro ao realizar login:", error.response?.status, error.message);
@@ -24,4 +23,25 @@ export async function loginUser(
       `Falha ao realizar login: ${error.response?.status || "sem status"}`
     );
   }
+}
+
+export async function loadUserById(
+  id: string
+):Promise<User>{
+  try {
+    const url = `/busca_usuario_id?id=${encodeURIComponent(id)}`;
+    const response = await client.get<User>(url);
+
+    if (response.status === 200) {
+      return response.data;
+    }
+    console.warn("Resposta inesperada:", response.status);
+    throw new Error(`Erro ao buscar o usuário. Status code: ${response.status}`);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error("Erro ao buscar o usuário:", error.response?.status, error.message);
+    throw new Error(
+      `Falha ao buscar o usuário: ${error.response?.status || "sem status"}`
+    );
+  }  
 }
