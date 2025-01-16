@@ -27,7 +27,7 @@ export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
         <DropdownMenuContent>
             <DropdownMenuLabel>
                 <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />                    
+                <AvatarImage src="https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg" />                    
                 </Avatar>
                 <p>Meu Perfil</p>
             </DropdownMenuLabel>
