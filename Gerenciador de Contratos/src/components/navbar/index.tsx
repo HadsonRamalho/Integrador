@@ -2,11 +2,8 @@ import { NavLink } from "react-router-dom";
 import "./navbar.css";
 import maq from "@/assets/maq.png";
 import { ModeToggle } from "../mode-toggle/mode-toggle";
-<<<<<<< HEAD
 import { DropdownMenuDemo } from "../dropdown-menu";
-=======
 import { useEffect, useState } from "react";
->>>>>>> a0863706540a14e136db43169eb467cd8b114028
 
 
 export function NavBar() {
@@ -59,7 +56,6 @@ export function NavBar() {
               Maquinas
           </NavLink>
         </li>
-<<<<<<< HEAD
         <li className="class1">
           <DropdownMenuDemo></DropdownMenuDemo>
         </li>
@@ -67,9 +63,7 @@ export function NavBar() {
           <ModeToggle></ModeToggle>
         </li>
         
-        <li>
-=======
->>>>>>> a0863706540a14e136db43169eb467cd8b114028
+        
         
         <li>        
           {logged ? (
