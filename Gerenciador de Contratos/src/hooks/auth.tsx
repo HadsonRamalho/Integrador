@@ -27,14 +27,13 @@ export default function AuthProvider({
   children: React.ReactNode;
 }) {
   const [user, setUser] = useState<UserId | null>(() => {
-    const user = localStorage.getItem("user");
+    const userId = localStorage.getItem("USER_ID");
 
-    if (!user) {
+    if (!userId) {
       return null;
     }
-
-    const userJSON = JSON.parse(user);
-    return userJSON;
+    const user: UserId = {"idusuario": userId};
+    return user;
   });
 
   const signIn = useCallback(async ({ email, password }: AuthCredentials) => {
@@ -59,7 +58,7 @@ export default function AuthProvider({
   }, []);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("USER_ID");
     setUser(null);
   }, []);
 

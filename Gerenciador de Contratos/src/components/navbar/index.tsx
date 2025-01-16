@@ -3,10 +3,12 @@ import "./navbar.css";
 import maq from "@/assets/maq.png";
 import { ModeToggle } from "../mode-toggle/mode-toggle";
 import { useEffect, useState } from "react";
+import { ProfileDropdownMenu } from "../profile-dropdown-menu";
 
 
 export function NavBar() {
   const [logged, setLogged] = useState(false);
+  
   useEffect(() => {
     const id = localStorage.getItem("USER_ID");
     if(id){
@@ -14,6 +16,7 @@ export function NavBar() {
       return;
     }
   },[])
+
   return (
     <nav>
       <ul className="link-nav-active">
@@ -47,14 +50,11 @@ export function NavBar() {
               Maquinas
           </NavLink>
         </li>
-        
+
         <li>        
           {logged ? (
-            <NavLink 
-            to="/user-profile"
-            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
-              Meu Perfil
-            </NavLink>
+            <ProfileDropdownMenu titulo={"Meu Perfil"} >
+            </ProfileDropdownMenu>
           ) : (
             <NavLink 
             to="/login"
@@ -63,6 +63,10 @@ export function NavBar() {
             </NavLink>
             )            
           }          
+        </li>
+
+        <li>
+          
         </li>
 
         <li>
