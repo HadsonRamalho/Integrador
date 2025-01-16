@@ -35,11 +35,17 @@ const router = createBrowserRouter([
   },
   {
     path: "/create-machine",
-    element: <CreateMachine/>
+    element: (
+      <PrivateRoute>
+        <CreateMachine/>
+      </PrivateRoute>)
   },
   {
     path: "/user-profile",
-    element: <UserProfile/>
+    element: (
+      <PrivateRoute>
+        <UserProfile/>
+      </PrivateRoute>)
   },
   {
     path: "/logado",
