@@ -10,6 +10,7 @@ pub mod usuarios;
 pub mod maquinas;
 pub mod imagens_maquinas;
 pub mod multipart;
+pub mod maquinas_usuarios;
 
 pub fn cria_conn() -> Result<PgConnection, (StatusCode, Json<String>)> {
     dotenv().ok();

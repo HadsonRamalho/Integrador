@@ -63,6 +63,17 @@ diesel::table! {
 }
 
 diesel::table! {
+    maquinas_usuarios (idmaquinausuario) {
+        #[max_length = 64]
+        idmaquinausuario -> Varchar,
+        #[max_length = 64]
+        idmaquina -> Varchar,
+        #[max_length = 64]
+        idusuario -> Varchar,
+    }
+}
+
+diesel::table! {
     usuarios (idusuario) {
         #[max_length = 64]
         nome -> Varchar,
@@ -85,5 +96,6 @@ diesel::allow_tables_to_appear_in_same_query!(
     imagens,
     imagens_maquinas,
     maquinas,
+    maquinas_usuarios,
     usuarios,
 );

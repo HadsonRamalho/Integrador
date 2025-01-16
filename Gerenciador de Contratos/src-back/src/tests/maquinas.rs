@@ -1,8 +1,19 @@
 use axum::Json;
 
-use crate::controllers::maquinas::{cadastra_maquina, deleta_maquina_id, lista_todas_maquinas, MaquinaInput};
+use crate::{controllers::{maquinas::{cadastra_maquina, deleta_maquina_id, lista_todas_maquinas, MaquinaInput}, usuarios::cadastra_usuario}, models::usuarios::deleta_usuario, tests::usuarios::usuario_padrao};
 
-pub fn maquina_padrao(numeroteste: &str) -> MaquinaInput{
+pub struct MaquinaInputTeste{
+    pub nome: String,
+    pub numeroserie: String,
+    pub valoraluguel: f64,
+    pub disponivelaluguel: String,
+    pub status: String,
+    pub categoria: String,
+    pub descricao: String
+}
+
+
+pub async fn maquina_padrao(numeroteste: &str) -> MaquinaInputTeste{
     let nome = format!("Maquina Teste {}", numeroteste);
     let numeroserie = format!("TEST-NS{}", numeroteste);
     let valoraluguel: f64 = numeroteste.parse().unwrap_or(169.1);
@@ -11,7 +22,7 @@ pub fn maquina_padrao(numeroteste: &str) -> MaquinaInput{
     let descricao =  format!("Descrição N{}", numeroteste);
     let categoria = "Máquina de Teste".to_string();
 
-    MaquinaInput{
+    MaquinaInputTeste{
         nome,
         numeroserie,
         valoraluguel,
@@ -22,25 +33,55 @@ pub fn maquina_padrao(numeroteste: &str) -> MaquinaInput{
     }
 }
 
+pub async fn converte_tipo_maquina(maq: MaquinaInputTeste, id: String)
+    -> MaquinaInput{
+    MaquinaInput{
+        idusuario: id,
+        nome: maq.nome,
+        numeroserie: maq.numeroserie,
+        valoraluguel: maq.valoraluguel,
+        disponivelaluguel: maq.disponivelaluguel,
+        status: maq.status,
+        categoria: maq.categoria,
+        descricao: maq.descricao
+    }
+}
+
 #[tokio::test]
 async fn test_cadastra_maquina_ok(){
-    let maquina = maquina_padrao("001");
+    let maquina = maquina_padrao("201").await;
 
-    let idsmaquina = cadastra_maquina(Json(maquina)).await.unwrap().1;
+    let usuario = usuario_padrao("201");
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let idusuario = usuario.0.clone();
+
+    let idsmaquina = cadastra_maquina(Json(
+        converte_tipo_maquina(maquina, idusuario.clone()
+        ).await)).await.unwrap().1;
     let id = idsmaquina.0.idmaquina.to_string();
 
+    assert!(deleta_usuario(idusuario).await.is_ok());
     assert!(deleta_maquina_id(id).await.is_ok());
 }
 
 #[tokio::test]
 async fn test_lista_todas_maquinas_ok(){
-    let maquina = maquina_padrao("002");
+    let maquina = maquina_padrao("202").await;
 
-    let idsmaquina = cadastra_maquina(Json(maquina)).await.unwrap().1;
+    let usuario = usuario_padrao("202");
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let idusuario = usuario.0.clone();
+
+    let idsmaquina = cadastra_maquina(Json(
+        converte_tipo_maquina(maquina, idusuario.clone()
+        ).await)).await.unwrap().1;
     let id = idsmaquina.0.idmaquina.to_string();
 
     assert!(lista_todas_maquinas().await.is_ok());
-
+    
+    assert!(deleta_usuario(idusuario).await.is_ok());
     assert!(deleta_maquina_id(id).await.is_ok());
 }
 
