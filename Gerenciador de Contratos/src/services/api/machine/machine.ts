@@ -20,3 +20,26 @@ export async function listMachine(): Promise<Machine[]> {
     );
   }
 }
+
+export const loadMachineImage = async (machineId: string): Promise<string> => {
+  try {
+    console.log("machineId: ", machineId);
+    const response = await client.post<string>("/recupera_imagem_maquina", machineId, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.data) {
+      throw new Error("Erro ao carregar imagem da máquina");
+    }
+
+    const imagePath = response.data;
+
+    const imageUrl = `https://g6v9psc0-3003.brs.devtunnels.ms${imagePath}`;
+    return imageUrl;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

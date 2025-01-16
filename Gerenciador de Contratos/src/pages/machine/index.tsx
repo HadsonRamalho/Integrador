@@ -1,7 +1,7 @@
 import Layout from "@/layouts/default";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { listMachine } from "@/services/api/machine/machine";
+import { listMachine, loadMachineImage } from "@/services/api/machine/machine";
 import { Button } from "@/components/ui/button";
 import { Machine as Maquina} from "@/interfaces/machine";
 import { useNavigate } from "react-router-dom";
@@ -20,28 +20,15 @@ export default function Machine() {
     listMachines();    
   }, []);
 
-  const MachineCard = ({machine}) => {
+  const MachineCard: React.FC<{ machine: Maquina }> = ({ machine }) => {
     const [image, setImage] = useState("");
     const [loadingImage, setLoadingImage] = useState(true);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const fetchMachineImage = async (machineId: any) => {
+    const fetchMachineImage = async (machineId: string) => {
       try {
         console.log("machineId: ", machineId);
-        const response = await fetch(`https://g6v9psc0-3003.brs.devtunnels.ms/recupera_imagem_maquina`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(machineId), 
-        });
-    
-        if (!response.ok) {
-          throw new Error('Erro ao carregar imagem da máquina');
-        }
-    
-        const imagePath = await response.json();
-        const imageUrl = `https://g6v9psc0-3003.brs.devtunnels.ms${imagePath}`;
+        const response = await loadMachineImage(machineId);
+        const imageUrl = response;
         setImage(imageUrl);
         setLoadingImage(false);
       } catch (error) {
@@ -111,7 +98,7 @@ export default function Machine() {
         </div>           
         <div>            
           <Button onClick={()=> {navigate("/create-machine")}}>Ir para cadastro de máquinas</Button>
-          <Button onClick={()=> {navigate("/logado")}}>Ir para a rota 'logado'</Button>
+          <Button onClick={()=> {navigate("/user-profile")}}>Ir para o perfil</Button>
         </div> 
       </main>
     </Layout>

@@ -8,6 +8,7 @@ import PrivateRoute from "./privateRoute";
 import { Prohibited } from "@/pages/prohibited";
 import PasswordRecovery from "@/pages/password-recovery/index.js";
 import CreateMachine from "@/pages/create-machine";
+import UserProfile from "@/pages/user-profile";
 
 
 const router = createBrowserRouter([
@@ -36,7 +37,10 @@ const router = createBrowserRouter([
     path: "/create-machine",
     element: <CreateMachine/>
   },
-  
+  {
+    path: "/user-profile",
+    element: <UserProfile/>
+  },
   {
     path: "/logado",
     element: (

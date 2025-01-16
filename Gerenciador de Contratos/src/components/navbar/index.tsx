@@ -2,9 +2,18 @@ import { NavLink } from "react-router-dom";
 import "./navbar.css";
 import maq from "@/assets/maq.png";
 import { ModeToggle } from "../mode-toggle/mode-toggle";
+import { useEffect, useState } from "react";
 
 
 export function NavBar() {
+  const [logged, setLogged] = useState(false);
+  useEffect(() => {
+    const id = localStorage.getItem("USER_ID");
+    if(id){
+      setLogged(true);
+      return;
+    }
+  },[])
   return (
     <nav>
       <ul className="link-nav-active">
@@ -38,15 +47,22 @@ export function NavBar() {
               Maquinas
           </NavLink>
         </li>
-        <li>
         
-          <NavLink 
-          to="/login"
-            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`
-          }
-           >
+        <li>        
+          {logged ? (
+            <NavLink 
+            to="/user-profile"
+            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
+              Meu Perfil
+            </NavLink>
+          ) : (
+            <NavLink 
+            to="/login"
+            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
               Entrar
-          </NavLink>
+            </NavLink>
+            )            
+          }          
         </li>
 
         <li>
