@@ -19,9 +19,3 @@
 
 
 
-.quadro3{
-  background-color: hsl(var(--background));
-  color: hsl(var(--text));
-  margin: 10px; 
-  border-color: hsl(var(--primary));
-}
