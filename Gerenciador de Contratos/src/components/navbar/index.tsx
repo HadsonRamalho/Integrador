@@ -4,6 +4,7 @@ import maq from "@/assets/maq.png";
 import { ModeToggle } from "../mode-toggle/mode-toggle";
 import { useEffect, useState } from "react";
 import { ProfileDropdownMenu } from "../profile-dropdown-menu";
+import { DropdownMenuDemo } from "../dropdown-menu";
 
 
 export function NavBar() {
@@ -24,11 +25,19 @@ export function NavBar() {
           <NavLink
            to="/"
             className={({ isActive }) => ` class1 ${isActive ? "link-nav-active" : ""}`
-            
             }
           >
             <img className="imagem" src={maq} alt="" />
-          
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink 
+          to="/"
+          className={({isActive}) => ` class1 ${isActive ? "link-nav-active" : ""}`
+          }
+          >
+            Pagina Inicial   
           </NavLink>
         </li>
       
@@ -50,6 +59,9 @@ export function NavBar() {
               Maquinas
           </NavLink>
         </li>
+        <li className="class1">
+          <DropdownMenuDemo></DropdownMenuDemo>
+        </li>       
 
         <li>        
           {logged ? (
@@ -66,12 +78,8 @@ export function NavBar() {
         </li>
 
         <li>
-          
-        </li>
-
-        <li>
           <ModeToggle></ModeToggle>
-        </li>
+        </li>        
 
       </ul>
     </nav>
