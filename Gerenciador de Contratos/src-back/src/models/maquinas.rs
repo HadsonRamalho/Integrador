@@ -67,3 +67,20 @@ pub async fn lista_todas_maquinas(conn: &mut PgConnection)
         }
     }
 }
+
+pub async fn busca_maquina_id(conn: &mut PgConnection, id: String)
+    -> Result<Maquina, String>{
+    use crate::schema::maquinas::dsl::*;
+
+    let res: Result<Maquina, diesel::result::Error> = maquinas.filter(idmaquina.eq(id))
+        .get_result(conn);
+
+    match res{
+        Ok(maquina) => {
+            return Ok(maquina)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}

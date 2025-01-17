@@ -108,3 +108,20 @@ pub async fn lista_todas_maquinas()
         }
     };
 }
+
+pub async fn busca_maquina_id(input: Json<String>)
+    -> Result<(StatusCode, Json<Maquina>), (StatusCode, Json<String>)>{
+    if input.0.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    let conn = &mut cria_conn()?;
+    let id = input.0.trim().to_string();
+    match models::maquinas::busca_maquina_id(conn, id).await{
+        Ok(maq) => {
+            return Ok((StatusCode::OK, Json(maq)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
