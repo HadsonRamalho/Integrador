@@ -2,6 +2,8 @@
 import "@/components/create-machine/index.css";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Layout from "@/layouts/default";
 import { useState } from "react";
 
@@ -66,6 +68,7 @@ export default function CreateMachine() {
   };
 
   const createMachine = async () => {
+    const idusuario = localStorage.getItem("USER_ID");
     try{
       const response = await fetch(`https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_maquina`, {
         method: "POST",
@@ -73,6 +76,8 @@ export default function CreateMachine() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          idusuario,
+
           nome: name,
           numeroserie: serialNumber, 
           valoraluguel: rentValue,
@@ -131,8 +136,8 @@ export default function CreateMachine() {
         </CardHeader>
         <CardContent className="form-content">
           <CardDescription>
-            <label htmlFor="machine-name">Nome da Máquina</label>
-            <input
+            <Label htmlFor="machine-name">Nome da Máquina</Label>
+            <Input
               id="machine-name"
               placeholder="Nome da Máquina"
               onChange={(e) => setName(e.target.value)}
@@ -140,8 +145,8 @@ export default function CreateMachine() {
             />
           </CardDescription>
           <CardDescription>
-            <label htmlFor="serial-number">Número de Série</label>
-            <input
+            <Label htmlFor="serial-number">Número de Série</Label>
+            <Input
               id="serial-number"
               placeholder="Número de Série"
               onChange={(e) => setSerialNumber(e.target.value)}
@@ -149,8 +154,8 @@ export default function CreateMachine() {
             />
           </CardDescription>
           <CardDescription>
-            <label htmlFor="rent-value">Valor de Aluguel</label>
-            <input
+            <Label htmlFor="rent-value">Valor de Aluguel</Label>
+            <Input
               id="rent-value"
               type="number"
               value={rentValue}
@@ -161,7 +166,7 @@ export default function CreateMachine() {
             />
           </CardDescription>
           <CardDescription>
-            <label htmlFor="rent-disponibility">Disponível para Aluguel?</label>
+            <Label htmlFor="rent-disponibility">Disponível para Aluguel?</Label>
             <select
               id="rent-disponibility"
               onChange={(e) => setRentDisponibility(e.target.value)}
@@ -172,8 +177,8 @@ export default function CreateMachine() {
             </select>
           </CardDescription>
           <CardDescription>
-            <label htmlFor="status">Status</label>
-            <input
+            <Label htmlFor="status">Status</Label>
+            <Input
               id="status"
               placeholder="Status"
               onChange={(e) => setStatus(e.target.value)}
@@ -181,7 +186,7 @@ export default function CreateMachine() {
             />
           </CardDescription>
           <CardDescription>
-            <label htmlFor="description">Descrição da Máquina</label>
+            <Label htmlFor="description">Descrição da Máquina</Label>
             <textarea
               id="description"
               placeholder="Descrição da Máquina"
@@ -190,8 +195,8 @@ export default function CreateMachine() {
             />
           </CardDescription>
           <CardDescription>
-            <label htmlFor="category">Categoria da Máquina</label>
-            <input
+            <Label htmlFor="category">Categoria da Máquina</Label>
+            <Input
               id="category"
               placeholder="Categoria da Máquina"
               onChange={(e) => setCategory(e.target.value)}
@@ -199,10 +204,10 @@ export default function CreateMachine() {
             />
           </CardDescription>
           <CardDescription>
-            <label>Imagens da Máquina</label>
+            <Label>Imagens da Máquina</Label>
             {machineImages.map((image, index) => (
               <div key={index}>
-                <input
+                <Input
                   type="file"
                   accept="image/*"
                   aria-label={`Upload da imagem ${index + 1}`}

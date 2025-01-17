@@ -5,11 +5,26 @@ import { listMachine, loadMachineImage } from "@/services/api/machine/machine";
 import { Button } from "@/components/ui/button";
 import { Machine as Maquina} from "@/interfaces/machine";
 import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
+import "@/components/machine/machine.css";
+import {  
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function Machine() {
   const navigate = useNavigate();
   const [machines, setMachines] = useState<Maquina[]>([]);
   const [error, setError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const toggleAlert = () => setShowAlert(!showAlert);
 
   useEffect(() => {
     const listMachines = async () => {
@@ -18,7 +33,16 @@ export default function Machine() {
       setMachines(machines);
     };
     listMachines();    
-  }, []);
+  }, []);  
+
+  const verifyAccountStatus = () => {
+    if(localStorage.getItem("USER_ID")){
+      navigate('/logado');
+      return;
+    }
+    toggleAlert();
+    return;
+  }
 
   const MachineCard: React.FC<{ machine: Maquina }> = ({ machine }) => {
     const [image, setImage] = useState("");
@@ -44,7 +68,7 @@ export default function Machine() {
     }, [machine.idmaquina]);  
 
     return (
-        <Card className="quadro3">
+        <Card className="machine-card">
         <CardHeader>
         <CardTitle>
           MÁQUINA        
@@ -53,7 +77,9 @@ export default function Machine() {
         <CardContent>  
         <div className="machine-image-home">
           {loadingImage ? (
-            <p>Carregando imagem...</p>
+            <div>
+              <Skeleton className="h-[50vh] w-[30vw] rounded-xl" />
+            </div>
           ) : error ? (
             <div className="image-placeholder">Erro ao carregar imagem</div>
           ) : image ? (
@@ -68,7 +94,7 @@ export default function Machine() {
         Preço: R$ {machine.valoraluguel}
         </CardDescription>
         <CardDescription>
-        <Button onClick={()=> {navigate("/logado")}}>Ver mais</Button>
+        <Button onClick={() => {verifyAccountStatus()}}>Ver mais</Button>
         </CardDescription>
         <p>Categoria: {machine.categoria}</p>
         </CardContent>
@@ -77,12 +103,12 @@ export default function Machine() {
   }
   return (
     <Layout>
-      <main>        
-        <div className="grid">
-          <p 
-            style={{color: 'hsl(var(--text))', fontSize: '25px'}}
-            className="ml-[5%]"
-            >Máquinas Disponíveis</p>
+      <main>      
+      <p 
+        style={{color: 'hsl(var(--text))', fontSize: '25px'}}
+        className="ml-[5%]"
+        >Máquinas Disponíveis</p>  
+        <div className="machine-grid">          
           {machines.length === 0 ? (
             <div>
               <p>Houve um erro ao carregar as máquinas. Reporte o problema aqui:</p>
@@ -99,6 +125,22 @@ export default function Machine() {
         <div>            
           <Button onClick={()=> {navigate("/create-machine")}}>Ir para cadastro de máquinas</Button>
           <Button onClick={()=> {navigate("/user-profile")}}>Ir para o perfil</Button>
+
+          <AlertDialog open={showAlert} onOpenChange={toggleAlert}>
+          <AlertDialogTrigger asChild></AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle style={{color: 'hsl(var(--text))'}}>UEPA! Pode não!</AlertDialogTitle>
+            <AlertDialogDescription style={{color: 'hsl(var(--text))'}}>
+              Você precisa estar logado pra fazer isso {">"}:( faz favor de entrar na sua conta.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel  style={{color: 'hsl(var(--text))', backgroundColor: 'rgb(136, 39, 39)'}}>Depois eu entro, tmj</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {navigate('/login')}}>Tabo, vou entrar :(</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         </div> 
       </main>
     </Layout>
