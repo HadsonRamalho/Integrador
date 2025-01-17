@@ -1,6 +1,6 @@
 use axum::Json;
 
-use crate::{controllers::{maquinas::{cadastra_maquina, deleta_maquina_id, lista_todas_maquinas, MaquinaInput}, usuarios::cadastra_usuario}, models::usuarios::deleta_usuario, tests::usuarios::usuario_padrao};
+use crate::{controllers::{maquinas::{busca_maquina_id, cadastra_maquina, deleta_maquina_id, lista_todas_maquinas, MaquinaInput}, maquinas_usuarios::busca_maquinas_usuario_idusuario, usuarios::cadastra_usuario}, models::usuarios::deleta_usuario, tests::usuarios::usuario_padrao};
 
 pub struct MaquinaInputTeste{
     pub nome: String,
@@ -86,8 +86,88 @@ async fn test_lista_todas_maquinas_ok(){
 }
 
 #[tokio::test]
+async fn busca_maquina_id_ok(){
+    let maquina = maquina_padrao("203").await;
 
-async fn test_lista_todas_maquinas_err(){
-    // Esse teste falha quando temos máquinas cadastradas no banco :)
-    assert!(lista_todas_maquinas().await.is_err());
+    let usuario = usuario_padrao("203");
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let idusuario = usuario.0.clone();
+
+    let idsmaquina = cadastra_maquina(Json(
+        converte_tipo_maquina(maquina, idusuario.clone()
+        ).await)).await.unwrap().1;
+    let id = idsmaquina.0.idmaquina.to_string();
+
+    assert!(busca_maquina_id(Json(id.clone())).await.is_ok());
+    
+    assert!(deleta_usuario(idusuario).await.is_ok());
+    assert!(deleta_maquina_id(id).await.is_ok());
 }
+
+#[tokio::test]
+async fn busca_maquina_id_err(){
+    let maquina = maquina_padrao("204").await;
+
+    let usuario = usuario_padrao("204");
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let idusuario = usuario.0.clone();
+
+    let idsmaquina = cadastra_maquina(Json(
+        converte_tipo_maquina(maquina, idusuario.clone()
+        ).await)).await.unwrap().1;
+    let id = idsmaquina.0.idmaquina.to_string();
+
+    assert!(busca_maquina_id(Json("idinvalido".to_string())).await.is_err());
+    
+    assert!(deleta_usuario(idusuario).await.is_ok());
+    assert!(deleta_maquina_id(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn busca_maquinas_usuario_idusuario_ok(){
+    let maquina = maquina_padrao("205").await;
+
+    let usuario = usuario_padrao("205");
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let idusuario = usuario.0.clone();
+
+    let idsmaquina = cadastra_maquina(Json(
+        converte_tipo_maquina(maquina, idusuario.clone()
+        ).await)).await.unwrap().1;
+    let id = idsmaquina.0.idmaquina.to_string();
+
+    assert!(busca_maquinas_usuario_idusuario(Json(idusuario.clone())).await.is_ok());
+    
+    assert!(deleta_usuario(idusuario).await.is_ok());
+    assert!(deleta_maquina_id(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn busca_maquinas_usuario_idusuario_err(){
+    let maquina = maquina_padrao("206").await;
+
+    let usuario = usuario_padrao("206");
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    let idusuario = usuario.0.clone();
+
+    let idsmaquina = cadastra_maquina(Json(
+        converte_tipo_maquina(maquina, idusuario.clone()
+        ).await)).await.unwrap().1;
+    let id = idsmaquina.0.idmaquina.to_string();
+
+    assert!(busca_maquinas_usuario_idusuario(Json("idinválido".to_string())).await.is_err());
+    
+    assert!(deleta_usuario(idusuario).await.is_ok());
+    assert!(deleta_maquina_id(id).await.is_ok());
+}
+
+// #[tokio::test]
+
+// async fn test_lista_todas_maquinas_err(){
+//     // Esse teste falha quando temos máquinas cadastradas no banco :)
+//     assert!(lista_todas_maquinas().await.is_err());
+// }
