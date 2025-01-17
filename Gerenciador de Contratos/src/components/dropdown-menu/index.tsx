@@ -8,9 +8,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/layouts"
+import { useState } from "react"
 
 
 export function DropdownMenuDemo() {
+  const [cep, setCep] = useState("");
+  const [pais, setPais] = useState("Brasil");
+  const [estado, setEstado] = useState("");
+  const [cidade, setCidade] = useState("");
+
+  const CarregaEndereco = async () =>{
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`,
+     {method:'GET'} );
+     if(!res.ok){
+      throw new Error( await res.text());
+     }
+     const endereco = await res.json();
+     setEstado(endereco.estado);
+     setCidade(endereco.local);
+     console.log(endereco);
+      
+    } catch (error) {
+      console.error(error);
+    }
+  }
   return (
     <DropdownMenu>
   <DropdownMenuTrigger>Open</DropdownMenuTrigger>
@@ -21,31 +43,37 @@ export function DropdownMenuDemo() {
      <Input
      placeholder="CEP"
      type="cep"
+     value={cep}
+     onChange={(e) =>setCep(e.target.value)}
      />
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
     <DropdownMenuLabel>
       <Input
       placeholder="País"
+      value={pais}
+      onChange={(e)=> setPais(e.target.value)}
       />
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
     <DropdownMenuLabel>
       <Input
-      placeholder="Estado"/>
+      placeholder="Estado"
+      value={estado}
+      onChange={(e)=> setEstado(e.target.value)}
+      />
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
     <DropdownMenuLabel>
       <Input
-      placeholder="Cidade"/>
+      placeholder="Cidade"
+      value={cidade}
+      onChange={(e)=>setCidade(e.target.value)}
+      />
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
-    <DropdownMenuLabel>
-      <Input
-      placeholder="Moeda"/>
-    </DropdownMenuLabel>
     <DropdownMenuItem>
-    <Button>Confirmar</Button>
+    <Button onClick={CarregaEndereco}>Confirmar</Button>
     </DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>

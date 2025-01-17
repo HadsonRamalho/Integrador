@@ -40,17 +40,17 @@ body {
 
 .content { 
   
-  width: 50%;
+  width: 30%;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.9);
   border: 2px solid hsl(var(--primary));
   border-radius: 100px;
-  height: 480px;
+  height: 590px;
   z-index: 2;
   opacity: 90%;
-   top: 50%;
+  top: 50%;
   left: 50%; 
-   transform: translate(-50%, -50%); 
+  transform: translate(-50%, -50%); 
 
 }
 
@@ -58,24 +58,16 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: hsl(var(--text));
+  color: hsl(var(--teste));
   gap: 15px;
   width: 100%;
+  padding: 2px;
 
 
 }
 
 
-.login-create {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: hsl(var(--text));
-  gap: 20px;
 
-
-
-}
 
 .password {
   font-size: 0.9rem;
@@ -98,11 +90,16 @@ body {
   border: 1px solid #0cdbab;
   border-radius: 5px;
   font-size: 1rem;
+
 }
 
 .link-login {
   color: hsl(var(--primary));
 }
+.link{
+  color: hsl(var(--teste));
+}
+
 
 .imagem {
   width: 130px;

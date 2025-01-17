@@ -74,9 +74,7 @@ export default function AuthPage() {
       <main>
         <div className="container">
           <div className="content ">
-
-            <div className="login">
-              <div className="titulo">
+          <div className="titulo">
                 <h1>MaqExpress</h1>
                 <p>
                   {mode === "login"
@@ -84,6 +82,8 @@ export default function AuthPage() {
                     : "Crie sua conta para acessar"}
                 </p>
               </div>
+            <div className="login">
+             
               {mode === "login" ? (
                 <>
                   <Input
@@ -111,7 +111,7 @@ export default function AuthPage() {
                     Entrar
                   </Button>
                   <Button>Entrar com o Google</Button>
-                  <span>
+                  <span className="link-login">
                     Não possui conta?{" "}
                     <a
                       className="link-login"
