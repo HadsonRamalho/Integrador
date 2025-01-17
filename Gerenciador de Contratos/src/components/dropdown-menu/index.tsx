@@ -26,7 +26,7 @@ export function DropdownMenuDemo() {
      }
      const endereco = await res.json();
      setEstado(endereco.estado);
-     setCidade(endereco.local);
+     setCidade(endereco.localidade);
      console.log(endereco);
       
     } catch (error) {
