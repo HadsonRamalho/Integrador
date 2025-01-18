@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/auth";
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom";
 
+
 export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
     const { signOut } = useAuth();
     const navigate = useNavigate();
@@ -29,14 +30,27 @@ export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
                 <Avatar>
                 <AvatarImage src="https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg" />                    
                 </Avatar>
-                <p>Meu Perfil</p>
+                <p>Minha Conta</p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
                 <NavLink to={"/user-profile"} className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
-                  <p style={{color: "black", fontSize: '15px'}}>Minhas Informações</p>
+                  <p style={{color: "black", fontSize: '15px'}}>Configuração da Conta</p>
                 </NavLink>
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+                Notificações
+            </DropdownMenuItem>
+            <DropdownMenuSeparator/>
+            <DropdownMenuLabel>
+                <p>Suporte</p>
+            </DropdownMenuLabel>
+           
+            <DropdownMenuItem>
+                Central de Ajuda
+            </DropdownMenuItem>
+            <DropdownMenuSeparator/>
             <DropdownMenuItem onClick={LogOut}>
                 <p style={{color: "black"}}>Sair da conta</p>
             </DropdownMenuItem>

@@ -46,7 +46,7 @@ export default function UserProfile() {
           </Avatar>
           <h1>Nome: {user.nome}</h1>
           <p>E-mail: {user.email}</p>
-          Documento: {user.documento}
+          <p>Documento: {user.documento}</p>
           <CardDescription className="user-profile-card-description">
             Data de Cadastro: {user.datacadastro}
           </CardDescription>
