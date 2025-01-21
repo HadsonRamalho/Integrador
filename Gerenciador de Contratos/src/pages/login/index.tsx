@@ -75,7 +75,7 @@ export default function AuthPage() {
         <div className="container">
           <div className="content ">
           <div className="titulo">
-                <h1>MaqExpress</h1>
+                <h1 className="maq">MaqExpress</h1>
                 <p>
                   {mode === "login"
                     ? "Faça login para  continuar"
@@ -110,8 +110,8 @@ export default function AuthPage() {
                   <Button className="button " onClick={RealizaLogin}>
                     Entrar
                   </Button>
-                  <Button>Entrar com o Google</Button>
-                  <span className="link-login">
+                  <Button className="button">Entrar com o Google</Button>
+                  <span className="link">
                     Não possui conta?{" "}
                     <a
                       className="link-login"
@@ -155,7 +155,7 @@ export default function AuthPage() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   <Button onClick={createAccount}>Criar Conta</Button>
-                  <span>
+                  <span className="link">
                     Já possui conta?{" "}
                     <a
                       className="link-login"

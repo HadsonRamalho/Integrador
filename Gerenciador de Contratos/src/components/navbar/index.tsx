@@ -19,8 +19,8 @@ export function NavBar() {
   },[])
 
   return (
-    <nav>
-      <ul className="link-nav-active">
+    <nav className="navbar">
+     <ul className="nav-left">
         <li>
           <NavLink
            to="/"
@@ -58,7 +58,11 @@ export function NavBar() {
            >
               Maquinas
           </NavLink>
+         
         </li>
+        </ul>
+
+        <ul className="nav-right">
         <li className="class1">
           <DropdownMenuDemo></DropdownMenuDemo>
         </li>       
