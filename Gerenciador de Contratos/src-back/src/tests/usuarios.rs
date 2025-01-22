@@ -22,7 +22,7 @@ async fn test_cadastra_usuario_ok(){
     let usuario = usuario_padrao("002");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(deleta_usuario(id).await.is_ok());
 }
@@ -50,7 +50,7 @@ async fn test_busca_email_usuario_ok(){
     let usuario = usuario_padrao("003");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     assert!(busca_email_usuario(Json(id.clone())).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
@@ -190,7 +190,7 @@ async fn test_atualiza_email_usuario_ok(){
     let email_novo = "xtesteunit4@gmail.comx".to_string();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     assert!(atualiza_email_usuario(Json(AtualizaEmailInput{
         email_antigo: email,
         email_novo,
@@ -215,7 +215,7 @@ async fn test_atualiza_email_usuario_err(){
     };
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id1 = usuario.0.clone();
+    let id1 = usuario.0.idusuario.to_string();
 
     let email2 = "testeunit6@gmail.com".to_string();
     let nome = "Usuario Teste 6".to_string();
@@ -230,7 +230,7 @@ async fn test_atualiza_email_usuario_err(){
     };
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id2 = usuario.0.clone();
+    let id2 = usuario.0.idusuario.to_string();
 
     assert!(atualiza_email_usuario(Json(AtualizaEmailInput{
         email_antigo: email1,
@@ -248,7 +248,7 @@ pub async fn busca_usuario_email_ok(){
     let email = usuario.email.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     
     assert!(busca_usuario_email(Query(
         EmailInput{
@@ -264,7 +264,7 @@ pub async fn busca_usuario_email_err(){
     let usuario = usuario_padrao("008");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(busca_usuario_email(Query(
         EmailInput{
@@ -282,7 +282,7 @@ async fn test_busca_senha_usuario_ok(){
     let senha = usuario.senha.clone();
 
         let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     let conn = &mut cria_conn().unwrap();
 
@@ -298,7 +298,7 @@ async fn test_busca_senha_usuario_err(){
     let email = usuario.email.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     let conn = &mut cria_conn().unwrap();
 
@@ -316,7 +316,7 @@ async fn test_realiza_login_ok(){
     let senha = usuario.senha.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -335,7 +335,7 @@ async fn test_realiza_login_err(){
     let senha = usuario.senha.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -354,7 +354,7 @@ async fn test_atualiza_senha_usuario_ok(){
     let senha = usuario.senha.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -386,7 +386,7 @@ async fn test_atualiza_senha_usuario_err(){
     let senha = usuario.senha.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -424,7 +424,7 @@ async fn test_busca_usuario_id_ok(){
     let usuario = usuario_padrao("015");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     
     assert!(busca_usuario_id(Query(
         IdInput{
@@ -440,7 +440,7 @@ async fn test_busca_usuario_id_err(){
     let usuario = usuario_padrao("016");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     
     assert!(busca_usuario_id(Query(
         IdInput{

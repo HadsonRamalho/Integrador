@@ -27,7 +27,7 @@ export function NavBar() {
             className={({ isActive }) => ` class1 ${isActive ? "link-nav-active" : ""}`
             }
           >
-            <img className="imagem" src={maq} alt="" />
+            <img className="imagem" src={maq} alt="" style={{width: '100%', height: '100%'}}/>
           </NavLink>
         </li>
 

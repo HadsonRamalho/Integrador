@@ -3,10 +3,20 @@ use axum::{
 };
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
-use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, busca_usuario_id, cadastra_usuario, realiza_login}};
+use crate::controllers::{self, codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, busca_usuario_id, cadastra_usuario, realiza_login}};
 use crate::controllers::usuarios::busca_usuario_email;
-
+use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario};
+use utoipa_axum::{router, routes};
+use utoipa_axum::router::OpenApiRouter;
+use utoipa_swagger_ui::SwaggerUi;
 pub fn cria_rotas() -> Router<>{
+    
+    let (router, api) = OpenApiRouter::<()>::new()
+    
+        .routes(routes!(realiza_login))
+        .routes(routes!(cadastra_usuario))
+        .split_for_parts();
+    
     let app: Router<_> = Router::new()
         .route("/cadastra_usuario", post(cadastra_usuario))
         .route("/busca_email_usuario", get(busca_email_usuario))
@@ -34,6 +44,8 @@ pub fn cria_rotas() -> Router<>{
                 .allow_origin(Any)
                 .allow_methods(vec![Method::POST, Method::PUT, Method::PATCH]) 
                 .allow_headers(Any),
-        );
+        )
+        
+        .merge(SwaggerUi::new("/swagger-ui").url("/api/openapi.json", api));
     app
 }

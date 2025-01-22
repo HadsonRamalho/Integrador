@@ -1,13 +1,14 @@
 use axum::{extract::Query, http::StatusCode, Json};
 use pwhash::unix::verify;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use validator::Validate;
 
 use crate::models::{self, usuarios::Usuario};
 
 use super::{cria_conn, envia_emails::envia_email_codigo, formata_cnpj, formata_cpf, gera_hash};
 
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize, Serialize, Clone, ToSchema)]
 pub struct UsuarioInput{
     pub nome: String,
     pub email: String,
@@ -21,8 +22,30 @@ pub struct EmailInput{
     pub email: String
 }
 
+
+#[utoipa::path(
+    post,
+    path = "/cadastra_usuario",
+    responses(
+        (
+            status = 200, 
+            description = "Dados válidos. O usuário foi cadastrado.",
+            body = UserId
+        ),
+        (
+            status = 500,
+            description = "Erro ao cadastrar o usuário."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = UsuarioInput    
+)]
+
 pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
-    -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    -> Result<(StatusCode, Json<UserId>), (StatusCode, Json<String>)>{
     match valida_usuario(&usuario.0).await{
         Ok(_) => {},
         Err(e) => {
@@ -60,7 +83,7 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
     match envia_email_codigo(email_clone, "ativação de conta").await{
         Ok(codigoativacao) => {
             println!("Código de ativação: {}", codigoativacao.1.0);
-            return Ok((StatusCode::OK, Json(idusuario_clone)))
+            return Ok((StatusCode::OK, Json(UserId{idusuario: idusuario_clone})))
         },
         Err(e) => {
             return Err(e)
@@ -69,15 +92,37 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
 
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, ToSchema)]
 pub struct CredenciaisUsuario{
     pub email: String,
     pub senha: String
 }
-#[derive(Serialize, Deserialize)]
+
+#[derive(Serialize, Deserialize, ToSchema, Debug)]
 pub struct UserId{
-    idusuario: String
+    pub idusuario: String
 }
+
+#[utoipa::path(
+    post,
+    path = "/realiza_login",
+    responses(
+        (
+            status = 200, 
+            description = "Credenciais verificadas e válidas. Login pode ser realizado.",
+            body = UserId       
+        ),
+        (
+            status = 500,
+            description = "O e-mail inserido não está registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = CredenciaisUsuario    
+)]
 
 pub async fn realiza_login(input: Json<CredenciaisUsuario>)
     -> Result<(StatusCode, Json<UserId>), (StatusCode, Json<String>)>{
