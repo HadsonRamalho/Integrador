@@ -2,6 +2,7 @@ use axum::{extract::Query, http::StatusCode, Json};
 use chrono::Days;
 use diesel::{ExpressionMethods, RunQueryDsl};
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 
 use crate::models::{self, codigos_recuperacao::{cadastra_codigo_recuperacao_db, CodigoRecuperacao}};
 
@@ -38,8 +39,35 @@ pub async fn verifica_codigo_recuperacao(input: Json<CodigoRecuperacaoInput>)
     }
 }
 
+#[derive(Serialize, Deserialize, ToSchema)]
+pub struct CodigoRecuperacaoReturn{
+    pub idcodigo: String,
+    pub codigo: String
+}
+
+#[utoipa::path(
+    post,
+    tag = "Código de Recuperação",
+    path = "/envia_codigo_recuperacao",
+    responses(
+        (
+            status = 200, 
+            description = "Dados válidos. E-mail enviado e registro salvo no banco.",
+            body = CodigoRecuperacaoReturn
+        ),
+        (
+            status = 500,
+            description = "Erro ao enviar o e-mail; Erro ao salvar os dados no banco; Erro ao buscar o usuário."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = EmailInput    
+)]
 pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
-    -> Result<(StatusCode, Json<(String, String)>), (StatusCode, Json<String>)>{
+    -> Result<(StatusCode, Json<CodigoRecuperacaoReturn>), (StatusCode, Json<String>)>{
     let email_clone = input.email.to_string();
     match valida_email(input).await{
         Ok(_) => {},
@@ -72,7 +100,10 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
 
     match cadastra_codigo_recuperacao_db(conn, codigorecuperacao).await{
         Ok(codigo) => {
-            return Ok((StatusCode::OK, Json((idcodigo_clone, codigo))))
+            return Ok((StatusCode::OK, Json(CodigoRecuperacaoReturn{
+                idcodigo: idcodigo_clone,
+                codigo: codigo
+            })))
         },
         Err(e) => {
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))

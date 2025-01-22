@@ -6,7 +6,8 @@ use tower_http::services::ServeDir;
 use utoipa::openapi::Contact;
 use crate::controllers::{self, codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, busca_usuario_id, cadastra_usuario, realiza_login}};
 use crate::controllers::usuarios::busca_usuario_email;
-use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario};
+use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario, __path_busca_usuario_email};
+use crate::controllers::codigos_recuperacao::__path_envia_codigo_recuperacao;
 use utoipa_axum::{router, routes};
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_swagger_ui::SwaggerUi;
@@ -16,6 +17,8 @@ pub fn cria_rotas() -> Router<>{
     
         .routes(routes!(realiza_login))
         .routes(routes!(cadastra_usuario))
+        .routes(routes!(envia_codigo_recuperacao))
+        .routes(routes!(busca_usuario_email))
         .split_for_parts();
 
     api.info.description = Some("\nDocumentação para as rotas da API do sistema MaqExpress.\n
@@ -40,7 +43,7 @@ pub fn cria_rotas() -> Router<>{
         .route("/busca_senha_usuario", post(busca_senha_usuario))
         .route("/atualiza_senha_usuario", patch(atualiza_senha_usuario))
         .route("/atualiza_email_usuario", patch(atualiza_email_usuario))
-        .route("/busca_usuario_email", get(busca_usuario_email))
+        .route("/busca_usuario_email/{email}", get(busca_usuario_email))
         .route("/busca_usuario_id", get(busca_usuario_id))
 
         .route("/verifica_codigo_recuperacao", post(verifica_codigo_recuperacao))

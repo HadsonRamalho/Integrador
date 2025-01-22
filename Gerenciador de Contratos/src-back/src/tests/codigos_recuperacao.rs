@@ -10,7 +10,7 @@ async fn test_cadastra_codigo_ok(){
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.0.idusuario.to_string();
 
-    let idcodigo = envia_codigo_recuperacao(Json(EmailInput{email})).await.unwrap().1.0.0;
+    let idcodigo = envia_codigo_recuperacao(Json(EmailInput{email})).await.unwrap().1.0.idcodigo;
 
     assert!(deleta_codigo(idcodigo).await.is_ok());
     assert!(deleta_usuario(id).await.is_ok());
@@ -38,7 +38,7 @@ async fn test_verifica_codigo_err(){
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
     let id = usuario.0.idusuario.to_string();
 
-    let idcodigo = envia_codigo_recuperacao(Json(EmailInput{email})).await.unwrap().1.0.0;
+    let idcodigo = envia_codigo_recuperacao(Json(EmailInput{email})).await.unwrap().1.0.idcodigo;
 
     assert!(verifica_codigo_recuperacao(Json(CodigoRecuperacaoInput{
         idusuario: id.clone(),

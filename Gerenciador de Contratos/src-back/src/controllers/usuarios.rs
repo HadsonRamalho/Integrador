@@ -1,8 +1,8 @@
 use axum::{extract::Query, http::StatusCode, Json};
 use pwhash::unix::verify;
 use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
-use validator::Validate;
+use utoipa::{IntoParams, ToSchema};
+use validator::{Validate, ValidationErrorsKind};
 
 use crate::models::{self, usuarios::Usuario};
 
@@ -16,7 +16,7 @@ pub struct UsuarioInput{
     pub documento: String
 }
 
-#[derive(Deserialize, Validate)]
+#[derive(Deserialize, Validate, ToSchema, IntoParams)]
 pub struct EmailInput{
     #[validate(email)]
     pub email: String
@@ -387,6 +387,30 @@ pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
     }
 }
 
+
+#[utoipa::path(
+    get,
+    tag = "Usuário",
+    path = "/busca_usuario_email/{email}",
+    responses(
+        (
+            status = 200, 
+            description = "Credenciais verificadas e válidas. Login pode ser realizado.",
+            body = UserId       
+        ),
+        (
+            status = 404,
+            description = "O e-mail inserido não está registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Parâmetro inválido ou ausente."
+        ),
+    ),
+    params(
+        ("email" = String, Query, description = "E-mail do usuário"),
+    )
+)]
 pub async fn busca_usuario_email(Query(params): Query<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     match valida_email(Json(EmailInput{
         email: params.email.clone()
