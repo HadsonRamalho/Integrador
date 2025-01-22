@@ -22,7 +22,7 @@ pub fn cria_rotas() -> Router<>{
         .split_for_parts();
 
     api.info.description = Some("\nDocumentação para as rotas da API do sistema MaqExpress.\n
-        Em caso de dúvidas ou erros, contate os desenvolvedores do back-end. ;)".to_string());
+        Em caso de dúvidas ou erros, contate os desenvolvedores do back-end. ;) dadso".to_string());
     
     let mut contato = Contact::new();
     contato.email = Some("hadsonramalho@gmail.com".to_string());
