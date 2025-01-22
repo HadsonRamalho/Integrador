@@ -3,6 +3,7 @@ use axum::{
 };
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
+use utoipa::openapi::Contact;
 use crate::controllers::{self, codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_senha_usuario, busca_usuario_id, cadastra_usuario, realiza_login}};
 use crate::controllers::usuarios::busca_usuario_email;
 use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario};
@@ -11,11 +12,26 @@ use utoipa_axum::router::OpenApiRouter;
 use utoipa_swagger_ui::SwaggerUi;
 pub fn cria_rotas() -> Router<>{
     
-    let (router, api) = OpenApiRouter::<()>::new()
+    let (router, mut api) = OpenApiRouter::<()>::new()
     
         .routes(routes!(realiza_login))
         .routes(routes!(cadastra_usuario))
         .split_for_parts();
+
+    api.info.description = Some("\nDocumentação para as rotas da API do sistema MaqExpress.\n
+        Em caso de dúvidas ou erros, contate os desenvolvedores do back-end. :)".to_string());
+    
+    let mut contato = Contact::new();
+    contato.email = Some("hadsonramalho@gmail.com".to_string());
+    contato.name = Some("Hadson Ramalho".to_string());
+    contato.url = Some("https://github.com/HadsonRamalho".to_string());
+    api.info.contact = Some(contato);
+    api.info.license = None;
+    api.info.title = "MaqExpress".to_string();
+    api.info.version = "1.1.22".to_string();
+    api.info.extensions = None;
+    api.info.terms_of_service = None;
+    api.external_docs = None;
     
     let app: Router<_> = Router::new()
         .route("/cadastra_usuario", post(cadastra_usuario))

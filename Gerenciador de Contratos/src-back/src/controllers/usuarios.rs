@@ -25,6 +25,7 @@ pub struct EmailInput{
 
 #[utoipa::path(
     post,
+    tag = "Usuário",
     path = "/cadastra_usuario",
     responses(
         (
@@ -105,6 +106,7 @@ pub struct UserId{
 
 #[utoipa::path(
     post,
+    tag = "Usuário",
     path = "/realiza_login",
     responses(
         (
