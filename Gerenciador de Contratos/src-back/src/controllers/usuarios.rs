@@ -458,6 +458,76 @@ pub async fn busca_usuario_id(Query(params): Query<IdInput>)
     }
 }
 
+#[derive(Serialize, Deserialize, ToSchema)]
+pub struct AtualizaUsuarioInput{
+    pub email_antigo: String,
+    pub senha: String,
+    pub email_novo: String,
+    pub nome_novo: String,
+    pub documento_novo: String,
+}
+
+#[utoipa::path(
+    put,
+    tag = "Usuário",
+    path = "/atualiza_usuario",
+    responses(
+        (
+            status = 200, 
+            description = "Informações válidas. Usuário atualizado.",
+            body = UserId       
+        ),
+        (
+            status = 404,
+            description = "O e-mail inserido não está registrado no sistema.\nOU a senha está incorreta.\nOU o documento pertence a outra pessoa.\nOU o e-mail pertence a outra pessoa."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = AtualizaUsuarioInput
+)]
+pub async fn atualiza_usuario(input: Json<AtualizaUsuarioInput>)
+    -> Result<(StatusCode, Json<UserId>), (StatusCode, Json<String>)>{
+    if input.nome_novo.trim().is_empty() || input.documento_novo.trim().is_empty()
+        || input.email_antigo.trim().is_empty() || input.senha.trim().is_empty()
+        || input.email_novo.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    assert!(valida_email(Json(EmailInput{
+        email: input.email_antigo.clone()
+    })).await.is_ok());
+    assert!(realiza_login(Json(CredenciaisUsuario{
+        email: input.email_antigo.to_string(),
+        senha: input.senha.to_string()
+    })).await.is_ok());
+
+    let query: Query<EmailInput> = Query::from(axum::extract::Query(EmailInput{
+        email: input.email_novo.clone()
+    }));
+    match busca_usuario_email(query).await{
+        Ok(_) => {
+            if input.email_antigo != input.email_novo{
+                return Err((StatusCode::BAD_REQUEST, Json("Esse e-mail já pertence a outro usuário.".to_string())))
+            }
+        },
+        Err(_) => {}
+    }
+
+    let conn = &mut cria_conn()?;
+    match crate::models::usuarios::atualiza_usuario(conn, input.0).await{
+        Ok(idusuario) => {
+            return Ok((StatusCode::OK, Json(UserId{
+                idusuario
+            })))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
+
 pub async fn valida_email(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {
     match input.validate(){
          Ok(_) => {

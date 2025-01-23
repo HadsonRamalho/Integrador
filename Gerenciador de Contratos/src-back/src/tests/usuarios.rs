@@ -1,7 +1,7 @@
 use axum::{extract::Query, Json};
 use pwhash::bcrypt::verify;
 
-use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, busca_usuario_id, cadastra_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, IdInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
+use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_email, busca_usuario_id, cadastra_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, AtualizaUsuarioInput, CredenciaisUsuario, EmailInput, IdInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
 
 pub fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
     let email = format!("testeunit{}@gmail.com", numeroteste);
@@ -447,6 +447,34 @@ async fn test_busca_usuario_id_err(){
             id: "randomId".to_string()
         }
     )).await.is_err());
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_atualiza_usuario_ok(){
+    let usuario = usuario_padrao("017");
+    let email = usuario.email.clone();
+    let senha = usuario.senha.clone();
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    
+    let id = usuario.0.idusuario.to_string();
+    
+    let email_novo: String = "emailnovo001@test.com".to_string();
+    let input = Json(AtualizaUsuarioInput{ 
+        email_antigo: email, 
+        senha, 
+        email_novo: email_novo.clone(), 
+        nome_novo: "Usuário Atualizado".to_string(), 
+        documento_novo: "017.017.017-01".to_string() 
+    });
+    assert!(atualiza_usuario(input).await.is_ok());
+
+    let input: Query<EmailInput> = Query::from(axum::extract::Query(EmailInput{
+        email: email_novo
+    }));
+    assert!(busca_usuario_email(input).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
 }
