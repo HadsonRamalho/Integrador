@@ -9,6 +9,7 @@ import { Prohibited } from "@/pages/prohibited";
 import PasswordRecovery from "@/pages/password-recovery/index.js";
 import CreateMachine from "@/pages/create-machine";
 import UserProfile from "@/pages/user-profile";
+import GoogleAuthCallback from "@/pages/google-auth-callback";
 
 
 const router = createBrowserRouter([
@@ -54,6 +55,12 @@ const router = createBrowserRouter([
         <Logged />,
       </PrivateRoute>
     ),
+  },
+  {
+    path: "/auth/google/callback",
+    element: (
+      <GoogleAuthCallback/>
+    )
   },
 
   {

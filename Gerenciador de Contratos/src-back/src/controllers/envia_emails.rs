@@ -27,7 +27,7 @@ pub fn verifica_credenciais_email() -> Result<(String, String), String>{
     Ok(credenciais)
 }
 
-pub async fn envia_email_codigo(email: String, assunto: &str) 
+pub async fn envia_email_codigo(email: String, assunto: &str, codigo: String) 
     -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     // carregando as credenciais SMTP
     let credenciais = match verifica_credenciais_email(){
@@ -73,44 +73,6 @@ pub async fn envia_email_codigo(email: String, assunto: &str)
         .authentication(vec![Mechanism::Plain])
         .build();
 
-    let codigo = gera_hash(&email);
-    let codigo = codigo.get(8..12).unwrap().to_string();
-    // conteúdo do e-mail
-    let code = format!("{}", codigo);
-
-    let conn = &mut cria_conn()?;
-
-    let datacriacao = chrono::Utc::now().naive_utc();
-    let dia = Days::new(1);
-    let dataexpiracao = chrono::Utc::now().checked_add_days(dia).unwrap().naive_utc();
-    let idcodigo = gera_hash(&codigo);
-
-    let idusuario = match busca_usuario_email(Query(EmailInput{
-        email: email.clone()
-    })).await{
-        Ok(id) =>{
-            id.1.0
-        },
-        Err(e) => {
-            return Err(e)
-        }
-    };
-
-    match cadastra_codigo_recuperacao_db(conn, CodigoRecuperacao{
-        codigo: codigo.clone(),
-        datacriacao,
-        dataexpiracao,
-        status: "Não utilizado".to_string(),
-        idusuario,
-        idcodigo,
-    }).await{
-        Ok(_) => {            
-        },
-        Err(e) => {
-            return Err((StatusCode::SERVICE_UNAVAILABLE, Json(e)))
-        }
-    }
-
     let email = Message::builder()
         .from("gerenciadordecontratosgdc@gmail.com".parse().unwrap())
         .to(email.parse().unwrap())
@@ -141,9 +103,9 @@ pub async fn envia_email_codigo(email: String, assunto: &str)
                         .code {{
                             font-size: 18px;
                             font-weight: bold;
-                            color: #007bff;
+                            color: #169E69;
                             padding: 10px;
-                            border: 1px solid #007bff;
+                            border: 1px solid #169E69;
                             border-radius: 5px;
                             display: inline-block;
                         }}
@@ -154,14 +116,14 @@ pub async fn envia_email_codigo(email: String, assunto: &str)
                         <div class="header">{assunto_titulo}</div>
                         <p>Olá,</p>
                         <p>{assunto_corpo}</p>
-                        <div class="code">{code}</div>
+                        <div class="code">{codigo}</div>
                         <p>Se você não solicitou isso, por favor ignore este e-mail.</p>
                         <p>Atenciosamente,<br>Equipe do MaqExpress </p>
                     </div>
                 </body>
                 </html>
                 "#,
-                code = code, assunto_corpo = assunto_corpo
+                codigo = codigo, assunto_corpo = assunto_corpo
             )
         )
         .unwrap();

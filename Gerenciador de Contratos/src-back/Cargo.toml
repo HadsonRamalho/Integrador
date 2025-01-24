@@ -39,3 +39,6 @@ axum_typed_multipart = "0.15.1"
 utoipa = "5"
 utoipa-swagger-ui = { version = "9", features = ["axum"] }
 utoipa-axum = "0.2"
+
+reqwest = { version = "0.12.12", features = ["json"] }
+oauth2 = "5.0.0"

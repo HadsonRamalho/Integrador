@@ -366,7 +366,7 @@ async fn test_atualiza_senha_usuario_ok(){
     let senha_nova = "SenhaTeste13.Nova".to_string();
 
     assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
-        email: email.clone(),
+        idusuario: id.clone(),
         senha_antiga: senha,
         senha_nova: senha_nova.clone()
     })).await.is_ok());
@@ -399,14 +399,14 @@ async fn test_atualiza_senha_usuario_err(){
     let email_invalido = "email_invalido@gmai.com".to_string();
 
     assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
-        email: email_invalido,
+        idusuario: "idinvalido".to_string(),
         senha_antiga: senha.clone(),
         senha_nova: senha_nova.clone()
     })).await.is_err());
 
     let senha_invalida = "senhainvalida".to_string();
     assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
-        email: email.clone(),
+        idusuario: id.clone(),
         senha_antiga: senha.clone(),
         senha_nova: senha_invalida
     })).await.is_err());

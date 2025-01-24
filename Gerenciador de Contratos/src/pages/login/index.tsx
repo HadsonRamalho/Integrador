@@ -69,6 +69,16 @@ export default function AuthPage() {
     }
   };
 
+  const redirectGoogle = async () => {
+    const redirectUri = 'https://g6v9psc0-5173.brs.devtunnels.ms/auth/google/callback'; // URL registrada no Google Developer Console
+    const clientId = '853000099698-mja71sb0chsva2m9eu3prpktl31psg5q.apps.googleusercontent.com'; 
+  
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=email&response_type=code&redirect_uri=https://g6v9psc0-5173.brs.devtunnels.ms/auth/google/callback&client_id=853000099698-mja71sb0chsva2m9eu3prpktl31psg5q.apps.googleusercontent.com`;
+  
+    // Redireciona o usuário para o Google
+    window.location.href = url;
+  }
+
   return (
     <Layout>
       <main>
@@ -166,6 +176,7 @@ export default function AuthPage() {
                     </a>{" "}
                     para entrar
                   </span>
+                  <Button onClick={redirectGoogle}>Login Google</Button>
 
                 </>
               )}
