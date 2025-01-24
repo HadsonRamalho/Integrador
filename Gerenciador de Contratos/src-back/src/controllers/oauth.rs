@@ -30,13 +30,16 @@ pub struct OAuthResponse {
     pub id_token: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct GoogleUserResult {
-    pub id: String,
-    pub email: String,
+    pub id: Option<String>,
+    pub email: Option<String>,
     pub verified_email: bool,
-    pub name: String,
-    pub picture: String,
+    pub name: Option<String>,
+    pub picture: Option<String>,
+    pub given_name: Option<String>,
+    pub family_name: Option<String>,
+    pub locale: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -96,11 +99,11 @@ pub async fn get_google_user(
         let error_message = response.text().await.unwrap_or_default();
         return Err((StatusCode::BAD_REQUEST, error_message))
     }
-    println!("Res get_google_user: {:?}", response);
     let response = response
             .json()
-            .await
-            .map_err(|e| (StatusCode::BAD_REQUEST, format!("Failed to parse user info: {}", e)));
+            .await;
+    //println!("RES2: {:?}", response);
+            
     let res = response.unwrap();
     return Ok(Json(res))
 }
@@ -116,6 +119,7 @@ pub async fn google_oauth_handler(
 
     // Obtém informações do usuário
     let user_info = get_google_user(&tokens.access_token).await?;
+    println!("USER_INFO: {:?}", user_info);
 
     Ok(Json(user_info.0))
 }

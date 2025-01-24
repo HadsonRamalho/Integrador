@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import Layout from '@/layouts/default';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
 
 function GoogleAuthCallback() {
   const [searchParams] = useSearchParams();
@@ -46,9 +48,13 @@ function GoogleAuthCallback() {
   }, [searchParams]);
 
   return (
-    <div>
-      <h1>Autenticando...</h1>
-    </div>
+    <Layout>
+      <Header></Header>
+      <div>
+        <h1>Autenticando...</h1>
+      </div>
+      <Footer></Footer>
+    </Layout>
   );
 }
 

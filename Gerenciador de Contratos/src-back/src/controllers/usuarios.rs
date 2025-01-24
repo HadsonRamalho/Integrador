@@ -191,8 +191,33 @@ pub async fn busca_senha_usuario(email: Json<EmailInput>)
     }
 }
 
-pub async fn busca_email_usuario(input: Json<String>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
-    let id = input.0;
+
+#[utoipa::path(
+    get,
+    tag = "Usuário",
+    path = "/busca_email_usuario/{idusuario}",
+    description = "Busca o e-mail de um usuário a partir de seu ID.",
+    responses(
+        (
+            status = 200, 
+            description = "E-mail encontrado.",
+            body = String       
+        ),
+        (
+            status = 500,
+            description = "O e-mail inserido não está registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    params(
+        ("idusuario" = UserId, Path, description = "ID do usuário"),
+    )
+)]
+pub async fn busca_email_usuario(Query(params): Query<UserId>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    let id = params.idusuario.trim().to_string();
     if id.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("O ID está vazio.".to_string())))
     }
@@ -263,14 +288,35 @@ pub async fn valida_usuario(usuario: &UsuarioInput) -> Result<(), String>{
     return Ok(())
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, ToSchema)]
 pub struct AtualizaEmailInput{
     pub email_antigo: String,
     pub email_novo: String,
     pub senha: String
 }
 
-
+#[utoipa::path(
+    patch,
+    tag = "Usuário",
+    path = "/atualiza_email_usuario",
+    description = "Atualiza o e-mail de um usuário.",
+    responses(
+        (
+            status = 200, 
+            description = "Dados válidos. O e-mail foi atualizado.",
+            body = String       
+        ),
+        (
+            status = 500,
+            description = "O e-mail inserido não está registrado no sistema OU a senha está incorreta."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = AtualizaEmailInput
+)]
 pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     let email_antigo = input.email_antigo.to_string();
     let email_novo = input.email_novo.to_string();

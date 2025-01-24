@@ -6,7 +6,7 @@ use tower_http::services::ServeDir;
 use utoipa::openapi::Contact;
 use crate::controllers::{self, codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, oauth::{google_oauth_handler, Config}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_senha_usuario, busca_usuario_id, cadastra_usuario, realiza_login, redefine_senha_usuario}};
 use crate::controllers::usuarios::busca_usuario_email;
-use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario, __path_busca_usuario_email, __path_atualiza_usuario, __path_atualiza_senha_usuario, __path_redefine_senha_usuario};
+use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario, __path_busca_usuario_email, __path_atualiza_usuario, __path_atualiza_senha_usuario, __path_redefine_senha_usuario, __path_busca_email_usuario, __path_atualiza_email_usuario};
 use crate::controllers::codigos_recuperacao::__path_envia_codigo_recuperacao;
 use utoipa_axum::{router, routes};
 use utoipa_axum::router::OpenApiRouter;
@@ -22,6 +22,8 @@ pub fn cria_rotas() -> Router<>{
         .routes(routes!(atualiza_usuario))
         .routes(routes!(redefine_senha_usuario))
         .routes(routes!(atualiza_senha_usuario))
+        .routes(routes!(busca_email_usuario))
+        .routes(routes!(atualiza_email_usuario))
         .split_for_parts();
 
     api.info.description = Some("\nDocumentação para as rotas da API do sistema MaqExpress.\n
@@ -44,7 +46,6 @@ pub fn cria_rotas() -> Router<>{
         .route("/cadastra_usuario", post(cadastra_usuario))
         .route("/busca_email_usuario", get(busca_email_usuario))
         .route("/realiza_login", post(realiza_login))
-        .route("/busca_senha_usuario", post(busca_senha_usuario))
         .route("/atualiza_senha_usuario", patch(atualiza_senha_usuario))
         .route("/atualiza_email_usuario", patch(atualiza_email_usuario))
         .route("/busca_usuario_email/{email}", get(busca_usuario_email))
