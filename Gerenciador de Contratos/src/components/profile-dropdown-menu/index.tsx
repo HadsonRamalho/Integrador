@@ -48,7 +48,7 @@ export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuLabel>
-                <p>Suporte</p>
+                <strong>Suporte</strong>
             </DropdownMenuLabel>
            
             <DropdownMenuItem>

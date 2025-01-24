@@ -11,7 +11,7 @@ body {
   align-items: center;
   padding: 20px;
   height: 100vh;
-  background-color: hsl(var(--background, 0, 0%, 10%)); /* Fallback */
+ 
 }
 
 .container img {
@@ -44,7 +44,7 @@ body {
   margin-bottom: 20px;
 }
 
-.maq{
+.titulo-maqexpress{
   text-transform: uppercase;
   align-self: flex-start;
  
