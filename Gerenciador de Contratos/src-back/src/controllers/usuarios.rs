@@ -6,7 +6,7 @@ use validator::{Validate, ValidationErrorsKind};
 
 use crate::models::{self, usuarios::Usuario};
 
-use super::{cria_conn, envia_emails::envia_email_codigo, formata_cnpj, formata_cpf, gera_hash};
+use super::{codigos_recuperacao::gera_codigo_recuperacao, cria_conn, envia_emails::envia_email_codigo, formata_cnpj, formata_cpf, gera_hash};
 
 #[derive(Deserialize, Serialize, Clone, ToSchema)]
 pub struct UsuarioInput{
@@ -16,7 +16,7 @@ pub struct UsuarioInput{
     pub documento: String
 }
 
-#[derive(Deserialize, Validate, ToSchema, IntoParams)]
+#[derive(Deserialize, Validate, ToSchema, IntoParams, Serialize)]
 pub struct EmailInput{
     #[validate(email)]
     pub email: String
@@ -27,6 +27,7 @@ pub struct EmailInput{
     post,
     tag = "Usuário",
     path = "/cadastra_usuario",
+    description = "Cadastra um usuário no sistema.",
     responses(
         (
             status = 200, 
@@ -81,7 +82,8 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
         }
     }
 
-    match envia_email_codigo(email_clone, "ativação de conta").await{
+    let codigo = gera_codigo_recuperacao(email_clone.clone()).await?.1.0.codigo;
+    match envia_email_codigo(email_clone, "ativação de conta", codigo).await{
         Ok(codigoativacao) => {
             println!("Código de ativação: {}", codigoativacao.1.0);
             return Ok((StatusCode::OK, Json(UserId{idusuario: idusuario_clone})))
@@ -108,6 +110,7 @@ pub struct UserId{
     post,
     tag = "Usuário",
     path = "/realiza_login",
+    description = "Valida o login de um usuário.",
     responses(
         (
             status = 200, 
@@ -188,8 +191,33 @@ pub async fn busca_senha_usuario(email: Json<EmailInput>)
     }
 }
 
-pub async fn busca_email_usuario(input: Json<String>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
-    let id = input.0;
+
+#[utoipa::path(
+    get,
+    tag = "Usuário",
+    path = "/busca_email_usuario/{idusuario}",
+    description = "Busca o e-mail de um usuário a partir de seu ID.",
+    responses(
+        (
+            status = 200, 
+            description = "E-mail encontrado.",
+            body = String       
+        ),
+        (
+            status = 500,
+            description = "O e-mail inserido não está registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    params(
+        ("idusuario" = UserId, Path, description = "ID do usuário"),
+    )
+)]
+pub async fn busca_email_usuario(Query(params): Query<UserId>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    let id = params.idusuario.trim().to_string();
     if id.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("O ID está vazio.".to_string())))
     }
@@ -260,14 +288,35 @@ pub async fn valida_usuario(usuario: &UsuarioInput) -> Result<(), String>{
     return Ok(())
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, ToSchema)]
 pub struct AtualizaEmailInput{
     pub email_antigo: String,
     pub email_novo: String,
     pub senha: String
 }
 
-
+#[utoipa::path(
+    patch,
+    tag = "Usuário",
+    path = "/atualiza_email_usuario",
+    description = "Atualiza o e-mail de um usuário.",
+    responses(
+        (
+            status = 200, 
+            description = "Dados válidos. O e-mail foi atualizado.",
+            body = String       
+        ),
+        (
+            status = 500,
+            description = "O e-mail inserido não está registrado no sistema OU a senha está incorreta."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = AtualizaEmailInput
+)]
 pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     let email_antigo = input.email_antigo.to_string();
     let email_novo = input.email_novo.to_string();
@@ -337,25 +386,94 @@ pub async fn atualiza_email_usuario(input: Json<AtualizaEmailInput>) -> Result<(
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, ToSchema)]
+pub struct RecuperaSenhaInput{
+    pub idusuario: String,
+    pub senha_nova: String
+}
+
+
+#[utoipa::path(
+    patch,
+    tag = "Usuário",
+    path = "/redefine_senha_usuario",
+    description = "Redefine a senha de um usuário que não está logado.",
+    responses(
+        (
+            status = 200, 
+            description = "O e-mail foi encontrado e a senha é segura. A senha foi atualizada com sucesso.",
+        ),
+        (
+            status = 500,
+            description = "O e-mail inserido não está registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = RecuperaSenhaInput    
+)]
+
+pub async fn redefine_senha_usuario(input: Json<RecuperaSenhaInput>)
+    -> Result<StatusCode, (StatusCode, Json<String>)>{
+    let id = input.idusuario.to_string();
+    let email = busca_usuario_id(Query(IdInput{id})).await?.1.email.to_string();
+
+    let senha_nova = input.senha_nova.to_string();
+    match valida_senha(&senha_nova){
+        Ok(_) => {},
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    }
+    let senha_nova = gera_hash(&senha_nova);
+
+    let conn = &mut cria_conn()?;
+
+    match models::usuarios::atualiza_senha_usuario(conn, email, senha_nova).await{
+        Ok(_) => {
+            return Ok(StatusCode::OK)
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, ToSchema)]
 pub struct AtualizaSenhaInput{
-    pub email: String,
+    pub idusuario: String,
     pub senha_antiga: String,
     pub senha_nova: String
 }
 
+#[utoipa::path(
+    patch,
+    tag = "Usuário",
+    path = "/atualiza_senha_usuario",
+    description = "Atualiza a senha de um usuário que já está logado.",
+    responses(
+        (
+            status = 200, 
+            description = "O e-mail foi encontrado e a senha é segura. A senha foi atualizada com sucesso.",
+        ),
+        (
+            status = 500,
+            description = "O e-mail inserido não está registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = RecuperaSenhaInput    
+)]
+
 pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
     -> Result<StatusCode, (StatusCode, Json<String>)>{
-    let email = input.email.to_string();
-    match valida_email(Json(EmailInput{
-        email: email.clone()
-    })).await{
-        Ok(_) => {},
-        Err(e) => {
-            return Err(e)
-        }
-    }
-
+    let id = input.idusuario.to_string();
+    let email = busca_usuario_id(Query(IdInput{id})).await?.1.email.to_string();
     match realiza_login(Json(CredenciaisUsuario{
         email: email.clone(),
         senha: input.senha_antiga.to_string()
@@ -392,6 +510,7 @@ pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
     get,
     tag = "Usuário",
     path = "/busca_usuario_email/{email}",
+    description = "Busca o ID de um usuário a partir do e-mail.",
     responses(
         (
             status = 200, 
@@ -408,7 +527,7 @@ pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
         ),
     ),
     params(
-        ("email" = String, Query, description = "E-mail do usuário"),
+        ("email" = String, Path, description = "E-mail do usuário"),
     )
 )]
 pub async fn busca_usuario_email(Query(params): Query<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
@@ -471,6 +590,7 @@ pub struct AtualizaUsuarioInput{
     put,
     tag = "Usuário",
     path = "/atualiza_usuario",
+    description = "Atualiza todos os dados de um usuário que já está logado.",
     responses(
         (
             status = 200, 

@@ -69,6 +69,17 @@ export default function AuthPage() {
     }
   };
 
+  const redirectGoogle = async () => {
+    console.log('Redirecionando para o Google...');
+    const redirectUri = 'https://g6v9psc0-5173.brs.devtunnels.ms/auth/google/callback';
+    const clientId = '853000099698-mja71sb0chsva2m9eu3prpktl31psg5q.apps.googleusercontent.com';
+  
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=email&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&client_id=${clientId}`;
+    console.log('URL gerada:', url);
+  
+    window.location.href = url;
+  };
+
   return (
     <Layout>
       <main>
@@ -110,7 +121,7 @@ export default function AuthPage() {
                   <Button className="button " onClick={RealizaLogin}>
                     Entrar
                   </Button>
-                  <Button className="button">Entrar com o Google</Button>
+                  <Button className="button" onClick={redirectGoogle}>Entrar com o Google</Button>
                   <span className="link">
                     Não possui conta?{" "}
                     <a
@@ -166,7 +177,6 @@ export default function AuthPage() {
                     </a>{" "}
                     para entrar
                   </span>
-
                 </>
               )}
             </div>
