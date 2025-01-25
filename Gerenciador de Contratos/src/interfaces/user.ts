@@ -8,5 +8,6 @@ export interface User{
   email: string,
   senha: string,
   documento: string,
-  datacadastro: string
+  datacadastro: string,
+  origemconta: string
 }

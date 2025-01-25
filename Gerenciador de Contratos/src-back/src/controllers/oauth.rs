@@ -148,6 +148,10 @@ pub async fn google_oauth_handler(
 
     // Obtém informações do usuário
     let user_info = get_google_user(&tokens.access_token).await?;
+
+    let fotoid = user_info.picture.clone().unwrap();
+    println!("{}", fotoid);
+    
     let res = cadastra_usuario_oauth(CredenciaisUsuarioGoogle{
         email: user_info.email.clone(),
         name: user_info.name.clone()

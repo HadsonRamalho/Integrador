@@ -75,12 +75,15 @@ export default function UserProfile() {
   const [email, setEmail] = useState(user.email);
   const [documento, setDocumento] = useState(user.documento);
   const [senha, setSenha] = useState("");
+  const origemConta = user.origemconta;
 
   const handleChange = async() => {
-    await AtualizaUsuario(nome, email, documento, senha);
-    
+    if(user.origemconta === 'Sistema'){
+      await AtualizaUsuario(nome, email, documento, senha);
+      return;
+    }
+    await AtualizaUsuario(nome, email, documento, email);     
   }
-
 
     return (
       <Card className="user-profile-card">
@@ -89,7 +92,7 @@ export default function UserProfile() {
         </CardHeader>
         <CardContent className="user-profile-card-content">
           <Avatar>
-            <AvatarImage className="user-profile-card-image" src="https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg" />                    
+            <AvatarImage className="user-profile-card-image" src={localStorage.getItem("PROFILE_IMAGE_URL") || "https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg"} />                    
           </Avatar>
           <Label htmlFor="nome">Nome</Label>
           <Input id="nome"
@@ -108,13 +111,16 @@ export default function UserProfile() {
           value={documento}
           onChange={(e) => setDocumento(e.target.value)}/>
 
-          <Label htmlFor="senha">Senha</Label>
-          <Input
-          id="senha"
-          type="password"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          />
+          { origemConta === "Sistema" ? (
+            <>
+            <Label htmlFor="senha">Senha</Label>
+            <Input
+            id="senha"
+            type="password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            />
+          </>) : (<></>)}
 
           <CardDescription className="user-profile-card-description">
             Data de Cadastro: {user.datacadastro}

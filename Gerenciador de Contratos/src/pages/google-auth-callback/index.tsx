@@ -69,6 +69,7 @@ function GoogleAuthCallback() {
         setMessage('autenticado');
         alert('Autenticação realizada com sucesso!');
         await loadUserId(obj.email);
+        localStorage.setItem("PROFILE_IMAGE_URL", obj.picture);
         navigate('/user-profile');
       } catch (error) {
         console.error('Erro ao enviar código ao backend:', error);

@@ -33,7 +33,7 @@
 
 .user-profile-card-description{
     color: hsl(var(--background));
-    font-size: 2.5vh;
+    font-size: 1.5vh;
 }
 
 .user-profile-card-image{
