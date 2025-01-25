@@ -14,7 +14,8 @@ pub struct Usuario {
     pub senha: String,
     pub documento: String,
     pub datacadastro: NaiveDateTime,
-    pub idusuario: String
+    pub idusuario: String,
+    pub origemconta: Option<String>
 }
 
 pub async fn cadastra_usuario(conn: &mut PgConnection, usuario: Usuario) 
@@ -101,6 +102,21 @@ pub async fn busca_usuario_email(conn: &mut PgConnection, email_: String)
     use self::usuarios::dsl::*;
 
     let res: Result<Usuario, diesel::result::Error> = usuarios.filter(email.eq(email_)).first(conn);
+    match res{
+        Ok(usuario) => {
+            return Ok(usuario.idusuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}
+
+pub async fn busca_usuario_email_oauth(conn: &mut PgConnection, email_: String)
+    -> Result<String, String>{
+    use self::usuarios::dsl::*;
+
+    let res: Result<Usuario, diesel::result::Error> = usuarios.filter(email.eq(email_).and(origemconta.eq("Google"))).first(conn);
     match res{
         Ok(usuario) => {
             return Ok(usuario.idusuario)

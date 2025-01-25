@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 //import { loginUser } from "@/services/api/user/user";
 import { handleAxiosError } from "@/services/api/error/error";
 import { useAuth } from "@/hooks/auth";
+import GoogleLoginButton from "@/components/google-login-button";
 
 export default function AuthPage() {
   const [mode, setMode] = useState("login");
@@ -79,6 +80,10 @@ export default function AuthPage() {
   
     window.location.href = url;
   };
+  
+  const loginGoogle = async () => {
+    
+  }
 
   return (
     <Layout>
@@ -121,7 +126,7 @@ export default function AuthPage() {
                   <Button className="button " onClick={RealizaLogin}>
                     Entrar
                   </Button>
-                  <Button className="button" onClick={redirectGoogle}>Entrar com o Google</Button>
+                  <GoogleLoginButton onClick={redirectGoogle}></GoogleLoginButton>
                   <span className="link">
                     Não possui conta?{" "}
                     <a

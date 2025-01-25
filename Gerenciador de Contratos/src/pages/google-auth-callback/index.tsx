@@ -1,11 +1,38 @@
-import React, { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '@/layouts/default';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
+import { useAuth } from '@/hooks/auth';
 
 function GoogleAuthCallback() {
   const [searchParams] = useSearchParams();
+  const [message, setMessage] = useState("Carregando...");
+  const API_URL = "https://g6v9psc0-3003.brs.devtunnels.ms";
+  const navigate = useNavigate();
+  const { signIn } = useAuth();
+  const loadUserId = async (email: string) => {
+    try {
+      const res = await fetch(`${API_URL}/busca_usuario_email/{email}?email=${encodeURIComponent(email)}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error(await res.text());
+      }
+
+      const userid = await res.json();
+      console.log("idusuario: ", userid);
+      localStorage.setItem("USER_ID", userid);
+      const credentials = { email: email, password: email };
+      await signIn(credentials);
+      return userid;
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     const sendCodeToBackend = async () => {
@@ -36,11 +63,17 @@ function GoogleAuthCallback() {
             console.log("Erro ao tentar autenticar: ", erro);
             throw new Error(erro);
         }
+        const obj = await res.json();
+        console.log('email: ', obj.email);
         console.log("Autenticado!");
+        setMessage('autenticado');
         alert('Autenticação realizada com sucesso!');
+        await loadUserId(obj.email);
+        navigate('/user-profile');
       } catch (error) {
         console.error('Erro ao enviar código ao backend:', error);
         alert('Falha na autenticação!');
+        setMessage('erro ao autenticar');
       }
     };
 
@@ -49,11 +82,10 @@ function GoogleAuthCallback() {
 
   return (
     <Layout>
-      <Header></Header>
       <div>
         <h1>Autenticando...</h1>
+        <p style={{color: 'white'}}>{message}</p>
       </div>
-      <Footer></Footer>
     </Layout>
   );
 }
