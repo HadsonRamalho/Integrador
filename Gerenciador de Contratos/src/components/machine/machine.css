@@ -13,6 +13,7 @@
 .machine-card{
     width: 100%;
     height: auto;
+    border-color: hsl(var(--primary));
     background-color: hsl(var(--background));
     color: hsl(var(--text));
     margin: 0;

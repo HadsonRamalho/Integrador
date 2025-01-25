@@ -146,4 +146,13 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
   }
+  .button {
+    width: 90%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--text));
+    font-size: 1rem;
+  }
 }

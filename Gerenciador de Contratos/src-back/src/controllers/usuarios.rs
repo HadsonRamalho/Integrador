@@ -8,6 +8,31 @@ use crate::models::{self, usuarios::Usuario};
 
 use super::{codigos_recuperacao::gera_codigo_recuperacao, cria_conn, envia_emails::envia_email_codigo, formata_cnpj, formata_cpf, gera_hash};
 
+#[derive(Serialize, Deserialize, ToSchema)]
+pub struct UsuarioReturn{
+    pub nome: String,
+    pub email: String,
+    pub senha: String,
+    pub documento: String,
+    pub datacadastro: String,
+    pub idusuario: String,
+    pub origemconta: Option<String>
+}
+
+impl From<Usuario> for UsuarioReturn {
+    fn from(usuario: Usuario) -> Self {
+        Self {       
+            nome: usuario.nome,
+            email: usuario.email,
+            senha: usuario.senha,
+            documento: usuario.documento,
+            datacadastro: usuario.datacadastro.to_string(),
+            idusuario: usuario.idusuario,
+            origemconta: usuario.origemconta
+        }
+    }
+}
+
 #[derive(Deserialize, Serialize, Clone, ToSchema)]
 pub struct UsuarioInput{
     pub nome: String,
@@ -530,7 +555,7 @@ pub async fn atualiza_senha_usuario(input: Json<AtualizaSenhaInput>)
     responses(
         (
             status = 200, 
-            description = "Credenciais verificadas e válidas. Login pode ser realizado.",
+            description = "E-mail válido. Usuário encontrado. ID retornado.",
             body = UserId       
         ),
         (
@@ -618,9 +643,32 @@ pub async fn busca_usuario_email_oauth(Query(params): Query<EmailInput>) -> Resu
 pub struct IdInput{
     pub id: String
 }
-
+#[utoipa::path(
+    get,
+    tag = "Usuário",
+    path = "/busca_usuario_id/{id}",
+    description = "Busca os dados de um usuário a partir de seu ID.",
+    responses(
+        (
+            status = 200, 
+            description = "ID válido. Usuário encontrado.",
+            body = UsuarioReturn
+        ),
+        (
+            status = 404,
+            description = "O ID inserido não pertence a um usuário registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Parâmetro inválido ou ausente."
+        ),
+    ),
+    params(
+        ("id" = String, Path, description = "ID do usuário"),
+    )
+)]
 pub async fn busca_usuario_id(Query(params): Query<IdInput>)
-    -> Result<(StatusCode, Json<Usuario>), (StatusCode, Json<String>)>{
+    -> Result<(StatusCode, Json<UsuarioReturn>), (StatusCode, Json<String>)>{
     if params.id.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
@@ -628,7 +676,7 @@ pub async fn busca_usuario_id(Query(params): Query<IdInput>)
     let conn = &mut cria_conn()?;
     match models::usuarios::busca_usuario_id(conn, id).await{
         Ok(usuario) => {
-            return Ok((StatusCode::OK, Json(usuario)))
+            return Ok((StatusCode::OK, Json(UsuarioReturn::from(usuario))))
         },
         Err(e) => {
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))

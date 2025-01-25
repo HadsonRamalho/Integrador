@@ -3,7 +3,6 @@ use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 use crate::{controllers::{cria_conn, usuarios::AtualizaUsuarioInput}, schema::usuarios::{self, idusuario}};
 
-
 #[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = crate::schema::usuarios)]
 #[diesel(check_for_backend(diesel::pg::Pg))]

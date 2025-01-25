@@ -29,7 +29,7 @@ export async function loadUserById(
   id: string
 ):Promise<User>{
   try {
-    const url = `/busca_usuario_id?id=${encodeURIComponent(id)}`;
+    const url = `/busca_usuario_id/?id=${encodeURIComponent(id)}`;
     const response = await client.get<User>(url);
 
     if (response.status === 200) {

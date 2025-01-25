@@ -1,5 +1,6 @@
 import React from "react";
 import { FcGoogle } from "react-icons/fc";
+import { Button } from "../ui/button";
 
 type GoogleLoginButtonProps = {
   onClick: () => void;
@@ -7,7 +8,7 @@ type GoogleLoginButtonProps = {
 
 const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onClick }) => {
   return (
-    <button
+    <Button
       onClick={onClick}
       className="flex items-center justify-center gap-2 px-8 py-2 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-100 transition duration-200"
     >
@@ -15,7 +16,7 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onClick }) => {
       <span className="text-sm font-medium text-gray-600">
         Entrar com o Google
       </span>
-    </button>
+    </Button>
   );
 };
 
