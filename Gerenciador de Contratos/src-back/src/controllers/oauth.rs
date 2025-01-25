@@ -133,7 +133,6 @@ pub async fn get_google_user(
     let response = response
             .json()
             .await;
-    //println!("RES2: {:?}", response);
             
     let res: GoogleUserResult = response.unwrap();
     return Ok(Json(res))
@@ -145,17 +144,14 @@ pub async fn google_oauth_handler(
     Json(payload): Json<AuthCodePayload>,
 ) -> Result<Json<GoogleUserResult>, (StatusCode, Json<String>)> {
     // Solicita o token ao Google OAuth2
-    println!("Code: {:?}", &payload.code);
     let tokens = request_token(&config, &payload.code).await?;
 
     // Obtém informações do usuário
     let user_info = get_google_user(&tokens.access_token).await?;
-    println!("USER_INFO: {:?}", user_info);
     let res = cadastra_usuario_oauth(CredenciaisUsuarioGoogle{
         email: user_info.email.clone(),
         name: user_info.name.clone()
     }).await?;
-    println!("{:?}", res);
 
     Ok(Json(user_info.0))
 }
@@ -184,7 +180,6 @@ pub async fn cadastra_usuario_oauth(usuario: CredenciaisUsuarioGoogle)
             return Ok((StatusCode::OK, Json(UserId{idusuario: id.1.to_string()})))
         },
         Err(e) => {
-            println!("ERRO APÓS BUSCA: {:?}", e);
             e
         }
     };
@@ -220,7 +215,6 @@ pub async fn cadastra_usuario_oauth(usuario: CredenciaisUsuarioGoogle)
     let codigo = gera_codigo_recuperacao(email_clone.clone()).await?.1.0.codigo;
     match envia_email_codigo(email_clone, "ativação de conta", codigo).await{
         Ok(codigoativacao) => {
-            println!("Código de ativação: {}", codigoativacao.1.0);
             return Ok((StatusCode::OK, Json(UserId{idusuario: idusuario_clone})))
         },
         Err(e) => {
