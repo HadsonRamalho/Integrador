@@ -94,7 +94,7 @@ export default function UserProfile() {
            value={nome}
             onChange={(e) => setNome(e.target.value)}/>
 
-          <Label className="teste" htmlFor="e-mail">E-mail</Label>
+          <Label htmlFor="e-mail">E-mail</Label>
           <Input
           id="email"
           value={email}
