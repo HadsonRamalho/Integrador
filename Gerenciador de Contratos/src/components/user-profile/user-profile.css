@@ -12,13 +12,13 @@
 
 .user-profile-card{
     background-color: hsl(var(--primary));
-    width: 50vh;
-    height: 60vh;
+    width: 60vh;
+    height: 70vh;
 }
 
 .user-profile-card-header{
     font-size: 3.2vh;
-    color: black;
+    color: hsl(var(--background));
 }
 
 .user-profile-card-content{
@@ -31,7 +31,7 @@
 }
 
 .user-profile-card-description{
-    color: black;
+    color: hsl(var(--background));
     font-size: 2.5vh;
 }
 
@@ -63,3 +63,4 @@
 .user-profile-button:hover{    
     background-color: rgb(128, 226, 197);
 }
+

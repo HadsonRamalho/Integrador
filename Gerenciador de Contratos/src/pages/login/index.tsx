@@ -91,7 +91,7 @@ export default function AuthPage() {
         <div className="container">
           <div className="content ">
           <div className="titulo">
-                <h1 className="maq">MaqExpress</h1>
+                <h1 className="titulo-maqexpresse">MaqExpress</h1>
                 <p>
                   {mode === "login"
                     ? "Faça login para  continuar"

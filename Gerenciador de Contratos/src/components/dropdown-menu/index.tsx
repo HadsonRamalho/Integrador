@@ -16,7 +16,8 @@ export function DropdownMenuDemo() {
   const [pais, setPais] = useState("Brasil");
   const [estado, setEstado] = useState("");
   const [cidade, setCidade] = useState("");
-  const [TriggerText, setTriggerText] = useState("Cep")
+  const [TriggerText, setTriggerText] = useState("Cep");
+  
   const CarregaEndereco = async () =>{
     try {
       const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`,
