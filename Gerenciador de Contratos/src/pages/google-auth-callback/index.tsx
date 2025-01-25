@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Layout from '@/layouts/default';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
 
 function GoogleAuthCallback() {
   const [searchParams] = useSearchParams();
-
+  const [message, setMessage] = useState("Carregando...");
   useEffect(() => {
     const sendCodeToBackend = async () => {
       const code = searchParams.get('code');
@@ -37,10 +35,12 @@ function GoogleAuthCallback() {
             throw new Error(erro);
         }
         console.log("Autenticado!");
+        setMessage('autenticado');
         alert('Autenticação realizada com sucesso!');
       } catch (error) {
         console.error('Erro ao enviar código ao backend:', error);
         alert('Falha na autenticação!');
+        setMessage('erro ao autenticar');
       }
     };
 
@@ -49,11 +49,10 @@ function GoogleAuthCallback() {
 
   return (
     <Layout>
-      <Header></Header>
       <div>
         <h1>Autenticando...</h1>
+        <p style={{color: 'white'}}>{message}</p>
       </div>
-      <Footer></Footer>
     </Layout>
   );
 }

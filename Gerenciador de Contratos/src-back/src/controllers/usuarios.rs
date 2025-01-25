@@ -54,7 +54,16 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
             println!("{:?}", e);
             return Err((StatusCode::BAD_REQUEST, Json(e)))
         }
-    }    
+    }
+
+    match busca_usuario_email(Query(EmailInput{email: usuario.email.clone()})).await{
+        Ok(_) => {
+            return Err((StatusCode::BAD_REQUEST, Json("Já existe um usuário cadastrado com esse e-mail.".to_string())))
+        },
+        Err(e) => {
+            println!("{:?}", e);
+        }
+    }
 
     let email_clone = usuario.email.to_string();
     let senha = gera_hash(&usuario.senha);
@@ -62,13 +71,20 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
     let idusuario = gera_hash(&usuario.email);
     let idusuario_clone = idusuario.clone();
     let now = chrono::Utc::now().naive_utc();
+    let documento = match formata_documento(&usuario.documento){
+        Ok(doc) => {doc},
+        Err(e) => {
+            return Err((StatusCode::BAD_REQUEST, Json(format!("Documento inválido: {}", e))))
+        }
+    };
     let usuario = Usuario{
         nome: usuario.nome.to_string(),
         email: usuario.email.to_string(),
         senha,
-        documento: usuario.documento.to_string(),
+        documento,
         datacadastro: now,
-        idusuario
+        idusuario,
+        origemconta: Some("Sistema".to_string())
     };
 
     let conn = &mut cria_conn()?;
@@ -256,7 +272,7 @@ pub fn valida_senha(senha: &str) -> Result<(), String>{
 pub async fn valida_usuario(usuario: &UsuarioInput) -> Result<(), String>{
     let nome = usuario.nome.to_string();
     if nome.trim().is_empty(){
-        return Err("Erro ao validar o e-mail.".to_string())
+        return Err("Erro ao validar o nome.".to_string())
     }
 
     let email = usuario.email.to_string();
@@ -555,6 +571,49 @@ pub async fn busca_usuario_email(Query(params): Query<EmailInput>) -> Result<(St
     }
 }
 
+pub async fn busca_usuario_email_oauth(Query(params): Query<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    match valida_email(Json(EmailInput{
+        email: params.email.clone()
+    })).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+    let email = params.email.to_string();
+    
+    let conn = &mut cria_conn()?;
+
+    let res = models::usuarios::busca_usuario_email_oauth(conn, email.clone()).await;
+    let res = match res{
+        Ok(idusuario) => {
+            println!("Usuário Oauth encontrado");
+            return Ok((StatusCode::OK, Json(idusuario)))
+        },
+        Err(e) => {
+            e      
+        }
+    };
+
+    if res != "Record not found".to_string(){
+        println!("{:?}", res);
+        println!("E != RECORD NOT FOUND");
+    }
+
+    println!("!RECORD NOT FOUND");
+
+    
+    match busca_usuario_email(Query(EmailInput{email})).await{
+        Ok(_) => {
+            return Err((StatusCode::BAD_REQUEST, Json("Esse e-mail pertence a outro usuário.".to_string())))
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct IdInput{
     pub id: String
@@ -615,13 +674,13 @@ pub async fn atualiza_usuario(input: Json<AtualizaUsuarioInput>)
         || input.email_novo.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
-    assert!(valida_email(Json(EmailInput{
+    valida_email(Json(EmailInput{
         email: input.email_antigo.clone()
-    })).await.is_ok());
-    assert!(realiza_login(Json(CredenciaisUsuario{
+    })).await?;
+    realiza_login(Json(CredenciaisUsuario{
         email: input.email_antigo.to_string(),
         senha: input.senha.to_string()
-    })).await.is_ok());
+    })).await?;
 
     let query: Query<EmailInput> = Query::from(axum::extract::Query(EmailInput{
         email: input.email_novo.clone()

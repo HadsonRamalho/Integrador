@@ -1,8 +1,12 @@
-use axum::{extract::State, Json};
+use axum::{extract::{Query, State}, Json};
 use hyper::StatusCode;
 use reqwest::{Client, Url};
 use serde::{Deserialize, Serialize};
-use std::{env, sync::Arc};
+use std::{env, ops::Deref, sync::Arc};
+
+use crate::{controllers::usuarios::UserId, models::{self, usuarios::Usuario}};
+
+use super::{codigos_recuperacao::gera_codigo_recuperacao, cria_conn, envia_emails::envia_email_codigo, gera_hash, usuarios::{busca_usuario_email, busca_usuario_email_oauth, valida_email, EmailInput}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
@@ -13,10 +17,39 @@ pub struct Config {
 
 impl Config {
     pub fn init() -> Arc<Self> {
-        let google_oauth_client_id = "/".to_string();
-        let google_oauth_client_secret = "/".to_string();
-        let google_oauth_redirect_url = "/".to_string();
-        Arc::new(Config {
+        let google_oauth_client_id = match env::var("GAUTH"){
+            Ok(google_oauth_client_id) => {
+                google_oauth_client_id
+            },
+            Err(e) => {
+                println!("{:?}", e);
+                e.to_string()
+            }
+        };
+
+        let google_oauth_client_secret = match env::var("GOOGLE_OAUTH_CLIENT_SECRET"){
+            Ok(google_oauth_client_secret) => {
+                google_oauth_client_secret
+            },
+            Err(e) => {
+                println!("{:?}", e);
+                e.to_string()
+            }
+        };
+
+        let google_oauth_redirect_url = match env::var("GOOGLE_OAUTH_REDIRECT_URL"){
+            Ok(google_oauth_redirect_url) => {
+                google_oauth_redirect_url
+            },
+            Err(e) => {
+                println!("{:?}", e);
+                e.to_string()
+            }
+        };
+
+        
+
+         Arc::new(Config {
             google_oauth_client_id,
             google_oauth_client_secret,
             google_oauth_redirect_url
@@ -51,7 +84,7 @@ pub struct AuthCodePayload {
 pub async fn request_token(
     config: &Config,
     authorization_code: &str,
-) -> Result<OAuthResponse, (StatusCode, String)> {
+) -> Result<OAuthResponse, (StatusCode, Json<String>)> {
     let client = Client::new();
 
     let params = [
@@ -67,23 +100,23 @@ pub async fn request_token(
         .form(&params)
         .send()
         .await
-        .map_err(|e| (StatusCode::BAD_REQUEST, e.to_string()))?;
+        .map_err(|e| (StatusCode::BAD_REQUEST, Json(e.to_string())))?;
 
     if response.status().is_success() {
         response
             .json::<OAuthResponse>()
             .await
-            .map_err(|e| (StatusCode::BAD_REQUEST, format!("Failed to parse token response: {}", e)))
+            .map_err(|e| (StatusCode::BAD_REQUEST, Json(format!("Failed to parse token response: {}", e))))
     } else {
         let error_message = response.text().await.unwrap_or_default();
-        Err((StatusCode::BAD_REQUEST, error_message))
+        Err((StatusCode::BAD_REQUEST, Json(error_message)))
     }
 }
 
 /// Obtém informações do usuário usando o token.
 pub async fn get_google_user(
     access_token: &str,
-) -> Result<Json<GoogleUserResult>, (StatusCode, String)> {
+) -> Result<Json<GoogleUserResult>, (StatusCode, Json<String>)> {
     let client = Client::new();
     let mut url = Url::parse("https://www.googleapis.com/oauth2/v1/userinfo").unwrap();
     url.query_pairs_mut()
@@ -93,18 +126,18 @@ pub async fn get_google_user(
         .get(url)
         .send()
         .await
-        .map_err(|e| (StatusCode::BAD_REQUEST, e.to_string()))?;
+        .map_err(|e| (StatusCode::BAD_REQUEST, Json(e.to_string())))?;
 
     if !response.status().is_success() {
         let error_message = response.text().await.unwrap_or_default();
-        return Err((StatusCode::BAD_REQUEST, error_message))
+        return Err((StatusCode::BAD_REQUEST, Json(error_message)))
     }
     let response = response
             .json()
             .await;
     //println!("RES2: {:?}", response);
             
-    let res = response.unwrap();
+    let res: GoogleUserResult = response.unwrap();
     return Ok(Json(res))
 }
 
@@ -112,7 +145,7 @@ pub async fn get_google_user(
 pub async fn google_oauth_handler(
     State(config): State<Arc<Config>>,
     Json(payload): Json<AuthCodePayload>,
-) -> Result<Json<GoogleUserResult>, (StatusCode, String)> {
+) -> Result<Json<GoogleUserResult>, (StatusCode, Json<String>)> {
     // Solicita o token ao Google OAuth2
     println!("Code: {:?}", &payload.code);
     let tokens = request_token(&config, &payload.code).await?;
@@ -120,6 +153,97 @@ pub async fn google_oauth_handler(
     // Obtém informações do usuário
     let user_info = get_google_user(&tokens.access_token).await?;
     println!("USER_INFO: {:?}", user_info);
+    let res = cadastra_usuario_oauth(CredenciaisUsuarioGoogle{
+        email: user_info.email.clone(),
+        name: user_info.name.clone()
+    }).await?;
+    println!("{:?}", res);
 
     Ok(Json(user_info.0))
+}
+
+pub struct CredenciaisUsuarioGoogle{
+    pub email: Option<String>,
+    pub name: Option<String>
+}
+
+pub async fn cadastra_usuario_oauth(usuario: CredenciaisUsuarioGoogle)
+    -> Result<(StatusCode, Json<UserId>), (StatusCode, Json<String>)>{
+    match valida_usuario_oauth(&usuario).await{
+        Ok(_) => {},
+        Err(e) => {
+            println!("{:?}", e);
+            return Err((StatusCode::BAD_REQUEST, Json(e)))
+        }
+    }
+
+    let email_clone = usuario.email.clone().unwrap();
+    let nome_clone = usuario.name.clone().unwrap_or(email_clone.clone());
+    let senha = gera_hash(&email_clone);
+
+    let erro = match busca_usuario_email_oauth(Query(EmailInput{email: email_clone.clone()})).await{
+        Ok(id) => {
+            return Ok((StatusCode::OK, Json(UserId{idusuario: id.1.to_string()})))
+        },
+        Err(e) => {
+            println!("ERRO APÓS BUSCA: {:?}", e);
+            e
+        }
+    };
+
+    if erro.1.0 == "Esse e-mail pertence a outro usuário.".to_string(){
+        return Err(erro)
+    }
+
+    let idusuario = gera_hash(&email_clone);
+    let idusuario_clone = idusuario.clone();
+    let now = chrono::Utc::now().naive_utc();
+    let usuario = Usuario{
+        nome: nome_clone,
+        email: email_clone.clone(),
+        senha,
+        documento: "Não definido".to_string(),
+        datacadastro: now,
+        idusuario,
+        origemconta: Some("Google".to_string())
+    };
+
+    let conn = &mut cria_conn()?;
+
+    match models::usuarios::cadastra_usuario(conn, usuario).await{
+        Ok(_) => {
+            
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+
+    let codigo = gera_codigo_recuperacao(email_clone.clone()).await?.1.0.codigo;
+    match envia_email_codigo(email_clone, "ativação de conta", codigo).await{
+        Ok(codigoativacao) => {
+            println!("Código de ativação: {}", codigoativacao.1.0);
+            return Ok((StatusCode::OK, Json(UserId{idusuario: idusuario_clone})))
+        },
+        Err(e) => {
+            return Err(e)
+        }
+    }
+
+}
+
+pub async fn valida_usuario_oauth(usuario: &CredenciaisUsuarioGoogle) -> Result<(), String>{
+    let nome = usuario.name.clone().unwrap_or("Usuário".to_string());
+    if nome.trim().is_empty(){
+        return Err("Erro ao validar o nome.".to_string())
+    }
+
+    let email = usuario.email.clone().unwrap();
+    match valida_email(Json(EmailInput{email: email.clone()})).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e.1.0)
+        }
+    }
+    return Ok(())
 }

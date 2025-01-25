@@ -78,3 +78,11 @@
 body {
   background-color: hsl(var(--background)); 
 }
+
+p {
+  color: hsl(var(--text));
+}
+
+h1{
+  color: hsl(var(--text));
+}
