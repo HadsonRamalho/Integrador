@@ -17,7 +17,9 @@ pub struct Config {
 
 impl Config {
     pub fn init() -> Arc<Self> {
-        let google_oauth_client_id = match env::var("GAUTH"){
+        use dotenv::dotenv;
+        dotenv().ok();
+        let google_oauth_client_id = match env::var("GOOGLE_OAUTH_CLIENT_ID"){
             Ok(google_oauth_client_id) => {
                 google_oauth_client_id
             },
