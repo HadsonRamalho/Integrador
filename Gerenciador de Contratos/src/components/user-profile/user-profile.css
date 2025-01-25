@@ -8,6 +8,7 @@
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
+    
 }
 
 .user-profile-card{
@@ -21,14 +22,14 @@
     color: hsl(var(--background));
 }
 
-.user-profile-card-content{
+/* .user-profile-card-content{
     width: 100%;
     border: 1px solid var(--primary);
     border-radius: 5px;
     font-size: 3vh;
     color: hsl(var(--background));
     box-sizing: border-box;
-}
+} */
 
 .user-profile-card-description{
     color: hsl(var(--background));
@@ -49,6 +50,7 @@
     color: black;
     margin-top: 5vh;
 }
+
 
 
 @media (max-width: 480px) {
