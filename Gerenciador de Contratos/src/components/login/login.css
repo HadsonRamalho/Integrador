@@ -112,3 +112,38 @@ body {
   width: 130px;
   height: auto;
 }
+
+@media (max-width: 480px) {
+  .container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 0px;
+  }
+  .container img {
+    width: 150%;
+    height: 100%;
+    border-radius: 38px;
+    border: 2px solid hsl(var(--primary));
+    opacity: 80%;
+    object-fit: cover;
+  }
+  .imagem-login{
+    height: 80%;
+    width: 100%;
+  }  
+  .content {
+    max-width: 500px;
+    position: absolute;
+    width: 90%;
+    height: 70%;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 2px solid hsl(var(--primary));
+    border-radius: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

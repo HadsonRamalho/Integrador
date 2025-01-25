@@ -18,3 +18,20 @@
     margin: 0;
     overflow: hidden;
 }
+
+@media (max-width: 480px) {
+    .machine-card {
+        width: 100%;
+        height: auto;
+        background-color: hsl(var(--background));
+        color: hsl(var(--text));
+        margin: 0;
+        overflow: hidden;
+    }
+    .machine-grid{
+        display: flex;
+        width: 450%;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        justify-items: center;
+    }
+  }

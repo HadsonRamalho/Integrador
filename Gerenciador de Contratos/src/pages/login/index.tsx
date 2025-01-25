@@ -187,7 +187,7 @@ export default function AuthPage() {
               )}
             </div>
           </div>
-          <div>
+          <div className="imagem-login">
             <img src={maquina} alt="" />
           </div>
         </div>
