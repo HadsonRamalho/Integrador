@@ -1,19 +1,19 @@
 use axum::{
-    http::Method, routing::{get, get_service, patch, post, put}, Extension, Router
+    http::Method, routing::{get, get_service, patch, post, put}, Router
 };
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
 use utoipa::openapi::Contact;
-use crate::controllers::{self, codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, oauth::{google_oauth_handler, Config}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_senha_usuario, busca_usuario_id, cadastra_usuario, realiza_login, redefine_senha_usuario}};
+use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{cadastra_maquina, lista_todas_maquinas}, multipart::cadastra_imagem, oauth::{google_oauth_handler, Config}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_id, cadastra_usuario, realiza_login, redefine_senha_usuario}};
 use crate::controllers::usuarios::busca_usuario_email;
 use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario, __path_busca_usuario_email, __path_atualiza_usuario, __path_atualiza_senha_usuario, __path_redefine_senha_usuario, __path_busca_email_usuario, __path_atualiza_email_usuario};
 use crate::controllers::codigos_recuperacao::__path_envia_codigo_recuperacao;
-use utoipa_axum::{router, routes};
+use utoipa_axum::routes;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_swagger_ui::SwaggerUi;
 pub fn cria_rotas() -> Router<>{
     
-    let (router, mut api) = OpenApiRouter::<()>::new()
+    let (_router, mut api) = OpenApiRouter::<()>::new()
     
         .routes(routes!(realiza_login))
         .routes(routes!(cadastra_usuario))

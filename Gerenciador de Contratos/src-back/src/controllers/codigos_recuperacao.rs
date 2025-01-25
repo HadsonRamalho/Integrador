@@ -3,8 +3,6 @@ use chrono::Days;
 use diesel::{ExpressionMethods, RunQueryDsl};
 use rand::Rng;
 use serde::{Serialize, Deserialize};
-use utoipa::ToSchema;
-
 use crate::models::{self, codigos_recuperacao::{cadastra_codigo_recuperacao_db, CodigoRecuperacao}};
 
 use super::{cria_conn, envia_emails::envia_email_codigo, gera_hash, usuarios::{busca_usuario_email, valida_email, EmailInput}};

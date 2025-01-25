@@ -2,11 +2,11 @@ use axum::{extract::{Query, State}, Json};
 use hyper::StatusCode;
 use reqwest::{Client, Url};
 use serde::{Deserialize, Serialize};
-use std::{env, ops::Deref, sync::Arc};
+use std::{env, sync::Arc};
 
 use crate::{controllers::usuarios::UserId, models::{self, usuarios::Usuario}};
 
-use super::{codigos_recuperacao::gera_codigo_recuperacao, cria_conn, envia_emails::envia_email_codigo, gera_hash, usuarios::{busca_usuario_email, busca_usuario_email_oauth, valida_email, EmailInput}};
+use super::{codigos_recuperacao::gera_codigo_recuperacao, cria_conn, envia_emails::envia_email_codigo, gera_hash, usuarios::{busca_usuario_email_oauth, valida_email, EmailInput}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
@@ -158,6 +158,7 @@ pub async fn google_oauth_handler(
         email: user_info.email.clone(),
         name: user_info.name.clone()
     }).await?;
+    println!("{:?}", res);
 
     Ok(Json(user_info.0))
 }
@@ -221,6 +222,7 @@ pub async fn cadastra_usuario_oauth(usuario: CredenciaisUsuarioGoogle)
     let codigo = gera_codigo_recuperacao(email_clone.clone()).await?.1.0.codigo;
     match envia_email_codigo(email_clone, "ativação de conta", codigo).await{
         Ok(codigoativacao) => {
+            println!("Código ativação: {:?}", codigoativacao);
             return Ok((StatusCode::OK, Json(UserId{idusuario: idusuario_clone})))
         },
         Err(e) => {

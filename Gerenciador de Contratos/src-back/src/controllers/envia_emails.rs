@@ -1,12 +1,7 @@
-use axum::{extract::Query, http::StatusCode, Json};
-use chrono::Days;
+use axum::{http::StatusCode, Json};
 use dotenv::dotenv;
 use std::env;
 use lettre::{message::header::ContentType, transport::smtp::authentication::{Credentials, Mechanism}, Message, SmtpTransport, Transport};
-
-use crate::models::codigos_recuperacao::{cadastra_codigo_recuperacao_db, CodigoRecuperacao};
-
-use super::{cria_conn, gera_hash, usuarios::{busca_usuario_email, EmailInput}};
 
 pub fn verifica_credenciais_email() -> Result<(String, String), String>{
     dotenv().ok();

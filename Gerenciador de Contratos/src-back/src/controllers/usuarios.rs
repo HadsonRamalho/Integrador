@@ -2,7 +2,7 @@ use axum::{extract::Query, http::StatusCode, Json};
 use pwhash::unix::verify;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
-use validator::{Validate, ValidationErrorsKind};
+use validator::Validate;
 
 use crate::models::{self, usuarios::Usuario};
 
@@ -674,10 +674,10 @@ pub async fn atualiza_usuario(input: Json<AtualizaUsuarioInput>)
         || input.email_novo.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
-    valida_email(Json(EmailInput{
+    let _res1 = valida_email(Json(EmailInput{
         email: input.email_antigo.clone()
     })).await?;
-    realiza_login(Json(CredenciaisUsuario{
+    let _res2 = realiza_login(Json(CredenciaisUsuario{
         email: input.email_antigo.to_string(),
         senha: input.senha.to_string()
     })).await?;

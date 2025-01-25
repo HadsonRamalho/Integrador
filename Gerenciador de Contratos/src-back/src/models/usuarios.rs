@@ -1,8 +1,7 @@
-use axum::extract::Query;
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
-use crate::{controllers::{cria_conn, usuarios::{AtualizaUsuarioInput, EmailInput, UsuarioInput}}, schema::usuarios::{self, idusuario}};
+use crate::{controllers::{cria_conn, usuarios::AtualizaUsuarioInput}, schema::usuarios::{self, idusuario}};
 
 
 #[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
