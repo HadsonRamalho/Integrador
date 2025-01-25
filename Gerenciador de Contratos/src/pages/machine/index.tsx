@@ -123,9 +123,6 @@ export default function Machine() {
           )}
         </div>           
         <div>            
-          <Button onClick={()=> {navigate("/create-machine")}}>Ir para cadastro de máquinas</Button>
-          <Button onClick={()=> {navigate("/user-profile")}}>Ir para o perfil</Button>
-
           <AlertDialog open={showAlert} onOpenChange={toggleAlert}>
           <AlertDialogTrigger asChild></AlertDialogTrigger>
           <AlertDialogContent>

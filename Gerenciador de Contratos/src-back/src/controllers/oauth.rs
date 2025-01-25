@@ -47,8 +47,6 @@ impl Config {
             }
         };
 
-        
-
          Arc::new(Config {
             google_oauth_client_id,
             google_oauth_client_secret,

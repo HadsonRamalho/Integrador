@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 export default function UserProfile() {
   const [user, setUser] = useState<User>();
   const [error, setError] = useState(false);
+  const [updatedData, setUpdatedData] = useState(true);
 
   async function AtualizaUsuario(nome_novo: string, email_novo: string, documento_novo: string, senha: string) {
     try {
@@ -39,7 +40,7 @@ export default function UserProfile() {
         throw new Error(erro);
       }
       console.log("Conta atualizada!");
-      window.location.reload();
+      setUpdatedData(true);
     } catch (erro) {
       console.error(erro);
     }
@@ -47,6 +48,7 @@ export default function UserProfile() {
 
   useEffect(() => {
     const loadUser = async () => {
+      setUpdatedData(false);
       const id = localStorage.getItem("USER_ID");
       if(!id){
         return;
@@ -62,7 +64,7 @@ export default function UserProfile() {
       }
     };
     loadUser();    
-  }, []);
+  }, [updatedData]);
 
   interface UserCardProps {
     user: User;
