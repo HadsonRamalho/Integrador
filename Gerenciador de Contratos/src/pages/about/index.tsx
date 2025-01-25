@@ -10,7 +10,7 @@ export default function About() {
     <Layout>
       <main>
       <h1>
-          Como Funciona o <span style={{color: "#0AFF22"}}> MAQEXPRESS </span>;
+          Como Funciona o <span style={{color:" #29A366"}}> MAQEXPRESS </span>;
         </h1>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur temporibus ullam neque! Reprehenderit atque, hic aspernatur natus ipsum similique enim et magnam accusantium. Aperiam commodi modi tempora libero voluptate est Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nobis quasi nam minima, omnis, nulla ad odio ea voluptatibus tempore ratione quae accusantium modi, eligendi asperiores! Ducimus corrupti consequuntur illo ratione.
         </p>
@@ -31,7 +31,7 @@ export default function About() {
 
         <p>Foto por <a href="https://unsplash.com/pt-br/fotografias/uma-escavadeira-amarela-em-uma-colina-com-um-ceu-azul-no-fundo-zmW-UG2OX_M">Built Robotics</a> no Unsplash</p>
 
-        <h2><span style={{color: "#0AFF22"}}> MAQEXPRESS </span> é Confiavél?;</h2>
+        <h2><span style={{color: " #29A366"}}> MAQEXPRESS </span> é Confiavél?;</h2>
         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam obcaecati labore minus voluptate laudantium nihil sit ad tempora repellendus, sapiente, autem enim eum molestiae ipsam itaque sed necessitatibus cupiditate in!</p>
         </div>
 
