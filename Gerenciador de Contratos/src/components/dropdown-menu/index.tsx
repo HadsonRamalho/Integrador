@@ -18,6 +18,7 @@ export function DropdownMenuDemo() {
   const [cidade, setCidade] = useState("");
   const [TriggerText, setTriggerText] = useState("Cep");
   
+  
   const CarregaEndereco = async () =>{
     try {
       const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`,
@@ -30,14 +31,15 @@ export function DropdownMenuDemo() {
      setCidade(endereco.localidade);
      console.log(endereco);
      setTriggerText(`${endereco.localidade}`);
-      
+     localStorage.setItem("cidade_dropdownmenu", endereco.localidade);
+     
     } catch (error) {
       console.error(error);
     }
   }
   return (
     <DropdownMenu>
-  <DropdownMenuTrigger>{TriggerText}</DropdownMenuTrigger>
+  <DropdownMenuTrigger>{localStorage.getItem("cidade_dropdownmenu")||TriggerText }</DropdownMenuTrigger>
   <DropdownMenuContent>
     <DropdownMenuLabel>Selecione </DropdownMenuLabel>
     <DropdownMenuSeparator />

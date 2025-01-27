@@ -35,7 +35,7 @@ export default function About() {
             <div className="question-two">
               <img src={Built} alt="Escavadeira amarela em uma colina"/>
                 <div className="text">
-                <h2><span style={{color: " #29A366"}}> MAQEXPRESS </span> é Confiavél?;</h2>
+                <h2><span style={{color: " #29A366"}}> MAQEXPRESS </span> é Confiavél?</h2>
                 <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam obcaecati labore minus voluptate laudantium nihil sit ad tempora repellendus, sapiente, autem enim eum molestiae ipsam itaque sed necessitatibus cupiditate in!
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos tempore eveniet deleniti explicabo quia dolore exercitationem tempora? Molestias, animi ullam. Voluptate quidem culpa aliquam vitae labore debitis magni illum quo.
                 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam similique amet molestias rerum, impedit corrupti quam officia iusto praesentium temporibus necessitatibus. Magnam adipisci illum saepe et velit consequuntur dolorem dolor?
