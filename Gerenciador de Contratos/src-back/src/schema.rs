@@ -16,6 +16,40 @@ diesel::table! {
 }
 
 diesel::table! {
+    enderecos (idendereco) {
+        #[max_length = 64]
+        idendereco -> Varchar,
+        #[max_length = 64]
+        pais -> Varchar,
+        #[max_length = 64]
+        estado -> Varchar,
+        #[max_length = 64]
+        cidade -> Varchar,
+        #[max_length = 12]
+        cep -> Varchar,
+        #[max_length = 64]
+        bairro -> Varchar,
+        #[max_length = 64]
+        logradouro -> Varchar,
+        #[max_length = 64]
+        numero -> Varchar,
+        #[max_length = 64]
+        complemento -> Varchar,
+    }
+}
+
+diesel::table! {
+    enderecos_usuarios (idenderecousuario) {
+        #[max_length = 64]
+        idenderecousuario -> Varchar,
+        #[max_length = 64]
+        idendereco -> Varchar,
+        #[max_length = 64]
+        idusuario -> Varchar,
+    }
+}
+
+diesel::table! {
     imagens (idimagem) {
         #[max_length = 64]
         idimagem -> Varchar,
@@ -95,6 +129,8 @@ diesel::joinable!(codigos_recuperacao -> usuarios (idusuario));
 
 diesel::allow_tables_to_appear_in_same_query!(
     codigos_recuperacao,
+    enderecos,
+    enderecos_usuarios,
     imagens,
     imagens_maquinas,
     maquinas,
