@@ -102,6 +102,7 @@ export default function UserProfile() {
           <Label htmlFor="e-mail">E-mail</Label>
           <Input
           id="email"
+          readOnly={true}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           />

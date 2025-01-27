@@ -11,7 +11,7 @@ function GoogleAuthCallback() {
   const { signIn } = useAuth();
   const loadUserId = async (email: string) => {
     try {
-      const res = await fetch(`${API_URL}/busca_usuario_email/{email}?email=${encodeURIComponent(email)}`, {
+      const res = await fetch(`${API_URL}/busca_usuario_email/?email=${encodeURIComponent(email)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
