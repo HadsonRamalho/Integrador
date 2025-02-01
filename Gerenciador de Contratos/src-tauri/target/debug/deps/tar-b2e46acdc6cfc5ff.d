@@ -1,0 +1,12 @@
+C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\libtar-b2e46acdc6cfc5ff.rmeta: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\archive.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\builder.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\entry.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\entry_type.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\error.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\header.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\pax.rs
+
+C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\tar-b2e46acdc6cfc5ff.d: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\archive.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\builder.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\entry.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\entry_type.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\error.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\header.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\pax.rs
+
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\lib.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\archive.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\builder.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\entry.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\entry_type.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\error.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\header.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tar-0.4.40\src\pax.rs:
