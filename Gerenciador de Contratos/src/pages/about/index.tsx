@@ -6,6 +6,7 @@ import "@/components/about/about.css";
 
 
 
+
 export default function About() {
   return (
     <Layout>
@@ -52,18 +53,9 @@ export default function About() {
                 </p>
               </div>
               <img src={Besley} alt="Escavadeira laranja"/>
-             
+   
             </div>
 
-            <div>
-              <h3>Dúvidas Frequentes</h3>
-
-              <ol>
-                <li>Pergunta 1?</li>
-                <li>Pergunta 2?</li>
-              </ol>  
-                
-            </div>
           </section>
       </main>
     </Layout>
