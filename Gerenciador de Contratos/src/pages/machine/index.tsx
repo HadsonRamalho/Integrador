@@ -17,7 +17,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+
 
 export default function Machine() {
   const navigate = useNavigate();
@@ -68,6 +70,7 @@ export default function Machine() {
     }, [machine.idmaquina]);  
 
     return (
+      <AspectRatio ratio={16 / 9}>
         <Card className="machine-card">
         <CardHeader>
         <CardTitle>
@@ -75,15 +78,16 @@ export default function Machine() {
         </CardTitle>
         </CardHeader>
         <CardContent>  
+        
         <div className="machine-image-home">
           {loadingImage ? (
             <div>
-              <Skeleton className="h-[50vh] w-[30vw] rounded-xl" />
+              <Skeleton className="h-[30vh] w-[30vw] rounded-xl" />
             </div>
           ) : error ? (
             <div className="image-placeholder">Erro ao carregar imagem</div>
           ) : image ? (
-            <img src={image} alt={`Imagem de ${machine.nome}`} />
+              <img src={image} alt={`Imagem de ${machine.nome}`} />
           ) : (
             <div className="image-placeholder">Imagem indisponível</div>
           )}
@@ -99,6 +103,7 @@ export default function Machine() {
         <p>Categoria: {machine.categoria}</p>
         </CardContent>
       </Card>
+      </AspectRatio>
     );
   }
   return (
@@ -116,16 +121,13 @@ export default function Machine() {
             </div>
           ) : (
             machines.map((machine: Maquina) => (
-              <div key={machine.idmaquina}>
+              <div key={machine.idmaquina} style={{width: '20%', height: '768px'}}>
               <MachineCard machine={machine} />
             </div>
             ))
           )}
         </div>           
         <div>            
-          <Button onClick={()=> {navigate("/create-machine")}}>Ir para cadastro de máquinas</Button>
-          <Button onClick={()=> {navigate("/user-profile")}}>Ir para o perfil</Button>
-
           <AlertDialog open={showAlert} onOpenChange={toggleAlert}>
           <AlertDialogTrigger asChild></AlertDialogTrigger>
           <AlertDialogContent>

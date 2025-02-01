@@ -1,10 +1,9 @@
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
-use crate::{controllers::cria_conn, schema::usuarios::{self, idusuario}};
+use crate::{controllers::{cria_conn, usuarios::AtualizaUsuarioInput}, schema::usuarios::{self, idusuario}};
 
-
-#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize)]
+#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = crate::schema::usuarios)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Usuario {
@@ -13,7 +12,8 @@ pub struct Usuario {
     pub senha: String,
     pub documento: String,
     pub datacadastro: NaiveDateTime,
-    pub idusuario: String
+    pub idusuario: String,
+    pub origemconta: Option<String>
 }
 
 pub async fn cadastra_usuario(conn: &mut PgConnection, usuario: Usuario) 
@@ -110,6 +110,21 @@ pub async fn busca_usuario_email(conn: &mut PgConnection, email_: String)
     }
 }
 
+pub async fn busca_usuario_email_oauth(conn: &mut PgConnection, email_: String)
+    -> Result<String, String>{
+    use self::usuarios::dsl::*;
+
+    let res: Result<Usuario, diesel::result::Error> = usuarios.filter(email.eq(email_).and(origemconta.eq("Google"))).first(conn);
+    match res{
+        Ok(usuario) => {
+            return Ok(usuario.idusuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}
+
 pub async fn busca_senha_usuario(conn: &mut PgConnection, email_: String) 
     -> Result<String, String>{
     use self::usuarios::dsl::*;
@@ -161,6 +176,53 @@ pub async fn busca_usuario_id(conn: &mut PgConnection, id: String)
     match res{
         Ok(usuario) => {
             return Ok(usuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}
+
+pub async fn atualiza_usuario(conn: &mut PgConnection, usuario: AtualizaUsuarioInput)
+    -> Result<String, String>{
+    use self::usuarios::dsl::*;
+
+    let res: Result<Usuario, diesel::result::Error> = usuarios
+        .filter(email.eq(usuario.email_antigo))
+        .get_result(conn);
+
+    let usuario_banco = match res{
+        Ok(usuario) => {
+            usuario
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    };
+
+    let res: Result<Usuario, diesel::result::Error> = usuarios.filter(documento.eq(usuario.documento_novo.clone()))
+        .get_result(conn);
+
+    match res{
+        Ok(user) => {
+            if user.documento == usuario.documento_novo && usuario_banco.idusuario != user.idusuario{
+                return Err("Esse documento já pertence a outra pessoa.".to_string())
+            }
+        },
+        Err(_) => {}
+    }
+
+    let res: Result<Usuario, diesel::result::Error> = diesel::update(usuarios)
+        .filter(idusuario.eq(usuario_banco.idusuario))
+        .set((
+            email.eq(usuario.email_novo),
+            documento.eq(usuario.documento_novo),
+            nome.eq(usuario.nome_novo)
+        )).get_result(conn);
+        
+    match res{
+        Ok(usuario ) =>{
+            return Ok(usuario.idusuario)
         },
         Err(e) => {
             return Err(e.to_string())

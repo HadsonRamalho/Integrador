@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 //import { loginUser } from "@/services/api/user/user";
 import { handleAxiosError } from "@/services/api/error/error";
 import { useAuth } from "@/hooks/auth";
+import GoogleLoginButton from "@/components/google-login-button";
 
 export default function AuthPage() {
   const [mode, setMode] = useState("login");
@@ -69,14 +70,29 @@ export default function AuthPage() {
     }
   };
 
+  const redirectGoogle = async () => {
+    console.log('Redirecionando para o Google...');
+    const redirectUri = 'https://g6v9psc0-5173.brs.devtunnels.ms/auth/google/callback';
+    const clientId = '853000099698-mja71sb0chsva2m9eu3prpktl31psg5q.apps.googleusercontent.com';
+  
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=email&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&client_id=${clientId}`;
+    console.log('URL gerada:', url);
+  
+    window.location.href = url;
+  };
+  
+  const loginGoogle = async () => {
+    
+  }
+
   return (
     <Layout>
       <main>
         <div className="container">
           <div className="content ">
           <div className="titulo">
-                <h1>MaqExpress</h1>
-                <p>
+                <h1 className="titulo-maqexpresse" style={{color: 'white'}}> MaqExpress</h1>
+                <p style={{color: 'white'}}>
                   {mode === "login"
                     ? "Faça login para  continuar"
                     : "Crie sua conta para acessar"}
@@ -101,17 +117,18 @@ export default function AuthPage() {
                     onChange={(e) => setSenha(e.target.value)}
                   />
                   <a
+                    style={{color: 'white'}}
                     className="password"
                     href="#"
                     onClick={() => navigate("/password-recovery")}
                   >
                     Esqueci a senha
                   </a>
-                  <Button className="button " onClick={RealizaLogin}>
+                  <Button style={{color: 'white'}} className="button" onClick={RealizaLogin}>
                     Entrar
                   </Button>
-                  <Button>Entrar com o Google</Button>
-                  <span className="link-login">
+                  <GoogleLoginButton onClick={redirectGoogle}></GoogleLoginButton>
+                  <span style={{color: 'white'}} className="link">
                     Não possui conta?{" "}
                     <a
                       className="link-login"
@@ -155,7 +172,7 @@ export default function AuthPage() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   <Button onClick={createAccount}>Criar Conta</Button>
-                  <span>
+                  <span className="link">
                     Já possui conta?{" "}
                     <a
                       className="link-login"
@@ -166,12 +183,11 @@ export default function AuthPage() {
                     </a>{" "}
                     para entrar
                   </span>
-
                 </>
               )}
             </div>
           </div>
-          <div>
+          <div className="imagem-login">
             <img src={maquina} alt="" />
           </div>
         </div>

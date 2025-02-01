@@ -1,21 +1,58 @@
 @import url("../../index.css");
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
 
-.class1{
+}
+
+.nav-left {
+  display: flex;
+ align-self: flex-start;
+  gap: 50px;
+  align-items: center;
+}
+
+.nav-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+
+}
+
+.class1 {
   text-decoration: none;
   color: #ffffff;
-}
-.home{
-  color: hsl(var(--text));
-  margin: 5px;
-  justify-content: center;
-  padding: 20px;
-  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
-
-.info{
-  color: hsl(var(--text));
+.imagem {
+  max-height: 50px;
+  width: auto;
 }
 
-
-
+@media (max-width: 480px) {
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px 2px;
+    font-size: 1rem;  
+  }
+  .nav-left {
+    display: flex;
+    align-self: flex-start;
+    gap: 5px;
+    align-items: center;
+  }
+  .nav-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;  
+  }
+}

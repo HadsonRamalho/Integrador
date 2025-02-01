@@ -1,7 +1,7 @@
 use axum::{extract::Query, Json};
 use pwhash::bcrypt::verify;
 
-use crate::{controllers::{cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, busca_email_usuario, busca_usuario_email, busca_usuario_id, cadastra_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, CredenciaisUsuario, EmailInput, IdInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
+use crate::{controllers::{self, cria_conn, usuarios::{atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_email, busca_usuario_id, cadastra_usuario, formata_documento, realiza_login, valida_email, valida_senha, AtualizaEmailInput, AtualizaSenhaInput, AtualizaUsuarioInput, CredenciaisUsuario, EmailInput, IdInput, UsuarioInput}}, models::usuarios::{busca_senha_usuario, deleta_usuario, Usuario}};
 
 pub fn usuario_padrao(numeroteste: &str) -> UsuarioInput{
     let email = format!("testeunit{}@gmail.com", numeroteste);
@@ -22,7 +22,7 @@ async fn test_cadastra_usuario_ok(){
     let usuario = usuario_padrao("002");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(deleta_usuario(id).await.is_ok());
 }
@@ -50,8 +50,8 @@ async fn test_busca_email_usuario_ok(){
     let usuario = usuario_padrao("003");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
-    assert!(busca_email_usuario(Json(id.clone())).await.is_ok());
+    let id = usuario.0.idusuario.to_string();
+    assert!(busca_email_usuario(Query(controllers::usuarios::UserId { idusuario: id.clone() })).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
 }
@@ -59,7 +59,7 @@ async fn test_busca_email_usuario_ok(){
 #[tokio::test]
 async fn test_busca_email_usuario_err(){
     let id = "123456789";
-    assert!(busca_email_usuario(Json(id.to_string())).await.is_err());
+    assert!(busca_email_usuario(Query(controllers::usuarios::UserId { idusuario: id.to_string() })).await.is_err());
 }
 
 #[tokio::test]
@@ -190,7 +190,7 @@ async fn test_atualiza_email_usuario_ok(){
     let email_novo = "xtesteunit4@gmail.comx".to_string();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     assert!(atualiza_email_usuario(Json(AtualizaEmailInput{
         email_antigo: email,
         email_novo,
@@ -215,7 +215,7 @@ async fn test_atualiza_email_usuario_err(){
     };
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id1 = usuario.0.clone();
+    let id1 = usuario.0.idusuario.to_string();
 
     let email2 = "testeunit6@gmail.com".to_string();
     let nome = "Usuario Teste 6".to_string();
@@ -230,7 +230,7 @@ async fn test_atualiza_email_usuario_err(){
     };
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id2 = usuario.0.clone();
+    let id2 = usuario.0.idusuario.to_string();
 
     assert!(atualiza_email_usuario(Json(AtualizaEmailInput{
         email_antigo: email1,
@@ -248,7 +248,7 @@ pub async fn busca_usuario_email_ok(){
     let email = usuario.email.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     
     assert!(busca_usuario_email(Query(
         EmailInput{
@@ -264,7 +264,7 @@ pub async fn busca_usuario_email_err(){
     let usuario = usuario_padrao("008");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(busca_usuario_email(Query(
         EmailInput{
@@ -282,7 +282,7 @@ async fn test_busca_senha_usuario_ok(){
     let senha = usuario.senha.clone();
 
         let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     let conn = &mut cria_conn().unwrap();
 
@@ -298,7 +298,7 @@ async fn test_busca_senha_usuario_err(){
     let email = usuario.email.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     let conn = &mut cria_conn().unwrap();
 
@@ -316,7 +316,7 @@ async fn test_realiza_login_ok(){
     let senha = usuario.senha.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -335,7 +335,7 @@ async fn test_realiza_login_err(){
     let senha = usuario.senha.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -354,7 +354,7 @@ async fn test_atualiza_senha_usuario_ok(){
     let senha = usuario.senha.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -366,7 +366,7 @@ async fn test_atualiza_senha_usuario_ok(){
     let senha_nova = "SenhaTeste13.Nova".to_string();
 
     assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
-        email: email.clone(),
+        idusuario: id.clone(),
         senha_antiga: senha,
         senha_nova: senha_nova.clone()
     })).await.is_ok());
@@ -386,7 +386,7 @@ async fn test_atualiza_senha_usuario_err(){
     let senha = usuario.senha.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     assert!(realiza_login(Json(
         CredenciaisUsuario{
@@ -399,14 +399,14 @@ async fn test_atualiza_senha_usuario_err(){
     let email_invalido = "email_invalido@gmai.com".to_string();
 
     assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
-        email: email_invalido,
+        idusuario: "idinvalido".to_string(),
         senha_antiga: senha.clone(),
         senha_nova: senha_nova.clone()
     })).await.is_err());
 
     let senha_invalida = "senhainvalida".to_string();
     assert!(atualiza_senha_usuario(Json(AtualizaSenhaInput{
-        email: email.clone(),
+        idusuario: id.clone(),
         senha_antiga: senha.clone(),
         senha_nova: senha_invalida
     })).await.is_err());
@@ -424,7 +424,7 @@ async fn test_busca_usuario_id_ok(){
     let usuario = usuario_padrao("015");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     
     assert!(busca_usuario_id(Query(
         IdInput{
@@ -440,13 +440,41 @@ async fn test_busca_usuario_id_err(){
     let usuario = usuario_padrao("016");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
     
     assert!(busca_usuario_id(Query(
         IdInput{
             id: "randomId".to_string()
         }
     )).await.is_err());
+
+    assert!(deleta_usuario(id).await.is_ok());
+}
+
+#[tokio::test]
+async fn test_atualiza_usuario_ok(){
+    let usuario = usuario_padrao("017");
+    let email = usuario.email.clone();
+    let senha = usuario.senha.clone();
+
+    let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
+    
+    let id = usuario.0.idusuario.to_string();
+    
+    let email_novo: String = "emailnovo001@test.com".to_string();
+    let input = Json(AtualizaUsuarioInput{ 
+        email_antigo: email, 
+        senha, 
+        email_novo: email_novo.clone(), 
+        nome_novo: "Usuário Atualizado".to_string(), 
+        documento_novo: "017.017.017-01".to_string() 
+    });
+    assert!(atualiza_usuario(input).await.is_ok());
+
+    let input: Query<EmailInput> = Query::from(axum::extract::Query(EmailInput{
+        email: email_novo
+    }));
+    assert!(busca_usuario_email(input).await.is_ok());
 
     assert!(deleta_usuario(id).await.is_ok());
 }

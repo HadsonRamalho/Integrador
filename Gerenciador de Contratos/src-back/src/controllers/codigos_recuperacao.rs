@@ -1,8 +1,8 @@
 use axum::{extract::Query, http::StatusCode, Json};
 use chrono::Days;
 use diesel::{ExpressionMethods, RunQueryDsl};
+use rand::Rng;
 use serde::{Serialize, Deserialize};
-
 use crate::models::{self, codigos_recuperacao::{cadastra_codigo_recuperacao_db, CodigoRecuperacao}};
 
 use super::{cria_conn, envia_emails::envia_email_codigo, gera_hash, usuarios::{busca_usuario_email, valida_email, EmailInput}};
@@ -12,6 +12,12 @@ use models::codigos_recuperacao::verifica_codigo_recuperacao_db;
 pub struct CodigoRecuperacaoInput{
     pub idusuario: String,
     pub codigodigitado: String
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CodigoRecuperacaoReturn{
+    pub idcodigo: String,
+    pub codigo: String
 }
 
 pub async fn verifica_codigo_recuperacao(input: Json<CodigoRecuperacaoInput>)
@@ -38,8 +44,30 @@ pub async fn verifica_codigo_recuperacao(input: Json<CodigoRecuperacaoInput>)
     }
 }
 
+#[utoipa::path(
+    post,
+    tag = "Código de Recuperação",
+    path = "/envia_codigo_recuperacao",
+    description = "Envia um e-mail com o código de recuperação de senha.",
+    responses(
+        (
+            status = 200, 
+            description = "Dados válidos. E-mail enviado e registro salvo no banco.",
+            body = String
+        ),
+        (
+            status = 500,
+            description = "Erro ao enviar o e-mail; Erro ao salvar os dados no banco; Erro ao buscar o usuário."
+        ),
+        (
+            status = 400,
+            description = "Algum dos campos inseridos está incorreto."
+        ),
+    ),
+    request_body = EmailInput    
+)]
 pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
-    -> Result<(StatusCode, Json<(String, String)>), (StatusCode, Json<String>)>{
+    -> Result<(StatusCode, Json<CodigoRecuperacaoReturn>), (StatusCode, Json<String>)>{
     let email_clone = input.email.to_string();
     match valida_email(input).await{
         Ok(_) => {},
@@ -47,37 +75,11 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
             return Err(e)
         } 
     }
-    let email_ = email_clone.clone();
-    let input = Query(EmailInput{email: email_clone});
-    let idusuario = busca_usuario_email(input).await?.1.0;
+    let codigoreturn = gera_codigo_recuperacao(email_clone.clone()).await?.1.0;
+    let res = envia_email_codigo(email_clone.clone(), "recuperação de senha", codigoreturn.codigo.clone()).await?;
+    println!("E-mail: {} | Código: {}", email_clone, res.1.0);
 
-    let codigo = envia_email_codigo(email_, "recuperação de senha").await?.1.0;
-
-    let conn = &mut cria_conn()?;
-
-    let datacriacao = chrono::Utc::now().naive_utc();
-    let dia = Days::new(1);
-    let dataexpiracao = chrono::Utc::now().checked_add_days(dia).unwrap().naive_utc();
-    let idcodigo = gera_hash(&codigo);
-    let idcodigo_clone = idcodigo.clone();
-
-    let codigorecuperacao = CodigoRecuperacao{
-        codigo,
-        datacriacao,
-        dataexpiracao,
-        status: "Não utilizado".to_string(),
-        idusuario,
-        idcodigo,
-    };
-
-    match cadastra_codigo_recuperacao_db(conn, codigorecuperacao).await{
-        Ok(codigo) => {
-            return Ok((StatusCode::OK, Json((idcodigo_clone, codigo))))
-        },
-        Err(e) => {
-            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
-        }
-    }
+    return Ok((StatusCode::OK, Json(codigoreturn)))
 }
 
 pub async fn deleta_codigo(id: String)
@@ -99,4 +101,47 @@ pub async fn deleta_codigo(id: String)
             return Err(e.to_string())
         }
     }
+}
+
+fn gera_i32_aleatorio() -> i32{
+    let mut rng = rand::thread_rng();
+    let random: i32 = rng.gen_range(1000..=9999);
+    random
+}
+
+pub async fn gera_codigo_recuperacao(email: String)
+    -> Result<(StatusCode, Json<CodigoRecuperacaoReturn>), (StatusCode, Json<String>)>{
+    let email_ = email.clone();
+    let input = Query(EmailInput{email: email_.clone()});
+    let idusuario = busca_usuario_email(input).await?.1.0;
+
+    let datacriacao = chrono::Utc::now().naive_utc();
+    let dia = Days::new(1);
+    let dataexpiracao = chrono::Utc::now().checked_add_days(dia).unwrap().naive_utc();
+    let idcodigo = gera_hash(&email_);
+
+    let codigo = gera_i32_aleatorio().to_string();
+
+    let codigorecuperacao = CodigoRecuperacao{
+        codigo: codigo.clone(),
+        datacriacao,
+        dataexpiracao,
+        status: "Não utilizado".to_string(),
+        idusuario,
+        idcodigo: idcodigo.clone(),
+    };
+
+    let conn = &mut cria_conn()?;
+
+    match cadastra_codigo_recuperacao_db(conn, codigorecuperacao).await{
+        Ok(codigo) => {
+            return Ok((StatusCode::OK, Json(CodigoRecuperacaoReturn{
+                idcodigo,
+                codigo
+            })))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    };
 }

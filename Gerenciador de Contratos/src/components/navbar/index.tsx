@@ -5,6 +5,7 @@ import { ModeToggle } from "../mode-toggle/mode-toggle";
 import { useEffect, useState } from "react";
 import { ProfileDropdownMenu } from "../profile-dropdown-menu";
 import { DropdownMenuDemo } from "../dropdown-menu";
+import { MachineDropdownMenu } from "../machine-dropdown-menu";
 
 
 export function NavBar() {
@@ -19,15 +20,15 @@ export function NavBar() {
   },[])
 
   return (
-    <nav>
-      <ul className="link-nav-active">
+    <nav className="navbar">
+     <ul className="nav-left">
         <li>
           <NavLink
            to="/"
             className={({ isActive }) => ` class1 ${isActive ? "link-nav-active" : ""}`
             }
           >
-            <img className="imagem" src={maq} alt="" />
+            <img className="imagem" src={maq} alt="" style={{width: '100%', height: '100%'}}/>
           </NavLink>
         </li>
 
@@ -51,14 +52,21 @@ export function NavBar() {
           </NavLink>
         </li>
         <li>
-          <NavLink
-          to ="/machine"
-            className={({ isActive }) => `class1 ${isActive ? "link-nav-active" : ""}`
-        }
-           >
-              Maquinas
-          </NavLink>
+        {logged ? (
+            <MachineDropdownMenu>
+            </MachineDropdownMenu>
+          ) : (
+            <NavLink 
+            to="/machine"
+            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
+              Máquinas
+            </NavLink>
+            )            
+          }              
         </li>
+        </ul>
+
+        <ul className="nav-right">
         <li className="class1">
           <DropdownMenuDemo></DropdownMenuDemo>
         </li>       

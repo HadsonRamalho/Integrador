@@ -19,7 +19,7 @@ chrono = { version = "^0", features = ["serde"] }
 thiserror = "1.0"
 tokio = { version = "1", features = ["full", "macros"] }
 
-axum = { version = "0.7.7", features = [ "macros"] }
+axum = { version = "0.8.1", features = [ "macros", "multipart"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 dotenvy = "0.15"
@@ -34,4 +34,11 @@ bigdecimal = "0.1.2"
 rand = "0.8.5"
 
 hyper = "1"
-axum_typed_multipart = "0.13.2"
+axum_typed_multipart = "0.15.1"
+
+utoipa = "5"
+utoipa-swagger-ui = { version = "9", features = ["axum"] }
+utoipa-axum = "0.2"
+
+reqwest = { version = "0.12.12", features = ["json"] }
+oauth2 = "5.0.0"

@@ -54,7 +54,7 @@ async fn test_cadastra_maquina_ok(){
     let usuario = usuario_padrao("201");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let idusuario = usuario.0.clone();
+    let idusuario = usuario.0.idusuario.to_string();
 
     let idsmaquina = cadastra_maquina(Json(
         converte_tipo_maquina(maquina, idusuario.clone()
@@ -72,7 +72,7 @@ async fn test_lista_todas_maquinas_ok(){
     let usuario = usuario_padrao("202");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let idusuario = usuario.0.clone();
+    let idusuario = usuario.0.idusuario.to_string();
 
     let idsmaquina = cadastra_maquina(Json(
         converte_tipo_maquina(maquina, idusuario.clone()
@@ -92,7 +92,7 @@ async fn busca_maquina_id_ok(){
     let usuario = usuario_padrao("203");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let idusuario = usuario.0.clone();
+    let idusuario = usuario.0.idusuario.to_string();
 
     let idsmaquina = cadastra_maquina(Json(
         converte_tipo_maquina(maquina, idusuario.clone()
@@ -112,7 +112,7 @@ async fn busca_maquina_id_err(){
     let usuario = usuario_padrao("204");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let idusuario = usuario.0.clone();
+    let idusuario = usuario.0.idusuario.to_string();
 
     let idsmaquina = cadastra_maquina(Json(
         converte_tipo_maquina(maquina, idusuario.clone()
@@ -132,7 +132,7 @@ async fn busca_maquinas_usuario_idusuario_ok(){
     let usuario = usuario_padrao("205");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let idusuario = usuario.0.clone();
+    let idusuario = usuario.0.idusuario.to_string();
 
     let idsmaquina = cadastra_maquina(Json(
         converte_tipo_maquina(maquina, idusuario.clone()
@@ -152,7 +152,7 @@ async fn busca_maquinas_usuario_idusuario_err(){
     let usuario = usuario_padrao("206");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let idusuario = usuario.0.clone();
+    let idusuario = usuario.0.idusuario.to_string();
 
     let idsmaquina = cadastra_maquina(Json(
         converte_tipo_maquina(maquina, idusuario.clone()

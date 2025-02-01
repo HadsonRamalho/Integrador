@@ -8,9 +8,9 @@ async fn test_cadastra_codigo_ok(){
     let email = usuario.email.clone();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
-    let idcodigo = envia_codigo_recuperacao(Json(EmailInput{email})).await.unwrap().1.0.0;
+    let idcodigo = envia_codigo_recuperacao(Json(EmailInput{email})).await.unwrap().1.0.idcodigo;
 
     assert!(deleta_codigo(idcodigo).await.is_ok());
     assert!(deleta_usuario(id).await.is_ok());
@@ -21,7 +21,7 @@ async fn test_cadastra_codigo_err(){
     let usuario = usuario_padrao("101");
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
     let email_invalido = "emailinvalido@gmail.com".to_string();
 
@@ -36,9 +36,9 @@ async fn test_verifica_codigo_err(){
     let email = usuario.email.to_string();
 
     let usuario = cadastra_usuario(Json(usuario)).await.unwrap().1;
-    let id = usuario.0.clone();
+    let id = usuario.0.idusuario.to_string();
 
-    let idcodigo = envia_codigo_recuperacao(Json(EmailInput{email})).await.unwrap().1.0.0;
+    let idcodigo = envia_codigo_recuperacao(Json(EmailInput{email})).await.unwrap().1.0.idcodigo;
 
     assert!(verifica_codigo_recuperacao(Json(CodigoRecuperacaoInput{
         idusuario: id.clone(),

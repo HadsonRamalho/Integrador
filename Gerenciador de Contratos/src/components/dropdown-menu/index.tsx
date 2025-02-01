@@ -16,7 +16,9 @@ export function DropdownMenuDemo() {
   const [pais, setPais] = useState("Brasil");
   const [estado, setEstado] = useState("");
   const [cidade, setCidade] = useState("");
-
+  const [TriggerText, setTriggerText] = useState("Cep");
+  
+  
   const CarregaEndereco = async () =>{
     try {
       const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`,
@@ -28,14 +30,16 @@ export function DropdownMenuDemo() {
      setEstado(endereco.estado);
      setCidade(endereco.localidade);
      console.log(endereco);
-      
+     setTriggerText(`${endereco.localidade}`);
+     localStorage.setItem("cidade_dropdownmenu", endereco.localidade);
+     
     } catch (error) {
       console.error(error);
     }
   }
   return (
     <DropdownMenu>
-  <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+  <DropdownMenuTrigger>{localStorage.getItem("cidade_dropdownmenu")||TriggerText }</DropdownMenuTrigger>
   <DropdownMenuContent>
     <DropdownMenuLabel>Selecione </DropdownMenuLabel>
     <DropdownMenuSeparator />
@@ -45,6 +49,7 @@ export function DropdownMenuDemo() {
      type="cep"
      value={cep}
      onChange={(e) =>setCep(e.target.value)}
+     onBlur={CarregaEndereco}
      />
     </DropdownMenuLabel>
     <DropdownMenuSeparator />

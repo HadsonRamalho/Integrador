@@ -8,31 +8,32 @@
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
+    
 }
 
 .user-profile-card{
     background-color: hsl(var(--primary));
-    width: 50vh;
-    height: 60vh;
+    width: 60vh;
+    height: 70vh;
 }
 
 .user-profile-card-header{
     font-size: 3.2vh;
-    color: black;
+    color: hsl(var(--background));
 }
 
-.user-profile-card-content{
+/* .user-profile-card-content{
     width: 100%;
     border: 1px solid var(--primary);
     border-radius: 5px;
     font-size: 3vh;
     color: hsl(var(--background));
     box-sizing: border-box;
-}
+} */
 
 .user-profile-card-description{
-    color: black;
-    font-size: 2.5vh;
+    color: hsl(var(--background));
+    font-size: 1.5vh;
 }
 
 .user-profile-card-image{
@@ -51,6 +52,7 @@
 }
 
 
+
 @media (max-width: 480px) {
     .user-profile-button {
       margin-top: 10px;
@@ -58,8 +60,9 @@
       left: 13vw;
       position: absolute;
     }
-  }
+}
 
 .user-profile-button:hover{    
     background-color: rgb(128, 226, 197);
 }
+

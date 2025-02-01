@@ -17,6 +17,7 @@ export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
     const navigate = useNavigate();
     const LogOut = () => {
         signOut();
+        localStorage.removeItem("PROFILE_IMAGE_URL");
         localStorage.removeItem("USER_ID");
         navigate("/login");
     };
@@ -24,13 +25,17 @@ export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
     return(
         <div>
         <DropdownMenu>
-        <DropdownMenuTrigger><p style={{color: "white"}}>{titulo}</p></DropdownMenuTrigger>
+        <DropdownMenuTrigger>
+        <Avatar>
+                <AvatarImage src={localStorage.getItem("PROFILE_IMAGE_URL") || "https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg"} />                    
+        </Avatar>
+        </DropdownMenuTrigger>
         <DropdownMenuContent>
             <DropdownMenuLabel>
                 <Avatar>
-                <AvatarImage src="https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg" />                    
+                <AvatarImage src={localStorage.getItem("PROFILE_IMAGE_URL") || "https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg"} />                    
                 </Avatar>
-                <p>Minha Conta</p>
+            
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
@@ -44,7 +49,7 @@ export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuLabel>
-                <p>Suporte</p>
+                <strong>Suporte</strong>
             </DropdownMenuLabel>
            
             <DropdownMenuItem>
