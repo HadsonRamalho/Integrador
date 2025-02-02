@@ -1,9 +1,0 @@
-C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\libstring_cache-b9068320354d6f77.rmeta: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\atom.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\dynamic_set.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\static_sets.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\trivial_impls.rs
-
-C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\string_cache-b9068320354d6f77.d: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\atom.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\dynamic_set.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\static_sets.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\trivial_impls.rs
-
-C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\lib.rs:
-C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\atom.rs:
-C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\dynamic_set.rs:
-C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\static_sets.rs:
-C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\string_cache-0.8.7\src\trivial_impls.rs:
