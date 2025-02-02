@@ -1,0 +1,11 @@
+C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\libsha1-3101ae196be6589f.rmeta: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\consts.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress\soft.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress\x86.rs
+
+C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\libsha1-3101ae196be6589f.rlib: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\consts.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress\soft.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress\x86.rs
+
+C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\sha1-3101ae196be6589f.d: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\consts.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress\soft.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress\x86.rs
+
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\lib.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\consts.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress\soft.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha-1-0.9.8\src\compress\x86.rs:

@@ -1,0 +1,10 @@
+C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\libwindows_tokens-b3b4ebaeba0e43a0.rmeta: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\to_tokens.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\token_stream.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\runtime.rs
+
+C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\libwindows_tokens-b3b4ebaeba0e43a0.rlib: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\to_tokens.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\token_stream.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\runtime.rs
+
+C:\Users\david\Documents\Integrador\Gerenciador de Contratos\src-tauri\target\debug\deps\windows_tokens-b3b4ebaeba0e43a0.d: C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\lib.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\to_tokens.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\token_stream.rs C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\runtime.rs
+
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\lib.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\to_tokens.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\token_stream.rs:
+C:\Users\david\.cargo\registry\src\index.crates.io-6f17d22bba15001f\windows-tokens-0.39.0\src\runtime.rs:
