@@ -34,11 +34,13 @@ Após a instalação, faça login na sua conta do GitHub.
  ### 4 - Instale o Rust
 
   [Rust](https://rustup.rs/)
+  
+Será instalado o Visual Studio Community, isso deve levar algum tempo, seja paciente.
 
 ### 5 - Instale o OpenSSL
   [OpenSSL](https://slproweb.com/products/Win32OpenSSL.html)
+
   
-Será instalado o Visual Studio Community, isso deve levar algum tempo, seja paciente.
  ### 6 - Clone o repositório
  
   
