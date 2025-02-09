@@ -1,0 +1,80 @@
+syntax = "proto3";
+//Os numeros atribuidos são apenas identificadores
+
+message User{
+	string uuid = 1; //Campo para o ID do usuario
+	string name = 2; //Nome do usuario
+	string email = 3; //Email do usuario
+	string password = 4;
+	string documento = 5;
+	string origemConta = 6;
+}
+
+message UserResponse{
+	string uuid = 1;
+	string name = 2;
+	string email = 3;
+	string password = 4;
+	string documento = 5;
+	string origemConta = 6;
+	
+
+}
+message LoginRequest{
+	string email = 1;
+	string password = 2;
+
+}
+
+message LoginResponse{
+	string id = 1;
+}
+
+message UserIdRequest{
+	string id = 1;
+}
+
+message GetEmailResponse{
+	string email = 1;
+
+}
+
+message UpdateUserRequest{
+	string name = 1;
+	string email = 2;
+	string documento = 3;
+	string id = 4;
+}
+
+message Success{
+	bool success = 1;
+}
+
+message UpdatePasswordRequest{
+	string id = 1;
+	string newPassword = 2;
+}
+
+message EmailRequest{
+	string email = 1;
+}
+
+message UpdateEmailRequest{
+	string oldEmail = 1;
+	string newEmail = 2;
+}
+
+message IdRequest{
+	string id = 1;
+}
+service UserService{
+	rpc CreateUser(User) returns (UserResponse);//Metodo gRPC
+	rpc GetUserById(UserIdRequest) returns (User);//Metodo gRPC
+	rpc Login(LoginRequest) returns (LoginResponse);
+	rpc GetEmailById(EmailRequest) returns (GetEmailResponse);
+	rpc UpdateUser(UpdateUserRequest) returns (Success);
+	rpc UpdatePassword(UpdatePasswordRequest) returns (Success);
+	rpc UserGoogle(EmailRequest) returns (UserResponse);
+	rpc UpdateEmail(UpdateEmailRequest) returns (Success);
+	rpc DeleteUser(IdRequest) returns (Success);
+}

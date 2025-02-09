@@ -13,6 +13,11 @@ dist-ssr
 *.local
 src-back/target
 
+#Arquivos Spring
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
