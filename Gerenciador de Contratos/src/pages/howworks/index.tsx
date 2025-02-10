@@ -2,12 +2,12 @@ import Layout from "@/layouts/default";
 import Dawn from "@/assets/maquina1.jpg";
 import Built from "@/assets/maquina2.jpg";
 import Besley from "@/assets/maquina3.jpg";
-import "@/components/about/about.css";
+import "@/components/howworks/howworks.css";
 
 
 
 
-export default function About() {
+export default function HowWorks() {
   return (
     <Layout>
       <main className="main-container">

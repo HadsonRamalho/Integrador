@@ -1,4 +1,3 @@
-import About from "@/pages/about";
 import Logged from "@/pages/logged";
 import Home from "@/pages/home";
 import Machine  from "@/pages/machine";
@@ -10,17 +9,18 @@ import PasswordRecovery from "@/pages/password-recovery/index.js";
 import CreateMachine from "@/pages/create-machine";
 import UserProfile from "@/pages/user-profile";
 import GoogleAuthCallback from "@/pages/google-auth-callback";
+import HowWorks from "@/pages/howworks";
 
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/home",
     element: <Home />,
     errorElement: <h1>404</h1>,
   },
   {
-    path: "/sobre",
-    element: <About />,
+    path: "/howworks",
+    element: <HowWorks />,
   },
   {
     path: "/machine",
