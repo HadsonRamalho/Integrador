@@ -119,7 +119,7 @@ export default function AuthPage() {
                   <a
                     style={{color: 'white'}}
                     className="password"
-                    href="#"
+                    href=""
                     onClick={() => navigate("/password-recovery")}
                   >
                     Esqueci a senha
@@ -132,7 +132,7 @@ export default function AuthPage() {
                     Não possui conta?{" "}
                     <a
                       className="link-login"
-                      href="#"
+                      href=""
                       onClick={() => setMode("create")}
                     >
                       Clique aqui

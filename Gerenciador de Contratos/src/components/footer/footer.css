@@ -1,23 +1,19 @@
 .footer-container {
   background-color: hsl(var(--primary));
-  padding: 20px;
+ 
   display: flex;
-  justify-content: space-around;
+  justify-content:space-evenly;
+ 
 
  
-}
-
-.footer-section {
-  margin: 10px;
-  
 }
 
 .footer-section h2 {
   font-size: 1.2rem;
   margin-bottom: 10px;
+
   
 }
-
 
 
 .footer-section ul li {
@@ -25,11 +21,11 @@
   
 }
 
-/* .footer-section ul li a {
+.footer-section ul li a {
 
   transition: color 0.3s ease;
-} */
+} 
 
-/* .footer-section ul li a:hover {
-  color: #007bff;
-} */
+ .footer-section ul li a:hover {
+  color: #033f84;
+} 

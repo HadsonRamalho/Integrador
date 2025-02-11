@@ -24,7 +24,7 @@ export function NavBar() {
      <ul className="nav-left">
         <li>
           <NavLink
-           to="/home"
+           to="/"
             className={({ isActive }) => ` class1 ${isActive ? "link-nav-active" : ""}`
             }
           >
@@ -34,7 +34,7 @@ export function NavBar() {
 
         <li>
           <NavLink 
-          to="/home"
+          to="/"
           className={({isActive}) => ` class1 ${isActive ? "link-nav-active" : ""}`
           }
           >

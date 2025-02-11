@@ -14,7 +14,7 @@ import HowWorks from "@/pages/howworks";
 
 const router = createBrowserRouter([
   {
-    path: "/home",
+    path: "/",
     element: <Home />,
     errorElement: <h1>404</h1>,
   },
