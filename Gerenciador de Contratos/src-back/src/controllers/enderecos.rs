@@ -1,14 +1,16 @@
 use axum::{extract::Query, Json};
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
+use tracing::span::Id;
 use utoipa::ToSchema;
 
-use crate::models::{self, enderecos::Endereco};
+use crate::{controllers::usuarios::{busca_usuario_id, IdInput}, models::{self, enderecos::Endereco}};
 
-use super::{cria_conn, enderecos_usuarios::busca_enderecousuario_idusuario, gera_hash};
+use super::{cria_conn, enderecos_usuarios::busca_enderecousuario_idusuario, gera_hash, usuarios::UserId};
 
 #[derive(Serialize, Deserialize, ToSchema)]
-pub struct EnderecoInput{
+pub struct EnderecoUsuarioInput{
+    pub idusuario: String,
     pub pais: String,
     pub estado: String,
     pub cidade: String,
@@ -22,7 +24,7 @@ pub struct EnderecoInput{
 #[utoipa::path(
     post,
     tag = "Endereço",
-    path = "/cadastra_endereco",
+    path = "/cadastra_endereco_usuario",
     description = "Cadastra um endereço no sistema.",
     responses(
         (
@@ -39,14 +41,15 @@ pub struct EnderecoInput{
             description = "Algum dos campos inseridos está incorreto."
         ),
     ),
-    request_body = EnderecoInput    
+    request_body = EnderecoUsuarioInput    
 )]
 
-pub async fn cadastra_endereco(input: Json<EnderecoInput>)
+pub async fn cadastra_endereco_usuario(input: Json<EnderecoUsuarioInput>)
     -> Result<(StatusCode, Json<Endereco>), (StatusCode, Json<String>)>{
     if input.bairro.trim().is_empty() || input.cep.trim().is_empty() || input.cidade.trim().is_empty()
         || input.estado.trim().is_empty() || input.logradouro.trim().is_empty() 
-        || input.numero.trim().is_empty() || input.pais.trim().is_empty(){
+        || input.numero.trim().is_empty() || input.pais.trim().is_empty()
+        || input.idusuario.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
     let complemento = input.complemento.clone();
@@ -71,14 +74,27 @@ pub async fn cadastra_endereco(input: Json<EnderecoInput>)
         complemento,
     };
 
+    let idusuario = busca_usuario_id(Query(IdInput{id: input.idusuario.clone()})).await?.1.idusuario.clone();
     let conn = &mut cria_conn()?;
 
-    match models::enderecos::cadastra_endereco(conn, endereco).await{
+    let endereco = match models::enderecos::cadastra_endereco(conn, endereco).await{
         Ok(endereco) => {
-            return Ok((StatusCode::OK, Json(endereco)))
+            endereco
         },
         Err(e) => {
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    };
+
+    match crate::controllers::enderecos_usuarios::cadastra_endereco_usuario(Json(crate::controllers::enderecos_usuarios::EnderecoUsuarioInput{
+        idendereco: endereco.idendereco.clone(),
+        idusuario
+    })).await{
+        Ok(_res) => {
+            return Ok((StatusCode::OK, Json(endereco)))
+        },
+        Err(e) => {
+            return Err(e)
         }
     }
 }
@@ -148,16 +164,16 @@ pub async fn busca_endereco_id(Query(params): Query<String>)
         ),
     ),
     params(
-        ("idusuario" = String, Path, description = "ID do usuário"),
+        ("idusuario" = UserId, Path, description = "ID do usuário"),
     )  
 )]
-pub async fn busca_endereco_idusuario(Query(params): Query<String>)
+pub async fn busca_endereco_idusuario(Query(params): Query<UserId>)
     -> Result<(StatusCode, Json<Endereco>), (StatusCode, Json<String>)>{
-    if params.trim().is_empty(){
+    if params.idusuario.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
 
-    let idendereco = busca_enderecousuario_idusuario(axum::extract::Query(params)).await?.1.idendereco.to_string();
+    let idendereco = busca_enderecousuario_idusuario(axum::extract::Query(params.idusuario)).await?.1.idendereco.to_string();
 
     let endereco = busca_endereco_id(Query(idendereco)).await;
     endereco

@@ -755,6 +755,22 @@ pub async fn atualiza_usuario(input: Json<AtualizaUsuarioInput>)
     }
 }
 
+pub async fn deleta_usuario(Query(input): Query<IdInput>)
+    -> Result<StatusCode, (StatusCode, Json<String>)>{
+    if input.id.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    let id = input.id.trim().to_string();
+    match models::usuarios::deleta_usuario(id).await{
+        Ok(_) => {
+            return Ok(StatusCode::OK)
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
+
 pub async fn valida_email(input: Json<EmailInput>) -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)> {
     match input.validate(){
          Ok(_) => {

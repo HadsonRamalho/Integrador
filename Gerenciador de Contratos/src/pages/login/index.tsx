@@ -81,10 +81,6 @@ export default function AuthPage() {
     window.location.href = url;
   };
   
-  const loginGoogle = async () => {
-    
-  }
-
   return (
     <Layout>
       <main>

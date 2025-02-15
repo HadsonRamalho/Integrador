@@ -8,6 +8,7 @@ import { loadUserById } from "@/services/api/user/user";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -15,6 +16,7 @@ export default function UserProfile() {
   const [user, setUser] = useState<User>();
   const [error, setError] = useState(false);
   const [updatedData, setUpdatedData] = useState(true);
+  const navigate = useNavigate();
 
   async function AtualizaUsuario(nome_novo: string, email_novo: string, documento_novo: string, senha: string) {
     try {
@@ -46,7 +48,54 @@ export default function UserProfile() {
     }
   }
 
+  async function DeletaUsuario(id: string) {
+    try {
+      const res = await fetch(
+        `https://g6v9psc0-3003.brs.devtunnels.ms/deleta_usuario/?id=${encodeURIComponent(id)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },          
+        }
+      );
+      if (!res.ok) {
+        const erro = await res.text();
+        console.log("Erro ao deletar: ", erro);
+        throw new Error(erro);
+      }
+      console.log("Conta deletada!");
+      alert("Conta deletada com sucesso!");
+      navigate('/login');
+    } catch (erro) {
+      console.error(erro);
+    }
+  }
+
   useEffect(() => {
+    async function buscaEndereco(id: string) {
+      try {
+        const res = await fetch(
+          `https://g6v9psc0-3003.brs.devtunnels.ms/busca_endereco_idusuario/?idusuario=${encodeURIComponent(id)}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            }
+          }
+        );
+        if (!res.ok) {
+          const erro = await res.text();
+          console.log("Erro ao buscar endereço: ", erro);
+          throw new Error(erro);
+        }
+        console.log("Endereço encontrado!");
+        const endereco = await res.json();
+        console.log(endereco);
+      } catch (erro) {
+        console.error(erro);
+      }
+    }
     const loadUser = async () => {
       setUpdatedData(false);
       const id = localStorage.getItem("USER_ID");
@@ -57,6 +106,7 @@ export default function UserProfile() {
         const user = await loadUserById(id);
         console.log(user);
         setUser(user);
+        await buscaEndereco(id);
       } catch(err){
         setError(true);
         console.error(err);
@@ -83,6 +133,15 @@ export default function UserProfile() {
       return;
     }
     await AtualizaUsuario(nome, email, documento, email);     
+  }
+
+  const handleDelete = async() => {
+    if(user.origemconta === 'Sistema'){
+      await DeletaUsuario(user.idusuario);
+      localStorage.removeItem("USER_ID");
+      return;
+    }
+    alert("Sua conta não pode ser deletada!");
   }
 
     return (
@@ -128,6 +187,7 @@ export default function UserProfile() {
           </CardDescription>
           <CardContent>
             <Button className="user-profile-button" onClick={handleChange}>Editar minhas informações</Button>
+            <Button className="user-profile-button" onClick={handleDelete}>Apagar minha conta</Button>
           </CardContent>
         </CardContent>
       </Card>
