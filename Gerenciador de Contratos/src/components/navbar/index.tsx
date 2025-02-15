@@ -44,7 +44,7 @@ export function NavBar() {
       
         <li>
           <NavLink
-            to="/sobre"
+            to="/howworks"
             className={({ isActive }) => `class1 ${isActive ? "link-nav-active" : ""}`
           }
           >

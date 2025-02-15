@@ -2,11 +2,12 @@ import Layout from "@/layouts/default";
 import Dawn from "@/assets/maquina1.jpg";
 import Built from "@/assets/maquina2.jpg";
 import Besley from "@/assets/maquina3.jpg";
-import "@/components/about/about.css";
+import "@/components/howworks/howworks.css";
 
 
 
-export default function About() {
+
+export default function HowWorks() {
   return (
     <Layout>
       <main className="main-container">
@@ -52,18 +53,9 @@ export default function About() {
                 </p>
               </div>
               <img src={Besley} alt="Escavadeira laranja"/>
-             
+   
             </div>
 
-            <div>
-              <h3>Dúvidas Frequentes</h3>
-
-              <ol>
-                <li>Pergunta 1?</li>
-                <li>Pergunta 2?</li>
-              </ol>  
-                
-            </div>
           </section>
       </main>
     </Layout>

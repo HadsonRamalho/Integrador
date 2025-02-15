@@ -21,10 +21,11 @@ h1 {
 .question-one{
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1.5rem;
     margin: 10px;
     padding: 20px;
-
+    min-width: 10vw;
 
 }
 .text{
@@ -60,6 +61,7 @@ img{
     gap: 1.5rem;
     margin: 10px;
     padding: 20px;
+    
 
 }
 
@@ -71,3 +73,19 @@ img{
     padding: 20px;
 
 }
+
+
+@media (max-width: 768px) {
+    .question-one, .question-two, .question-three{
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    img{
+        width: 80%;
+        max-width: none;
+    }
+}
+
+
+    

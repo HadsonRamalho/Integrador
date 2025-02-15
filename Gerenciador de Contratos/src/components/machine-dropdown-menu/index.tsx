@@ -12,7 +12,7 @@ export const MachineDropdownMenu = () => {
         <div>
         <DropdownMenu>
         <DropdownMenuTrigger>
-        <p>Máquinas</p>
+        <p style={{color: 'white'}}>Máquinas</p>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
             <DropdownMenuSeparator />

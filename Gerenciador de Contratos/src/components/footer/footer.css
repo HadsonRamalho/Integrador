@@ -1,3 +1,31 @@
-/* .bg-gray {
-  background-color: #ccc ;
-} */
+.footer-container {
+  background-color: hsl(var(--primary));
+ 
+  display: flex;
+  justify-content:space-evenly;
+ 
+
+ 
+}
+
+.footer-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+
+  
+}
+
+
+.footer-section ul li {
+  margin: 5px 0;
+  
+}
+
+.footer-section ul li a {
+
+  transition: color 0.3s ease;
+} 
+
+ .footer-section ul li a:hover {
+  color: #033f84;
+} 

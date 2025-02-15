@@ -1,4 +1,4 @@
-# Gerenciador de Contratos
+# MaqExpress
 ## Materiais para a equipe
 #### Frontend:
  - [JavaScript](https://developer.mozilla.org/pt-BR/docs/Learn/Getting_started_with_the_web/JavaScript_basics)
@@ -36,7 +36,13 @@ Após a instalação, faça login na sua conta do GitHub.
   [Rust](https://rustup.rs/)
   
 Será instalado o Visual Studio Community, isso deve levar algum tempo, seja paciente.
- ### 5 - Clone o repositório
+
+### 5 - Instale o OpenSSL
+  [OpenSSL](https://slproweb.com/products/Win32OpenSSL.html)
+
+  
+ ### 6 - Clone o repositório
+ 
   
 Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
   Em seguida, execute o código abaixo para clonar o repositório:

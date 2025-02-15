@@ -41,7 +41,7 @@ export function DropdownMenuDemo() {
     <DropdownMenu>
   <DropdownMenuTrigger>{localStorage.getItem("cidade_dropdownmenu")||TriggerText }</DropdownMenuTrigger>
   <DropdownMenuContent>
-    <DropdownMenuLabel>Selecione </DropdownMenuLabel>
+    <DropdownMenuLabel>Selecione</DropdownMenuLabel>
     <DropdownMenuSeparator />
     <DropdownMenuLabel>
      <Input
