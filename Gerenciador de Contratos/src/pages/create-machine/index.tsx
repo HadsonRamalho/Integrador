@@ -12,7 +12,6 @@ export default function CreateMachine() {
   const [serialNumber, setSerialNumber] = useState("");
   const [rentValue, setRentValue] = useState(0);
   const [rentDisponibility, setRentDisponibility] = useState("");
-  const [status, setStatus] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [machineImages, setMachineImages] = useState<(File | null)[]>([]);
@@ -82,13 +81,13 @@ export default function CreateMachine() {
           numeroserie: serialNumber, 
           valoraluguel: rentValue,
           disponivelaluguel: rentDisponibility,
-          status,
+          status: "Ativo",
           descricao: description,
           categoria: category}),
       });
 
       if (!response.ok) {
-        throw new Error(await response.text() || "Erro ao cadastrar imagem");
+        throw new Error(await response.text() || "Erro ao cadastrar máquina");
       }
       
       const res = await response.json();
@@ -128,108 +127,104 @@ export default function CreateMachine() {
   }
 
   return (
-    <Layout>
-      <h2 style={{color: 'hsl(var(--text))', fontSize: "25px"}}>Cadastro de Máquina</h2>
-      <div className="container-maquinas">
-      <Card className="form-maquinas">
+  <Layout>
+    <div className="container-maquinas mt-10">
+      <Card className="form-maquinas mt-20 ml-2 mr-2 w-[98vw] max-w-3xl">
         <CardHeader>
+          <h2 className="text-[25px] text-[hsl(var(--text))]">Cadastro de Máquina</h2>
         </CardHeader>
-        <CardContent className="form-content">
+        <CardContent className="form-content space-y-4">
           <CardDescription>
-            <Label htmlFor="machine-name">Nome da Máquina</Label>
+            <Label htmlFor="machine-name" className="mb-1">Nome da Máquina</Label>
             <Input
               id="machine-name"
+              className="text-[hsl(var(--primary))] mb-4"
               placeholder="Nome da Máquina"
               onChange={(e) => setName(e.target.value)}
               value={name}
             />
-          </CardDescription>
-          <CardDescription>
-            <Label htmlFor="serial-number">Número de Série</Label>
+  
+            <Label htmlFor="serial-number" className="mb-1">Número de Série</Label>
             <Input
               id="serial-number"
+              className="text-[hsl(var(--primary))] mb-4"
               placeholder="Número de Série"
               onChange={(e) => setSerialNumber(e.target.value)}
               value={serialNumber}
             />
-          </CardDescription>
-          <CardDescription>
-            <Label htmlFor="rent-value">Valor de Aluguel</Label>
+  
+            <Label htmlFor="rent-value" className="mb-1">Valor de Aluguel</Label>
             <Input
               id="rent-value"
               type="number"
+              className="text-[hsl(var(--primary))] mb-4"
               value={rentValue}
               onChange={(e) => setRentValue(e.target.value ? Number(e.target.value) : 0)}
               min="0.01"
               step="0.01"
               required
             />
-          </CardDescription>
-          <CardDescription>
-            <Label htmlFor="rent-disponibility">Disponível para Aluguel?</Label>
+  
+            <Label htmlFor="rent-disponibility" className="mb-1">Disponível para Aluguel?</Label>
+            <br></br>
             <select
               id="rent-disponibility"
+              className="text-black w-[100px] mb-4 ml-20"
               onChange={(e) => setRentDisponibility(e.target.value)}
               value={rentDisponibility}
             >
               <option value="sim">Sim</option>
               <option value="não">Não</option>
             </select>
-          </CardDescription>
-          <CardDescription>
-            <Label htmlFor="status">Status</Label>
-            <Input
-              id="status"
-              placeholder="Status"
-              onChange={(e) => setStatus(e.target.value)}
-              value={status}
-            />
-          </CardDescription>
-          <CardDescription>
-            <Label htmlFor="description">Descrição da Máquina</Label>
+            <br></br>
+            <Label htmlFor="description" className="mb-1">Descrição da Máquina</Label>
             <textarea
               id="description"
+              className="w-full p-2 border rounded-md mb-4 ml-10"
               placeholder="Descrição da Máquina"
               onChange={(e) => setDescription(e.target.value)}
               value={description}
             />
-          </CardDescription>
-          <CardDescription>
-            <Label htmlFor="category">Categoria da Máquina</Label>
+  
+            <Label htmlFor="category" className="mb-1">Categoria da Máquina</Label>
             <Input
               id="category"
+              className="mb-4"
               placeholder="Categoria da Máquina"
               onChange={(e) => setCategory(e.target.value)}
               value={category}
             />
-          </CardDescription>
-          <CardDescription>
-            <Label>Imagens da Máquina</Label>
-            {machineImages.map((image, index) => (
-              <div key={index}>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  aria-label={`Upload da imagem ${index + 1}`}
-                  onChange={(e) => {
-                    const files = e.target.files;
-                    if (files && files[0]) {
-                      handleImageChange(index, files[0]);
-                    }
-                  }}
-                />
-                {image && <p>Imagem {index + 1} selecionada.</p>}
-              </div>
-            ))}
-          </CardDescription>
-          <CardDescription className="button-group-maquinas">
-            <Button onClick={addImageInput}>Adicionar Imagem</Button>
-            <Button onClick={tryCreateMachine}>Cadastrar Máquina</Button>
+  
+            <Label className="mb-1">Imagens da Máquina</Label>
+            <div className="space-y-2">
+              {machineImages.map((image, index) => (
+                <div key={index} className="mb-2">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    aria-label={`Upload da imagem ${index + 1}`}
+                    onChange={(e) => {
+                      const files = e.target.files;
+                      if (files && files[0]) {
+                        handleImageChange(index, files[0]);
+                      }
+                    }}
+                  />
+                  {image && <p>Imagem {index + 1} selecionada.</p>}
+                </div>
+              ))}
+            </div>
+  
+            <div className="button-group-maquinas flex gap-4 mt-6">
+              <Button onClick={addImageInput}>Adicionar Imagem</Button>
+              <Button onClick={tryCreateMachine}>Cadastrar Máquina</Button>
+            </div>
           </CardDescription>
         </CardContent>
       </Card>
-      </div>
+    </div>
     </Layout>
   );
+  
   
 }
