@@ -1,6 +1,6 @@
 import Layout from "@/layouts/default";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription} from "@/components/ui/card";
 import { listMachine, loadMachineImage } from "@/services/api/machine/machine";
 import { Button } from "@/components/ui/button";
 import { Machine as Maquina} from "@/interfaces/machine";

@@ -23,6 +23,7 @@
 
 .machine-card:hover{
     transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(66, 168, 117, 0.315);
 }
 
 .machine-card-description{
