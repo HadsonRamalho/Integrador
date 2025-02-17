@@ -5,6 +5,7 @@ import { loadMachinePublicId, loadMachineImage } from "@/services/api/machine/ma
 import { Machine as Maquina} from "@/interfaces/machine";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import "@/components/machine-details/machine-details.css";
 import {  
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +26,33 @@ export default function MachineDetails() {
   const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const toggleAlert = () => setShowAlert(!showAlert);
+
+  const formatDate = (dateparam: string | undefined) => {
+    if (!dateparam) return "";
+    console.log(dateparam);
+  
+    const date = new Date(dateparam);
+    
+    const brtOffset = -3 * 60;
+    const localDate = new Date(date.getTime() + brtOffset * 60 * 1000);
+  
+    const hours = String(localDate.getHours()).padStart(2, "0");
+    const minutes = String(localDate.getMinutes()).padStart(2, "0");
+    const day = String(localDate.getDate()).padStart(2, "0");
+    const month = String(localDate.getMonth() + 1).padStart(2, "0");
+    const year = localDate.getFullYear();
+  
+    return `${hours}:${minutes} ${day}/${month}/${year}`;
+  };
+
+  const formatCurrency = (value: number | bigint) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  };
 
   useEffect(() => {
     const listMachines = async () => {
@@ -80,10 +108,20 @@ export default function MachineDetails() {
             <div className="image-placeholder">Imagem indisponível</div>
           )}
         </div>
-        <h1>{machine?.nome}</h1>    
-        <CardDescription>
-        <p className="machine-card-description">Preço: <strong>R$ {machine?.valoraluguel}</strong></p>
+        <p className="machine-details-name">{machine?.nome}</p>
+        <CardDescription className="m-2">
+        <p className="machine-card-description">Preço: <strong>{formatCurrency(machine?.valoraluguel || 0)}</strong></p>
         <p className="machine-card-description">Categoria: {machine?.categoria}</p>
+
+        <p className="machine-card-description">Número de série: {machine?.numeroserie}</p>
+        <p className="machine-card-description">Disponível para aluguel: {machine?.disponivelaluguel}</p>
+        <p className="machine-card-description">Status do anúncio: {machine?.status}</p>
+
+        <p className="machine-card-description">Descrição: {machine?.descricao}</p>
+        
+        <p className="machine-card-description">Data de cadastro da máquina: {formatDate(machine?.datacadastro)}</p>
+        <p className="machine-card-description">Data de atualização da máquina: {formatDate(machine?.dataatualizacao)}</p>
+        
         </CardDescription>
         </CardContent>
       </Card>   
