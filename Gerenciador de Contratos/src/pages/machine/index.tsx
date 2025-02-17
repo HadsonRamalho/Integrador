@@ -37,9 +37,9 @@ export default function Machine() {
     listMachines();    
   }, []);  
 
-  const verifyAccountStatus = () => {
+  const verifyAccountStatus = (id: string) => {
     if(localStorage.getItem("USER_ID")){
-      navigate('/logado');
+      navigate(`/machine-details/${id}`);
       return;
     }
     toggleAlert();
@@ -71,7 +71,7 @@ export default function Machine() {
 
     return (
       <AspectRatio ratio={16 / 9}>
-        <Card className="machine-card  hover:cursor-pointer" onClick={() => {verifyAccountStatus()}}>
+        <Card className="machine-card  hover:cursor-pointer" onClick={() => {verifyAccountStatus(machine.idpublico)}}>
         <CardContent>  
         
         <div className="machine-image-home">
