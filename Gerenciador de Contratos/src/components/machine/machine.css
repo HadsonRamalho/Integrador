@@ -14,10 +14,20 @@
     width: 100%;
     height: auto;
     border-color: hsl(var(--primary));
-    background-color: hsl(var(--background));
+    background-color: hsl(var(--machine-card-bg));
     color: hsl(var(--text));
     margin: 0;
     overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.machine-card:hover{
+    transform: scale(1.02);
+}
+
+.machine-card-description{
+    font-size: 1rem;
+    margin-bottom: 10px;
 }
 
 @media (max-width: 480px) {

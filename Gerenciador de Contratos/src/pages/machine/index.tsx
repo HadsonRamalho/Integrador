@@ -71,12 +71,7 @@ export default function Machine() {
 
     return (
       <AspectRatio ratio={16 / 9}>
-        <Card className="machine-card">
-        <CardHeader>
-        <CardTitle>
-          MÁQUINA        
-        </CardTitle>
-        </CardHeader>
+        <Card className="machine-card  hover:cursor-pointer" onClick={() => {verifyAccountStatus()}}>
         <CardContent>  
         
         <div className="machine-image-home">
@@ -93,14 +88,10 @@ export default function Machine() {
           )}
         </div>
         <h1>{machine.nome}</h1>    
-        <p>Descrição: {machine.descricao}</p>
-        <CardDescription className="quadro3">
-        Preço: R$ {machine.valoraluguel}
-        </CardDescription>
         <CardDescription>
-        <Button onClick={() => {verifyAccountStatus()}}>Ver mais</Button>
+        <p className="machine-card-description">Preço: <strong>R$ {machine.valoraluguel}</strong></p>
+        <p className="machine-card-description">Categoria: {machine.categoria}</p>
         </CardDescription>
-        <p>Categoria: {machine.categoria}</p>
         </CardContent>
       </Card>
       </AspectRatio>
