@@ -178,7 +178,7 @@ export default function UserProfile() {
           </CardDescription>
           <CardContent>
             <Button className="user-profile-button" onClick={handleChange}>Editar minhas informações</Button>
-            <Button className="user-profile-button" onClick={handleDelete}>Apagar minha conta</Button>
+
           </CardContent>
         </CardContent>
       </Card>
