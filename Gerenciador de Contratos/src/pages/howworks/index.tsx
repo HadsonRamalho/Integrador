@@ -51,19 +51,25 @@ export default function HowWorks() {
               <img src={Built} alt="Escavadeira amarela em uma colina"/>
                 <div className="text">
                 <h2><span style={{color: " #29A366"}}> MAQEXPRESS </span> é Confiavél?</h2>
-                <p className="text-two"> Sim! A <span style ={{color: "#29A366"}}> MAQEXPRESS</span> foi pensada e desenvolvida para garatir um processo de locação seguro, transparente e eficiente. Nosso sistema conta com medidas de proteção para ambas as partes,  assegurando que lacadores e clientes tenham uma experiência Confiavél.
-                A MAQEXPRESS é a solução ideal para quem busca um aluguel de máquinas confiável
+                <p className="text-two"> Sim! A <span style ={{color: "#29A366"}}> MAQEXPRESS</span> foi pensada e desenvolvida para garantir um processo de locação seguro, transparente e eficiente. Nosso sistema conta com medidas de proteção para ambas as partes,  assegurando que lacadores e clientes tenham uma experiência Confiavél.
+                A MAQEXPRESS é a solução ideal para quem busca um aluguel de máquinas seguro.
                 </p>
                 </div>
               </div>
 
             <div className="question-three" >
-              <div className="text">
+              <div className="text-three">
                 <h2>E Se Eu Ainda Tiver Com Dúvida?</h2>
-                <p >Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ducimus nemo expedita quidem voluptates. Nam quasi in saepe vel. Sit laudantium facere eos nobis eius in. Eligendi vitae omnis id ad.
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vitae quam enim tempora aspernatur excepturi! Consequuntur necessitatibus enim quisquam excepturi corporis expedita placeat, consequatur officia sint tempore nam tempora sapiente nostrum!
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt a quo nulla ullam nihil! Temporibus at mollitia eos voluptates cupiditate. Placeat molestiae accusantium odio, quia possimus laboriosam amet animi voluptatem.
-                </p>
+                <p >Se ainda restarem dúvidas sobre o funcionamento ou o processo de aluguel, estamos aqui para ajudar!</p>
+
+                <ul>
+                  <li>📩Fale com o suporte - Nossa aquipe está disponível para responder suas perguntas e oferecer suporte durante todo o processo.</li>
+                  <li>💬 Entre em contato com o locador – Você pode conversar diretamente com o locador para esclarecer detalhes sobre a máquina ou a locação.</li>
+                  <li>📚 Confira a seção de perguntas frequentes (FAQ) – Reunimos as dúvidas mais comuns para facilitar sua experiência.</li>
+                </ul>
+
+                <p>Não hesite em nos chamar! Estamos prontos para tornar sua experiência mais tranquila e segura. </p>
+
               </div>
               <img src={Besley} alt="Escavadeira laranja"/>
    
