@@ -1,0 +1,15 @@
+.machine-details-card{
+    width: 98vw;
+    height: auto;
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--machine-card-bg));
+    color: hsl(var(--text));
+    margin: 0;
+    margin: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.machine-details-name{
+    font-size: 1.5rem;
+}

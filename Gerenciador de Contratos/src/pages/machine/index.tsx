@@ -1,6 +1,6 @@
 import Layout from "@/layouts/default";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription} from "@/components/ui/card";
 import { listMachine, loadMachineImage } from "@/services/api/machine/machine";
 import { Button } from "@/components/ui/button";
 import { Machine as Maquina} from "@/interfaces/machine";
@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
-
 export default function Machine() {
   const navigate = useNavigate();
   const [machines, setMachines] = useState<Maquina[]>([]);
@@ -37,9 +36,9 @@ export default function Machine() {
     listMachines();    
   }, []);  
 
-  const verifyAccountStatus = () => {
+  const verifyAccountStatus = (id: string) => {
     if(localStorage.getItem("USER_ID")){
-      navigate('/logado');
+      navigate(`/machine-details/${id}`);
       return;
     }
     toggleAlert();
@@ -71,12 +70,7 @@ export default function Machine() {
 
     return (
       <AspectRatio ratio={16 / 9}>
-        <Card className="machine-card">
-        <CardHeader>
-        <CardTitle>
-          MÁQUINA        
-        </CardTitle>
-        </CardHeader>
+        <Card className="machine-card  hover:cursor-pointer" onClick={() => {verifyAccountStatus(machine.idpublico)}}>
         <CardContent>  
         
         <div className="machine-image-home">
@@ -93,14 +87,10 @@ export default function Machine() {
           )}
         </div>
         <h1>{machine.nome}</h1>    
-        <p>Descrição: {machine.descricao}</p>
-        <CardDescription className="quadro3">
-        Preço: R$ {machine.valoraluguel}
-        </CardDescription>
         <CardDescription>
-        <Button onClick={() => {verifyAccountStatus()}}>Ver mais</Button>
+        <p className="machine-card-description">Preço: <strong>R$ {machine.valoraluguel}</strong></p>
+        <p className="machine-card-description">Categoria: {machine.categoria}</p>
         </CardDescription>
-        <p>Categoria: {machine.categoria}</p>
         </CardContent>
       </Card>
       </AspectRatio>
@@ -108,11 +98,14 @@ export default function Machine() {
   }
   return (
     <Layout>
-      <main>      
-      <p 
-        style={{color: 'hsl(var(--text))', fontSize: '25px'}}
-        className="ml-[5%]"
-        >Máquinas Disponíveis</p>  
+      <main className="mt-10">
+        <div className="flex justify-center items-center">
+          <div className="rounded-md border-[hsl(var(--primary))] border-[1px] bg-[hsl(var(--machine-card-bg))]">
+          <p className="m-4">Categorias disponíveis</p>
+          <Button className="m-4">Motoniveladora</Button>
+          <Button className="m-4">Teste</Button>
+          </div>
+        </div>
         <div className="machine-grid">          
           {machines.length === 0 ? (
             <div>
@@ -121,7 +114,7 @@ export default function Machine() {
             </div>
           ) : (
             machines.map((machine: Maquina) => (
-              <div key={machine.idmaquina} style={{width: '20%', height: '768px'}}>
+              <div key={machine.idmaquina} style={{width: '40%', height: '768px'}}>
               <MachineCard machine={machine} />
             </div>
             ))

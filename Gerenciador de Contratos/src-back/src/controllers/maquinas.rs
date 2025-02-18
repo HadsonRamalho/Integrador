@@ -2,6 +2,7 @@ use axum::{extract::Query, http::StatusCode, Json};
 use diesel::{ExpressionMethods, RunQueryDsl};
 use rand::random;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 use crate::{controllers::{maquinas_usuarios::{cadastra_maquina_usuario, MaquinaUsuarioInput}, usuarios::{busca_usuario_id, IdInput}}, models::{self, maquinas::Maquina, str_to_f64_bigdecimal}};
 
@@ -18,6 +19,39 @@ pub struct MaquinaInput{
     pub status: String,
     pub categoria: String,
     pub descricao: String
+}
+
+#[derive(Serialize, Deserialize, ToSchema)]
+pub struct MaquinaReturn{
+    pub idmaquina: String,
+    pub idpublico: String,
+    pub nome: String,
+    pub numeroserie: String,
+    pub categoria: String,
+    pub valoraluguel: f64,
+    pub disponivelaluguel: String,
+    pub status: String,
+    pub datacadastro: String,
+    pub dataatualizacao: String,
+    pub descricao: String
+}
+
+impl From<Maquina> for MaquinaReturn {
+    fn from(maquina: Maquina) -> Self {
+        Self {       
+            nome: maquina.nome,
+            idmaquina: maquina.idmaquina,
+            idpublico: maquina.idpublico,
+            numeroserie: maquina.numeroserie,
+            categoria: maquina.categoria,
+            valoraluguel: maquina.valoraluguel,
+            disponivelaluguel: maquina.disponivelaluguel,
+            status: maquina.status,
+            datacadastro: maquina.datacadastro.to_string(),
+            dataatualizacao: maquina.dataatualizacao.to_string(),
+            descricao: maquina.descricao,
+        }
+    }
 }
 
 pub async fn cadastra_maquina(input: Json<MaquinaInput>)
@@ -119,6 +153,47 @@ pub async fn busca_maquina_id(input: Json<String>)
     match models::maquinas::busca_maquina_id(conn, id).await{
         Ok(maq) => {
             return Ok((StatusCode::OK, Json(maq)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
+
+#[utoipa::path(
+    get,
+    tag = "Máquina",
+    path = "/busca_maquina_idpublico/{id}",
+    description = "Busca os dados de uma máquina a partir de seu ID público.",
+    responses(
+        (
+            status = 200, 
+            description = "ID válido. Máquina encontrada.",
+            body = MaquinaReturn
+        ),
+        (
+            status = 404,
+            description = "O ID inserido não pertence a uma máquina registrada no sistema."
+        ),
+        (
+            status = 400,
+            description = "Parâmetro inválido ou ausente."
+        ),
+    ),
+    params(
+        ("id" = String, Path, description = "ID da máquina"),
+    )
+)]
+pub async fn busca_maquina_idpublico(Query(params): Query<IdInput>)
+    -> Result<(StatusCode, Json<MaquinaReturn>), (StatusCode, Json<String>)>{
+    if params.id.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    let conn = &mut cria_conn()?;
+    let idpublico = params.id.trim().to_string();
+    match models::maquinas::busca_maquina_idpublico(conn, idpublico).await{
+        Ok(maq) => {
+            return Ok((StatusCode::OK, Json(MaquinaReturn::from(maq))))
         },
         Err(e) => {
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))

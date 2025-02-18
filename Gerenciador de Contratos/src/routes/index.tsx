@@ -10,6 +10,7 @@ import CreateMachine from "@/pages/create-machine";
 import UserProfile from "@/pages/user-profile";
 import GoogleAuthCallback from "@/pages/google-auth-callback";
 import HowWorks from "@/pages/howworks";
+import MachineDetails from "@/pages/machine-details";
 
 
 const router = createBrowserRouter([
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "/machine",
     element: <Machine/>,
+  },
+  {
+    path: "/machine-details/:publicid",
+    element: <MachineDetails/>,
   },
   {
     path: "/password-recovery",
