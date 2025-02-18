@@ -107,19 +107,6 @@ export default function UserProfile() {
     await AtualizaUsuario(nome, email, documento, email);     
   }
 
-<<<<<<< HEAD
-  const handleDelete = async() => {
-    if(user.origemconta === 'Sistema'){
-      await DeletaUsuario(user.idusuario);
-      localStorage.removeItem("USER_ID");
-      return;
-    
-    }
-    alert("Sua conta não pode ser deletada!");
-  }
-
-=======
->>>>>>> 9699b3c1602f822e0d5f0f34b5ef1e5a01db0cc8
     return (
       <Card className="user-profile-card">
         <CardHeader>

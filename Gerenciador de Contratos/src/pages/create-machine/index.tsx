@@ -128,8 +128,8 @@ export default function CreateMachine() {
 
   return (
   <Layout>
-    <div className="container-maquinas mt-10">
-      <Card className="form-maquinas mt-20 ml-2 mr-2 w-[98vw] max-w-3xl">
+    <div className="container-maquinas">
+      <Card className="form-maquinas mt-10 ml-2 mr-2 w-[98vw] max-w-3xl mb-10">
         <CardHeader>
           <h2 className="text-[25px] text-[hsl(var(--text))]">Cadastro de Máquina</h2>
         </CardHeader>
