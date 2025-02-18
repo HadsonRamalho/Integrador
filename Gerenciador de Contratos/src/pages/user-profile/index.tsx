@@ -140,6 +140,7 @@ export default function UserProfile() {
       await DeletaUsuario(user.idusuario);
       localStorage.removeItem("USER_ID");
       return;
+    
     }
     alert("Sua conta não pode ser deletada!");
   }
