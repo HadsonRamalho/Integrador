@@ -7,7 +7,7 @@
     display: inline-block;
   
 }
-
+  
 .button-group-maquinas {
     display: flex;
     justify-content: space-between;
@@ -21,49 +21,34 @@
     background-color: #000000; 
     /* height: 50vh; */
      /* padding-top: 10%;  */
-    width: 100%;    
+    width: 100%;
+     
 }
 
 .form-maquinas {
-    width: 90vw;
-    max-width: 600px;
-    background-color: hsl(var(--machine-card-bg)); 
+    width: 100vw;
+    background-color: #020303;
     padding: 20px; 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 15px; 
+    border-radius: 8px; 
 }
 
-.form-maquinas input, 
-.form-maquinas select, 
-.form-maquinas textarea {
-    width: 100%;
-    margin-left: 0; 
-    padding: 8px; 
-    border: 1px solid hsl(var(--primary)); 
-    border-radius: 8px;
+.form-maquinas input{
+    margin-left: 10%;
 }
 
-.form-maquinas select{
-    background-color: hsl(var(--primary));
-}
-
-.form-maquinas textarea{
-    color: hsl(var(--primary));
-}
-
-.form-maquinas label {
+.form-maquinas label{
     color: hsl(var(--text));
     font-size: 1rem;
-    text-align: left;
-    width: 100%;
-    padding: 4px 0;
+    padding-left: 5vh;
 }
 
-.form-maquinas .image-upload {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.quadro3{
+  background-color: hsl(var(--background));
+  color: hsl(var(--text));
+  margin: 10px; 
+  border-color: hsl(var(--primary));
 }

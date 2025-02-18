@@ -1,85 +1,91 @@
 .main-container{
     padding: 2px;
     margin: 10px;
+    
 }
 
 h1 {
     text-align: center;
-    padding: 5px;
+    padding: 15px;
     margin: 30px;
-    font-size: 2rem;
+    font-size: 2rem;  
 }
 
-.text{
+.text-headline {
    max-width: 800px;
-   padding: 10px;
+   padding: 20px;
    margin: 40px auto;
    border-radius: 8px;
-   box-shadow: 0 2px 10px rgb(0, 0, 0, 0.01);
+   box-shadow: 0 2px 10px rgb(0, 0, 0, 0.02);
    line-height: 1.5;
 }
+
 .headline{
-   text-align: center;
    text-align: justify;    
 }
 
-
-
-
-.question-one{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin: 10px;
+.list{
+    max-width: 700px;
+    margin: 20px auto;
     padding: 20px;
-    min-width: 10vw;
-
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    line-height: 1.5;
+    text-align: justify;
 }
+
+.list li{
+    line-height: 1.5;
+    padding-left: 8px;
+    list-style-type: decimal;
+    margin-bottom: 15px;
+}
+
 .text{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-
 }
- h2{
+
+h2{
     color: white;
     font-size: 1.5rem;
-    padding: 12px;
+    padding: 10px 15px;
     gap: 0.5rem;
     justify-content: center;
     align-self: center;
     text-align: center;
-    
-    
-
+    margin-bottom: 15px;
 }
 
 img{
     border-radius: 8px;
     height: 400px;
-    position: relative;
     object-fit: cover;
-
-}
-
-.question-two{
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin: 10px;
-    padding: 20px;
+    width: 50%;
+    max-width: 100%;
     
-
+}
+img:hover {
+    transform: scale(1.05); 
 }
 
-.question-three{
+.question-one, .question-two, .question-three{
     display: flex;
     align-items: center;
     gap: 1.5rem;
     margin: 10px;
     padding: 20px;
+}
 
+.text-two, .text-three{
+    line-height: 1.8rem;
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02); 
+    text-align: justify; 
 }
 
 
@@ -87,11 +93,18 @@ img{
     .question-one, .question-two, .question-three{
         flex-direction: column;
         text-align: center;
+        align-items: center;
     }
     
     img{
-        width: 80%;
-        max-width: none;
+        width: 90%;
+        height: auto;
+    }
+
+    .text{
+        max-width: 90%;
+        padding: 15px;
+        
     }
 }
 
