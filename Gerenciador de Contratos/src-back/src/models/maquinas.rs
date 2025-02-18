@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{prelude::{Insertable, Queryable}, BoolExpressionMethods, ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl, Selectable};
+use diesel::{prelude::{Insertable, Queryable}, BoolExpressionMethods, ExpressionMethods, PgConnection, PgTextExpressionMethods, QueryDsl, RunQueryDsl, Selectable};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -98,6 +98,44 @@ pub async fn busca_maquina_idpublico(conn: &mut PgConnection, id: String)
         },
         Err(e) => {
             return Err(e.to_string())
+        }
+    }
+}
+
+pub async fn pesquisa_maquina(conn: &mut PgConnection, pesquisa: String)
+    -> Result<Vec<Maquina>, String>{
+    use crate::schema::maquinas::dsl::*;
+    use diesel::dsl::sql;
+    use diesel::sql_types::Integer;
+
+    let pesquisa = format!("%{}%", pesquisa);
+    
+    let match_count_sql = format!(
+        "CASE WHEN nome ILIKE '{}' THEN 1 ELSE 0 END + \
+         CASE WHEN numeroserie ILIKE '{}' THEN 1 ELSE 0 END + \
+         CASE WHEN categoria ILIKE '{}' THEN 1 ELSE 0 END + \
+         CASE WHEN descricao ILIKE '{}' THEN 1 ELSE 0 END",
+         pesquisa, pesquisa, pesquisa, pesquisa
+    );
+
+    let match_count_sql = sql::<Integer>(&match_count_sql);
+
+    let res: Result<Vec<Maquina>, diesel::result::Error> = maquinas
+        .filter(
+            nome.ilike(&pesquisa)
+                .or(categoria.ilike(&pesquisa))
+                .or(numeroserie.ilike(&pesquisa))
+                .or(descricao.ilike(&pesquisa))
+                .and(status.eq("ativo")),
+        )
+        .order_by(match_count_sql.desc())
+        .get_results(conn);
+
+    match res {
+        Ok(produtos_) => Ok(produtos_),
+        Err(e) => {
+            println!("{:?}", e);
+            Err(e.to_string())
         }
     }
 }
