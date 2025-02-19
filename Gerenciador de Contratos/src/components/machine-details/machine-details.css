@@ -7,7 +7,6 @@
     margin: 0;
     margin: 20px;
     overflow: hidden;
-    transition: transform 0.3s ease;
 }
 
 .machine-details-name{

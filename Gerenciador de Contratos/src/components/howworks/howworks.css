@@ -49,7 +49,7 @@ h1 {
 }
 
 h2{
-    color: white;
+    color: hsl(var(--text));
     font-size: 1.5rem;
     padding: 10px 15px;
     gap: 0.5rem;
@@ -59,15 +59,16 @@ h2{
     margin-bottom: 15px;
 }
 
-img{
+.howworks-image{
     border-radius: 8px;
     height: 400px;
     object-fit: cover;
     width: 50%;
     max-width: 100%;   
+    transition: transform 0.3s ease; /* deixa a animação do hover mais fluída */
 }
 
-img:hover {
+.howworks-image:hover {
     transform: scale(1.05); 
 }
 

@@ -20,8 +20,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
-import { Document, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer';
-
 export default function Machine() {
   const navigate = useNavigate();
   const [machines, setMachines] = useState<Maquina[]>([]);
@@ -83,7 +81,7 @@ export default function Machine() {
           ) : error ? (
             <div className="image-placeholder">Erro ao carregar imagem</div>
           ) : image ? (
-              <img src={image} alt={`Imagem de ${machine.nome}`} />
+              <img src={image} className="p-0 w-full" alt={`Imagem de ${machine.nome}`} />
           ) : (
             <div className="image-placeholder">Imagem indisponível</div>
           )}
@@ -99,49 +97,9 @@ export default function Machine() {
     );
   }
 
-  const styles = StyleSheet.create({
-    page: {
-      flexDirection: 'row',
-      backgroundColor: '#E4E4E4',
-    },
-    section: {
-      margin: 10,
-      padding: 10,
-      flexGrow: 1,
-    },
-  });
-
-  const MyDocument = () => (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        <View style={styles.section}>
-          <Text>Section #1</Text>
-        </View>
-        <View style={styles.section}>
-          <Text>Section #2</Text>
-        </View>
-      </Page>
-    </Document>
-  );
-
-  const handleDownload = async () => {
-    const blob = await pdf(<MyDocument />).toBlob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "documento.pdf";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <Layout>
       <main className="mt-10">
-
-      <button onClick={handleDownload}>Baixar PDF</button>
-
 
         <div className="flex justify-center items-center">
           <div className="rounded-md border-[hsl(var(--primary))] border-[1px] bg-[hsl(var(--machine-card-bg))]">
