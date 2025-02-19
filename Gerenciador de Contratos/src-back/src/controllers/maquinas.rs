@@ -200,3 +200,23 @@ pub async fn busca_maquina_idpublico(Query(params): Query<IdInput>)
         }
     }
 }
+
+pub async fn pesquisa_maquina(pesquisa: Json<String>)
+    -> Result<(StatusCode, Json<Vec<Maquina>>), (StatusCode, Json<String>)>{
+    if pesquisa.0.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())));
+    }
+
+    let pesquisa = pesquisa.0.to_string();
+
+    let conn = &mut cria_conn()?;
+
+    match models::maquinas::pesquisa_maquina(conn, pesquisa).await{
+        Ok(maquinas) => {
+            return Ok((StatusCode::OK, Json(maquinas)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
