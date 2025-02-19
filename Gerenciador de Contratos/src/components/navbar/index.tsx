@@ -64,6 +64,15 @@ export function NavBar() {
             )            
           }              
         </li>
+        <li>
+          <NavLink
+            to="/pdf-example"
+            className={({ isActive }) => `class1 ${isActive ? "link-nav-active" : ""}`
+          }
+          >
+            Exemplo de PDF
+          </NavLink>
+        </li>
         </ul>
 
         <ul className="nav-right">

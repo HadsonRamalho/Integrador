@@ -11,6 +11,7 @@ import UserProfile from "@/pages/user-profile";
 import GoogleAuthCallback from "@/pages/google-auth-callback";
 import HowWorks from "@/pages/howworks";
 import MachineDetails from "@/pages/machine-details";
+import PdfExample from "@/pages/pdf-example";
 
 
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "/machine-details/:publicid",
     element: <MachineDetails/>,
+  },
+  {
+    path: "/pdf-example",
+    element: <PdfExample/>,
   },
   {
     path: "/password-recovery",
