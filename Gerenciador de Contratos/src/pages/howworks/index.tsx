@@ -3,6 +3,10 @@ import Dawn from "@/assets/maquina1.jpg";
 import Built from "@/assets/maquina2.jpg";
 import Besley from "@/assets/maquina3.jpg";
 import "@/components/howworks/howworks.css";
+import { MailCheck } from 'lucide-react';
+import { Cloudy  } from 'lucide-react';
+import { BookCopy } from 'lucide-react';
+
 
 
 
@@ -62,10 +66,17 @@ export default function HowWorks() {
                 <h2>E Se Eu Ainda Tiver Com Dúvida?</h2>
                 <p >Se ainda restarem dúvidas sobre o funcionamento ou o processo de aluguel, estamos aqui para ajudar!</p>
 
-                <ul>
-                  <li>📩Fale com o suporte - Nossa aquipe está disponível para responder suas perguntas e oferecer suporte durante todo o processo.</li>
-                  <li>💬 Entre em contato com o locador – Você pode conversar diretamente com o locador para esclarecer detalhes sobre a máquina ou a locação.</li>
-                  <li>📚 Confira a seção de perguntas frequentes (FAQ) – Reunimos as dúvidas mais comuns para facilitar sua experiência.</li>
+                <ul className="list-two">
+                  <li>
+                    <span className="icon"><MailCheck /></span>
+                    Fale com o suporte - Nossa aquipe está disponível para responder suas perguntas e oferecer suporte durante todo o processo.
+                  </li>
+                  <li>
+                    <span className="icon"><Cloudy /></span>
+                    Entre em contato com o locador – Você pode conversar diretamente com o locador para esclarecer detalhes sobre a máquina ou a locação.</li>
+                  <li>
+                    <span className="icon"><BookCopy /></span>
+                    Confira a seção de perguntas frequentes (FAQ) – Reunimos as dúvidas mais comuns para facilitar sua experiência.</li>
                 </ul>
 
                 <p>Não hesite em nos chamar! Estamos prontos para tornar sua experiência mais tranquila e segura. </p>
