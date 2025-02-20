@@ -24,6 +24,7 @@ h1 {
 }
 
 .list{
+    color: hsl(var(--text));
     max-width: 700px;
     margin: 20px auto;
     padding: 20px;
@@ -39,8 +40,6 @@ h1 {
     list-style-type: decimal;
     margin-bottom: 15px;
 }
-
-
 
 .text{
     display: flex;
@@ -81,6 +80,7 @@ h2{
 }
 
 .text-two, .text-three{
+    color: hsl(var(--text));
     line-height: 1.8rem;
     max-width: 700px;
     margin: 20px auto;
