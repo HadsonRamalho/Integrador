@@ -3,7 +3,6 @@ use tonic::{transport::Server, Request, Response, Status};
 use hello_world::greeter_server::{Greeter, GreeterServer};
 use hello_world::{HelloReply, HelloRequest};
 
-use crate::mid::mostra_maquinas;
 use crate::controllers::maquinas::lista_todas_maquinas;
 
 pub mod hello_world {
@@ -20,12 +19,6 @@ impl Greeter for MyGreeter {
         request: Request<HelloRequest>,
     ) -> Result<Response<HelloReply>, Status> {
         println!("Got a request: {:?}", request);
-        mostra_maquinas().await;
-        let r = lista_todas_maquinas().await.unwrap();
-        let m = r.1.0;
-        for i in m{
-            println!("{}", i.datacadastro);
-        }
 
         let reply = HelloReply {
             message: format!("Hello {}!", request.into_inner().name),
