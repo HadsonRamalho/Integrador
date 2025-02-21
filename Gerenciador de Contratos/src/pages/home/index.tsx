@@ -7,6 +7,7 @@ import teste from "@/assets/teste.jpg";
 import escavadeira from "@/assets/escavadeira.jpg";
 import motoniveladora from "@/assets/motoniveladora.jpg";
 import { Input } from "@/layouts";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 function Home() {
   return (
@@ -26,9 +27,9 @@ function Home() {
           <section className="beneficio-section">
             <h1>Por Que Alugar Na MAQEXPRESS?</h1>
             <div className="beneficios">
-              
+
               <Card>
-                <Forklift size={40} color="#29a366"/>
+                <Forklift size={40} color="#29a366" />
                 <CardTitle> Variedade</CardTitle>
                 <CardContent>
                   Máquinas de diferentes categorias para atender sua necessidade, sempre disponíveis e prontas para uso.
@@ -52,7 +53,7 @@ function Home() {
                 </CardContent>
               </Card>
               <Card>
-                <Headset size={40} color="#29a366"/>
+                <Headset size={40} color="#29a366" />
                 <CardTitle>  Suporte Agilizado</CardTitle>
                 <CardContent>
                   Nossa equipe está sempre pronta para ajudar, garantindo uma experiência ágil e sem complicações.
@@ -64,22 +65,29 @@ function Home() {
           <section className="destaque-section">
             <div className="destaque">
               <h1>Destaques Da Semana</h1>
-              <Card>
-                <img src={teste} alt="" />
-                <CardTitle>Roçadeira</CardTitle>
-                <CardContent>R$ 1000</CardContent>
-              </Card>
+              <Carousel>
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  <CarouselItem className="pl-2 md:pl-4"><Card>
+                    <img src={teste} alt="" />
+                    <CardTitle>Roçadeira</CardTitle>
+                    <CardContent>R$ 1000</CardContent>
+                  </Card></CarouselItem>
+                  <CarouselItem className="pl-2 md:pl-4">
+                    <Card>
+                      <img src={escavadeira} alt="" />
+                      <CardTitle>Escavadeira</CardTitle>
+                      <CardContent>R$ 2300</CardContent>
+                    </Card></CarouselItem>
+                  <CarouselItem className="pl-2 md:pl-4"><Card>
+                    <img src={motoniveladora} alt="" />
+                    <CardTitle>Motoniveladora</CardTitle>
+                    <CardContent>R$ 120000</CardContent>
+                  </Card></CarouselItem>
+                </CarouselContent>
+              </Carousel>
 
-              <Card>
-                <img src={escavadeira} alt="" />
-                <CardTitle>Escavadeira</CardTitle>
-                <CardContent>R$ 2300</CardContent>
-              </Card>
-              <Card>
-                <img src={motoniveladora} alt="" />
-                <CardTitle>Motoniveladora</CardTitle>
-                <CardContent>R$ 120000</CardContent>
-              </Card>
+
+
             </div>
           </section>
         </main>

@@ -25,7 +25,7 @@
 
 .titulo-section p {
     font-size: 1.1rem;
-    color: #555;
+    
     margin-bottom: 20px;
 }
 
@@ -67,14 +67,25 @@
   
 }
 
-.destaque-section{
+.destaque-section {
     text-align: center;
-    padding: 50px 20px;
 }
-.destaque-section{
-   font-size: 2rem;
-   margin-bottom: 30px;
+
+.destaque{
+    display: grid;
+    padding: 20px;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
+
+
+
+
+
+
+
+
+
 
 
 
