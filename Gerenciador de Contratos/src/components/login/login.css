@@ -11,7 +11,9 @@ body {
   align-items: center;
   padding: 20px;
   height: 100vh;
+  margin-left: 6%;
  
+  
 }
 
 .container img {
@@ -19,22 +21,25 @@ body {
   height: 100%;
   border-radius: 38px;
   border: 2px solid hsl(var(--primary));
-  opacity: 80%;
+  opacity: 0.8;
   object-fit: cover;
 }
 
 .content {
   max-width: 400px;
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: hsl(var(--background));
   border: 2px solid hsl(var(--primary));
   border-radius: 30px;
-  padding: 40px;
+  padding: 20px;
   z-index: 2;
   top: 50%;
   left: 50%;
+  opacity: 0.9;
   transform: translate(-50%, -50%);
 }
+
+
 
 .titulo {
   color: hsl(var(--text));
@@ -42,13 +47,10 @@ body {
   font-size: 1.5rem;
   text-align: start;
   margin-bottom: 20px;
+ 
+  
 }
 
-.titulo-maqexpress{
-  text-transform: uppercase;
-  align-self: flex-start;
- 
-}
 
 .login {
   display: flex;
@@ -57,6 +59,7 @@ body {
   color: hsl(var(--teste));
   gap: 15px;
   width: 100%;
+
 }
 
 .password {
@@ -80,6 +83,7 @@ body {
   border: 1px solid hsl(var(--primary));
   border-radius: 5px;
   align-items: center;
+ 
 
 }
 
@@ -92,9 +96,6 @@ body {
   color: hsl(var(--text));
 }
 
-
-
-
 .button {
   width: 70%;
   padding: 10px;
@@ -103,13 +104,5 @@ body {
   background-color: hsl(var(--primary));
   color: hsl(var(--text));
   font-size: 1rem;
-
-
-}
-
-
-.imagem {
-  width: 130px;
-  height: auto;
 }
 

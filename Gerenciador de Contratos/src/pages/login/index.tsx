@@ -87,8 +87,8 @@ export default function AuthPage() {
         <div className="container">
           <div className="content ">
           <div className="titulo">
-                <h1 className="titulo-maqexpresse" style={{color: 'white'}}> MaqExpress</h1>
-                <p style={{color: 'white'}}>
+                <h1> MaqExpress</h1>
+                <p>
                   {mode === "login"
                     ? "Faça login para  continuar"
                     : "Crie sua conta para acessar"}
@@ -113,18 +113,17 @@ export default function AuthPage() {
                     onChange={(e) => setSenha(e.target.value)}
                   />
                   <a
-                    style={{color: 'white'}}
                     className="password"
                     href=""
                     onClick={() => navigate("/password-recovery")}
                   >
                     Esqueci a senha
                   </a>
-                  <Button style={{color: 'white'}} className="button" onClick={RealizaLogin}>
+                  <Button className="button" onClick={RealizaLogin}>
                     Entrar
                   </Button>
                   <GoogleLoginButton onClick={redirectGoogle}></GoogleLoginButton>
-                  <span style={{color: 'white'}} className="link">
+                  <span className="link">
                     Não possui conta?{" "}
                     <a
                       className="link-login"
