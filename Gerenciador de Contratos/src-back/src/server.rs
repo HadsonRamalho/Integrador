@@ -1,0 +1,49 @@
+use tonic::{transport::Server, Request, Response, Status};
+
+use hello_world::greeter_server::{Greeter, GreeterServer};
+use hello_world::{HelloReply, HelloRequest};
+
+use crate::mid::mostra_maquinas;
+use crate::controllers::maquinas::lista_todas_maquinas;
+
+pub mod hello_world {
+    tonic::include_proto!("helloworld");
+}
+
+#[derive(Debug, Default)]
+pub struct MyGreeter {}
+
+#[tonic::async_trait]
+impl Greeter for MyGreeter {
+    async fn say_hello(
+        &self,
+        request: Request<HelloRequest>,
+    ) -> Result<Response<HelloReply>, Status> {
+        println!("Got a request: {:?}", request);
+        mostra_maquinas().await;
+        let r = lista_todas_maquinas().await.unwrap();
+        let m = r.1.0;
+        for i in m{
+            println!("{}", i.datacadastro);
+        }
+
+        let reply = HelloReply {
+            message: format!("Hello {}!", request.into_inner().name),
+        };
+
+        Ok(Response::new(reply))
+    }
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = "[::1]:50051".parse()?;
+    let greeter = MyGreeter::default();
+    println!("Servindo no server.rs");
+    Server::builder()
+        .add_service(GreeterServer::new(greeter))
+        .serve(addr)
+        .await?;
+
+    Ok(())
+}
