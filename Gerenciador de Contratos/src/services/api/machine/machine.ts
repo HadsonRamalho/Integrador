@@ -82,3 +82,22 @@ export async function loadUserMachines(userid: string): Promise<Machine[]> {
     );
   }
 }
+
+export async function updateMachine(machine: Machine): Promise<Machine> {
+  try {
+    const response = await client.put<Machine>("/atualiza_maquina", machine);
+
+    if (response.status === 200) {
+      const data = response.data;
+      return data;
+    }
+    console.warn("Resposta inesperada:", response.status);
+    throw new Error(`Erro ao atualizar a máquina. Status code: ${response.status}`);    
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error(error.response?.status, error.message);
+    throw new Error(
+      `Falha ao atualizar a máquina: Código [${error.response?.status}]`
+    );
+  }
+}

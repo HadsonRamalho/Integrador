@@ -139,3 +139,32 @@ pub async fn pesquisa_maquina(conn: &mut PgConnection, pesquisa: String)
         }
     }
 }
+
+pub async fn atualiza_maquina(conn: &mut PgConnection, maquina: Maquina)
+    -> Result<(), String>{
+    use crate::schema::maquinas::dsl::*;
+
+    let dataupdate = chrono::Local::now().naive_local();
+
+    let res = diesel::update(maquinas.filter(idmaquina.eq(&maquina.idmaquina)))
+        .set((
+            nome.eq(&maquina.nome),
+            numeroserie.eq(&maquina.numeroserie),
+            categoria.eq(&maquina.categoria),
+            valoraluguel.eq(&maquina.valoraluguel),
+            disponivelaluguel.eq(&maquina.disponivelaluguel),
+            status.eq(&maquina.status),
+            dataatualizacao.eq(dataupdate),
+            descricao.eq(&maquina.descricao)
+        ))
+        .execute(conn);
+
+    match res{
+        Ok(_) => {
+            return Ok(())
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}

@@ -1,4 +1,7 @@
+use std::str::FromStr;
+
 use axum::{extract::Query, http::StatusCode, Json};
+use chrono::NaiveDateTime;
 use diesel::{ExpressionMethods, RunQueryDsl};
 use rand::random;
 use serde::{Deserialize, Serialize};
@@ -36,6 +39,24 @@ pub struct MaquinaReturn{
     pub descricao: String
 }
 
+impl From<MaquinaReturn> for Maquina {
+    fn from(maquina_return: MaquinaReturn) -> Self {
+        Self {
+            idmaquina: maquina_return.idmaquina,
+            idpublico: maquina_return.idpublico,
+            nome: maquina_return.nome,
+            numeroserie: maquina_return.numeroserie,
+            categoria: maquina_return.categoria,
+            valoraluguel: maquina_return.valoraluguel,
+            disponivelaluguel: maquina_return.disponivelaluguel,
+            status: maquina_return.status,
+            datacadastro: NaiveDateTime::parse_from_str(&maquina_return.datacadastro, "%Y-%m-%d %H:%M:%S%.6f").unwrap(),
+            dataatualizacao: NaiveDateTime::parse_from_str(&maquina_return.dataatualizacao, "%Y-%m-%d %H:%M:%S%.6f").unwrap(),
+            descricao: maquina_return.descricao,
+        }
+    }
+}
+
 impl From<Maquina> for MaquinaReturn {
     fn from(maquina: Maquina) -> Self {
         Self {       
@@ -66,9 +87,9 @@ pub async fn cadastra_maquina(input: Json<MaquinaInput>)
 
     assert!(busca_usuario_id(Query(IdInput{id: input.idusuario.clone()})).await.is_ok());
 
-    if input.valoraluguel <= 0.0 {
+    if input.valoraluguel <= 1.0 {
         return Err((StatusCode::BAD_REQUEST,
-            Json("O valor do aluguel não pode ser menor ou igual a zero.".to_string())))
+            Json("O valor do aluguel não pode ser menor que R$ 1,00.".to_string())))
     }
     let id: u32 = random();
     let datacadastro = chrono::Utc::now().naive_utc();
@@ -207,6 +228,51 @@ pub async fn busca_maquina_idpublico(Query(params): Query<IdInput>)
     match models::maquinas::busca_maquina_idpublico(conn, idpublico).await{
         Ok(maq) => {
             return Ok((StatusCode::OK, Json(MaquinaReturn::from(maq))))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
+
+#[utoipa::path(
+    put,
+    tag = "Máquina",
+    path = "/atualiza_maquina",
+    description = "Atualiza os dados de uma máquina.",
+    responses(
+        (
+            status = 200, 
+            description = "Máquina atualizada com sucesso."
+        ),
+        (
+            status = 400,
+            description = "Parâmetro inválido ou ausente."
+        ),
+        (
+            status = 500,
+            description = "Erro interno."
+        ),
+    ),
+    request_body = MaquinaReturn
+)]
+pub async fn atualiza_maquina(maquina: Json<MaquinaReturn>)
+    -> Result<StatusCode, (StatusCode, Json<String>)>{
+    if maquina.categoria.trim().is_empty() || maquina.dataatualizacao.trim().is_empty()
+        || maquina.datacadastro.trim().is_empty() || maquina.descricao.trim().is_empty()
+        || maquina.disponivelaluguel.trim().is_empty() || maquina.idmaquina.trim().is_empty()
+        || maquina.idpublico.trim().is_empty() || maquina.nome.trim().is_empty()
+        || maquina.numeroserie.trim().is_empty() || maquina.status.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    
+    let maquina = maquina.0;
+
+    let conn = &mut cria_conn()?;
+
+    match models::maquinas::atualiza_maquina(conn, Maquina::from(maquina)).await{
+        Ok(_maquina) => {
+            return Ok(StatusCode::OK)
         },
         Err(e) => {
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
