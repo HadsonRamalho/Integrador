@@ -105,6 +105,11 @@ export default function CreateMachine() {
       setIsLoading(false);
       return;
     }
+    if(rentValue < 1){
+      alert("O valor do aluguel não pode ser menor que R$ 1,00");
+      setIsLoading(false);
+      return;
+    }
     const machineid = await createMachine();
     await submitImages();
     await connectMachineImage(machineid);
