@@ -101,7 +101,7 @@ export default function MachineDetails() {
       <main>
         <div>
           <Card className="machine-details-card">
-            <CardContent>
+            <CardContent className="mt-4">
               <div className="machine-details-image">
                 {loadingImage ? (
                   <div>
@@ -112,7 +112,7 @@ export default function MachineDetails() {
                     Erro ao carregar a imagem
                   </div>
                 ) : image ? (
-                  <img src={image} alt={`Imagem de ${machine?.nome}`} />
+                  <img className="rounded-xl mb-4" src={image} alt={`Imagem de ${machine?.nome}`} />
                 ) : (
                   <div className="image-placeholder">Imagem indisponível</div>
                 )}
