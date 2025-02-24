@@ -5,7 +5,7 @@ import {
   loadUserMachines,
 } from "@/services/api/machine/machine";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import "@/components/machine-list/machine-list.css";
 import { Machine as Maquina } from "@/interfaces/machine";
@@ -100,13 +100,25 @@ export const MachineList = () => {
         <div className="machine-list-grid">
           <div>
             {machines.length === 0 ? (
-              <div>
-                <p>
-                  Houve um erro ao carregar as máquinas. Reporte o problema
-                  aqui:
+              <Card>
+                <CardHeader>
+                  <h2 className="text-[hsl(var(--primary))]">
+                  Erro ao carregar lista de máquinas
+                  </h2>
+                </CardHeader>
+                <CardContent>
+                <div>
+                <p className="mb-2 text-[hsl(var(--primary))]">
+                  Você ainda não cadastrou uma máquina.
+                  <br/>
                 </p>
-                <Button>Relatar problema</Button>
+                <div className="m-4">
+                <Button className="m-2">Relatar problema</Button>
+                <Button className="m-2">Cadastrar uma máquina</Button>
+                </div>
               </div>
+                </CardContent>
+              </Card>
             ) : (
               machines.map((machine: Maquina) => (
                 <div

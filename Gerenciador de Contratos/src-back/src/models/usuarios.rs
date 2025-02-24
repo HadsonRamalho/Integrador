@@ -229,3 +229,18 @@ pub async fn atualiza_usuario(conn: &mut PgConnection, usuario: AtualizaUsuarioI
         }
     }
 }
+
+pub async fn busca_usuario_documento(conn: &mut PgConnection, doc: String)
+    -> Result<Usuario, String>{
+    use self::usuarios::dsl::*;
+
+    let res: Result<Usuario, diesel::result::Error> = usuarios.filter(documento.eq(doc)).first(conn);
+    match res{
+        Ok(usuario) => {
+            return Ok(usuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}

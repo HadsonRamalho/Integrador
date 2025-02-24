@@ -13,6 +13,7 @@ import HowWorks from "@/pages/howworks";
 import MachineDetails from "@/pages/machine-details";
 import PdfExample from "@/pages/pdf-example";
 import { MachineList } from "@/pages/machine-list";
+import UpdateMachine from "@/pages/update-machine";
 
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: "/machine-list",
     element: <MachineList/>,
+  },
+  {
+    path: "/update-machine/:publicid",
+    element: <UpdateMachine/>,
   },
   {
     path: "/pdf-example",
