@@ -176,7 +176,7 @@ export default function MachineDetails() {
 
                 {machineOwner ? (
                   <>
-                    <Button>Editar máquina</Button>
+                    <Button onClick={() => {navigate(`/update-machine/${publicid}`)}}>Atualizar máquina</Button>
                   </>
                 ) : (
                   <></>
