@@ -17,7 +17,7 @@ pwhash = "1"
 lettre = "0.11.7"
 chrono = { version = "^0", features = ["serde"] }
 thiserror = "1.0"
-tokio = { version = "1", features = ["full", "macros"] }
+tokio = { version = "1", features = ["full", "macros", "rt-multi-thread"] }
 
 axum = { version = "0.8.1", features = [ "macros", "multipart"] }
 tracing = "0.1"
@@ -42,3 +42,20 @@ utoipa-axum = "0.2"
 
 reqwest = { version = "0.12.12", features = ["json"] }
 oauth2 = "5.0.0"
+
+tonic = "*"
+prost = "0.13"
+prost-build = "*"
+
+
+[[bin]] # Bin to run the HelloWorld gRPC server
+name = "helloworld-server"
+path = "src/server.rs"
+
+[[bin]] # Bin to run the HelloWorld gRPC client
+name = "helloworld-client"
+path = "src/client.rs"
+
+[build-dependencies]
+tonic-build = "*"
+prost-build = "*"
