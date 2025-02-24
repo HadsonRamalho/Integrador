@@ -151,6 +151,7 @@ pub async fn deleta_maquina_id(id: String)
     }
 }
 
+// tonic / src-java / proto / grpc
 pub async fn lista_todas_maquinas()
     -> Result<(StatusCode, Json<Vec<Maquina>>), (StatusCode, Json<String>)>{
     let conn = &mut cria_conn()?;
@@ -162,13 +163,9 @@ pub async fn lista_todas_maquinas()
     });
 
     let response = client.say_hello(request).await.unwrap();
-    println!("RESPONSE={:?}", response);
     
     match models::maquinas::lista_todas_maquinas(conn).await{
         Ok(maquinas) => {
-            for maq in maquinas.iter(){
-                println!("{}", maq.idmaquina);
-            }
             return Ok((StatusCode::OK, Json(maquinas)))
         },
         Err(e) => {

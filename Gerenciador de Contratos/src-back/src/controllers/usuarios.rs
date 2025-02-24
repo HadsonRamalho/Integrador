@@ -755,13 +755,37 @@ pub async fn atualiza_usuario(input: Json<AtualizaUsuarioInput>)
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, ToSchema)]
 pub struct DocumentoInput{
     documento: String
 }
 
+#[utoipa::path(
+    get,
+    tag = "Usuário",
+    path = "/busca_usuario_documento/{documento}",
+    description = "Busca os dados de um usuário a partir de seu documento.",
+    responses(
+        (
+            status = 200, 
+            description = "Documento válido. Usuário encontrado.",
+            body = UsuarioReturn
+        ),
+        (
+            status = 500,
+            description = "O documento inserido não pertence a um usuário registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Parâmetro inválido ou ausente."
+        ),
+    ),
+    params(
+        ("documento" = DocumentoInput, Path, description = "Documento do usuário"),
+    )
+)]
 pub async fn busca_usuario_documento(Query(input): Query<DocumentoInput>)
-    -> Result<(StatusCode, Json<Usuario>), (StatusCode, Json<String>)>{
+    -> Result<(StatusCode, Json<UsuarioReturn>), (StatusCode, Json<String>)>{
     if input.documento.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
@@ -769,7 +793,7 @@ pub async fn busca_usuario_documento(Query(input): Query<DocumentoInput>)
     let conn = &mut cria_conn()?;
     match models::usuarios::busca_usuario_documento(conn, documento).await{
         Ok(usuario) => {
-            return Ok((StatusCode::OK, Json(usuario)))
+            return Ok((StatusCode::OK, Json(UsuarioReturn::from(usuario))))
         },
         Err(e) => {
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
@@ -777,6 +801,29 @@ pub async fn busca_usuario_documento(Query(input): Query<DocumentoInput>)
     }
 }
 
+#[utoipa::path(
+    delete,
+    tag = "Usuário",
+    path = "/deleta_usuario/{id}",
+    description = "Deleta um usuário a partir de seu ID. NÃO USAR FORA DE TESTES.",
+    responses(
+        (
+            status = 200, 
+            description = "ID válido. Usuário deletado.",
+        ),
+        (
+            status = 500,
+            description = "O ID inserido não pertence a um usuário registrado no sistema."
+        ),
+        (
+            status = 400,
+            description = "Parâmetro inválido ou ausente."
+        ),
+    ),
+    params(
+        ("id" = String, Path, description = "ID do usuário"),
+    )
+)]
 pub async fn deleta_usuario(Query(input): Query<IdInput>)
     -> Result<StatusCode, (StatusCode, Json<String>)>{
     if input.id.trim().is_empty(){

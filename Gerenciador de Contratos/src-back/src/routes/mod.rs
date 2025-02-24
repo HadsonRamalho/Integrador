@@ -10,6 +10,7 @@ use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario, __p
 use crate::controllers::codigos_recuperacao::__path_envia_codigo_recuperacao;
 use crate::controllers::enderecos::{__path_cadastra_endereco_usuario, __path_busca_endereco_id, __path_busca_endereco_idusuario};
 use crate::controllers::maquinas::{__path_busca_maquina_idpublico, __path_atualiza_maquina};
+use crate::controllers::usuarios::{__path_busca_usuario_documento, __path_deleta_usuario};
 use utoipa_axum::routes;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_swagger_ui::SwaggerUi;
@@ -32,6 +33,8 @@ pub fn cria_rotas() -> Router<>{
         .routes(routes!(busca_endereco_idusuario))
         .routes(routes!(busca_maquina_idpublico))
         .routes(routes!(atualiza_maquina))
+        .routes(routes!(busca_usuario_documento))
+        .routes(routes!(deleta_usuario))
         .split_for_parts();
 
     api.info.description = Some("\nDocumentação para as rotas da API do sistema MaqExpress.\n

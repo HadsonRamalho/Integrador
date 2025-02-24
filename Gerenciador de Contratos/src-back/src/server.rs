@@ -16,7 +16,6 @@ impl Greeter for MyGreeter {
         &self,
         request: Request<HelloRequest>,
     ) -> Result<Response<HelloReply>, Status> {
-        println!("Got a request: {:?}", request);
 
         let reply = HelloReply {
             message: format!("Hello {}!", request.into_inner().name),
