@@ -1,0 +1,49 @@
+.machine-list-image img{
+    max-width: 90%;
+    max-height: 40%;
+}
+.machine-list-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    justify-items: center;
+}
+
+.machine-list-card{
+    width: 100%;
+    height: auto;
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--machine-card-bg));
+    color: hsl(var(--text));
+    margin: 0;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+
+.machine-list-card:hover{
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(66, 168, 117, 0.315);
+}
+
+.machine-list-card-description{
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 480px) {
+    .machine-list-card {
+        width: 100%;
+        height: auto;
+        background-color: hsl(var(--background));
+        color: hsl(var(--text));
+        margin: 0;
+        overflow: hidden;
+    }
+    .machine-list-grid{
+        display: flex;
+        width: 450%;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        justify-items: center;
+    }
+  }

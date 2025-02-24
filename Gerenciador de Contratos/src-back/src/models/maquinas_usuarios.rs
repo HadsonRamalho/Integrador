@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::schema::maquinas_usuarios;
 
 
-#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize)]
+#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = crate::schema::maquinas_usuarios)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct MaquinaUsuario{

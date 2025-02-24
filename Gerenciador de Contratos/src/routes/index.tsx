@@ -12,6 +12,7 @@ import GoogleAuthCallback from "@/pages/google-auth-callback";
 import HowWorks from "@/pages/howworks";
 import MachineDetails from "@/pages/machine-details";
 import PdfExample from "@/pages/pdf-example";
+import { MachineList } from "@/pages/machine-list";
 
 
 const router = createBrowserRouter([
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/machine-details/:publicid",
     element: <MachineDetails/>,
+  },  
+  {
+    path: "/machine-list",
+    element: <MachineList/>,
   },
   {
     path: "/pdf-example",

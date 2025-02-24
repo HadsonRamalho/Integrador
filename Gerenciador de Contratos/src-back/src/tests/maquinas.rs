@@ -1,6 +1,6 @@
-use axum::Json;
+use axum::{extract::Query, Json};
 
-use crate::{controllers::{maquinas::{busca_maquina_id, cadastra_maquina, deleta_maquina_id, lista_todas_maquinas, MaquinaInput}, maquinas_usuarios::busca_maquinas_usuario_idusuario, usuarios::cadastra_usuario}, models::usuarios::deleta_usuario, tests::usuarios::usuario_padrao};
+use crate::{controllers::{maquinas::{busca_maquina_id, cadastra_maquina, deleta_maquina_id, lista_todas_maquinas, MaquinaInput}, maquinas_usuarios::busca_maquinas_usuario_idusuario, usuarios::{cadastra_usuario, IdInput}}, models::usuarios::deleta_usuario, tests::usuarios::usuario_padrao};
 
 pub struct MaquinaInputTeste{
     pub nome: String,
@@ -139,7 +139,9 @@ async fn busca_maquinas_usuario_idusuario_ok(){
         ).await)).await.unwrap().1;
     let id = idsmaquina.0.idmaquina.to_string();
 
-    assert!(busca_maquinas_usuario_idusuario(Json(idusuario.clone())).await.is_ok());
+    assert!(busca_maquinas_usuario_idusuario(Query(IdInput{
+        id: idusuario.clone()
+    })).await.is_ok());
     
     assert!(deleta_usuario(idusuario).await.is_ok());
     assert!(deleta_maquina_id(id).await.is_ok());
@@ -159,7 +161,9 @@ async fn busca_maquinas_usuario_idusuario_err(){
         ).await)).await.unwrap().1;
     let id = idsmaquina.0.idmaquina.to_string();
 
-    assert!(busca_maquinas_usuario_idusuario(Json("idinválido".to_string())).await.is_err());
+    assert!(busca_maquinas_usuario_idusuario(Query(IdInput{
+        id: "idinválido".to_string()
+    })).await.is_err());
     
     assert!(deleta_usuario(idusuario).await.is_ok());
     assert!(deleta_maquina_id(id).await.is_ok());

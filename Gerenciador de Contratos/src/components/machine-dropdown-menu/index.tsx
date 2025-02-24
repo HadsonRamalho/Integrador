@@ -27,6 +27,12 @@ export const MachineDropdownMenu = () => {
                   <p style={{color: "black", fontSize: '15px'}}>Cadastrar Máquinas</p>
                 </NavLink>
             </DropdownMenuItem>
+            <DropdownMenuSeparator/>
+            <DropdownMenuItem>
+              <NavLink to={"/machine-list"} className={({isActive}) =>`class1 ${isActive} ? "link-nav-active" : ""} `}>
+              <p style={{color: "black", fontSize: '15px'}}>Minhas Máquinas</p>
+              </NavLink>
+            </DropdownMenuItem>
             <DropdownMenuSeparator/>        
         </DropdownMenuContent>
         </DropdownMenu>

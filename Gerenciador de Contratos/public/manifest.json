@@ -3,12 +3,12 @@
     "name": "MaqExpress",
     "icons": [
       {
-        "src": "./public/maq.png",
+        "src": "./maq.png",
         "type": "image/png",
         "sizes": "192x192"
       },
       {
-        "src": "./public/maq.png",
+        "src": "./maq.png",
         "type": "image/png",
         "sizes": "512x512"
       }
