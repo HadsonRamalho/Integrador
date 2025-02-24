@@ -755,6 +755,28 @@ pub async fn atualiza_usuario(input: Json<AtualizaUsuarioInput>)
     }
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct DocumentoInput{
+    documento: String
+}
+
+pub async fn busca_usuario_documento(Query(input): Query<DocumentoInput>)
+    -> Result<(StatusCode, Json<Usuario>), (StatusCode, Json<String>)>{
+    if input.documento.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    let documento = input.documento.trim().to_string();
+    let conn = &mut cria_conn()?;
+    match models::usuarios::busca_usuario_documento(conn, documento).await{
+        Ok(usuario) => {
+            return Ok((StatusCode::OK, Json(usuario)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}
+
 pub async fn deleta_usuario(Query(input): Query<IdInput>)
     -> Result<StatusCode, (StatusCode, Json<String>)>{
     if input.id.trim().is_empty(){
