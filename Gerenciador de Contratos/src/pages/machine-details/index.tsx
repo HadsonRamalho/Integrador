@@ -22,6 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { formatCurrency, formatDate } from "@/services/api/format/format";
 
 export default function MachineDetails() {
   const navigate = useNavigate();
@@ -32,32 +33,7 @@ export default function MachineDetails() {
   const toggleAlert = () => setShowAlert(!showAlert);
   const [machineOwner, setMachineOwner] = useState(false);
 
-  const formatDate = (dateparam: string | undefined) => {
-    if (!dateparam) return "";
-    console.log(dateparam);
-
-    const date = new Date(dateparam);
-
-    const brtOffset = -3 * 60;
-    const localDate = new Date(date.getTime() + brtOffset * 60 * 1000);
-
-    const hours = String(localDate.getHours()).padStart(2, "0");
-    const minutes = String(localDate.getMinutes()).padStart(2, "0");
-    const day = String(localDate.getDate()).padStart(2, "0");
-    const month = String(localDate.getMonth() + 1).padStart(2, "0");
-    const year = localDate.getFullYear();
-
-    return `${hours}:${minutes} ${day}/${month}/${year}`;
-  };
-
-  const formatCurrency = (value: number | bigint) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  };
+  
 
   useEffect(() => {
     const listMachines = async () => {
@@ -111,7 +87,7 @@ export default function MachineDetails() {
 
   useEffect(() => {
     const userId = localStorage.getItem("USER_ID");
-    if (userId && machine) {      
+    if (userId && machine) {
       verifyUserMachines(userId, machine.idmaquina).then((result) => {
         if (result) {
           setMachineOwner(true);
@@ -171,12 +147,18 @@ export default function MachineDetails() {
                 </p>
                 <p className="machine-card-description">
                   Data de atualização da máquina:{" "}
-                  {formatDate(machine?.dataatualizacao)}
+                  {formatDate(machine?.dataatualizacao, +0)}
                 </p>
 
                 {machineOwner ? (
                   <>
-                    <Button onClick={() => {navigate(`/update-machine/${publicid}`)}}>Atualizar máquina</Button>
+                    <Button
+                      onClick={() => {
+                        navigate(`/update-machine/${publicid}`);
+                      }}
+                    >
+                      Atualizar máquina
+                    </Button>
                   </>
                 ) : (
                   <></>

@@ -24,7 +24,7 @@ export default function UpdateMachine() {
   const [name, setName] = useState("");
   const [serialNumber, setSerialNumber] = useState("");
   const [rentValue, setRentValue] = useState(0);
-  const [rentDisponibility, setRentDisponibility] = useState("");
+  const [rentDisponibility, setRentDisponibility] = useState("Sim");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
@@ -182,8 +182,8 @@ export default function UpdateMachine() {
                 value={rentDisponibility}
                 required
               >
-                <option value="sim">Sim</option>
-                <option value="não">Não</option>
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
               </select>
               <br></br>
               <Label htmlFor="description" className="mb-1">
