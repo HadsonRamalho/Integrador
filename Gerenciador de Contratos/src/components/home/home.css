@@ -5,6 +5,11 @@
     font-family: Arial, sans-serif;
 }
 
+section {
+    text-align: center;
+    padding: 50px 20px;
+}
+
 .home-container {
 
     max-width: 1200px;
@@ -25,7 +30,7 @@
 
 .titulo-section p {
     font-size: 1.1rem;
-    
+
     margin-bottom: 20px;
 }
 
@@ -49,7 +54,7 @@
 .busca-search button {
     border-radius: 5px;
     font-size: 1rem;
-  
+
 }
 
 .beneficio-section {
@@ -64,29 +69,32 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     justify-content: center;
-  
+
 }
 
 .destaque-section {
     text-align: center;
 }
 
-.destaque{
-    display: grid;
+
+
+
+.teste {
+    text-align: center;
     padding: 20px;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 
 
+.item-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
 
-
-
-
-
-
-
-
-
-
+.item {
+    width: 350px;
+    text-align: center;
+    color: hsl(var(--text))
+}
