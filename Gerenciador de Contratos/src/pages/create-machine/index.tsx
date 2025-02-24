@@ -16,6 +16,7 @@ export default function CreateMachine() {
   const [category, setCategory] = useState("");
   const [machineImages, setMachineImages] = useState<(File | null)[]>([]);
   const imageIds: string[] = [];
+  const [loading, setIsLoading] = useState(false);
 
   const handleImageChange = (index: number, file: File) => {
     const updatedImages = [...machineImages];
@@ -98,9 +99,16 @@ export default function CreateMachine() {
   }
 
   const tryCreateMachine = async () => {
+    setIsLoading(true);
+    if(machineImages.length < 1){
+      alert("A máquina deve possuir ao menos uma imagem.");
+      setIsLoading(false);
+      return;
+    }
     const machineid = await createMachine();
     await submitImages();
     await connectMachineImage(machineid);
+    setIsLoading(false);
   }
 
   const connectMachineImage = async (idmaquina: any) => {
@@ -129,7 +137,7 @@ export default function CreateMachine() {
   return (
   <Layout>
     <div className="container-maquinas">
-      <Card className="form-maquinas mt-10 ml-2 mr-2 w-[98vw] max-w-3xl mb-10">
+      <Card className="form-maquinas border-[hsl(var(--primary))] mt-10 ml-2 mr-2 w-[98vw] max-w-3xl mb-10">
         <CardHeader>
           <h2 className="text-[25px] text-[hsl(var(--text))]">Cadastro de Máquina</h2>
         </CardHeader>
@@ -138,7 +146,8 @@ export default function CreateMachine() {
             <Label htmlFor="machine-name" className="mb-1">Nome da Máquina</Label>
             <Input
               id="machine-name"
-              className="text-[hsl(var(--primary))] mb-4"
+              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              required
               placeholder="Nome da Máquina"
               onChange={(e) => setName(e.target.value)}
               value={name}
@@ -147,7 +156,8 @@ export default function CreateMachine() {
             <Label htmlFor="serial-number" className="mb-1">Número de Série</Label>
             <Input
               id="serial-number"
-              className="text-[hsl(var(--primary))] mb-4"
+              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"              
+              required
               placeholder="Número de Série"
               onChange={(e) => setSerialNumber(e.target.value)}
               value={serialNumber}
@@ -157,7 +167,7 @@ export default function CreateMachine() {
             <Input
               id="rent-value"
               type="number"
-              className="text-[hsl(var(--primary))] mb-4"
+              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"              
               value={rentValue}
               onChange={(e) => setRentValue(e.target.value ? Number(e.target.value) : 0)}
               min="0.01"
@@ -169,9 +179,10 @@ export default function CreateMachine() {
             <br></br>
             <select
               id="rent-disponibility"
-              className="text-black w-[100px] mb-4 ml-20"
+              className="w-[455px] bg-[hsl(var(--background))] h-[30px] ml-10 text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
               onChange={(e) => setRentDisponibility(e.target.value)}
               value={rentDisponibility}
+              required
             >
               <option value="sim">Sim</option>
               <option value="não">Não</option>
@@ -180,19 +191,20 @@ export default function CreateMachine() {
             <Label htmlFor="description" className="mb-1">Descrição da Máquina</Label>
             <textarea
               id="description"
-              className="w-full p-2 border rounded-md mb-4 ml-10"
+              className="w-full p-2 border bg-[hsl(var(--background))] rounded-md mb-4 ml-10 h-20 text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
               placeholder="Descrição da Máquina"
               onChange={(e) => setDescription(e.target.value)}
+              required
               value={description}
             />
   
             <Label htmlFor="category" className="mb-1">Categoria da Máquina</Label>
             <Input
               id="category"
-              className="mb-4"
-              placeholder="Categoria da Máquina"
+              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"              placeholder="Categoria da Máquina"
               onChange={(e) => setCategory(e.target.value)}
               value={category}
+              required
             />
   
             <Label className="mb-1">Imagens da Máquina</Label>
@@ -200,6 +212,8 @@ export default function CreateMachine() {
               {machineImages.map((image, index) => (
                 <div key={index} className="mb-2">
                   <Input
+                    className="mb-4 border-[hsl(var(--primary))] bg-[hsl(var(--background))] rounded-m border-[1px]"
+
                     type="file"
                     accept="image/*"
                     aria-label={`Upload da imagem ${index + 1}`}
@@ -217,7 +231,11 @@ export default function CreateMachine() {
   
             <div className="button-group-maquinas flex gap-4 mt-6">
               <Button onClick={addImageInput}>Adicionar Imagem</Button>
-              <Button onClick={tryCreateMachine}>Cadastrar Máquina</Button>
+              <Button disabled={loading} onClick={tryCreateMachine}>
+                {loading ? (
+                  <>Cadastrando...</>
+                ) : (<>Cadastrar Máquina</>)} 
+                </Button>
             </div>
           </CardDescription>
         </CardContent>

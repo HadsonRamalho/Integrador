@@ -18,7 +18,7 @@
     display: flex;
     justify-content: center;
     align-items: center; 
-    background-color: #000000; 
+    background-color: hsl(var(--background)); 
     /* height: 50vh; */
      /* padding-top: 10%;  */
     width: 100%;
@@ -27,7 +27,7 @@
 
 .form-maquinas {
     width: 100vw;
-    background-color: #020303;
+    background-color: hsl(var(--machine-card-bg));
     padding: 20px; 
     display: flex;
     flex-direction: column;
