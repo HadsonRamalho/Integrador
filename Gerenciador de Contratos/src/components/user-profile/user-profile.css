@@ -12,14 +12,14 @@
 }
 
 .user-profile-card{
-    background-color: hsl(var(--primary));
+    background-color: hsl(var(--machine-card-bg));
     width: 60vh;
     height: 70vh;
 }
 
 .user-profile-card-header{
     font-size: 3.2vh;
-    color: hsl(var(--background));
+    color: hsl(var(--primary));
 }
 
 /* .user-profile-card-content{
@@ -32,7 +32,7 @@
 } */
 
 .user-profile-card-description{
-    color: hsl(var(--background));
+    color: hsl(var(--primary));
     font-size: 1.5vh;
 }
 
@@ -46,8 +46,8 @@
 }
 
 .user-profile-button{
-    background-color: white;
-    color: black;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--text));
     margin-top: 5vh;
 }
 
@@ -63,6 +63,6 @@
 }
 
 .user-profile-button:hover{    
-    background-color: rgb(128, 226, 197);
+    background-color: #169e69;
 }
 

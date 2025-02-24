@@ -136,7 +136,7 @@ export default function UserProfile() {
   }
 
     return (
-      <Card className="user-profile-card">
+      <Card className="user-profile-card rounded-xl border-[1px] border-[hsl(var(--primary))]">
         <CardHeader>
           <CardTitle className="user-profile-card-header">Minhas Informações</CardTitle>
         </CardHeader>
@@ -144,30 +144,34 @@ export default function UserProfile() {
           <Avatar>
             <AvatarImage className="user-profile-card-image" src={localStorage.getItem("PROFILE_IMAGE_URL") || "https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg"} />                    
           </Avatar>
-          <Label htmlFor="nome">Nome</Label>
+          <Label htmlFor="nome" className="text-[hsl(var(--text))]">Nome</Label>
           <Input id="nome"
            value={nome}
+           className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
             onChange={(e) => setNome(e.target.value)}/>
 
-          <Label htmlFor="e-mail">E-mail</Label>
+          <Label htmlFor="e-mail" className="text-[hsl(var(--text))]">E-mail</Label>
           <Input
           id="email"
           readOnly={true}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
           />
-          <Label htmlFor="documento">Documento</Label>
+          <Label htmlFor="documento" className="text-[hsl(var(--text))]">Documento</Label>
           <Input
           id="documento"
           value={documento}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
           onChange={(e) => setDocumento(e.target.value)}/>
 
           { origemConta === "Sistema" ? (
             <>
-            <Label htmlFor="senha">Senha</Label>
+            <Label htmlFor="senha" className="text-[hsl(var(--text))]">Senha</Label>
             <Input
             id="senha"
             type="password"
+            className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             />

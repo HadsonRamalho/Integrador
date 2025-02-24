@@ -97,8 +97,12 @@ export const MachineList = () => {
   return (
     <Layout>
       <main className="mt-10 mb-10">
-        <div className="machine-list-grid">
-          <div>
+      <div className="flex justify-center items-center">
+          <div className="rounded-md border-[hsl(var(--primary))] border-[1px] bg-[hsl(var(--machine-card-bg))]">
+          <p className="m-4">Minhas Máquinas</p>
+          </div>
+        </div>
+        <div className="machine-list-grid">          
             {machines.length === 0 ? (
               <Card>
                 <CardHeader>
@@ -123,13 +127,12 @@ export const MachineList = () => {
               machines.map((machine: Maquina) => (
                 <div
                   key={machine.idmaquina}
-                  style={{ width: "40%", height: "768px" }}
+                  style={{marginTop: '5vh', width: "80%", height: "768px" }}
                 >
                   <MachineCard machine={machine} />
                 </div>
               ))
             )}
-          </div>
         </div>
       </main>
     </Layout>

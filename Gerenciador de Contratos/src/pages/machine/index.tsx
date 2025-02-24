@@ -100,14 +100,6 @@ export default function Machine() {
   return (
     <Layout>
       <main className="mt-10">
-
-        <div className="flex justify-center items-center">
-          <div className="rounded-md border-[hsl(var(--primary))] border-[1px] bg-[hsl(var(--machine-card-bg))]">
-          <p className="m-4">Categorias disponíveis</p>
-          <Button className="m-4">Motoniveladora</Button>
-          <Button className="m-4">Teste</Button>
-          </div>
-        </div>
         <div className="machine-grid">          
           {machines.length === 0 ? (
             <div>
