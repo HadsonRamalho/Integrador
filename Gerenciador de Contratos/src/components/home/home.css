@@ -43,7 +43,7 @@ section {
 }
 
 .busca-search Input {
-    border: 1px solid #29a366;
+    border: 1px solid hsl(var(--primary));
     border: radius 5px;
     padding: 10px;
     width: 300px;
@@ -74,6 +74,7 @@ section {
 
 .destaque-section {
     text-align: center;
+    color: hsl(var(--text));
 }
 
 
@@ -82,19 +83,8 @@ section {
 .teste {
     text-align: center;
     padding: 20px;
+    color: hsl(var(--text));
 }
 
 
 
-.item-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.item {
-    width: 350px;
-    text-align: center;
-    color: hsl(var(--text))
-}

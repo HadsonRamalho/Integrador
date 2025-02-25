@@ -84,27 +84,35 @@ function Home() {
                   Nossa equipe está sempre pronta para ajudar, garantindo uma
                   experiência ágil e sem complicações.
                 </CardContent>
+                
               </Card>
             </div>
           </section>
 
           <section className="teste">
-            <h1>Encontre O Equipamento Ideal Para Sua Obra</h1>
-            <div className="item-container">
-            <div className="item">
-            <img className="img-find" src={caminhao} alt="" />
-            <CardTitle>Caçamba</CardTitle>
-            </div>
-
-            <div className="item">
-            <img className="img-find" src={moto_serra} alt="" />
-            <CardTitle>Roçadeira</CardTitle>
-            </div>
-            <div className="item">
-            <img className="img-find" src={escavadeira1} alt="" />
-            <CardTitle>Escavadeira</CardTitle>
-            </div>
-            </div>
+          <h1>Encontre O Equipamento Ideal Para Sua Obra</h1>
+            <Carousel>
+              <CarouselContent>
+                <CarouselItem  className="md:basis-1/2 lg:basis-1/3">
+                  <img src={caminhao} alt=""/>
+                  <CardTitle>Caçamba</CardTitle>
+                </CarouselItem>
+                <CarouselItem  className="md:basis-1/2 lg:basis-1/3">
+                  <img src={moto_serra} alt=""/>
+                  <CardTitle>Motosserra</CardTitle>
+                </CarouselItem>
+                <CarouselItem  className="md:basis-1/2 lg:basis-1/3">
+                  <img src={escavadeira1} alt=""/>
+                  <CardTitle>Escavadeira</CardTitle>
+                </CarouselItem>
+                <CarouselItem  className="md:basis-1/2 lg:basis-1/3">
+                  <img src={trator} alt=""/>
+                  <CardTitle>Trator</CardTitle>
+                  </CarouselItem>
+              </CarouselContent>
+                  <CarouselPrevious />
+                <CarouselNext />
+            </Carousel>
           </section>
 
           <section className="destaque-section">
