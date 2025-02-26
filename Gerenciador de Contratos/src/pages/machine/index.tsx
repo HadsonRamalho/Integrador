@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
 } from "@/components/ui/card";
 import { listMachine, loadMachineImage } from "@/services/api/machine/machine";
 import { Button } from "@/components/ui/button";
@@ -24,6 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import MachineFilter from "@/components/machine-filter";
 
 export default function Machine() {
   const navigate = useNavigate();
@@ -119,38 +119,7 @@ export default function Machine() {
   return (
     <Layout>
       <main className="mt-10">
-        <div className="flex justify-center mb-4">
-          <Card className="bg-[hsl(var(--machine-card-bg))] w-[50%] h-[120px] border-[hsl(var(--primary))]">
-            <CardHeader>
-              <p>Filtrar Máquinas</p>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="mb-4">
-              <div className="flex justify-center">
-                <select
-                  className="w-[60%] pl-2 bg-[hsl(var(--background))] h-[30px] text-[hsl(var(--text))] border-[hsl(var(--primary))] rounded-md border-[1px]"
-                  onChange={(e) => setFilter(e.target.value)}
-                  value={filter}
-                  required
-                >
-                  <option value="">Todas as máquinas</option>
-                  {machines
-                    .map((machine) => machine.categoria)
-                    .filter(
-                      (categoria, index, self) =>
-                        self.indexOf(categoria) === index
-                    )
-                    .map((categoria) => (
-                      <option key={categoria} value={categoria}>
-                        {categoria}
-                      </option>
-                    ))}
-                </select>
-              </div>
-              </CardDescription>
-            </CardContent>
-          </Card>
-        </div>
+      <MachineFilter machines={machines} filter={filter} setFilter={setFilter} />
         <div className="machine-grid">
           {machines.length === 0 ? (
             <div>
