@@ -119,15 +119,16 @@ export default function Machine() {
   return (
     <Layout>
       <main className="mt-10">
-        <div className="flex justify-center mb-10">
-          <Card className="bg-[hsl(var(--machine-card-bg))] w-[80%] h-[100px]">
+        <div className="flex justify-center mb-4">
+          <Card className="bg-[hsl(var(--machine-card-bg))] w-[50%] h-[120px] border-[hsl(var(--primary))]">
             <CardHeader>
               <p>Filtrar Máquinas</p>
             </CardHeader>
             <CardContent>
+              <CardDescription className="mb-4">
               <div className="flex justify-center">
                 <select
-                  className="w-[20%] pl-2 bg-[hsl(var(--background))] h-[30px] text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-xl border-[1px]"
+                  className="w-[60%] pl-2 bg-[hsl(var(--background))] h-[30px] text-[hsl(var(--text))] border-[hsl(var(--primary))] rounded-md border-[1px]"
                   onChange={(e) => setFilter(e.target.value)}
                   value={filter}
                   required
@@ -146,6 +147,7 @@ export default function Machine() {
                     ))}
                 </select>
               </div>
+              </CardDescription>
             </CardContent>
           </Card>
         </div>
@@ -165,7 +167,7 @@ export default function Machine() {
               .map((machine: Maquina) => (
                 <div
                   key={machine.idmaquina}
-                  style={{ marginTop: "10vh", width: "90%", height: "768px" }}
+                  style={{ marginTop: "4vh", width: "90%", height: "768px" }}
                 >
                   <MachineCard machine={machine} />
                 </div>
