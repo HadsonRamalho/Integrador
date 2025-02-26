@@ -131,27 +131,42 @@ function Home() {
               <Carousel>
                 <CarouselContent>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
+                  <a href=""
+                  onClick={()=> navigate("/machine")}>
                     <img src={teste} alt="" />
+                  </a>
                     <CardTitle>Roçadeira</CardTitle>
                     <CardContent>R$10092</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
+                  <a href=""
+                  onClick={()=> navigate("/machine")}>
                     <img src={escavadeira} alt="" />
+                  </a>
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$12292</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
+                  <a href=""
+                  onClick={()=> navigate("/machine")}>
                     <img src={motoniveladora} alt="" />
+                  </a>
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$2540</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
+                  <a href=""
+                  onClick={()=> navigate("/machine")}>
                     <img src={escavadeira} alt="" />
+                  </a>
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$5410</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
+                  <a href=""
+                  onClick={()=> navigate("/machine")}>
                     <img src={motoniveladora} alt="" />
+                  </a>
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$10000</CardContent>
                   </CarouselItem>

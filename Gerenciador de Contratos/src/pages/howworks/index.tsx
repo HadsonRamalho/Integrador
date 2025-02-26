@@ -3,12 +3,7 @@ import Dawn from "@/assets/maquina1.jpg";
 import Built from "@/assets/maquina2.jpg";
 import Besley from "@/assets/maquina3.jpg";
 import "@/components/howworks/howworks.css";
-import { Contact, MailCheck } from 'lucide-react';
-import { Cloudy  } from 'lucide-react';
-import { BookCopy } from 'lucide-react';
-
-
-
+import { Contact, MailCheck, BookCopy } from 'lucide-react';
 
 
 export default function HowWorks() {
