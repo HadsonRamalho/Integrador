@@ -3,7 +3,7 @@ import Dawn from "@/assets/maquina1.jpg";
 import Built from "@/assets/maquina2.jpg";
 import Besley from "@/assets/maquina3.jpg";
 import "@/components/howworks/howworks.css";
-import { MailCheck } from 'lucide-react';
+import { Contact, MailCheck } from 'lucide-react';
 import { Cloudy  } from 'lucide-react';
 import { BookCopy } from 'lucide-react';
 
@@ -72,7 +72,7 @@ export default function HowWorks() {
                     Fale com o suporte - Nossa aquipe está disponível para responder suas perguntas e oferecer suporte durante todo o processo.
                   </li>
                   <li>
-                    <span className="icon"><Cloudy /></span>
+                    <span className="icon"><Contact/></span>
                     Entre em contato com o locador – Você pode conversar diretamente com o locador para esclarecer detalhes sobre a máquina ou a locação.</li>
                   <li>
                     <span className="icon"><BookCopy /></span>

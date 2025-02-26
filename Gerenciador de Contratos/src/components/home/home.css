@@ -10,6 +10,7 @@ section {
     padding: 50px 20px;
 }
 
+
 .home-container {
 
     max-width: 1200px;
@@ -58,27 +59,25 @@ section {
 }
 
 .beneficio-section {
-    text-align: center;
+    justify-content: center;
     padding: 50px, 20px;
-
 }
-
 
 .beneficios {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
-    justify-content: center;
 
+}
+.card-content{
+    padding: 50px 20px;
 }
 
 .destaque-section {
     text-align: center;
     color: hsl(var(--text));
+  
 }
-
-
-
 
 .teste {
     text-align: center;
@@ -86,5 +85,20 @@ section {
     color: hsl(var(--text));
 }
 
+.card:hover {
+    transform: scale(1.1);
+    transition: transform 0.5s ease;
+   
+}
 
+.carousel:active{
+    transform: scale(1.05);
+    transition: transform 0.2s ease; 
+    
+}
+
+.carousel-item:hover{
+    transition: transform 0.5 ease;
+    transform: scale(0.95);
+}
 

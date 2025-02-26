@@ -24,8 +24,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
+
   return (
     <>
       <Layout>
@@ -48,99 +51,106 @@ function Home() {
           <section className="beneficio-section">
             <h1>Por Que Alugar Na MAQEXPRESS?</h1>
             <div className="beneficios">
-              <Card>
+              <Card className="card">
                 <Forklift size={40} color="#29a366" />
                 <CardTitle> Variedade</CardTitle>
-                <CardContent>
+                <CardContent className="card-content">
                   Máquinas de diferentes categorias para atender sua
                   necessidade, sempre disponíveis e prontas para uso.
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="card">
                 <MousePointerClickIcon size={40} color="#29a366" />
                 <CardTitle> Facilidade</CardTitle>
-                <CardContent>
+                <CardContent className="card-content">
                   Processo 100% online, sem burocracia! Alugue em poucos cliques
                   e receba onde precisar.
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="card">
                 <Handshake size={40} color="#29a366" />
                 <CardTitle>Segurança</CardTitle>
-                <CardContent>
-                  Garantimos que todos os usuários são verificados para evitar
-                  fraudes e proporcionar negociações seguras. Formalize seu
-                  aluguel com contratos eletrônicos seguros, sem necessidade de
-                  papelada ou deslocamentos. Utilizamos tecnologias de
-                  criptografia para proteger suas transações financeiras.
-                  Proteja os equipamentos alugados contra danos ou imprevistos,
-                  garantindo mais tranquilidade na locação.
+                <CardContent className="card-content" >
+                  Garantimos que todos os usuários são verificados para evitar fraudes e proporcionar
+                  negociações seguras. Utilizamos contratos eletrônicos e criptografia para sua proteção.
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="card">
                 <Headset size={40} color="#29a366" />
                 <CardTitle> Suporte Agilizado</CardTitle>
-                <CardContent>
+                <CardContent className="card-content">
                   Nossa equipe está sempre pronta para ajudar, garantindo uma
                   experiência ágil e sem complicações.
                 </CardContent>
-                
+
               </Card>
             </div>
           </section>
 
           <section className="teste">
-          <h1>Encontre O Equipamento Ideal Para Sua Obra</h1>
+            <h1>Encontre O Equipamento Ideal Para Sua Obra</h1>
             <Carousel>
               <CarouselContent>
-                <CarouselItem  className="md:basis-1/2 lg:basis-1/3">
-                  <img src={caminhao} alt=""/>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
+                  <a href=""
+                    onClick={() => navigate("/machine")}>
+                    <img src={caminhao} alt="" />
+                  </a>
                   <CardTitle>Caçamba</CardTitle>
                 </CarouselItem>
-                <CarouselItem  className="md:basis-1/2 lg:basis-1/3">
-                  <img src={moto_serra} alt=""/>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
+                  <a href=""
+                    onClick={() => navigate("/machine")}>
+                    <img src={moto_serra} alt="" />
+                  </a>
                   <CardTitle>Motosserra</CardTitle>
                 </CarouselItem>
-                <CarouselItem  className="md:basis-1/2 lg:basis-1/3">
-                  <img src={escavadeira1} alt=""/>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
+                  <a href=""
+                    onClick={() => navigate("/machine")}>
+                    <img src={escavadeira1} alt="" />
+                  </a>
                   <CardTitle>Escavadeira</CardTitle>
                 </CarouselItem>
-                <CarouselItem  className="md:basis-1/2 lg:basis-1/3">
-                  <img src={trator} alt=""/>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
+                  <a href=""
+                    onClick={() => navigate("/machine")}>
+                    <img src={trator} alt="" />
+                  </a>
                   <CardTitle>Trator</CardTitle>
-                  </CarouselItem>
+                </CarouselItem>
               </CarouselContent>
-                  <CarouselPrevious />
-                <CarouselNext />
+              <CarouselPrevious />
+              <CarouselNext />
             </Carousel>
           </section>
 
           <section className="destaque-section">
-            <div className="destaque">
+            <div>
               <h1>Destaques Da Semana</h1>
               <Carousel>
                 <CarouselContent>
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img src={teste} alt="" />
                     <CardTitle>Roçadeira</CardTitle>
                     <CardContent>R$10092</CardContent>
                   </CarouselItem>
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img src={escavadeira} alt="" />
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$12292</CardContent>
                   </CarouselItem>
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img src={motoniveladora} alt="" />
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$2540</CardContent>
                   </CarouselItem>
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img src={escavadeira} alt="" />
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$5410</CardContent>
                   </CarouselItem>
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img src={motoniveladora} alt="" />
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$10000</CardContent>
