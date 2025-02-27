@@ -1,4 +1,4 @@
-.form-content {
+.form-content-update {
     width: 500px;
     display: flex;
     flex-direction: column;
@@ -8,13 +8,13 @@
   
 }
   
-.button-group-maquinas {
+.button-group-maquinas-update {
     display: flex;
     justify-content: space-between;
     gap: 10px;
 }
 
-.container-maquinas {
+.container-maquinas-update {
     display: flex;
     justify-content: center;
     align-items: center; 
@@ -25,7 +25,7 @@
      
 }
 
-.form-maquinas {
+.form-maquinas-update {
     width: 100vw;
     background-color: hsl(var(--machine-card-bg));
     padding: 20px; 
@@ -36,17 +36,12 @@
     border-radius: 8px; 
 }
 
-.form-maquinas input, select, textarea{
+.form-maquinas-update input, select, textarea{
     margin-left: 0%;
 }
 
-.form-maquinas label{
+.form-maquinas-update label{
     color: hsl(var(--text));
     font-size: 1rem;
     padding-left: 0;
-}
-
-.machine-image-update img{
-    max-width: 90%;
-    max-height: 40%;
 }

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "@/components/create-machine/index.css";
+import EquipmentSelect from "@/components/equipment-select";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,10 +14,10 @@ export default function CreateMachine() {
   const [rentValue, setRentValue] = useState(0);
   const [rentDisponibility, setRentDisponibility] = useState("Sim");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
   const [machineImages, setMachineImages] = useState<(File | null)[]>([]);
   const imageIds: string[] = [];
   const [loading, setIsLoading] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState("");
 
   const handleImageChange = (index: number, file: File) => {
     const updatedImages = [...machineImages];
@@ -84,7 +85,7 @@ export default function CreateMachine() {
           disponivelaluguel: rentDisponibility,
           status: "Ativo",
           descricao: description,
-          categoria: category}),
+          categoria: selectedEquipment}),
       });
 
       if (!response.ok) {
@@ -141,8 +142,8 @@ export default function CreateMachine() {
 
   return (
   <Layout>
-    <div className="container-maquinas">
-      <Card className="form-maquinas border-[hsl(var(--primary))] mt-10 ml-2 mr-2 w-[98vw] max-w-3xl mb-10">
+    <div className="flex justify-center items-center min-h-screen">
+      <Card className="form-maquinas border-[hsl(var(--primary))] mt-10 w-full max-w-3xl mb-10">
         <CardHeader>
           <h2 className="text-[25px] text-[hsl(var(--text))]">Cadastro de Máquina</h2>
         </CardHeader>
@@ -184,7 +185,7 @@ export default function CreateMachine() {
             <br></br>
             <select
               id="rent-disponibility"
-              className="w-[455px] bg-[hsl(var(--background))] h-[30px] ml-10 text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              className="w-full bg-[hsl(var(--background))] h-[30px] text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
               onChange={(e) => setRentDisponibility(e.target.value)}
               value={rentDisponibility}
               required
@@ -196,7 +197,7 @@ export default function CreateMachine() {
             <Label htmlFor="description" className="mb-1">Descrição da Máquina</Label>
             <textarea
               id="description"
-              className="w-full p-2 border bg-[hsl(var(--background))] rounded-md mb-4 ml-10 h-20 text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              className="w-full p-2 border bg-[hsl(var(--background))] rounded-md mb-4 h-20 text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
               placeholder="Descrição da Máquina"
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -204,13 +205,7 @@ export default function CreateMachine() {
             />
   
             <Label htmlFor="category" className="mb-1">Categoria da Máquina</Label>
-            <Input
-              id="category"
-              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"              placeholder="Categoria da Máquina"
-              onChange={(e) => setCategory(e.target.value)}
-              value={category}
-              required
-            />
+            <EquipmentSelect className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] w-full" onChange={(e) => setSelectedEquipment(e.target.value)} />
   
             <Label className="mb-1">Imagens da Máquina</Label>
             <div className="space-y-2">

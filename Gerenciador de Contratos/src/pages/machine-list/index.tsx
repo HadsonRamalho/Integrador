@@ -111,8 +111,7 @@ export const MachineList = () => {
     <Layout>
       <main className="mt-10 mb-10">
         <div className="flex justify-center items-center">
-          <div className="rounded-md w-[50vw] border-[hsl(var(--primary))] border-[1px] bg-[hsl(var(--machine-card-bg))]">
-            <p className="m-4">Minhas Máquinas</p>
+          <div className="rounded-md w-[50vw]">
             <MachineFilter
               machines={machines}
               filter={filter}
@@ -120,7 +119,12 @@ export const MachineList = () => {
             />
           </div>
         </div>
-        <div className={`machine-list-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`}>
+        <Card className="bg-[hsl(var(--machine-card-bg))] m-4 border-[hsl(var(--primary))]">
+            <CardHeader className="text-center">
+            <p className="text-[1.2rem]">Minhas Máquinas</p>
+            </CardHeader>
+          <CardContent>
+          <div className={`machine-list-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`}>
           {filteredMachines.length === 0 ? (
             <Card>
               <CardHeader>
@@ -152,7 +156,9 @@ export const MachineList = () => {
               </div>
             ))
           )}
-        </div>
+          </div>
+          </CardContent>
+        </Card>
       </main>
     </Layout>
   );
