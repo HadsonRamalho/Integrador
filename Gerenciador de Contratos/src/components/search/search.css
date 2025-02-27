@@ -1,0 +1,22 @@
+.busca-search {
+    max-width: 300px;
+    margin: 20px auto;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .search-results {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .search-results li {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+  }
+  

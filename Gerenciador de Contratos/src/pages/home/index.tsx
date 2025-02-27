@@ -12,11 +12,11 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import teste from "@/assets/teste.jpg";
 import escavadeira1 from "@/assets/escava.jpg";
 import escavadeira from "@/assets/escavadeira.jpg";
-import caminhao from "@/assets/caminhao.jpg";
+import cacamba from "@/assets/caminhao.jpg";
 import motoniveladora from "@/assets/motoniveladora.jpg";
 import moto_serra from "@/assets/motoserra.jpg";
 import trator from "@/assets/trator.jpg";
-import { Input } from "@/layouts";
+
 import {
   Carousel,
   CarouselContent,
@@ -25,9 +25,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useNavigate } from "react-router-dom";
+import SearchFilter from "@/components/search/search";
 
 function Home() {
   const navigate = useNavigate();
+
 
   return (
     <>
@@ -39,13 +41,7 @@ function Home() {
               Encontre a máquina ideal para sua obra ou disponibilize seus
               equipamentos para locação com segurança e sem burocracia.
             </p>
-            <div className="busca-search">
-              <Input placeholder="Buscar Equipamentos.." />
-              <Button className="">
-                <Search />
-                Buscar
-              </Button>
-            </div>
+            <SearchFilter/>
           </section>
 
           <section className="beneficio-section">
@@ -70,9 +66,10 @@ function Home() {
               <Card className="card">
                 <Handshake size={40} color="#29a366" />
                 <CardTitle>Segurança</CardTitle>
-                <CardContent className="card-content" >
-                  Garantimos que todos os usuários são verificados para evitar fraudes e proporcionar
-                  negociações seguras. Utilizamos contratos eletrônicos e criptografia para sua proteção.
+                <CardContent className="card-content">
+                  Garantimos que todos os usuários são verificados para evitar
+                  fraudes e proporcionar negociações seguras. Utilizamos
+                  contratos eletrônicos e criptografia para sua proteção.
                 </CardContent>
               </Card>
               <Card className="card">
@@ -82,7 +79,6 @@ function Home() {
                   Nossa equipe está sempre pronta para ajudar, garantindo uma
                   experiência ágil e sem complicações.
                 </CardContent>
-
               </Card>
             </div>
           </section>
@@ -92,31 +88,35 @@ function Home() {
             <Carousel>
               <CarouselContent>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
-                  <a href=""
-                    onClick={() => navigate("/machine")}>
-                    <img src={caminhao} alt="" />
-                  </a>
+                  <img
+                    src={cacamba}
+                    alt="caçamba"
+                    onClick={() => navigate("/machine")}
+                  />
                   <CardTitle>Caçamba</CardTitle>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
-                  <a href=""
-                    onClick={() => navigate("/machine")}>
-                    <img src={moto_serra} alt="" />
-                  </a>
+                  <img
+                    src={moto_serra}
+                    alt="motosserra"
+                    onClick={() => navigate("/machine")}
+                  />
                   <CardTitle>Motosserra</CardTitle>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
-                  <a href=""
-                    onClick={() => navigate("/machine")}>
-                    <img src={escavadeira1} alt="" />
-                  </a>
+                  <img
+                    src={escavadeira1}
+                    alt="escavadeira"
+                    onClick={() => navigate("/machine")}
+                  />
                   <CardTitle>Escavadeira</CardTitle>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
-                  <a href=""
-                    onClick={() => navigate("/machine")}>
-                    <img src={trator} alt="" />
-                  </a>
+                  <img
+                    src={trator}
+                    alt="trator"
+                    onClick={() => navigate("/machine")}
+                  />
                   <CardTitle>Trator</CardTitle>
                 </CarouselItem>
               </CarouselContent>
@@ -131,42 +131,47 @@ function Home() {
               <Carousel>
                 <CarouselContent>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
-                  <a href=""
-                  onClick={()=> navigate("/machine")}>
-                    <img src={teste} alt="" />
-                  </a>
+                    <img
+                      src={teste}
+                      alt=""
+                      onClick={() => navigate("/machine")}
+                    />
                     <CardTitle>Roçadeira</CardTitle>
                     <CardContent>R$10092</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
-                  <a href=""
-                  onClick={()=> navigate("/machine")}>
-                    <img src={escavadeira} alt="" />
-                  </a>
+                    <img
+                      src={escavadeira}
+                      alt=""
+                      onClick={() => navigate("/machine")}
+                    />
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$12292</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
-                  <a href=""
-                  onClick={()=> navigate("/machine")}>
-                    <img src={motoniveladora} alt="" />
-                  </a>
+                    <img
+                      src={motoniveladora}
+                      alt=""
+                      onClick={() => navigate("/machine")}
+                    />
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$2540</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
-                  <a href=""
-                  onClick={()=> navigate("/machine")}>
-                    <img src={escavadeira} alt="" />
-                  </a>
+                    <img
+                      src={escavadeira}
+                      alt=""
+                      onClick={() => navigate("/machine")}
+                    />
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$5410</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
-                  <a href=""
-                  onClick={()=> navigate("/machine")}>
-                    <img src={motoniveladora} alt="" />
-                  </a>
+                    <img
+                      src={motoniveladora}
+                      alt=""
+                      onClick={() => navigate("/machine")}
+                    />
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$10000</CardContent>
                   </CarouselItem>
