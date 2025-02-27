@@ -87,7 +87,7 @@ export default function Machine() {
             <div className="machine-image-home">
               {loadingImage ? (
                 <div>
-                  <Skeleton className="h-[30vh] w-[30vw] rounded-xl" />
+                  <Skeleton className="h-[30vh] w-[90%] rounded-xl" />
                 </div>
               ) : error ? (
                 <div className="image-placeholder">Erro ao carregar imagem</div>
