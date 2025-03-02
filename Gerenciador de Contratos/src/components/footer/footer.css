@@ -1,33 +1,31 @@
 .footer-container {
   background-color: hsl(var(--primary));
- 
   display: flex;
-  justify-content:space-evenly;
-  
+  justify-content: space-between;
+  align-items: center;
  
+}
 
- 
+.footer-section {
+  color: hsl(var(--foreground));
+  min-width: 200px;
+  text-align: center;
 }
 
 .footer-section h2 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  
-  
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: hsl(var(--foreground));
 }
 
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
 .footer-section ul li {
-  margin: 5px 0;
-  
-
+  margin: 8px 0;
 }
 
-.footer-section ul li a {
-
-  transition: color 0.3s ease;
-} 
-
- .footer-section ul li a:hover {
-  color: #033f84;
-} 

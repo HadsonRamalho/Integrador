@@ -25,7 +25,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useNavigate } from "react-router-dom";
-import SearchFilter from "@/components/search/search";
+import SearchFilter from "@/components/searchs";
 
 function Home() {
   const navigate = useNavigate();

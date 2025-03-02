@@ -14,6 +14,7 @@ import MachineDetails from "@/pages/machine-details";
 import PdfExample from "@/pages/pdf-example";
 import { MachineList } from "@/pages/machine-list";
 import UpdateMachine from "@/pages/update-machine";
+import DetalhesMaquina from "@/pages/search";
 
 
 const router = createBrowserRouter([
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
     path: "/machine-details/:publicid",
     element: <MachineDetails/>,
   },  
+  {
+    path: "/maquinas/:id",
+    element: <DetalhesMaquina />,
+  },
   {
     path: "/machine-list",
     element: <MachineList/>,
