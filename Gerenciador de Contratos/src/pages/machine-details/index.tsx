@@ -168,9 +168,18 @@ export default function MachineDetails() {
                   {formatDate(machine?.dataatualizacao, +0)}
                 </p>
 
+                <div className="m-2">
+                {machine?.disponivelaluguel === "Sim" ?
+                (
+                  <Button className="m-2">Alugar máquina</Button>
+                ) : (
+                  <Button disabled={true}>Máquina indisponível para aluguel</Button>
+                )}
+
                 {machineOwner ? (
                   <>
                     <Button
+                      className="m-2"
                       onClick={() => {
                         navigate(`/update-machine/${publicid}`);
                       }}
@@ -181,6 +190,7 @@ export default function MachineDetails() {
                 ) : (
                   <></>
                 )}
+                </div>
               </CardDescription>
             </CardContent>
           </Card>
