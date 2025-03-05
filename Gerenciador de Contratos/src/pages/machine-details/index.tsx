@@ -21,6 +21,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/services/api/format/format";
 
@@ -106,14 +113,24 @@ export default function MachineDetails() {
               <div className="machine-details-image">
                 {loadingImage ? (
                   <div>
-                    <Skeleton className="h-[30vh] w-[30vw] rounded-xl" />
+                    <Skeleton className="h-[35vh] w-[25vw] ml-10 rounded-xl" />
                   </div>
                 ) : error ? (
                   <div className="image-placeholder">
                     Erro ao carregar a imagem
                   </div>
                 ) : images ? (
-                  <img className="rounded-xl mb-4" src={images[0]} alt={`Imagem de ${machine?.nome}`} />
+                  <Carousel className="w-[80%] ml-10">
+                  <CarouselContent>
+                    {images.map((image) => (
+                      <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
+                      <img className="rounded-xl mb-4" src={image} alt={`Imagem de ${machine?.nome}`} />
+                    </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
                 ) : (
                   <div className="image-placeholder">Imagem indisponível</div>
                 )}
