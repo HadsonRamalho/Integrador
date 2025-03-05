@@ -423,6 +423,11 @@ export default function UserProfile() {
                   />                  
                 </div>
               <AlertDialogFooter>
+                <AlertDialogCancel
+                  className="bg-[hsl(var(--machine-card-bg))] text-[hsl(var(--text))]"
+                  onClick={() => {navigate('/')}}>
+                  Vou fazer isso depois
+                </AlertDialogCancel>
                 <AlertDialogAction onClick={() => {
                   handleSubtmitAddress();
                 }}>
