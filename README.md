@@ -40,10 +40,8 @@ Será instalado o Visual Studio Community, isso deve levar algum tempo, seja pac
 ### 5 - Instale o OpenSSL
   [OpenSSL](https://slproweb.com/products/Win32OpenSSL.html)
 
-  
- ### 6 - Clone o repositório
- 
-  
+### 6 - Clone o repositório
+
 Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
   Em seguida, execute o código abaixo para clonar o repositório:
   `git clone https://github.com/HadsonRamalho/Integrador.git`
