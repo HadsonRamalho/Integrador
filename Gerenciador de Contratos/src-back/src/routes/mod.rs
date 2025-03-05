@@ -4,7 +4,7 @@ use axum::{
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
 use utoipa::openapi::Contact;
-use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, enderecos::{busca_endereco_id, busca_endereco_idusuario, cadastra_endereco_usuario}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina}, maquinas::{atualiza_maquina, busca_maquina_idpublico, cadastra_maquina, lista_todas_maquinas, pesquisa_maquina}, maquinas_usuarios::busca_maquinas_usuario_idusuario, multipart::cadastra_imagem, oauth::{google_oauth_handler, Config}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_documento, busca_usuario_id, cadastra_usuario, deleta_usuario, realiza_login, redefine_senha_usuario}};
+use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, enderecos::{busca_endereco_id, busca_endereco_idusuario, cadastra_endereco_usuario}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina, recupera_imagens_maquina}, maquinas::{atualiza_maquina, busca_maquina_idpublico, cadastra_maquina, lista_todas_maquinas, pesquisa_maquina}, maquinas_usuarios::busca_maquinas_usuario_idusuario, multipart::cadastra_imagem, oauth::{google_oauth_handler, Config}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_documento, busca_usuario_id, cadastra_usuario, deleta_usuario, realiza_login, redefine_senha_usuario}};
 use crate::controllers::usuarios::busca_usuario_email;
 use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario, __path_busca_usuario_email, __path_atualiza_usuario, __path_atualiza_senha_usuario, __path_redefine_senha_usuario, __path_busca_email_usuario, __path_atualiza_email_usuario, __path_busca_usuario_id};
 use crate::controllers::codigos_recuperacao::__path_envia_codigo_recuperacao;
@@ -78,6 +78,7 @@ pub fn cria_rotas() -> Router<>{
         .route("/cadastra_imagem", post(cadastra_imagem))
         .route("/cadastra_imagem_maquina", post(cadastra_imagem_maquina))
         .route("/recupera_imagem_maquina", post(recupera_imagem_maquina))
+        .route("/recupera_imagens_maquina", post(recupera_imagens_maquina))
 
         .route("/cadastra_endereco_usuario", post(cadastra_endereco_usuario))
         .route("/busca_endereco_id/", get(busca_endereco_id))

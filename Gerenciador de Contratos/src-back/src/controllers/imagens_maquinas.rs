@@ -48,13 +48,13 @@ pub async fn recupera_imagem_maquina(input: Json<String>)
     }
 }
 
-pub async fn busca_imagens_maquina(input: Json<String>)
+pub async fn recupera_imagens_maquina(input: Json<String>)
     -> Result<(StatusCode, Json<Vec<String>>), (StatusCode, Json<String>)>{
     let idmaquina = input.0.to_string();
 
     let conn = &mut cria_conn()?;
 
-    match models::imagens_maquinas::busca_imagens_maquina(conn, Json(idmaquina)).await{
+    match models::imagens_maquinas::recupera_imagens_maquina(conn, Json(idmaquina)).await{
         Ok(ids) => {
             return Ok((StatusCode::OK, Json(ids)))
         },

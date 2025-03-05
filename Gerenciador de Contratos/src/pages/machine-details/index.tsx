@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import {
   loadMachinePublicId,
-  loadMachineImage,
   loadUserMachines,
+  loadMachineImages,
 } from "@/services/api/machine/machine";
 import { Machine as Maquina } from "@/interfaces/machine";
 import { useNavigate, useParams } from "react-router-dom";
@@ -46,14 +46,15 @@ export default function MachineDetails() {
     listMachines();
   }, [publicid]);
 
-  const [image, setImage] = useState("");
+  const [images, setImages] = useState<string[]>();
   const [loadingImage, setLoadingImage] = useState(true);
 
   const fetchMachineImage = async (machineId: string) => {
     try {
-      const response = await loadMachineImage(machineId);
+      const response = await loadMachineImages(machineId);
       const imageUrl = response;
-      setImage(imageUrl);
+      console.log("imageUrl: ", imageUrl);
+      setImages(imageUrl);
       setLoadingImage(false);
     } catch (error) {
       console.error(error);
@@ -111,8 +112,8 @@ export default function MachineDetails() {
                   <div className="image-placeholder">
                     Erro ao carregar a imagem
                   </div>
-                ) : image ? (
-                  <img className="rounded-xl mb-4" src={image} alt={`Imagem de ${machine?.nome}`} />
+                ) : images ? (
+                  <img className="rounded-xl mb-4" src={images[0]} alt={`Imagem de ${machine?.nome}`} />
                 ) : (
                   <div className="image-placeholder">Imagem indisponível</div>
                 )}

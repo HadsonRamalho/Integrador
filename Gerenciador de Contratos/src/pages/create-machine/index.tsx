@@ -57,8 +57,7 @@ export default function CreateMachine() {
           throw new Error("Erro ao obter o ID de uma imagem");
         }
         
-        imageIds.push(data.idimagem);  
-        return imageIds[0];
+        imageIds.push(data.idimagem);          
       } catch (err) {
         console.error("Erro na requisição de imagem:", err);
         alert("Erro ao enviar imagem.");
@@ -66,6 +65,7 @@ export default function CreateMachine() {
     }
     alert("Imagens enviadas com sucesso!");
     setMachineImages([]);
+    return imageIds;
   };
 
   const createMachine = async () => {

@@ -68,30 +68,34 @@ pub async fn recupera_imagem_maquina(conn: &mut PgConnection, id: String)
     }
 }
 
-pub async fn busca_imagens_maquina(conn: &mut PgConnection, id: Json<String>) -> Result<Vec<String>, String> {
+pub async fn recupera_imagens_maquina(conn: &mut PgConnection, id: Json<String>) -> Result<Vec<String>, String> {
     use crate::schema::imagens_maquinas::dsl::*;
-    let id= id.0.to_string();
 
-    let imagens: Result<Vec<ImagemMaquina>, diesel::result::Error> = imagens_maquinas
-        .filter(idmaquina.eq(id))
+    let imagem: Result<Vec<ImagemMaquina>, diesel::result::Error> = imagens_maquinas
+        .filter(idmaquina.eq(id.0))
         .get_results(conn);
 
-    let mut ids = vec![];
-    match imagens{
-        Ok(imagens) => {
-            for img in imagens{
-                ids.push(img.idimagem);
-            }
-        },
+    let imagem = match imagem{
+        Ok(imagem) => {imagem},
         Err(e) => {
             return Err(e.to_string())
         }
     };
 
-    if !ids.is_empty(){
-        return Ok(ids);
+    let mut imagens = Vec::new();
+    for img in imagem{
+        let res = recupera_imagem(conn, img.idimagem).await;
+        match res{
+            Ok(img) => {
+                imagens.push(img.1)
+            },
+            Err(e) => {
+                println!("Erro [BACK/DB]: {}", e);
+                return Err(e)
+            }
+        }
     }
-    println!("Erro [BACK/DB]: Falha ao carregar imagens da máquina.");
-    return Err("Não existem imagens cadastradas para essa máquina.".to_string())
+
+    return Ok(imagens)
 }
 
