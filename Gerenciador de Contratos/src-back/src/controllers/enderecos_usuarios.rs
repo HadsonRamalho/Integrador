@@ -3,7 +3,7 @@ use hyper::StatusCode;
 
 use crate::models::{self, enderecos_usuarios::EnderecoUsuario};
 
-use super::{cria_conn, gera_hash};
+use super::{cria_conn, gera_hash, usuarios::{IdInput, UserId}};
 
 pub struct EnderecoUsuarioInput{
     pub idendereco: String,
@@ -45,12 +45,12 @@ pub async fn cadastra_endereco_usuario(input: Json<EnderecoUsuarioInput>)
     }
 }
 
-pub async fn busca_enderecousuario_idusuario(Query(params): Query<String>)
+pub async fn busca_enderecousuario_idusuario(Query(id): Query<UserId>)
     -> Result<(StatusCode, Json<EnderecoUsuario>), (StatusCode, Json<String>)>{
-    if params.trim().is_empty(){
+    if id.idusuario.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
-    let idusuario = params.to_string();
+    let idusuario = id.idusuario.to_string();
 
     let conn = &mut cria_conn()?;
 

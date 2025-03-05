@@ -171,7 +171,9 @@ export default function MachineDetails() {
                 <div className="m-2">
                 {machine?.disponivelaluguel === "Sim" ?
                 (
-                  <Button className="m-2">Alugar máquina</Button>
+                  <Button className="m-2"
+                    onClick={() => {navigate(`/rent-machine/${machine.idpublico}`)}}
+                  >Alugar máquina</Button>
                 ) : (
                   <Button disabled={true}>Máquina indisponível para aluguel</Button>
                 )}

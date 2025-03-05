@@ -13,12 +13,11 @@
 
 .user-profile-card{
     background-color: hsl(var(--machine-card-bg));
-    width: 60vh;
-    height: 70vh;
+    width: 40vw;
 }
 
 .user-profile-card-header{
-    font-size: 3.2vh;
+    font-size: 1.5rem;
     color: hsl(var(--primary));
 }
 

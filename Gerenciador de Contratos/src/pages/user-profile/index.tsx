@@ -9,13 +9,35 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-
-
+import { Address, CreateUserAddress } from "@/interfaces/address";
+import { createUserAddress, loadAddressByCep, loadAddressUserId, updateAddress } from "@/services/api/address/address";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function UserProfile() {
   const [user, setUser] = useState<User>();
   const [error, setError] = useState(false);
   const [updatedData, setUpdatedData] = useState(true);
+  const [address, setAddress] = useState<Address>();
+
+  const [pais, setPais] = useState<string>("Brasil");
+  const [estado, setEstado] = useState<string>();
+  const [cidade, setCidade] = useState<string>();
+  const [bairro, setBairro] = useState<string>();
+  const [cep, setCep] = useState<string>();
+  const [logradouro, setLogradouro] = useState<string>();
+  const [numero, setNumero] = useState<string>();
+  const [complemento, setComplemento] = useState<string>();
+
   const navigate = useNavigate();
 
   async function AtualizaUsuario(nome_novo: string, email_novo: string, documento_novo: string, senha: string) {
@@ -74,27 +96,14 @@ export default function UserProfile() {
 
   useEffect(() => {
     async function buscaEndereco(id: string) {
-      try {
-        const res = await fetch(
-          `https://g6v9psc0-3003.brs.devtunnels.ms/busca_endereco_idusuario/?idusuario=${encodeURIComponent(id)}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            }
-          }
-        );
-        if (!res.ok) {
-          const erro = await res.text();
-          console.log("Erro ao buscar endereço: ", erro);
-          throw new Error(erro);
-        }
-        console.log("Endereço encontrado!");
-        const endereco = await res.json();
-        console.log(endereco);
-      } catch (erro) {
-        console.error(erro);
+      const res = await loadAddressUserId(id);
+      if (!res) {
+        console.log("Erro ao buscar endereço do usuário.");
+        alert("Usuário não possui endereço");
       }
+      const endereco = res;
+      setAddress(endereco);
+      console.log(endereco);
     }
     const loadUser = async () => {
       setUpdatedData(false);
@@ -104,13 +113,11 @@ export default function UserProfile() {
       }
       try{
         const user = await loadUserById(id);
-        console.log(user);
         setUser(user);
         await buscaEndereco(id);
       } catch(err){
         setError(true);
         console.error(err);
-        console.log(error);
       }
     };
     loadUser();    
@@ -118,6 +125,11 @@ export default function UserProfile() {
 
   interface UserCardProps {
     user: User;
+  }
+
+  interface AddressCardProps {
+    user: User;
+    address: Address;
   }
   
   const UserCard: React.FC<UserCardProps> = ({ user }) => {
@@ -181,21 +193,158 @@ export default function UserProfile() {
             Data de Cadastro: {user.datacadastro}
           </CardDescription>
           <CardContent>
-            <Button className="user-profile-button" onClick={handleChange}>Editar minhas informações</Button>
+            <Button className="user-profile-button" onClick={handleChange}>Atualizar informações do perfil</Button>
+          </CardContent>
+        </CardContent>
+      </Card>
+    );
+  };
 
+  const AddressCard: React.FC<AddressCardProps> = ({ user, address }) => {
+    const [pais, setPais] = useState<string>("Brasil");
+    const [estado, setEstado] = useState<string>(address.estado);
+    const [cidade, setCidade] = useState<string>(address.cidade);
+    const [bairro, setBairro] = useState<string>(address.bairro);
+    const [cep, setCep] = useState<string>(address.cep);
+    const [logradouro, setLogradouro] = useState<string>(address.logradouro);
+    const [numero, setNumero] = useState<string>(address.numero);
+    const [complemento, setComplemento] = useState<string>(address.complemento);
+
+    const handleUpdateAddress = async () => {
+      const newAddress = {
+        idendereco: address.idendereco,
+        bairro,
+        cep,
+        cidade,
+        estado,
+        pais,
+        complemento: complemento || "Nenhum",
+        logradouro,
+        numero,
+        idusuario: user.idusuario
+      }
+      const updatedAddress = await updateAddress(newAddress);
+      if (!updatedAddress) {
+        alert("Erro ao atualizar endereço");
+        return;
+      }
+      setAddress(updatedAddress);
+      alert("Endereço atualizado!");
+    }
+
+    return (
+      <Card className="mt-2 border-[hsl(var(--primary))] bg-[hsl(var(--machine-card-bg))]">
+        <CardHeader>
+          <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Meu Endereço</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Label htmlFor="cep" className="text-[hsl(var(--text))]">CEP</Label>
+          <Input id="cep"
+          value={cep}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          onChange={(e) => setCep(e.target.value)}/>
+          <Label htmlFor="pais" className="text-[hsl(var(--text))]">País</Label>
+          <Input
+          id="pais"
+          readOnly={true}
+          value={pais}
+          onChange={(e) => setPais(e.target.value)}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          />
+          <Label htmlFor="estado" className="text-[hsl(var(--text))]">Estado</Label>
+          <Input
+          id="estado"
+          value={estado}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          onChange={(e) => setEstado(e.target.value)}/>
+          <Label htmlFor="cidade" className="text-[hsl(var(--text))]">Cidade</Label>
+          <Input
+          id="cidade"
+          value={cidade}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          onChange={(e) => setCidade(e.target.value)}/>
+          <Label htmlFor="bairro" className="text-[hsl(var(--text))]">Bairro</Label>
+          <Input
+          id="bairro"
+          value={bairro}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          onChange={(e) => setBairro(e.target.value)}/>
+          <Label htmlFor="logradouro" className="text-[hsl(var(--text))]">Rua</Label>
+          <Input
+          id="logradouro"
+          value={logradouro}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          onChange={(e) => setLogradouro(e.target.value)}/>
+          <Label htmlFor="numero" className="text-[hsl(var(--text))]">Número</Label>
+          <Input
+          id="numero"
+          value={numero}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          onChange={(e) => setNumero(e.target.value)}/>
+          <Label htmlFor="complemento" className="text-[hsl(var(--text))]">Complemento</Label>
+          <Input
+          id="complemento"
+          value={complemento}
+          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          onChange={(e) => setComplemento(e.target.value)}/>
+          <CardContent>
+            <Button onClick={handleUpdateAddress} className="user-profile-button">Atualizar endereço</Button>
           </CardContent>
         </CardContent>
       </Card>
     );
   };
   
+  const handleSubtmitAddress = async () => {
+    if(!user){
+      return;
+    }
+    if (!pais || !estado || !cidade || !bairro || !cep || !logradouro || !numero) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+    const endereco: CreateUserAddress = {
+      bairro,
+      cep,
+      cidade,
+      estado,
+      pais,
+      complemento: complemento || "Nenhum",
+      logradouro,
+      numero,
+      idusuario: user.idusuario
+    };
+    const res = await createUserAddress(endereco);
+    if (!res) {
+      alert("Erro ao cadastrar endereço");
+      return;
+    }
+    setAddress(res);
+    alert("Endereço cadastrado!");
+  }
+
+  const handleCepChange = async () => {
+    if(!cep){
+      return;
+    }
+    const endereco = await loadAddressByCep(cep);
+    if (!endereco){
+      alert("CEP inválido");
+      return;
+    }
+    setEstado(endereco.uf);
+    setCidade(endereco.localidade);
+    setBairro(endereco.bairro);
+    setLogradouro(endereco.logradouro);
+  }
+   
   return (
     <Layout>
       <main>        
         <div className="user-profile-container">
         <div>
           {user ? (
-            <UserCard user={user} />
+            <UserCard user={user} />            
             ) : error ? (
             <div>
                 <p>Houve um erro ao carregar o usuário. Reporte o problema aqui:</p>
@@ -204,8 +353,85 @@ export default function UserProfile() {
             ) : (
             <p>Carregando usuário...</p>
         )}
+        {address && user ? (
+          <AddressCard user={user} address={address} />
+        ) : (
+          <p>Carregando endereço...</p>
+        )}
         </div>      
-        </div>     
+        </div>
+        <div>
+          <AlertDialog open={!address}>
+            <AlertDialogTrigger asChild></AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle style={{ color: "hsl(var(--text))" }}>
+                  Cadastre um endereço
+                </AlertDialogTitle>
+                <AlertDialogDescription style={{ color: "hsl(var(--text))" }}>
+                  Você precisa cadastrar um endereço para utilizar o sistema.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
+                  <input
+                  placeholder="CEP"
+                  onChange={(e) => setCep(e.target.value)}
+                  onBlur={() => {handleCepChange()}}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  />
+                  <input
+                  placeholder="País"
+                  disabled={true}
+                  value={pais}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  />
+                  <input
+                  placeholder="Estado"
+                  onChange={(e) => setEstado(e.target.value)}
+                  value={estado}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  />
+                  <input
+                  placeholder="Cidade"
+                  value={cidade}
+                  onChange={(e) => setCidade(e.target.value)}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  />
+                  <input
+                  placeholder="Bairro"
+                  value={bairro}
+                  onChange={(e) => setBairro(e.target.value)}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  />
+                  <input
+                  placeholder="Rua"
+                  value={logradouro}
+                  onChange={(e) => setLogradouro(e.target.value)}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  />
+                  <input
+                  placeholder="Número"
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  />
+                  <input
+                  placeholder="Complemento"
+                  value={complemento}
+                  onChange={(e) => setComplemento(e.target.value)}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  />                  
+                </div>
+              <AlertDialogFooter>
+                <AlertDialogAction onClick={() => {
+                  handleSubtmitAddress();
+                }}>
+                  Cadastrar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </main>
     </Layout>
   );

@@ -173,8 +173,24 @@ pub async fn busca_endereco_idusuario(Query(params): Query<UserId>)
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
 
-    let idendereco = busca_enderecousuario_idusuario(axum::extract::Query(params.idusuario)).await?.1.idendereco.to_string();
+    let idendereco = busca_enderecousuario_idusuario(axum::extract::Query(params)).await?.1.idendereco.to_string();
 
     let endereco = busca_endereco_id(Query(idendereco)).await;
     endereco
+}
+
+pub async fn atualiza_endereco(endereco: Json<Endereco>)
+    -> Result<(StatusCode, Json<Endereco>), (StatusCode, Json<String>)>{
+    let endereco = endereco.0;
+
+    let conn = &mut cria_conn()?;
+
+    match models::enderecos::atualiza_endereco(endereco).await{
+        Ok(endereco) => {
+            return Ok((StatusCode::OK, Json(endereco)))
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
 }

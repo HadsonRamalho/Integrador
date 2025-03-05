@@ -75,3 +75,32 @@ pub async fn deleta_endereco(id: String)
         }
     }
 }
+
+pub async fn atualiza_endereco(endereco: Endereco)
+    -> Result<Endereco, String>{
+    use crate::schema::enderecos::dsl::*;
+
+    let conn = &mut cria_conn().unwrap();
+
+    let res: Result<Endereco, diesel::result::Error> = diesel::update(enderecos.filter(idendereco.eq(endereco.idendereco)))
+        .set((
+            pais.eq(endereco.pais),
+            estado.eq(endereco.estado),
+            cidade.eq(endereco.cidade),
+            cep.eq(endereco.cep),
+            bairro.eq(endereco.bairro),
+            logradouro.eq(endereco.logradouro),
+            numero.eq(endereco.numero),
+            complemento.eq(endereco.complemento)
+        ))
+        .get_result(conn);
+
+    match res{
+        Ok(endereco) => {
+            return Ok(endereco)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}

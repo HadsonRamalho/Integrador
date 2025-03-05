@@ -14,6 +14,8 @@ pub mod maquinas_usuarios;
 pub mod oauth;
 pub mod enderecos;
 pub mod enderecos_usuarios;
+pub mod locatarios;
+
 pub fn cria_conn() -> Result<PgConnection, (StatusCode, Json<String>)> {
     dotenv().ok();
 
