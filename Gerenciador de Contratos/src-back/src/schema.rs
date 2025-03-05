@@ -16,6 +16,21 @@ diesel::table! {
 }
 
 diesel::table! {
+    contas_bancarias (idconta) {
+        #[max_length = 64]
+        idconta -> Varchar,
+        #[max_length = 64]
+        idusuario -> Varchar,
+        #[max_length = 64]
+        numeroconta -> Varchar,
+        #[max_length = 64]
+        numeroagencia -> Varchar,
+        #[max_length = 64]
+        nomebanco -> Varchar,
+    }
+}
+
+diesel::table! {
     enderecos (idendereco) {
         #[max_length = 64]
         idendereco -> Varchar,
@@ -69,6 +84,30 @@ diesel::table! {
         idimagem -> Varchar,
         #[max_length = 64]
         idmaquina -> Varchar,
+    }
+}
+
+diesel::table! {
+    locadoras (idlocadora) {
+        #[max_length = 64]
+        idlocadora -> Varchar,
+        #[max_length = 64]
+        idusuario -> Varchar,
+        #[max_length = 64]
+        idendereco -> Varchar,
+        #[max_length = 64]
+        idconta -> Varchar,
+    }
+}
+
+diesel::table! {
+    locatarios (idlocatario) {
+        #[max_length = 64]
+        idlocatario -> Varchar,
+        #[max_length = 64]
+        idusuario -> Varchar,
+        #[max_length = 64]
+        idendereco -> Varchar,
     }
 }
 
@@ -129,10 +168,13 @@ diesel::joinable!(codigos_recuperacao -> usuarios (idusuario));
 
 diesel::allow_tables_to_appear_in_same_query!(
     codigos_recuperacao,
+    contas_bancarias,
     enderecos,
     enderecos_usuarios,
     imagens,
     imagens_maquinas,
+    locadoras,
+    locatarios,
     maquinas,
     maquinas_usuarios,
     usuarios,
