@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const client = axios.create({
-  baseURL: import.meta.env.BASE_URL,
+  baseURL: 'https://g6v9psc0-3003.brs.devtunnels.ms',
 });
 
 export { client };

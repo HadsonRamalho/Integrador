@@ -1,0 +1,47 @@
+{
+    "short_name": "MaqExpress",
+    "name": "MaqExpress",
+    "icons": [
+      {
+        "src": "./maq.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "./maq.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "categories": ["máquinas", "maquinário", "araçuaí", "aluguel", "locação", "mineração", "construção"],
+    "start_url": "/",
+    "background_color": "#fff",
+    "display_override": ["standalone", "window-control-overlay", "minimal-ui", "browser"],
+    "display": "standalone",
+    "theme_color": "#169e69",
+    "shortcuts": [
+      {
+        "name": "Lista de Máquinas Disponíveis",
+        "short_name": "Lista de Máquinas",
+        "description": "Ir para a lista de máquinas",
+        "url": "/machine",
+        "icons": [{ "src": "./icon192.png", "sizes": "192x192" }]
+      }
+    ],
+    "description": "Confiança no aluguel de máquinas!",
+    "screenshots": [
+      {
+        "src": "./screenshot1.png",
+        "type": "image/png",
+        "sizes": "1080x2036",
+        "form_factor": "any"
+      },
+      {
+        "src": "./screenshot2.jpg",
+        "type": "image/jpg",
+        "sizes": "1080x2031",
+        "form_factor": "any"
+      }
+    ]
+  }
+  

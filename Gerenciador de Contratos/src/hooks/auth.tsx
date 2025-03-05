@@ -1,4 +1,4 @@
-import { User } from "@/interfaces/user";
+import { UserId } from "@/interfaces/user";
 import { loginUser } from "@/services/api/user/user";
 import {
   createContext,
@@ -14,7 +14,7 @@ interface AuthCredentials {
 }
 
 interface AuthContextData {
-  user: User | null;
+  user: UserId | null;
   signIn(credentials: AuthCredentials): void;
   signOut(): void;
 }
@@ -26,26 +26,39 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(() => {
-    const user = localStorage.getItem("user");
+  const [user, setUser] = useState<UserId | null>(() => {
+    const userId = localStorage.getItem("USER_ID");
 
-    if (!user) {
+    if (!userId) {
       return null;
     }
-
-    const userJSON = JSON.parse(user);
-    return userJSON;
+    const user: UserId = {"idusuario": userId};
+    return user;
   });
 
   const signIn = useCallback(async ({ email, password }: AuthCredentials) => {
-    const data = await loginUser(email, password);
+    try{
+      const data = await loginUser(email, password);
 
-    localStorage.setItem("user", JSON.stringify(data));
-    setUser(data);
+      localStorage.setItem("USER_ID", data.idusuario);
+      setUser(data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const statusCode = error.response?.status;
+  
+      // Lança exceções com base no código de status
+      if (statusCode === 401) {
+        throw new Error("Credenciais inválidas. Verifique seu e-mail e senha.");
+      } else if (statusCode === 500) {
+        throw new Error("Erro no servidor. Por favor, tente novamente mais tarde.");
+      } else {
+        throw new Error(`Erro inesperado: ${statusCode || error.message}`);
+      }
+    }    
   }, []);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("USER_ID");
     setUser(null);
   }, []);
 

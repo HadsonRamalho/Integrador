@@ -11,6 +11,12 @@ node_modules
 dist
 dist-ssr
 *.local
+src-back/target
+
+#Arquivos Spring
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +28,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#Gerenciador de Contratos/src-tauri/target
+*.pdb
+*.rlib
+*.rmeta
+
+src-back/target 
+src-tauri/target 
+src-back/images
+
+node_modules

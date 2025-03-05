@@ -1,0 +1,67 @@
+.user-profile-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: hsl(var(--background));
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    
+}
+
+.user-profile-card{
+    background-color: hsl(var(--machine-card-bg));
+    width: 40vw;
+}
+
+.user-profile-card-header{
+    font-size: 1.5rem;
+    color: hsl(var(--primary));
+}
+
+/* .user-profile-card-content{
+    width: 100%;
+    border: 1px solid var(--primary);
+    border-radius: 5px;
+    font-size: 3vh;
+    color: hsl(var(--background));
+    box-sizing: border-box;
+} */
+
+.user-profile-card-description{
+    color: hsl(var(--primary));
+    font-size: 1.5vh;
+}
+
+.user-profile-card-image{
+    width: 10vh;
+    height: 10vh;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+.user-profile-button{
+    background-color: hsl(var(--primary));
+    color: hsl(var(--text));
+    margin-top: 5vh;
+}
+
+
+
+@media (max-width: 480px) {
+    .user-profile-button {
+      margin-top: 10px;
+      margin-left: 0;
+      left: 13vw;
+      position: absolute;
+    }
+}
+
+.user-profile-button:hover{    
+    background-color: #169e69;
+}
+

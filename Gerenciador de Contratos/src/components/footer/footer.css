@@ -1,3 +1,31 @@
-.bg-gray {
-  background-color: #ccc ;
+.footer-container {
+  background-color: hsl(var(--primary));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+ 
 }
+
+.footer-section {
+  color: hsl(var(--foreground));
+  min-width: 200px;
+  text-align: center;
+}
+
+.footer-section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: hsl(var(--foreground));
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-section ul li {
+  margin: 8px 0;
+}
+

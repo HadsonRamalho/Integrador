@@ -2,8 +2,7 @@ import "./header.css";
 import { NavBar } from "../navbar";
 function Header() {
   return (
-    <header className="bg-red">
-      <h2>header de página.</h2>
+    <header className="bg-red pr-[2%] pl-[2%]">
       <NavBar />
     </header>
   );
