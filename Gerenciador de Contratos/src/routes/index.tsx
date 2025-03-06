@@ -15,6 +15,7 @@ import PdfExample from "@/pages/pdf-example";
 import { MachineList } from "@/pages/machine-list";
 import UpdateMachine from "@/pages/update-machine";
 import DetalhesMaquina from "@/pages/search";
+import RentMachine from "@/pages/rent-machine";
 
 
 const router = createBrowserRouter([
@@ -60,6 +61,14 @@ const router = createBrowserRouter([
     element: <Login/>,
   },
   {
+    path: "/rent-machine/:publicid",
+    element: ( 
+    <PrivateRoute>
+      <RentMachine/>
+    </PrivateRoute>
+  ),
+  },
+  {
     path: "/create-machine",
     element: (
       <PrivateRoute>
@@ -87,7 +96,7 @@ const router = createBrowserRouter([
       <GoogleAuthCallback/>
     )
   },
-
+  
   {
     path: "/entrada-proibida",
     element: <Prohibited />,
