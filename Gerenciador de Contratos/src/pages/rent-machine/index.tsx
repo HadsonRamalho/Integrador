@@ -8,7 +8,7 @@ import { loadMachinePublicId } from "@/services/api/machine/machine";
 import { loadRenterByUserId } from "@/services/api/renter/renter";
 import { loadUserById } from "@/services/api/user/user";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../../components/rent-machine/rent-machine.css";
 import { Address } from "@/interfaces/address";
 import { loadAddressUserId } from "@/services/api/address/address";
@@ -23,6 +23,8 @@ const RentMachine = () => {
   const [renter, setRenter] = useState<Renter>();
   const [address, setAddress] = useState<Address>();
   const [error, setError] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const listMachines = async () => {
@@ -178,13 +180,16 @@ const RentMachine = () => {
                     <CardContent className="pt-2 pb-2">
                       <p>Atualize seu endereço para prosseguir.</p>
                     </CardContent>
+                    <CardContent>
+                      <Button onClick={() => {navigate('/user-profile')}}>Atualizar endereço</Button>
+                    </CardContent>
                   </Card>
                 )}
                 </CardContent>
                 <CardFooter className="flex justify-center">
                 {
-                  (address && renter && user) && 
-                  (<Button>Confirmar</Button>)
+                  (address && user) && 
+                  (<Button>Confirmar informações</Button>)
                 }
                 </CardFooter>
             </Card>
