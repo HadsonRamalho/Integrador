@@ -1,39 +1,61 @@
-import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Machine as Maquina } from "@/interfaces/machine";
+import { listMachine } from "@/services/api/machine/machine";
+import { MachineCard } from "@/components/machine-card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/layouts"; 
 
 const DetalhesMaquina = () => {
-  const { id } = useParams();
-  
-  interface Maquina {
-    id: number;
-    nome: string;
-    descricao: string;
-  }
-  
-  const [maquina, setMaquina] = useState<Maquina | null>(null);
+  const [maquinas, setMaquinas] = useState<Maquina[]>([]);
+  const [filter, setFilter] = useState(""); 
 
   useEffect(() => {
-  
-    const mockData = [
-      { id: 1, nome: "Escavadeira", descricao: "Máquina pesada para escavação." },
-      { id: 2, nome: "Roçadeira", descricao: "Equipamento para corte de vegetação." },
-      { id: 3, nome: "Máquina", descricao: "Máquina genérica para múltiplas funções." },
-      { id: 4, nome: "Trator", descricao: "Utilizado para puxar cargas e equipamentos." },
-      { id: 5, nome: "Motoniveladora de Combate", descricao: "Para nivelamento de terrenos." },
-    ];
+    const listMachines = async () => {
+      const maquinas = await listMachine();
+      console.log(maquinas);
+      setMaquinas(maquinas);
+    };
+    listMachines();
+  }, []);
 
-    const maquinaSelecionada = mockData.find((m) => m.nome === String(id));
-    setMaquina(maquinaSelecionada || null);
-  }, [id]);
 
-  if (!maquina) {
-    return <p>Máquina não encontrada...</p>;
-  }
+  const filteredMachines = maquinas.filter((maquina) =>
+    maquina.nome.toLowerCase().includes(filter.toLowerCase()) 
+  );
 
   return (
-    <div >
-      <h1 >{maquina.nome}</h1>
-      <p >{maquina.descricao}</p>
+    <div>
+ 
+      <Input
+        type="text"
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)} o
+        placeholder="Buscar máquina..."
+        style={{ marginBottom: "20px", padding: "10px", width: "80%" }}
+      />
+
+ 
+      {maquinas.length === 0 ? (
+        <div>
+          <p>Houve um erro ao carregar as máquinas. Reporte o problema aqui:</p>
+          <Button>Relatar problema</Button>
+        </div>
+      ) : (
+   
+        filteredMachines.length > 0 ? (
+          filteredMachines.map((maquina) => (
+            <div
+              key={maquina.idmaquina}
+              style={{ marginTop: "4vh", width: "90%", height: "600px" }}
+            >
+              <MachineCard machine={maquina} />
+            </div>
+          ))
+        ) : (
+  
+          <p>Nenhuma máquina encontrada.</p>
+        )
+      )}
     </div>
   );
 };

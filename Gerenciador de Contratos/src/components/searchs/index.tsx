@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Search } from "lucide-react";
 
-const itens = [
+const maquinas = [
   {id: 1, nome: "Escavadeira"},
   {id: 2, nome: "Roçadeira"},
   {id: 3, nome: "Maquina"},
@@ -15,12 +15,13 @@ const itens = [
 const SearchFilter = () => {
   const [search, setSearch] = useState("");
   const navigate  = useNavigate();
-  const LowerSearch = search.toLowerCase();
-
   
-  const filteredItems = itens.filter((item) =>
-    item.nome.toLowerCase().includes(LowerSearch)
+  const PalavraBuscada = search.toLowerCase();
+  
+  const filteredItems = maquinas.filter((maquina) =>
+    maquina.nome.toLowerCase().includes(PalavraBuscada)
   );
+  
 
   return (
     <div className="busca-search">

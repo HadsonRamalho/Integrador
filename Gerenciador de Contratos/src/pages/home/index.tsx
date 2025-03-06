@@ -1,12 +1,11 @@
 import Layout from "@/layouts/default";
 import "@/components/home/home.css";
-import { Button } from "@/components/ui/button";
 import {
   Forklift,
   Handshake,
   Headset,
   MousePointerClickIcon,
-  Search,
+
 } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import teste from "@/assets/teste.jpg";
@@ -26,6 +25,7 @@ import {
 } from "@/components/ui/carousel";
 import { useNavigate } from "react-router-dom";
 import SearchFilter from "@/components/searchs";
+import DetalhesMaquina from "../search";
 
 function Home() {
   const navigate = useNavigate();

@@ -15,7 +15,6 @@ import PdfExample from "@/pages/pdf-example";
 import { MachineList } from "@/pages/machine-list";
 import UpdateMachine from "@/pages/update-machine";
 import DetalhesMaquina from "@/pages/search";
-import RentMachine from "@/pages/rent-machine";
 
 
 const router = createBrowserRouter([
@@ -73,12 +72,6 @@ const router = createBrowserRouter([
       <PrivateRoute>
         <UserProfile/>
       </PrivateRoute>)
-  },
-  {
-    path: "/rent-machine/:publicid",
-    element: (
-      <RentMachine/>
-    )
   },
   {
     path: "/logado",
