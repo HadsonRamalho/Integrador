@@ -86,7 +86,7 @@ pub fn cria_rotas() -> Router<>{
         .route("/atualiza_endereco", patch(atualiza_endereco))
 
         .route("/cadastra_locatario", post(cadastra_locatario))
-        .route("/busca_locatario_idusuario", get(busca_locatario_idusuario))
+        .route("/busca_locatario_idusuario/", get(busca_locatario_idusuario))
 
         .route("/busca_maquinas_usuario_idusuario/", get(busca_maquinas_usuario_idusuario))
 
@@ -99,7 +99,7 @@ pub fn cria_rotas() -> Router<>{
         .layer(
             CorsLayer::new()
                 .allow_origin(Any)
-                .allow_methods(vec![Method::POST, Method::PUT, Method::PATCH, Method::DELETE]) 
+                .allow_methods(vec![Method::POST, Method::PUT, Method::PATCH, Method::DELETE, Method::GET]) 
                 .allow_headers(Any),
         )
         

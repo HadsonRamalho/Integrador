@@ -5,7 +5,7 @@ import { Renter } from "@/interfaces/renter";
 import { User } from "@/interfaces/user";
 import Layout from "@/layouts/default";
 import { loadMachinePublicId } from "@/services/api/machine/machine";
-import { loadRenterByUserId } from "@/services/api/renter/renter";
+import { createRenter, loadRenterByUserId } from "@/services/api/renter/renter";
 import { loadUserById } from "@/services/api/user/user";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,6 +22,7 @@ const RentMachine = () => {
   const [user, setUser] = useState<User>();
   const [renter, setRenter] = useState<Renter>();
   const [address, setAddress] = useState<Address>();
+  const [renterId, setRenterId] = useState<string>();
   const [error, setError] = useState(false);
 
   const navigate = useNavigate();
@@ -32,6 +33,10 @@ const RentMachine = () => {
         const machine = await loadMachinePublicId(publicid);
         console.log(machine);
         setMachine(machine);
+        if(machine.disponivelaluguel !== "Sim"){
+          alert("Essa máquina não está disponível para aluguel no momento.");
+          navigate("/");
+        }
       }
     };
     listMachines();
@@ -41,6 +46,7 @@ const RentMachine = () => {
     const loadUser = async () => {
       const id = localStorage.getItem("USER_ID");
       if(!id){
+        setError(true);
         return;
        }
       try{
@@ -66,7 +72,9 @@ const RentMachine = () => {
     const loadRenter = async (id: string) => {
       try {
         const loadedRenter = await loadRenterByUserId(id);
+        setStep("revisão-solicitação");
         setRenter(loadedRenter);
+        console.log(loadedRenter);
       } catch (err) {
         console.error(err);
         setStep("cadastro-locatario");
@@ -75,7 +83,10 @@ const RentMachine = () => {
     if (user) {
       loadRenter(user.idusuario);
     }
-  }, [user]);
+    if (renterId && user){
+      loadRenter(user.idusuario);
+    }
+  }, [renterId, user]);
 
   useEffect(() => {
     const loadAddress = async (id: string) => {
@@ -84,6 +95,7 @@ const RentMachine = () => {
         setAddress(loadedAddress);
       } catch (err) {
         console.error(err);
+        setError(true);
         setStep("cadastro-locatario");
       }
     };
@@ -91,6 +103,32 @@ const RentMachine = () => {
       loadAddress(user.idusuario);
     }
   }, [user]);
+
+  const tryCreateRenter = async () => {
+    if (!user || !address){
+      return;
+    }
+    try{
+      const createdRenterId = await createRenter(user.idusuario, address.idendereco);
+      setRenterId(createdRenterId);
+      setStep("revisão-solicitação");
+    } catch(error){
+      console.error(error);
+    }
+  }
+
+  if (error){
+    return (
+      <Layout>
+        <main>
+          <Card className="m-4 p-4">
+            <p>Houve um erro ao carregar as informações. Reporte o problema aqui:</p>
+            <Button>Relatar problema</Button>
+          </Card>
+        </main>
+      </Layout>
+    )
+  }
 
   return (
     <Layout>
@@ -102,78 +140,79 @@ const RentMachine = () => {
               <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Minhas Informações</CardTitle>
               </CardHeader>
               <CardDescription>
-                <p>Confirme seus dados para alugar a máquina. Só é necessário realizar esse processo uma vez.</p>
+                <p>Confirme seus dados antes de alugar a máquina. Só é necessário realizar esse processo uma vez.</p>
                 <p>Se precisar atualizar alguma informação, acesse o seu perfil.</p>
               </CardDescription>
                 <CardContent className="flex flex-col items-center w-full">
-                <Card className="w-[60%] bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
-                  <Label className="text-[hsl(var(--text))]">Nome</Label>
+                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                  <Label className="text-[hsl(var(--text))] mt-2">Nome</Label>
                   <Input
                   value={user?.nome}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
-                  <Label className="text-[hsl(var(--text))]">E-mail</Label>
+                  <Label className="text-[hsl(var(--text))] mt-2">E-mail</Label>
                   <Input
                   value={user?.email}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
-                  <Label className="text-[hsl(var(--text))]">Documento</Label>
+                  <Label className="text-[hsl(var(--text))] mt-2">Documento</Label>
                   <Input
                   value={user?.documento}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
                 </Card>
                 {address ? (
                   <Card className="mt-2 w-[60%] bg-[hsl(var(--machine-card-bg))] pb-10 border-[hsl(var(--primary))]">
-                  <Label className="text-[hsl(var(--text))]">País</Label>
-                  <Input
-                  value={address?.pais}
-                  readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
-
-                  <Label className="text-[hsl(var(--text))]">Estado</Label>
-                  <Input
-                  value={address?.estado}
-                  readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
-
-                  <Label className="text-[hsl(var(--text))]">CEP</Label>
+                  <Label className="text-[hsl(var(--text))] mt-2">CEP</Label>
                   <Input
                   value={address?.cep}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
-                  <Label className="text-[hsl(var(--text))]">Cidade</Label>
+                  
+                  <Label className="text-[hsl(var(--text))] mt-2">País</Label>
+                  <Input
+                  value={address?.pais}
+                  readOnly={true}
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+
+                  <Label className="text-[hsl(var(--text))]  mt-2">Estado</Label>
+                  <Input
+                  value={address?.estado}
+                  readOnly={true}
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+
+                  <Label className="text-[hsl(var(--text))]  mt-2">Cidade</Label>
                   <Input
                   value={address?.cidade}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
-                  <Label className="text-[hsl(var(--text))]">Bairro</Label>
+                  <Label className="text-[hsl(var(--text))]  mt-2">Bairro</Label>
                   <Input
                   value={address?.bairro}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
-                  <Label className="text-[hsl(var(--text))]">Rua</Label>
+                  <Label className="text-[hsl(var(--text))]  mt-2">Rua</Label>
                   <Input
                   value={address?.logradouro}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
-                  <Label className="text-[hsl(var(--text))]">Número</Label>
+                  <Label className="text-[hsl(var(--text))]  mt-2">Número</Label>
                   <Input
                   value={address?.numero}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
-                  <Label className="text-[hsl(var(--text))]">Complemento</Label>
+                  <Label className="text-[hsl(var(--text))]  mt-2">Complemento</Label>
                   <Input
                   value={address?.complemento}
                   readOnly={true}
-                  className="text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
                 </Card>
                 ) : (
                   <Card className="w-[60%] mt-2 border-[hsl(var(--primary))] bg-[hsl(var(--machine-card-bg))]">
@@ -189,15 +228,10 @@ const RentMachine = () => {
                 <CardFooter className="flex justify-center">
                 {
                   (address && user) && 
-                  (<Button>Confirmar informações</Button>)
+                  (<Button onClick={tryCreateRenter}>Confirmar informações</Button>)
                 }
                 </CardFooter>
-            </Card>
-            
-          </div>
-        ) : step === "informações-contrato" ? (
-          <div>
-            <h1>Informações do Contrato</h1>
+            </Card>            
           </div>
         ) : step === "revisão-solicitação" ? (
           <div>
@@ -207,6 +241,11 @@ const RentMachine = () => {
         (<div>
           <h1>Carregando...</h1>
         </div>) 
+        : step === "informações-contrato" ? (
+          <div>
+            <h1>Informações do Contrato</h1>
+          </div>
+        ) 
         : step === "status-solicitação" ? (
           <div>
             <h1>Status da Solicitação</h1>

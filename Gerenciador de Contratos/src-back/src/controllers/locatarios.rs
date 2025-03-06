@@ -43,14 +43,14 @@ pub async fn cadastra_locatario(input: Json<LocatarioInput>)
   }
 }
 
-pub async fn busca_locatario_idusuario(Query(input): Query<IdInput>)
+pub async fn busca_locatario_idusuario(Query(id): Query<IdInput>)
   -> Result<(StatusCode, Json<Locatario>), (StatusCode, Json<String>)>{
-  if input.id.trim().is_empty(){
+  if id.id.trim().is_empty(){
     return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())));
   }
 
   let conn = &mut cria_conn()?;
-  let idusuario = input.id.trim().to_string();
+  let idusuario = id.id.trim().to_string();
   
   match models::locatarios::busca_locatario_idusuario(conn, idusuario).await{
     Ok(locatario) => {
