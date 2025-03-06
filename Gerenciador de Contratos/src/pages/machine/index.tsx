@@ -3,13 +3,11 @@ import { useEffect, useState } from "react";
 import { listMachine } from "@/services/api/machine/machine";
 import { Button } from "@/components/ui/button";
 import { Machine as Maquina } from "@/interfaces/machine";
-import { useNavigate } from "react-router-dom";
 import "@/components/machine/machine.css";
 import MachineFilter from "@/components/machine-filter";
 import { MachineCard } from "@/components/machine-card";
 
 export default function Machine() {
-  const navigate = useNavigate();
   const [machines, setMachines] = useState<Maquina[]>([]);
   const [filter, setFilter] = useState("");
 
