@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/carousel";
 import { useNavigate } from "react-router-dom";
 import SearchFilter from "@/components/searchs";
-import DetalhesMaquina from "../search";
+
 
 function Home() {
   const navigate = useNavigate();
