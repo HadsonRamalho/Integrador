@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/layouts"; 
 import { useParams } from "react-router-dom";
 import Layout from "@/layouts/default";
+import "@/components/searchs/searchs.css";
 const DetalhesMaquina = () => {
   const [maquinas, setMaquinas] = useState<Maquina[]>([]);
   const {busca} = useParams();
@@ -27,7 +28,7 @@ const DetalhesMaquina = () => {
 
   return (
     <Layout>
-      <main>
+      <main className="max-w-6xl mx-auto p-6">
       <div className="mt-10 mb-10">
  
       <Input

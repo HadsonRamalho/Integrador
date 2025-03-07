@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Search } from "lucide-react";
+import "@/components/searchs/searchs.css"
 import { listMachine } from "@/services/api/machine/machine";
 import { Machine } from "@/interfaces/machine";
 
@@ -29,7 +30,9 @@ const SearchFilter = () => {
   
 
   return (
-      <div className="busca-search">
+      <div className="container-search">
+        <div className="search-busca">
+        <Search  className="search-icon"/>
       <Input
         type="text"
         value={search}
@@ -37,10 +40,7 @@ const SearchFilter = () => {
         onChange={(e) => setSearch(e.target.value)}
         className="search-input"
       />
-      <Button>
-        <Search />
-        Buscar
-      </Button>
+      </div>
 
 
       {search && filteredItems.length > 0 && (
@@ -48,7 +48,7 @@ const SearchFilter = () => {
           {filteredItems.map((maquina) => (
             <li
              key={maquina.idmaquina}
-             className="hover:cursor-pointer"
+             className="search-item"
              onClick={() => navigate(`/maquinas/${encodeURIComponent(maquina.nome)}`)}
               >
              {maquina.nome}
