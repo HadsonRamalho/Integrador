@@ -29,7 +29,7 @@ const DetalhesMaquina = () => {
       <Input
         type="text"
         value={filter}
-        onChange={(e) => setFilter(e.target.value)} o
+        onChange={(e) => setFilter(e.target.value)} 
         placeholder="Buscar máquina..."
         style={{ marginBottom: "20px", padding: "10px", width: "80%" }}
       />
