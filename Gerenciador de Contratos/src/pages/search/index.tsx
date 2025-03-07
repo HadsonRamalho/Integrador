@@ -4,10 +4,12 @@ import { listMachine } from "@/services/api/machine/machine";
 import { MachineCard } from "@/components/machine-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/layouts"; 
-
+import { useParams } from "react-router-dom";
+import Layout from "@/layouts/default";
 const DetalhesMaquina = () => {
   const [maquinas, setMaquinas] = useState<Maquina[]>([]);
-  const [filter, setFilter] = useState(""); 
+  const {busca} = useParams();
+  const [filter, setFilter] = useState(busca); 
 
   useEffect(() => {
     const listMachines = async () => {
@@ -24,7 +26,9 @@ const DetalhesMaquina = () => {
   );
 
   return (
-    <div>
+    <Layout>
+      <main>
+      <div className="mt-10 mb-10">
  
       <Input
         type="text"
@@ -35,6 +39,7 @@ const DetalhesMaquina = () => {
       />
 
  
+      <div className="flex">
       {maquinas.length === 0 ? (
         <div>
           <p>Houve um erro ao carregar as máquinas. Reporte o problema aqui:</p>
@@ -56,7 +61,10 @@ const DetalhesMaquina = () => {
           <p>Nenhuma máquina encontrada.</p>
         )
       )}
+      </div>
     </div>
+    </main>
+    </Layout>
   );
 };
 
