@@ -3,7 +3,7 @@ use chrono::Days;
 use diesel::{ExpressionMethods, RunQueryDsl};
 use rand::Rng;
 use serde::{Serialize, Deserialize};
-use crate::models::{self, codigos_recuperacao::{cadastra_codigo_recuperacao_db, CodigoRecuperacao}};
+use crate::{controllers::usuarios::{busca_usuario_id, IdInput}, models::{self, codigos_recuperacao::{cadastra_codigo_recuperacao_db, CodigoRecuperacao}}};
 
 use super::{cria_conn, envia_emails::envia_email_codigo, gera_hash, usuarios::{busca_usuario_email, valida_email, EmailInput}};
 use models::codigos_recuperacao::verifica_codigo_recuperacao_db;
@@ -75,6 +75,17 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
             return Err(e)
         } 
     }
+
+    let idusuario = busca_usuario_email(Query(EmailInput{email: email_clone.clone()})).await?.1.0;
+    let usuario = busca_usuario_id(Query(IdInput{id: idusuario.clone()})).await?.1.0;
+    if let Some(origemconta) = usuario.origemconta{
+        if origemconta != "Sistema"{
+            return Err((StatusCode::BAD_REQUEST, 
+                Json("Não é possível solicitar a recuperação de senha de uma conta criada usando o Google.".to_string())))
+        }
+    }
+
+
     let codigoreturn = gera_codigo_recuperacao(email_clone.clone()).await?.1.0;
     let res = envia_email_codigo(email_clone.clone(), "recuperação de senha", codigoreturn.codigo.clone()).await?;
     println!("E-mail: {} | Código: {}", email_clone, res.1.0);

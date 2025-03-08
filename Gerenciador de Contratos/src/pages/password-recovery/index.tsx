@@ -82,6 +82,9 @@ export default function PasswordRecovery() {
     } catch (error) {
       setTimeout(() => setIsUpdating(false));
       setMessage("Erro ao enviar o código de recuperação.");
+      if (error.message.includes("Google")){
+        setMessage(JSON.parse(error.message));
+      }
       console.error(error);
     }
   };
@@ -213,7 +216,7 @@ export default function PasswordRecovery() {
                   </Button>
                 </>
               )}
-              <span>{message}</span>
+              <p className="m-4">{message}</p>
               <Button onClick={() => {navigate(-1)}}>
                 Voltar
               </Button>
