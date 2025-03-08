@@ -31,7 +31,7 @@
 } */
 
 .user-profile-card-description{
-    color: hsl(var(--primary));
+    color: hsl(var(--text));
     font-size: 1.5vh;
 }
 
