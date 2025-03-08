@@ -164,19 +164,19 @@ const RentMachine = () => {
                   <Input
                   value={user?.nome}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))] mt-2">E-mail</Label>
                   <Input
                   value={user?.email}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))] mt-2">Documento</Label>
                   <Input
                   value={user?.documento}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
                 </Card>
                 {address ? (
                   <Card className="mt-2 w-[60%] bg-[hsl(var(--machine-card-bg))] pb-10 border-[hsl(var(--primary))]">
@@ -184,53 +184,53 @@ const RentMachine = () => {
                   <Input
                   value={address?.cep}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   
                   <Label className="text-[hsl(var(--text))] mt-2">País</Label>
                   <Input
                   value={address?.pais}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Estado</Label>
                   <Input
                   value={address?.estado}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Cidade</Label>
                   <Input
                   value={address?.cidade}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Bairro</Label>
                   <Input
                   value={address?.bairro}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Rua</Label>
                   <Input
                   value={address?.logradouro}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Número</Label>
                   <Input
                   value={address?.numero}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Complemento</Label>
                   <Input
                   value={address?.complemento}
                   readOnly={true}
-                  className="p-2 text-[hsl(var(--text))] bg-[hsl(var(--machine-card-bg))] rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
                 </Card>
                 ) : (
-                  <Card className="w-[60%] mt-2 border-[hsl(var(--primary))] bg-[hsl(var(--machine-card-bg))]">
+                  <Card className="w-[60%] mt-2 border-[hsl(var(--primary))] bg-white">
                     <CardContent className="pt-2 pb-2">
                       <p>Atualize seu endereço para prosseguir.</p>
                     </CardContent>
@@ -249,8 +249,21 @@ const RentMachine = () => {
             </Card>            
           </div>
         ) : step === "revisão-solicitação" ? (
-          <div>
-            <h1>Revisão da Solicitação</h1>
+          <div className="rent-machine-container">
+            <Card className="bg-white w-[60vw] m-4 border-[hsl(var(--primary))]">
+              <CardHeader>
+              <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Revisão da Solicitação</CardTitle>
+              </CardHeader>
+              <CardDescription>
+                <p>Confirme seus dados antes de alugar a máquina. Só é necessário realizar esse processo uma vez.</p>
+                <p>Se precisar atualizar alguma informação, acesse o seu perfil.</p>
+              </CardDescription>
+                <CardContent className="flex flex-col items-center w-full">
+                <Card className="w-[60%] mt-2 bg-white pb-4 border-[hsl(var(--primary))]">
+                
+                </Card>
+              </CardContent> 
+            </Card>
           </div>
         ) : step === "carregando" ? 
         (<div>
