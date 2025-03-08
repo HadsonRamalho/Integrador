@@ -54,7 +54,7 @@ const DetalhesMaquina = () => {
               filteredMachines.map((maquina) => (
                 <div
                   key={maquina.idmaquina}
-                  style={{ marginTop: "4vh", width: "90%", height: "600px" }}
+                  style={{ marginTop: "4vh", width: "100%", height: "500px" }}
                 >
                   <MachineCard machine={maquina} />
                 </div>
