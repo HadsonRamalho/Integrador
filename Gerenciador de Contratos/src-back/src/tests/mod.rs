@@ -1,7 +1,7 @@
 pub mod usuarios;
 pub mod codigos_recuperacao;
 pub mod maquinas;
-pub mod enderecos;
+pub mod enderecos_usuarios;
 
 #[tokio::test]
 async fn test_cria_conn_ok(){
