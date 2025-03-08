@@ -49,7 +49,7 @@ pub async fn busca_enderecousuario_idusuario(conn: &mut PgConnection, id: String
     }
 }
 
-pub async fn deleta_endereco_usuario(id: String)
+pub async fn deleta_endereco_usuario_idendereco(id: String)
     -> Result<String, String>{
     // Só utilizar em testes
     use crate::schema::enderecos_usuarios::dsl::*;
@@ -57,7 +57,7 @@ pub async fn deleta_endereco_usuario(id: String)
     let conn = &mut cria_conn().unwrap();
 
     let res: Result<EnderecoUsuario, diesel::result::Error> = diesel::delete(enderecos_usuarios)
-        .filter(idenderecousuario.eq(id))
+        .filter(idendereco.eq(id))
         .get_result(conn);
 
     match res{
