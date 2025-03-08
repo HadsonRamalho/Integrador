@@ -16,6 +16,7 @@ import { MachineList } from "@/pages/machine-list";
 import UpdateMachine from "@/pages/update-machine";
 import DetalhesMaquina from "@/pages/search";
 import RentMachine from "@/pages/rent-machine";
+import HelpCenter from "@/pages/helpcenter";
 
 
 const router = createBrowserRouter([
@@ -80,6 +81,13 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <UserProfile/>
+      </PrivateRoute>)
+  },
+  {
+    path: "/helpcenter",
+    element: (
+      <PrivateRoute>
+        <HelpCenter/>
       </PrivateRoute>)
   },
   {

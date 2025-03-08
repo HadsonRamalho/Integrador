@@ -31,7 +31,7 @@ export default function HowWorks() {
                 <p>Alugar uma máquina pelo MAQEXPRESS é simples e rápido! Basta seguir estes passos:</p>
 
                 <ol className="list">
-                  <li><strong>Se cadasrte </strong> - Crie uma conta para começar a usar nosso sistema.</li>
+                  <li><strong>Se cadastre </strong> - Crie uma conta para começar a usar nosso sistema.</li>
                   <li><strong>Escolha a máquina</strong> - Navegue pela lista de equipamentos disponíveis e selecione o que melhor atende às suas necessidades.</li>
 
                   <li><strong>Solicite o aluguel</strong> - Preencha seus dados corretamente e envie a solicitação para o locador.</li>
