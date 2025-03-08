@@ -31,7 +31,6 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
 
   const fetchMachineImage = async (machineId: string) => {
     try {
-      console.log("machineId: ", machineId);
       const response = await loadMachineImage(machineId);
       const imageUrl = response;
       setImage(imageUrl);

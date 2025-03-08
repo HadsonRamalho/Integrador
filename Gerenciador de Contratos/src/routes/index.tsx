@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     element: <MachineDetails/>,
   },  
   {
-    path: "/maquinas/:id",
+    path: "/maquinas/:busca",
     element: <DetalhesMaquina />,
   },
   {
@@ -61,6 +61,14 @@ const router = createBrowserRouter([
     element: <Login/>,
   },
   {
+    path: "/rent-machine/:publicid",
+    element: ( 
+    <PrivateRoute>
+      <RentMachine/>
+    </PrivateRoute>
+  ),
+  },
+  {
     path: "/create-machine",
     element: (
       <PrivateRoute>
@@ -73,12 +81,6 @@ const router = createBrowserRouter([
       <PrivateRoute>
         <UserProfile/>
       </PrivateRoute>)
-  },
-  {
-    path: "/rent-machine/:publicid",
-    element: (
-      <RentMachine/>
-    )
   },
   {
     path: "/logado",
@@ -94,7 +96,7 @@ const router = createBrowserRouter([
       <GoogleAuthCallback/>
     )
   },
-
+  
   {
     path: "/entrada-proibida",
     element: <Prohibited />,

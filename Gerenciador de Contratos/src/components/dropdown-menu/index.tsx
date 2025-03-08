@@ -7,8 +7,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Address } from "@/interfaces/address";
 import { Input } from "@/layouts"
-import { useState } from "react"
+import { loadAddressUserId } from "@/services/api/address/address";
+import { useEffect, useState } from "react"
 
 
 export function DropdownMenuDemo() {
@@ -17,7 +19,30 @@ export function DropdownMenuDemo() {
   const [estado, setEstado] = useState("");
   const [cidade, setCidade] = useState("");
   const [TriggerText, setTriggerText] = useState("Cep");
+  const [endereco, setEndereco] = useState<Address>();
   
+  useEffect(() => {
+    async function buscaEndereco(id: string) {
+      const res = await loadAddressUserId(id);
+      if (!res) {
+        console.log("Erro ao buscar endereço do usuário.");
+        alert("Usuário não possui endereço");
+      }
+      const endereco = res;
+      setEndereco(endereco);
+    }
+    const id = localStorage.getItem("USER_ID");
+    if (id){
+      buscaEndereco(id);
+    }
+    if (endereco){
+      setCep(endereco.cep);
+      setCidade(endereco.cidade);
+      setEstado(endereco.estado);
+      setPais(endereco.pais);
+      localStorage.setItem("cidade_dropdownmenu", endereco.cidade);
+    }
+  }, [endereco]);
   
   const CarregaEndereco = async () =>{
     try {
@@ -41,7 +66,6 @@ export function DropdownMenuDemo() {
     <DropdownMenu>
   <DropdownMenuTrigger>{localStorage.getItem("cidade_dropdownmenu")||TriggerText }</DropdownMenuTrigger>
   <DropdownMenuContent>
-    <DropdownMenuLabel>Selecione</DropdownMenuLabel>
     <DropdownMenuSeparator />
     <DropdownMenuLabel>
      <Input
@@ -76,10 +100,6 @@ export function DropdownMenuDemo() {
       onChange={(e)=>setCidade(e.target.value)}
       />
     </DropdownMenuLabel>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem>
-    <Button onClick={CarregaEndereco}>Confirmar</Button>
-    </DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>
 

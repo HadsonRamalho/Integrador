@@ -53,7 +53,7 @@ export default function AuthPage() {
           },
           body: JSON.stringify({
             nome: name,
-            email,
+            email: emailS,
             documento: document,
             senha: password,
           }),
