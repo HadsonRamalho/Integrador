@@ -66,7 +66,6 @@ export function DropdownMenuDemo() {
     <DropdownMenu>
   <DropdownMenuTrigger>{localStorage.getItem("cidade_dropdownmenu")||TriggerText }</DropdownMenuTrigger>
   <DropdownMenuContent>
-    <DropdownMenuLabel>Selecione</DropdownMenuLabel>
     <DropdownMenuSeparator />
     <DropdownMenuLabel>
      <Input
@@ -101,10 +100,6 @@ export function DropdownMenuDemo() {
       onChange={(e)=>setCidade(e.target.value)}
       />
     </DropdownMenuLabel>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem>
-    <Button onClick={CarregaEndereco}>Confirmar</Button>
-    </DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>
 
