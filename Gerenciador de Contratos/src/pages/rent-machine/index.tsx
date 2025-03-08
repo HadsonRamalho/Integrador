@@ -374,7 +374,11 @@ const RentMachine = () => {
                   onBlur={handleValorAluguel}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
-                <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (calculado com base em {medidaPrazo})</Label>
+                <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel 
+                  {medidaPrazo !== "Selecione um Prazo" && (
+                    <p>(total calculado em {medidaPrazo})</p>
+                  )}
+                  </Label>
                 <Input
                   value={formatCurrency(totalAluguel)}
                   disabled={true}

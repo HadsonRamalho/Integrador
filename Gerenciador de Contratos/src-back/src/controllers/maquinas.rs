@@ -327,10 +327,10 @@ pub async fn calcula_valor_aluguel(input: Json<CalculoValorAluguel>)
             (valor_por_hora * 24.0 * valores.prazo) + valor_taxa
         },
         "Semanas" => {
-            (valor_por_hora * 24.0 * 7.0 * valores.prazo) + valor_taxa
+            (valor_por_hora * 24.0 * (30. / 4.) * valores.prazo) + valor_taxa
         },
         "Meses" => {
-            (valor_por_hora * 24.0 * 7.0 * 4.0 * valores.prazo) + valor_taxa
+            (valor_por_hora * 24.0 * 30. * valores.prazo) + valor_taxa
         },
         _ => {
             return Err((StatusCode::BAD_REQUEST, Json("Medida de tempo inválida.".to_string())))
