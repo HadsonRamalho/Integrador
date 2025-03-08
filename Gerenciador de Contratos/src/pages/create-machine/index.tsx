@@ -152,7 +152,7 @@ export default function CreateMachine() {
             <Label htmlFor="machine-name" className="mb-1">Nome da Máquina</Label>
             <Input
               id="machine-name"
-              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              className="text-black   mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"
               required
               placeholder="Nome da Máquina"
               onChange={(e) => setName(e.target.value)}
@@ -162,7 +162,7 @@ export default function CreateMachine() {
             <Label htmlFor="serial-number" className="mb-1">Número de Série</Label>
             <Input
               id="serial-number"
-              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"              
+              className="text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100 "              
               required
               placeholder="Número de Série"
               onChange={(e) => setSerialNumber(e.target.value)}
@@ -173,7 +173,7 @@ export default function CreateMachine() {
             <Input
               id="rent-value"
               type="number"
-              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"              
+              className="text-black bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"              
               value={rentValue}
               onChange={(e) => setRentValue(e.target.value ? Number(e.target.value) : 0)}
               min="0.01"
@@ -185,7 +185,7 @@ export default function CreateMachine() {
             <br></br>
             <select
               id="rent-disponibility"
-              className="w-full bg-[hsl(var(--background))] h-[30px] text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              className="w-full  h-[30px] text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"
               onChange={(e) => setRentDisponibility(e.target.value)}
               value={rentDisponibility}
               required
@@ -197,7 +197,7 @@ export default function CreateMachine() {
             <Label htmlFor="description" className="mb-1">Descrição da Máquina</Label>
             <textarea
               id="description"
-              className="w-full p-2 border bg-[hsl(var(--background))] rounded-md mb-4 h-20 text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              className="w-full p-2 border  rounded-md mb-4 h-20 text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"
               placeholder="Descrição da Máquina"
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -205,14 +205,14 @@ export default function CreateMachine() {
             />
   
             <Label htmlFor="category" className="mb-1">Categoria da Máquina</Label>
-            <EquipmentSelect className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] w-full" onChange={(e) => setSelectedEquipment(e.target.value)} />
+            <EquipmentSelect className="text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] w-full bg-neutral-100" onChange={(e) => setSelectedEquipment(e.target.value)} />
   
             <Label className="mb-1">Imagens da Máquina</Label>
             <div className="space-y-2">
               {machineImages.map((image, index) => (
                 <div key={index} className="mb-2">
                   <Input
-                    className="mb-4 border-[hsl(var(--primary))] bg-[hsl(var(--background))] rounded-m border-[1px]"
+                    className="mb-4 border-[hsl(var(--primary))]  rounded-m border-[1px] bg-neutral-100"
 
                     type="file"
                     accept="image/*"

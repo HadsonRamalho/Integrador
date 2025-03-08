@@ -14,16 +14,15 @@
     gap: 10px;
 }
 
-.container-maquinas {
+/* .container-maquinas {
     display: flex;
     justify-content: center;
     align-items: center; 
     background-color: hsl(var(--background)); 
-    /* height: 50vh; */
-     /* padding-top: 10%;  */
-    width: 100%;
-     
-}
+    height: 50vh; 
+     padding-top: 10%;  
+    width: 100%;  
+} */
 
 .form-maquinas {
     width: 100vw;
@@ -38,6 +37,7 @@
 
 .form-maquinas input, select, textarea{
     margin-left: 0%;
+   
 }
 
 .form-maquinas label{
