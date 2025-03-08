@@ -24,7 +24,8 @@ const SearchFilter = () => {
   }, []);
   
   const filteredItems = maquinas.filter((maquina) =>
-    maquina.nome.toLowerCase().includes(PalavraBuscada)
+    maquina.nome.toLowerCase().includes(PalavraBuscada.toLowerCase()) ||
+    maquina.categoria.toLowerCase().includes(PalavraBuscada.toLowerCase())
   );
   
 

@@ -23,7 +23,8 @@ const DetalhesMaquina = () => {
   }, []);
 
   const filteredMachines = maquinas.filter((maquina) =>
-    maquina.nome.toLowerCase().includes(filter.toLowerCase())
+    maquina.nome.toLowerCase().includes(filter.toLowerCase()) || 
+  maquina.categoria.toLowerCase().includes(filter.toLowerCase())
   );
 
   return (
@@ -40,7 +41,7 @@ const DetalhesMaquina = () => {
           <Search className="search-icon" />
         </div>
         <div className="mt-10 mb-10 ml-10">
-          <div className="machine-grid w-[90vw]">
+          <div className="machine-grid">
             {maquinas.length === 0 ? (
               <div>
                 <p>
@@ -53,7 +54,7 @@ const DetalhesMaquina = () => {
               filteredMachines.map((maquina) => (
                 <div
                   key={maquina.idmaquina}
-                  style={{ marginTop: "4vh", width: "100%", height: "500px" }}
+                  style={{ marginTop: "4vh", width: "90%", height: "600px" }}
                 >
                   <MachineCard machine={maquina} />
                 </div>

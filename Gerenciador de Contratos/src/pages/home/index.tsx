@@ -91,7 +91,7 @@ function Home() {
                   <img
                     src={cacamba}
                     alt="caçamba"
-                    onClick={() => navigate("/machine")}
+                    onClick={() => navigate(`/maquinas/${encodeURIComponent('caçamba')}`)}
                   />
                   <CardTitle>Caçamba</CardTitle>
                 </CarouselItem>
@@ -99,7 +99,7 @@ function Home() {
                   <img
                     src={moto_serra}
                     alt="motosserra"
-                    onClick={() => navigate("/machine")}
+                    onClick={() => navigate(`/maquinas/${encodeURIComponent('motosserra')}`)}
                   />
                   <CardTitle>Motosserra</CardTitle>
                 </CarouselItem>
@@ -107,7 +107,7 @@ function Home() {
                   <img
                     src={escavadeira1}
                     alt="escavadeira"
-                    onClick={() => navigate("/machine")}
+                    onClick={() => navigate(`/maquinas/${encodeURIComponent('escavadeira')}`)}
                   />
                   <CardTitle>Escavadeira</CardTitle>
                 </CarouselItem>
@@ -115,7 +115,7 @@ function Home() {
                   <img
                     src={trator}
                     alt="trator"
-                    onClick={() => navigate("/machine")}
+                    onClick={() => navigate(`/maquinas/${encodeURIComponent('trator')}`)}
                   />
                   <CardTitle>Trator</CardTitle>
                 </CarouselItem>
@@ -134,7 +134,7 @@ function Home() {
                     <img
                       src={teste}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('Roçadeira')}`)}
                     />
                     <CardTitle>Roçadeira</CardTitle>
                     <CardContent>R$10092</CardContent>
@@ -143,7 +143,7 @@ function Home() {
                     <img
                       src={escavadeira}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('Escavadeira')}`)}
                     />
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$12292</CardContent>
@@ -152,7 +152,7 @@ function Home() {
                     <img
                       src={motoniveladora}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('Motoniveladora')}`)}
                     />
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$2540</CardContent>
@@ -161,7 +161,7 @@ function Home() {
                     <img
                       src={escavadeira}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('escavadeira')}`)}
                     />
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$5410</CardContent>
@@ -170,7 +170,7 @@ function Home() {
                     <img
                       src={motoniveladora}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('motoniveladora')}`)}
                     />
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$10000</CardContent>
