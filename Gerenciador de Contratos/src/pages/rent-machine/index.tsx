@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Machine } from "@/interfaces/machine";
+import { Machine, MachineRentValue } from "@/interfaces/machine";
 import { Renter } from "@/interfaces/renter";
 import { User } from "@/interfaces/user";
 import Layout from "@/layouts/default";
-import { loadMachinePublicId } from "@/services/api/machine/machine";
+import { loadMachineImage, loadMachinePublicId, loadMachineRentValue } from "@/services/api/machine/machine";
 import { createRenter, loadRenterByUserId } from "@/services/api/renter/renter";
 import { loadUserById } from "@/services/api/user/user";
 import { useEffect, useState } from "react";
@@ -14,10 +14,19 @@ import { Address } from "@/interfaces/address";
 import { loadAddressUserId } from "@/services/api/address/address";
 import { Input } from "@/layouts";
 import { Label } from "@radix-ui/react-dropdown-menu";
+import { formatCurrency } from "@/services/api/format/format";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const RentMachine = () => {
   const { publicid } = useParams();
   const [machine, setMachine] = useState<Machine>();
+  const [machineImage, setMachineImage] = useState<string>();
   const [step, setStep] = useState("carregando");
   const [user, setUser] = useState<User>();
   const [renter, setRenter] = useState<Renter>();
@@ -26,17 +35,52 @@ const RentMachine = () => {
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>();
 
+  const [medidaPrazo, setMedidaPrazo] = useState<string>("Selecione um Prazo");
+  const [prazo, setPrazo] = useState<string>('0');
+  const [totalAluguel, setTotalAluguel] = useState<number>(0);
+
   const navigate = useNavigate();
+
+  const handleValorAluguel = async () => {
+    if (!machine || !medidaPrazo || !prazo){
+      return;
+    }
+    try{
+      const obj: MachineRentValue = {
+        idmaquina: machine?.idmaquina,
+        medida_prazo: medidaPrazo,
+        prazo: parseFloat(prazo)
+      };
+      const valor = await loadMachineRentValue(obj);
+      setTotalAluguel(valor);
+    } catch(error){
+      console.error(error);
+      alert(`Erro ao calcular o valor do aluguel da máquina: ${error.message}`)
+    }
+  }
+
+  useEffect(() => {
+    handleValorAluguel();
+  }, [medidaPrazo, prazo]);
+  
 
   useEffect(() => {
     const listMachines = async () => {
       if (publicid) {
-        const machine = await loadMachinePublicId(publicid);
-        console.log(machine);
-        setMachine(machine);
-        if(machine.disponivelaluguel !== "Sim"){
-          alert("Essa máquina não está disponível para aluguel no momento.");
-          navigate("/");
+        try{
+          const machine = await loadMachinePublicId(publicid);
+          console.log(machine);
+          setMachine(machine);
+          const imageUrl = await loadMachineImage(machine.idmaquina);
+          setMachineImage(imageUrl);
+          if(machine.disponivelaluguel !== "Sim"){
+            alert("Essa máquina não está disponível para aluguel no momento.");
+            navigate("/");
+          }
+        } catch(error){
+          console.error(error);
+          setError(true);
+          setErrorMessage("Houve um erro ao carregar a máquina.");
         }
       }
     };
@@ -163,19 +207,19 @@ const RentMachine = () => {
                   <Label className="text-[hsl(var(--text))] mt-2">Nome</Label>
                   <Input
                   value={user?.nome}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))] mt-2">E-mail</Label>
                   <Input
                   value={user?.email}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))] mt-2">Documento</Label>
                   <Input
                   value={user?.documento}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
                 </Card>
                 {address ? (
@@ -183,50 +227,50 @@ const RentMachine = () => {
                   <Label className="text-[hsl(var(--text))] mt-2">CEP</Label>
                   <Input
                   value={address?.cep}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   
                   <Label className="text-[hsl(var(--text))] mt-2">País</Label>
                   <Input
                   value={address?.pais}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Estado</Label>
                   <Input
                   value={address?.estado}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Cidade</Label>
                   <Input
                   value={address?.cidade}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Bairro</Label>
                   <Input
                   value={address?.bairro}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Rua</Label>
                   <Input
                   value={address?.logradouro}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Número</Label>
                   <Input
                   value={address?.numero}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Complemento</Label>
                   <Input
                   value={address?.complemento}
-                  readOnly={true}
+                  disabled={true}
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
                 </Card>
                 ) : (
@@ -250,18 +294,97 @@ const RentMachine = () => {
           </div>
         ) : step === "revisão-solicitação" ? (
           <div className="rent-machine-container">
-            <Card className="bg-white w-[60vw] m-4 border-[hsl(var(--primary))]">
+            <Card className="bg-[hsl(var(--machine-card-bg))] w-[60vw] m-4 border-[hsl(var(--primary))]">
               <CardHeader>
               <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Revisão da Solicitação</CardTitle>
               </CardHeader>
               <CardDescription>
-                <p>Confirme seus dados antes de alugar a máquina. Só é necessário realizar esse processo uma vez.</p>
+                <p>Revises essas informações antes de alugar a máquina. Role para baixo para ver mais e leia com atenção.</p>
                 <p>Se precisar atualizar alguma informação, acesse o seu perfil.</p>
               </CardDescription>
                 <CardContent className="flex flex-col items-center w-full">
-                <Card className="w-[60%] mt-2 bg-white pb-4 border-[hsl(var(--primary))]">
-                
+                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                <CardHeader className="text-[hsl(var(--text))]  text-[1.25rem]"><strong>Máquina </strong>
+                  <img
+                    src={machineImage}
+                  />
+                </CardHeader>
+                {machine && (
+                  <CardContent>
+                  <Label className="text-[hsl(var(--text))] mt-2 mb-2">Nome da Máquina</Label>
+                  <Input
+                  value={machine?.nome}
+                  disabled={true}
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+
+                  <Label className="text-[hsl(var(--text))] mt-2 mb-2">Categoria da Máquina</Label>
+                  <Input
+                  value={machine.categoria}
+                  disabled={true}
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+
+
+                  <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número de Série da Máquina</Label>
+                  <Input
+                  value={machine?.numeroserie}
+                  disabled={true}
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+
+                  <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (Mensal)</Label>
+                  <Input
+                  value={formatCurrency(machine.valoraluguel)}
+                  disabled={true}
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+
+                </CardContent>
+                )}
                 </Card>
+
+                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]"><strong>Aluguel</strong>
+                 </CardHeader>
+                 <CardContent>
+                 <Label className="text-[hsl(var(--text))] mt-2 mb-2">Medida do Prazo</Label>
+
+                <div className="flex flex-col items-center w-full gap-4">
+                  <div className="flex flex-col w-[50%]">
+                <Select onValueChange={(e) => {
+                  setMedidaPrazo(e);
+                  }}>
+                  <SelectTrigger className="p-2 bg-white text-black border-[1px] border-[hsl(var(--primary))] rounded-md">                    
+                    <SelectValue placeholder="Selecione um Prazo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Horas">Horas</SelectItem>
+                    <SelectItem  value="Dias">Dias</SelectItem>
+                    <SelectItem  value="Semanas">Semanas</SelectItem>
+                    <SelectItem  value="Meses">Meses</SelectItem>
+                  </SelectContent>
+                </Select>
+                </div></div>
+
+                <Label className="text-[hsl(var(--text))] mt-2 mb-2">Prazo do Aluguel (em {medidaPrazo})</Label>
+                <Input
+                  value={prazo}
+                  type="number"
+                  step={0.5}
+                  onChange={(e) => {
+                    setPrazo(e.target.value)
+                  }}
+                  onBlur={handleValorAluguel}
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+
+                <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (calculado com base em {medidaPrazo})</Label>
+                <Input
+                  value={formatCurrency(totalAluguel)}
+                  disabled={true}
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  <p className="mt-2">Foi adicionada uma taxa de 5% do valor mensal da máquina
+                    para cobrir parte dos custos de manutenção após o uso.
+                  </p>
+
+                 </CardContent>
+                 </Card>
               </CardContent> 
             </Card>
           </div>
