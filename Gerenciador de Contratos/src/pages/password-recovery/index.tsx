@@ -155,7 +155,7 @@ export default function PasswordRecovery() {
       <Layout>
         <main>
           <div className="password-recovery">
-            <div className="input-box height-[400px]">
+            <div className="input-box height-[400px] mb-10">
               <h2 className="title">Recuperação de senha</h2>
               {(!isCodeInputVisible && !isPasswordInputVisible) && (
                 <>                 

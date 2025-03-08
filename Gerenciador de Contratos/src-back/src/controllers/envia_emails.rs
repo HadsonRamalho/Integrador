@@ -98,9 +98,9 @@ pub async fn envia_email_codigo(email: String, assunto: &str, codigo: String)
                         .code {{
                             font-size: 18px;
                             font-weight: bold;
-                            color: #169E69;
+                            color:rgb(2, 119, 74);
                             padding: 10px;
-                            border: 1px solid #169E69;
+                            border: 1px solidrgb(3, 102, 64);
                             border-radius: 5px;
                             display: inline-block;
                         }}

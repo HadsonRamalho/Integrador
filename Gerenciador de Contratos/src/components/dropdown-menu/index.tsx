@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -74,6 +72,7 @@ export function DropdownMenuDemo() {
      value={cep}
      onChange={(e) =>setCep(e.target.value)}
      onBlur={CarregaEndereco}
+     disabled={true}
      />
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
@@ -82,6 +81,7 @@ export function DropdownMenuDemo() {
       placeholder="País"
       value={pais}
       onChange={(e)=> setPais(e.target.value)}
+      disabled={true}
       />
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
@@ -90,6 +90,7 @@ export function DropdownMenuDemo() {
       placeholder="Estado"
       value={estado}
       onChange={(e)=> setEstado(e.target.value)}
+      disabled={true}
       />
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
@@ -98,6 +99,7 @@ export function DropdownMenuDemo() {
       placeholder="Cidade"
       value={cidade}
       onChange={(e)=>setCidade(e.target.value)}
+      disabled={true}
       />
     </DropdownMenuLabel>
   </DropdownMenuContent>
