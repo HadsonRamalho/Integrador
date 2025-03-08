@@ -27,7 +27,18 @@ export default function UserProfile() {
   const [user, setUser] = useState<User>();
   const [error, setError] = useState(false);
   const [updatedData, setUpdatedData] = useState(true);
-  const [address, setAddress] = useState<Address>();
+  const defaultAddress: Address = {
+    idendereco: "",
+    pais: "",
+    estado: "",
+    cidade: "",
+    cep: "",
+    bairro: "",
+    logradouro: "",
+    numero: "",
+    complemento: ""
+  };
+  const [address, setAddress] = useState<Address | null>(defaultAddress);
 
   const [pais, setPais] = useState<string>("Brasil");
   const [estado, setEstado] = useState<string>();
@@ -96,14 +107,16 @@ export default function UserProfile() {
 
   useEffect(() => {
     async function buscaEndereco(id: string) {
-      const res = await loadAddressUserId(id);
-      if (!res) {
-        console.log("Erro ao buscar endereço do usuário.");
-        alert("Usuário não possui endereço");
+      try{
+        const res = await loadAddressUserId(id);
+        console.log(res);
+        const endereco = res;
+        setAddress(endereco);
+        console.log(endereco);
+      } catch(error){
+        setAddress(null);
+        console.error(error);
       }
-      const endereco = res;
-      setAddress(endereco);
-      console.log(endereco);
     }
     const loadUser = async () => {
       setUpdatedData(false);
