@@ -28,20 +28,19 @@ const DetalhesMaquina = () => {
 
   return (
     <Layout>
-      <main className="max-w-6xl mx-auto p-6">
-        <div className="mt-10 mb-10 ">
-          <div className="search-busca">
-            <Input
-              type="text"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              placeholder="Buscar máquina..."
-              className="search-input-result"
-            />
-            <Search className="search-icon" />
-          </div>
-
-          <div className="machine-grid">
+      <main>
+        <div className="search-busca mt-10 ml-10 mr-10">
+          <Input
+            type="text"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            placeholder="Buscar máquina..."
+            className="search-input-result"
+          />
+          <Search className="search-icon" />
+        </div>
+        <div className="mt-10 mb-10 ml-10">
+          <div className="machine-grid w-[90vw]">
             {maquinas.length === 0 ? (
               <div>
                 <p>
@@ -54,7 +53,7 @@ const DetalhesMaquina = () => {
               filteredMachines.map((maquina) => (
                 <div
                   key={maquina.idmaquina}
-                  style={{ marginTop: "4vh", width: "90%", height: "600px" }}
+                  style={{ marginTop: "4vh", width: "100%", height: "600px" }}
                 >
                   <MachineCard machine={maquina} />
                 </div>

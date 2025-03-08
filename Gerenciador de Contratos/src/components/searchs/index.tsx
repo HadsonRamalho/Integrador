@@ -1,7 +1,6 @@
 import { Input } from "@/layouts";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../ui/button";
 import { Search } from "lucide-react";
 import "@/components/searchs/searchs.css"
 import { listMachine } from "@/services/api/machine/machine";

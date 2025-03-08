@@ -53,7 +53,7 @@ export const MachineList = () => {
             <p className="text-[1.2rem]">Minhas Máquinas</p>
             </CardHeader>
           <CardContent>
-          <div className={`machine-list-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`}>
+          <div className={`machine-list-grid pt-10 pb-20 ${filteredMachines.length === 1 ? 'single-item' : ''}`}>
           {filteredMachines.length === 0 ? (
             <Card>
               <CardHeader>

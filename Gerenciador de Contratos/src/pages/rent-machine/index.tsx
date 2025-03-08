@@ -24,6 +24,7 @@ const RentMachine = () => {
   const [address, setAddress] = useState<Address>();
   const [renterId, setRenterId] = useState<string>();
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>();
 
   const navigate = useNavigate();
 
@@ -47,6 +48,7 @@ const RentMachine = () => {
       const id = localStorage.getItem("USER_ID");
       if(!id){
         setError(true);
+        setErrorMessage("Você precisa estar logado pra prosseguir.");
         return;
        }
       try{
@@ -55,6 +57,7 @@ const RentMachine = () => {
         setUser(user);
       } catch(err){
         setError(true);
+        setErrorMessage("Houve um erro ao carregar suas informações.");
         console.error(err);
         setStep("");
       }
@@ -96,6 +99,7 @@ const RentMachine = () => {
       } catch (err) {
         console.error(err);
         setError(true);
+        setErrorMessage("Houve um erro ao carregar seu endereço. Acesse seu perfil para verificar.");
         setStep("cadastro-locatario");
       }
     };
@@ -121,9 +125,20 @@ const RentMachine = () => {
     return (
       <Layout>
         <main>
-          <Card className="m-4 p-4">
-            <p>Houve um erro ao carregar as informações. Reporte o problema aqui:</p>
-            <Button>Relatar problema</Button>
+          <Card className="m-4 p-4 mr-10 ml-10">
+            <CardHeader>
+              <p className="text-[black]">{errorMessage}</p>
+            </CardHeader>
+            {errorMessage !== "Houve um erro ao carregar seu endereço. Acesse seu perfil para verificar." ? (
+              <div>
+                <p className="text-[black]">Houve um erro ao carregar as informações. Reporte o problema aqui:</p>
+                <Button>Relatar problema</Button>
+              </div>
+            ) : (
+              <div>
+                <Button onClick={() => {navigate('/user-profile')}}>Ver meu perfil</Button>
+              </div>
+            )}
           </Card>
         </main>
       </Layout>
@@ -252,7 +267,7 @@ const RentMachine = () => {
           </div>
         ) : 
         <div>
-          <p>
+          <p className="text-[black]">
             Houve um erro ao carregar as informações. Reporte o problema aqui:
           </p>
           <Button>Relatar problema</Button>
