@@ -89,6 +89,7 @@ function Home() {
               <CarouselContent>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
                   <img
+                    className="hover:cursor-pointer"
                     src={cacamba}
                     alt="caçamba"
                     onClick={() => navigate(`/maquinas/${encodeURIComponent('caçamba')}`)}
@@ -97,6 +98,7 @@ function Home() {
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
                   <img
+                    className="hover:cursor-pointer"
                     src={moto_serra}
                     alt="motosserra"
                     onClick={() => navigate(`/maquinas/${encodeURIComponent('motosserra')}`)}
@@ -105,6 +107,7 @@ function Home() {
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
                   <img
+                    className="hover:cursor-pointer"
                     src={escavadeira1}
                     alt="escavadeira"
                     onClick={() => navigate(`/maquinas/${encodeURIComponent('escavadeira')}`)}
@@ -113,6 +116,7 @@ function Home() {
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
                   <img
+                    className="hover:cursor-pointer"
                     src={trator}
                     alt="trator"
                     onClick={() => navigate(`/maquinas/${encodeURIComponent('trator')}`)}
@@ -132,6 +136,7 @@ function Home() {
                 <CarouselContent>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={teste}
                       alt=""
                       onClick={() => navigate(`/maquinas/${encodeURIComponent('Roçadeira')}`)}
@@ -141,6 +146,7 @@ function Home() {
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={escavadeira}
                       alt=""
                       onClick={() => navigate(`/maquinas/${encodeURIComponent('Escavadeira')}`)}
@@ -150,6 +156,7 @@ function Home() {
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={motoniveladora}
                       alt=""
                       onClick={() => navigate(`/maquinas/${encodeURIComponent('Motoniveladora')}`)}
@@ -159,6 +166,7 @@ function Home() {
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={escavadeira}
                       alt=""
                       onClick={() => navigate(`/maquinas/${encodeURIComponent('escavadeira')}`)}
@@ -168,6 +176,7 @@ function Home() {
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={motoniveladora}
                       alt=""
                       onClick={() => navigate(`/maquinas/${encodeURIComponent('motoniveladora')}`)}
