@@ -65,3 +65,10 @@
     background-color: #169e69;
 }
 
+label{
+text-align: left;
+font-size: 1.1em;
+display: block;
+margin-bottom: 2px;
+}
+
