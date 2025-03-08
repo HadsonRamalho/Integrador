@@ -54,7 +54,9 @@ export const ProfileDropdownMenu = () => {
             </DropdownMenuLabel>
            
             <DropdownMenuItem>
-                Central de Ajuda
+            <NavLink to={"/helpcenter"} className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
+            <p style={{color: "black", fontSize: '15px'}}>Central de Ajuda</p>
+            </NavLink>
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuItem onClick={LogOut}>
