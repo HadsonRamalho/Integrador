@@ -36,7 +36,7 @@ function Home() {
       <Layout>
         <main className="home-container">
           <section className="titulo-section">
-            <h1>Locação de Maquinas e Equipamentos</h1>
+            <h1>Locação de Máquinas e Equipamentos</h1>
             <p>
               Encontre a máquina ideal para sua obra ou disponibilize seus
               equipamentos para locação com segurança e sem burocracia.
