@@ -66,6 +66,8 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
 - RNF 002: Testes unitários
 - RNF 003: Facilitar o uso e entendimento do sistema
 - RNF 004: Disponibilizar um guia de uso do sistema
+- RNF 005: Permitir que o usuário pesquise por máquinas
+- RNF 006: Permitir que o usuário filtre  máquinas por categoria
 
 
  ### Ajuda
