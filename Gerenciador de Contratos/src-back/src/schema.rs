@@ -56,6 +56,9 @@ diesel::table! {
         contabancarialocador -> Varchar,
         #[max_length = 64]
         cidadeforo -> Varchar,
+        datacontrato -> Timestamp,
+        #[max_length = 64]
+        statuscontrato -> Varchar,
     }
 }
 
@@ -176,6 +179,24 @@ diesel::table! {
 }
 
 diesel::table! {
+    solicitacoes_contratos (idsolicitacao) {
+        #[max_length = 64]
+        idsolicitacao -> Varchar,
+        #[max_length = 64]
+        idlocador -> Varchar,
+        #[max_length = 64]
+        idlocatario -> Varchar,
+        #[max_length = 64]
+        idmaquina -> Varchar,
+        #[max_length = 64]
+        origemsolicitacao -> Varchar,
+        #[max_length = 64]
+        statussolicitacao -> Varchar,
+        datasolicitacao -> Timestamp,
+    }
+}
+
+diesel::table! {
     usuarios (idusuario) {
         #[max_length = 64]
         nome -> Varchar,
@@ -207,5 +228,6 @@ diesel::allow_tables_to_appear_in_same_query!(
     locatarios,
     maquinas,
     maquinas_usuarios,
+    solicitacoes_contratos,
     usuarios,
 );
