@@ -4,23 +4,24 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = crate::schema::solicitacoes_contratos)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[diesel(check_for_backend(diesel::pg::Pg))] 
 pub struct SolicitacaoContrato{ 
     pub idsolicitacao: String,
-    pub idlocador: String,
+    pub idlocador: String, 
     pub idlocatario: String,
     pub idmaquina: String,
-    pub prazolocacao: f64,
     pub medidatempolocacao: String,
     pub origemsolicitacao: String,
     pub statussolicitacao: String,
+    pub prazolocacao: f64,
+    pub valorsolicitacao: f64,
     pub datasolicitacao: NaiveDateTime 
 }
 
 pub async fn cadastra_solicitacao_contrato(conn: &mut PgConnection, solicitacao: SolicitacaoContrato)
     -> Result<String, String>{
     use crate::schema::solicitacoes_contratos::dsl::*;
-
+ 
     let res: Result<SolicitacaoContrato, diesel::result::Error> = diesel::insert_into(solicitacoes_contratos)
       .values(solicitacao)
       .get_result(conn);

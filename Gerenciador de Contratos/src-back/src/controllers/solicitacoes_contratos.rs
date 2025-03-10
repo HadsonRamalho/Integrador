@@ -1,5 +1,4 @@
 use axum::Json;
-use chrono::NaiveDateTime;
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 
@@ -12,10 +11,10 @@ pub struct SolicitacaoContratoInput{
     pub idlocador: String,
     pub idlocatario: String,
     pub idmaquina: String,
-    pub prazolocacao: f64,
     pub medidatempolocacao: String,
     pub origemsolicitacao: String,
-    pub statussolicitacao: String,
+    pub valorsolicitacao: f64,
+    pub prazolocacao: f64,
 }
 
 pub async fn cadastra_solicitacao_contrato(input: Json<SolicitacaoContratoInput>)
@@ -33,6 +32,7 @@ pub async fn cadastra_solicitacao_contrato(input: Json<SolicitacaoContratoInput>
     let statussolicitacao = "Aguardando aprovação".to_string();
     let medidatempolocacao = input.medidatempolocacao.to_string();
     let prazolocacao = input.prazolocacao;
+    let valorsolicitacao = input.valorsolicitacao;
 
     let idsolicitacao = gera_hash(&idmaquina);
     let datasolicitacao = chrono::Utc::now().naive_utc();
@@ -44,9 +44,14 @@ pub async fn cadastra_solicitacao_contrato(input: Json<SolicitacaoContratoInput>
       medidatempolocacao,
       prazolocacao,
       origemsolicitacao,
+      valorsolicitacao,
       statussolicitacao,
       datasolicitacao
     };
+
+    if valorsolicitacao < 1.{
+      return Err((StatusCode::BAD_REQUEST, Json("O valor do aluguel não é válido.".to_string())))
+    }
     
     let conn = &mut cria_conn()?;
     match models::solicitacoes_contratos::cadastra_solicitacao_contrato(conn, solicitacao).await{
