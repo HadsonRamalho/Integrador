@@ -25,6 +25,7 @@ import {
 import { loadMachineOwnerByMachineId } from "@/services/api/machine-owner";
 import { loadBankAccountByUserId } from "@/services/api/bank-account";
 import { BankAccount } from "@/interfaces/bank-account";
+import { createContractRequest } from "@/services/api/contract-request";
 
 const RentMachine = () => {
   const { publicid } = useParams();
@@ -41,11 +42,15 @@ const RentMachine = () => {
   const [machineOwnerId, setMachineOwnerId] = useState<string>();
   const [machineOwnerName, setMachineOwnerName] = useState<string>();
 
+  const [machineOwnerAddress, setMachineOwnerAddress] = useState<Address>();
+
   const [bankAccount, setBankAccount] = useState<BankAccount | null>();
 
   const [medidaPrazo, setMedidaPrazo] = useState<string>("Selecione um Prazo");
   const [prazo, setPrazo] = useState<string>('0');
   const [totalAluguel, setTotalAluguel] = useState<number>(0);
+
+  const [requestId, setRequestId] = useState<string>();
 
   const navigate = useNavigate();
 
@@ -70,7 +75,6 @@ const RentMachine = () => {
   useEffect(() => {
     handleValorAluguel();
   }, [medidaPrazo, prazo]);
-  
 
   useEffect(() => {
     const listMachines = async () => {
@@ -112,6 +116,22 @@ const RentMachine = () => {
     };
     loadMachineOwner();
   }, [machine]);
+
+  useEffect(() => {
+    const loadMachineOwnerAddress = async () => {
+      if (machineOwnerId) {
+        try{
+          const address = await loadAddressUserId(machineOwnerId);
+          setMachineOwnerAddress(address);
+        } catch(error){
+          console.error(error);
+          setError(true);
+          setErrorMessage("Houve um erro ao carregar o endereço do locador da máquina.");
+        }
+      }
+    };
+    loadMachineOwnerAddress();
+  }, [machineOwnerId]);
 
   useEffect(() => {
     const loadBankAccount = async () => {
@@ -206,6 +226,34 @@ const RentMachine = () => {
       console.error(error);
     }
   }
+
+  const handleContractRequest = async () => {
+    if (!machineOwnerId || !user || !machine || !prazo || !medidaPrazo || !totalAluguel){
+      alert("Houve um erro na solicitação. Preencha todos os campos.");
+      return;
+    }
+    if (prazo <= "0" || totalAluguel <= 0){
+      alert("Houve um erro ao processar o valor do aluguel.");
+      return;
+    }
+    try {
+      const id = await createContractRequest(
+        machineOwnerId,
+        user?.idusuario,
+        machine?.idmaquina,
+        parseFloat(prazo),
+        medidaPrazo,
+        user?.idusuario,
+        totalAluguel,
+      );
+      setRequestId(id);
+      setStep("status-solicitação");
+      alert("A solicitação de aluguel foi enviada!");
+    } catch (err) {
+      console.error(err);
+      alert("Houve um erro ao enviar a solicitação de aluguel.");
+    }
+  };
 
   if (error){
     return (
@@ -457,9 +505,66 @@ const RentMachine = () => {
                       value={bankAccount?.numeroagencia}
                       disabled={true}
                       className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
-                      
+                    </CardContent>
+                </Card>
+                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))] mb-10">
+                 <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]"><strong>Endereço para Retirada</strong>
+                 </CardHeader>
+                    <CardContent>
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">CEP</Label>
+                    <Input
+                      value={machineOwnerAddress?.cep}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">País</Label>
+                    <Input
+                      value={machineOwnerAddress?.pais}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Estado</Label>
+                    <Input
+                      value={machineOwnerAddress?.estado}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Cidade</Label>
+                    <Input
+                      value={machineOwnerAddress?.cidade}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Bairro</Label>
+                    <Input
+                      value={machineOwnerAddress?.bairro}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Rua</Label>
+                    <Input
+                      value={machineOwnerAddress?.logradouro}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número</Label>
+                    <Input
+                      value={machineOwnerAddress?.numero}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Complemento</Label>
+                    <Input
+                      value={machineOwnerAddress?.complemento}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
                     </CardContent>
                   </Card>
+                  <Button onClick={handleContractRequest}>Solicitar aluguel da máquina</Button>
+                  <CardDescription>
+                    <p className="text-[hsl(var(--text))]">O dono da máquina vai receber uma notificação e poderá aprovar
+                    o aluguel da máquina.</p>
+                  </CardDescription>
               </CardContent> 
             </Card>
           </div>

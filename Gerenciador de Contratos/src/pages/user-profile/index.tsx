@@ -481,49 +481,49 @@ export default function UserProfile() {
                   placeholder="CEP"
                   onChange={(e) => setCep(e.target.value)}
                   onBlur={() => {handleCepChange()}}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
                   <Input
                   placeholder="País"
                   disabled={true}
                   value={pais}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
                   <Input
                   placeholder="Estado"
                   onChange={(e) => setEstado(e.target.value)}
                   value={estado}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
                   <Input
                   placeholder="Cidade"
                   value={cidade}
                   onChange={(e) => setCidade(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
                   <Input
                   placeholder="Bairro"
                   value={bairro}
                   onChange={(e) => setBairro(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
                   <Input
                   placeholder="Rua"
                   value={logradouro}
                   onChange={(e) => setLogradouro(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
                   <Input
                   placeholder="Número"
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
                   <Input
                   placeholder="Complemento"
                   value={complemento}
                   onChange={(e) => setComplemento(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />                  
                 </div>
               <AlertDialogFooter>
