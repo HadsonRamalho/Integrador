@@ -96,7 +96,7 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
           </AlertDialog>
         </div>
         <CardContent>
-          <div>
+          <div className="machine-image-container">
             {loadingImage ? (
               <div>
                 <Skeleton className="h-[30vh] w-[90%] rounded-xl" />
@@ -104,12 +104,10 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
             ) : error ? (
               <div className="image-placeholder">Erro ao carregar imagem</div>
             ) : image ? (
-              <div className="machine-image-container">
                 <img
                 src={image}
                 alt={`Imagem de ${machine.nome}`}
               />
-              </div>
             ) : (
               <div className="image-placeholder">Imagem indisponível</div>
             )}

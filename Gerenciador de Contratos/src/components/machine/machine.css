@@ -1,8 +1,5 @@
 .machine-image-container{
-    width: 20vw;
-    height: 20vw;
-    max-width: 200px;
-    max-height: 200px;
+    max-height: 230px;
 }
 
 .machine-image-container img{
