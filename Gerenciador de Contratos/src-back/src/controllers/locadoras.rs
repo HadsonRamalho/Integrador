@@ -48,7 +48,7 @@ pub async fn cadastra_locadora(input: Json<LocadoraInput>)
 }
 
 pub async fn busca_locadora_idusuario(Query(id): Query<IdInput>)
-  -> Result<(StatusCode, Json<Locadora>), (StatusCode, Json<String>)>{
+    -> Result<(StatusCode, Json<Locadora>), (StatusCode, Json<String>)>{
     if id.id.trim().is_empty(){
       return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())));
     }
