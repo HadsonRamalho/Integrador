@@ -215,10 +215,7 @@ export default function MachineDetails() {
                   onClick={() => {
                     navigate("/");
                   }}
-                  style={{
-                    color: "hsl(var(--text))",
-                    backgroundColor: "rgb(136, 39, 39)",
-                  }}
+                  className="text-[hsl(var(--text)) bg-[#882727]"
                 >
                   Cancelar
                 </AlertDialogCancel>

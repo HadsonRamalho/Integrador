@@ -68,3 +68,26 @@ pub async fn deleta_conta_bancaria(id: String)
       }
     }
 }
+
+pub async fn atualiza_conta_bancaria(conn: &mut PgConnection, conta: ContaBancaria)
+    -> Result<ContaBancaria, String>{
+    use crate::schema::contas_bancarias::dsl::*;
+
+    let res: Result<ContaBancaria, diesel::result::Error> = diesel::update(contas_bancarias)
+      .filter(idconta.eq(conta.idconta))
+      .set((
+        nomebanco.eq(conta.nomebanco),
+        numeroagencia.eq(conta.numeroagencia),
+        numeroconta.eq(conta.numeroconta)
+      ))
+      .get_result(conn);
+
+    match res{
+      Ok(conta) => {
+        return Ok(conta)
+      },
+      Err(e) => {
+        return Err(e.to_string())
+      }
+    }
+}
