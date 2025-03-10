@@ -47,6 +47,8 @@ diesel::table! {
         #[max_length = 64]
         idmaquina -> Varchar,
         #[max_length = 64]
+        idsolicitacaocontrato -> Varchar,
+        #[max_length = 64]
         prazolocacao -> Varchar,
         #[max_length = 64]
         medidatempolocacao -> Varchar,

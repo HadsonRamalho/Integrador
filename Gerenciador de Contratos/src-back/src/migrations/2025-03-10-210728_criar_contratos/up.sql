@@ -7,6 +7,7 @@ CREATE TABLE contratos(
     idenderecolocador VARCHAR(64) NOT NULL,
     idenderecoretirada VARCHAR(64) NOT NULL,
     idmaquina VARCHAR(64) NOT NULL,
+    idsolicitacaocontrato VARCHAR(64) NOT NULL,
     prazolocacao VARCHAR(64) NOT NULL,
     medidatempolocacao VARCHAR(64) NOT NULL,
     valorlocacao VARCHAR(64) NOT NULL,
