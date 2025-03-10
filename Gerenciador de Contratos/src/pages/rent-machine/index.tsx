@@ -204,7 +204,7 @@ const RentMachine = () => {
               </CardDescription>
                 <CardContent className="flex flex-col items-center w-full">
                 <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
-                  <Label className="text-[hsl(var(--text))] mt-2 block  text-left">Nome</Label>
+                  <Label className="text-[hsl(var(--text))] mt-2 ">Nome</Label>
                   <Input
                   value={user?.nome}
                   disabled={true}
