@@ -58,7 +58,7 @@
     text-align: center;
 }
 
-.machine-grid{
+.search-machine-grid{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(1, 1fr);
@@ -71,10 +71,17 @@
     padding: 10px;
     font-size: 16px;
     border: none;
-    outline: none;
-  
-  
+    outline: none;  
 }
 
+.search-machine-grid.single-item {
+    max-width: 350px;
+    max-height: 600px;
+    margin: 0;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    grid-template-columns: 1fr;
+    justify-content: center;
+}
 
  

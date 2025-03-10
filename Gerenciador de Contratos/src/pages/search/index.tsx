@@ -24,7 +24,7 @@ const DetalhesMaquina = () => {
 
   const filteredMachines = maquinas.filter((maquina) =>
     maquina.nome.toLowerCase().includes(filter.toLowerCase()) || 
-  maquina.categoria.toLowerCase().includes(filter.toLowerCase())
+    maquina.categoria.toLowerCase().includes(filter.toLowerCase())
   );
 
   return (
@@ -52,7 +52,8 @@ const DetalhesMaquina = () => {
               </div>
             ) : filteredMachines.length > 0 ? (
               filteredMachines.map((maquina) => (
-                <div
+                <div 
+                  className={`search-machine-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`}
                   key={maquina.idmaquina}
                   style={{ marginTop: "4vh", width: "90%", height: "600px" }}
                 >

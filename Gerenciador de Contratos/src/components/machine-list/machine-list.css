@@ -12,10 +12,6 @@
         justify-items: center;
     }
 }
-.machine-list-grid.single-item {
-    grid-template-columns: 1fr;
-    justify-content: center;
-}
 
 .machine-list-grid.single-item {
     max-width: 350px;
@@ -23,4 +19,6 @@
     margin: 0;
     overflow: hidden;
     transition: transform 0.3s ease;
+    grid-template-columns: 1fr;
+    justify-content: center;
 }
