@@ -7,6 +7,11 @@ describe('Teste login', () => {
 
   it('login realizado', () => {
    
+    cy.get('.nav-left > :nth-child(2) > .class1').click();
+
+    
+    cy.url().should('eq', 'http://localhost:5173/');
   });
 
 });
+
