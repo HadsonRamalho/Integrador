@@ -1,5 +1,4 @@
 import { loadMachineImage } from "@/services/api/machine/machine";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { useEffect, useState } from "react";
 import { Card } from "../ui/card";
 import { useNavigate } from "react-router-dom";
@@ -57,7 +56,6 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
   }, [machine.idmaquina]);
 
   return (
-    <AspectRatio ratio={16 / 9}>
       <Card
         className="machine-card  hover:cursor-pointer"
         onClick={() => {
@@ -98,7 +96,7 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
           </AlertDialog>
         </div>
         <CardContent>
-          <div className="machine-image-home">
+          <div>
             {loadingImage ? (
               <div>
                 <Skeleton className="h-[30vh] w-[90%] rounded-xl" />
@@ -106,16 +104,19 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
             ) : error ? (
               <div className="image-placeholder">Erro ao carregar imagem</div>
             ) : image ? (
-              <img
+              <div className="machine-image-container">
+                <img
                 src={image}
-                className="p-0 w-full"
                 alt={`Imagem de ${machine.nome}`}
               />
+              </div>
             ) : (
               <div className="image-placeholder">Imagem indisponível</div>
             )}
           </div>
-          <h1>{machine.nome}</h1>
+          <div>
+            <h1 className="ml-0 w-[250px]">{machine.nome}</h1>
+          </div>
           <CardDescription>
             <p className="machine-card-description">
               Preço: <strong>R$ {machine.valoraluguel}</strong>
@@ -126,6 +127,5 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
           </CardDescription>
         </CardContent>
       </Card>
-    </AspectRatio>
   );
 };
