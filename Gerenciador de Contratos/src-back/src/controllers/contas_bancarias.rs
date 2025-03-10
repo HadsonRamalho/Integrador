@@ -67,3 +67,23 @@ pub async fn busca_conta_bancaria_idusuario(Query(id): Query<IdInput>)
       }
     }
 }
+
+pub async fn atualiza_conta_bancaria(input: Json<ContaBancaria>)
+    ->Result<(StatusCode, Json<ContaBancaria>), (StatusCode, Json<String>)>{
+    if input.idconta.trim().is_empty() || input.idusuario.trim().is_empty() 
+      || input.nomebanco.trim().is_empty() || input.numeroagencia.trim().is_empty()
+      || input.numeroconta.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+
+    let mut conn = &mut cria_conn()?;
+
+    match models::contas_bancarias::atualiza_conta_bancaria(conn, input.0).await{
+        Ok(conta) => {
+          return Ok((StatusCode::OK, Json(conta)))
+        },
+        Err(e) => {
+          return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    }
+}

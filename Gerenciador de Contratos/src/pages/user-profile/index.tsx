@@ -22,8 +22,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { loadBankAccountByUserId, updateBankAccount } from "@/services/api/bank-account";
+import { BankAccount } from "@/interfaces/bank-account";
 
 export default function UserProfile() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState<User>();
   const [error, setError] = useState(false);
   const [updatedData, setUpdatedData] = useState(true);
@@ -48,8 +52,6 @@ export default function UserProfile() {
   const [logradouro, setLogradouro] = useState<string>();
   const [numero, setNumero] = useState<string>();
   const [complemento, setComplemento] = useState<string>();
-
-  const navigate = useNavigate();
 
   async function AtualizaUsuario(nome_novo: string, email_novo: string, documento_novo: string, senha: string) {
     try {
@@ -307,8 +309,94 @@ export default function UserProfile() {
       </Card>
     );
   };
+
+  const BankAccountCard: React.FC<UserCardProps> = ({ user }) => {
+    const [bankName, setBankName] = useState<string>();
+    const [bankAccountNumber, setBankAccountNumber] = useState<string>();
+    const [bankAgency, setBankAgency] = useState<string>();
+    const [bankAccountId, setBankAccountId] = useState<string>();
+
+    const loadBankAccount = async () => {
+      if(!user){
+        return;
+      }
+      try{
+        const res = await loadBankAccountByUserId(user.idusuario);
+        setBankName(res.nomebanco);
+        setBankAccountNumber(res.numeroconta);
+        setBankAgency(res.numeroagencia);
+        setBankAccountId(res.idconta);
+      } catch(error){
+        console.error(error);
+      }
+    }
+
+    useEffect(() => {
+      if(user){
+        loadBankAccount();
+      }
+    }, [user]);
+    
+    const handleUpdateBankAccount = async () => {
+      if (!bankAccountId || !bankAgency || !bankAccountNumber || !bankName){
+        alert("Preencha todos os campos para atualizar a conta bancária.");
+        return;
+      }
+      const newBankAccount: BankAccount = {
+        idconta: bankAccountId,
+        idusuario: user.idusuario,
+        nomebanco: bankName,
+        numeroagencia: bankAgency,
+        numeroconta: bankAccountNumber        
+      };
+      const updatedBankAccount = await updateBankAccount(newBankAccount);
+      if (!updatedBankAccount) {
+        alert("Erro ao atualizar a conta bancária.");
+        return;
+      }
+      setBankAccountNumber(updatedBankAccount.numeroconta);
+      setBankAgency(updatedBankAccount.numeroagencia);
+      setBankName(updatedBankAccount.nomebanco);
+      alert("Conta bancária atualizada!");
+    }
+
+    return (
+      <div>
+        {bankAccountId && (
+          <Card className="mt-2 border-[hsl(var(--primary))] bg-[hsl(var(--machine-card-bg))]">
+          <CardHeader>
+            <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Minha Conta Bancária</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Label htmlFor="cep" className="text-[hsl(var(--text))]">Nome do Banco</Label>
+            <Input id="cep"
+            value={bankName}
+            className="text-black  rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
+            onChange={(e) => setBankName(e.target.value)}/>
   
-  const handleSubtmitAddress = async () => {
+            <Label htmlFor="cep" className="text-[hsl(var(--text))]">Número da Conta</Label>
+            <Input id="cep"
+            value={bankAccountNumber}
+            className="text-black  rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
+            onChange={(e) => setBankAccountNumber(e.target.value)}/>
+  
+            <Label htmlFor="cep" className="text-[hsl(var(--text))]">Número da Agência da Conta</Label>
+            <Input id="cep"
+            value={bankAgency}
+            className="text-black  rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
+            onChange={(e) => setBankAgency(e.target.value)}/>
+            
+            <CardContent>
+              <Button onClick={handleUpdateBankAccount} className="user-profile-button">Atualizar conta bancária</Button>
+            </CardContent>
+          </CardContent>
+        </Card>
+        )}
+      </div>
+    );
+  };
+  
+  const handleSubmitAddress = async () => {
     if(!user){
       return;
     }
@@ -371,12 +459,15 @@ export default function UserProfile() {
         ) : (
           <p>Carregando endereço...</p>
         )}
+        {user && (
+          <BankAccountCard user={user}/>
+        )}
         </div>      
         </div>
         <div>
           <AlertDialog open={!address}>
             <AlertDialogTrigger asChild></AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="border-[hsl(var(--primary))]">
               <AlertDialogHeader>
                 <AlertDialogTitle style={{ color: "hsl(var(--text))" }}>
                   Cadastre um endereço
@@ -386,49 +477,49 @@ export default function UserProfile() {
                 </AlertDialogDescription>
               </AlertDialogHeader>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
-                  <input
+                  <Input
                   placeholder="CEP"
                   onChange={(e) => setCep(e.target.value)}
                   onBlur={() => {handleCepChange()}}
                   style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
                   />
-                  <input
+                  <Input
                   placeholder="País"
                   disabled={true}
                   value={pais}
                   style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
                   />
-                  <input
+                  <Input
                   placeholder="Estado"
                   onChange={(e) => setEstado(e.target.value)}
                   value={estado}
                   style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
                   />
-                  <input
+                  <Input
                   placeholder="Cidade"
                   value={cidade}
                   onChange={(e) => setCidade(e.target.value)}
                   style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
                   />
-                  <input
+                  <Input
                   placeholder="Bairro"
                   value={bairro}
                   onChange={(e) => setBairro(e.target.value)}
                   style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
                   />
-                  <input
+                  <Input
                   placeholder="Rua"
                   value={logradouro}
                   onChange={(e) => setLogradouro(e.target.value)}
                   style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
                   />
-                  <input
+                  <Input
                   placeholder="Número"
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
                   style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
                   />
-                  <input
+                  <Input
                   placeholder="Complemento"
                   value={complemento}
                   onChange={(e) => setComplemento(e.target.value)}
@@ -442,7 +533,7 @@ export default function UserProfile() {
                   Vou fazer isso depois
                 </AlertDialogCancel>
                 <AlertDialogAction onClick={() => {
-                  handleSubtmitAddress();
+                  handleSubmitAddress();
                 }}>
                   Cadastrar
                 </AlertDialogAction>
