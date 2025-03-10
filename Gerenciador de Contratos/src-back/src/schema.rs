@@ -31,6 +31,40 @@ diesel::table! {
 }
 
 diesel::table! {
+    contratos (idcontrato) {
+        #[max_length = 64]
+        idcontrato -> Varchar,
+        #[max_length = 64]
+        idlocatario -> Varchar,
+        #[max_length = 64]
+        idlocador -> Varchar,
+        #[max_length = 64]
+        idenderecolocatario -> Varchar,
+        #[max_length = 64]
+        idenderecolocador -> Varchar,
+        #[max_length = 64]
+        idenderecoretirada -> Varchar,
+        #[max_length = 64]
+        idmaquina -> Varchar,
+        #[max_length = 64]
+        idsolicitacaocontrato -> Varchar,
+        #[max_length = 64]
+        prazolocacao -> Varchar,
+        #[max_length = 64]
+        medidatempolocacao -> Varchar,
+        #[max_length = 64]
+        valorlocacao -> Varchar,
+        #[max_length = 64]
+        contabancarialocador -> Varchar,
+        #[max_length = 64]
+        cidadeforo -> Varchar,
+        datacontrato -> Timestamp,
+        #[max_length = 64]
+        statuscontrato -> Varchar,
+    }
+}
+
+diesel::table! {
     enderecos (idendereco) {
         #[max_length = 64]
         idendereco -> Varchar,
@@ -147,6 +181,28 @@ diesel::table! {
 }
 
 diesel::table! {
+    solicitacoes_contratos (idsolicitacao) {
+        #[max_length = 64]
+        idsolicitacao -> Varchar,
+        #[max_length = 64]
+        idlocador -> Varchar,
+        #[max_length = 64]
+        idlocatario -> Varchar,
+        #[max_length = 64]
+        idmaquina -> Varchar,
+        #[max_length = 64]
+        medidatempolocacao -> Varchar,
+        #[max_length = 64]
+        origemsolicitacao -> Varchar,
+        #[max_length = 64]
+        statussolicitacao -> Varchar,
+        prazolocacao -> Float8,
+        valorsolicitacao -> Float8,
+        datasolicitacao -> Timestamp,
+    }
+}
+
+diesel::table! {
     usuarios (idusuario) {
         #[max_length = 64]
         nome -> Varchar,
@@ -169,6 +225,7 @@ diesel::joinable!(codigos_recuperacao -> usuarios (idusuario));
 diesel::allow_tables_to_appear_in_same_query!(
     codigos_recuperacao,
     contas_bancarias,
+    contratos,
     enderecos,
     enderecos_usuarios,
     imagens,
@@ -177,5 +234,6 @@ diesel::allow_tables_to_appear_in_same_query!(
     locatarios,
     maquinas,
     maquinas_usuarios,
+    solicitacoes_contratos,
     usuarios,
 );

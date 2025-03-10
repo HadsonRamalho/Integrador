@@ -5,8 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BankAccount } from "@/interfaces/bank-account";
 import Layout from "@/layouts/default";
-import { useState } from "react";
+import { createBankAccount, loadBankAccountByUserId } from "@/services/api/bank-account";
+import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { loadUserById } from "@/services/api/user/user";
+import { User } from "@/interfaces/user";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateMachine() {
   const [name, setName] = useState("");
@@ -18,6 +34,67 @@ export default function CreateMachine() {
   const imageIds: string[] = [];
   const [loading, setIsLoading] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState("");
+
+  const navigate = useNavigate();
+  
+  const [user, setUser] = useState<User>();
+  const [bankAccount, setBankAccount] = useState<BankAccount>();
+
+  const [bankName, setBankName] = useState<string>();
+  const [bankAccountNumber, setBankAccountNumber] = useState<string>();
+  const [bankAgency, setBankAgency] = useState<string>();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const id = localStorage.getItem("USER_ID");
+      if(!id){
+        return;
+      }
+      try{
+        const user = await loadUserById(id);
+        setUser(user);
+      } catch(err){
+        console.error(err);
+      }
+    };
+    loadUser();    
+  }, []);
+
+  const loadBankAccount = async () => {
+    if(!user){
+      return;
+    }
+    try{
+      const res = await loadBankAccountByUserId(user.idusuario);
+      setBankAccount(res);
+    } catch(error){
+      console.error(error);
+    }
+  }
+
+  const handleSubmitBankAccount = () => {
+    if(!user){
+      console.warn("Usuário não está logado");
+      return;
+    }
+    if(!bankAccountNumber || !bankAgency || !bankName){
+      alert("Preencha todos os campos.");
+      return;
+    }
+    try{
+      createBankAccount(user.idusuario, bankAccountNumber, bankAgency, bankName);
+      loadBankAccount();
+      console.log("Conta criada!");
+    } catch(error){
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if(user){
+      loadBankAccount();
+    }
+  }, [user]);
 
   const handleImageChange = (index: number, file: File) => {
     const updatedImages = [...machineImages];
@@ -240,6 +317,51 @@ export default function CreateMachine() {
           </CardDescription>
         </CardContent>
       </Card>
+      <div>
+        <AlertDialog open={!bankAccount}>
+          <AlertDialogTrigger asChild></AlertDialogTrigger>
+          <AlertDialogContent className="border-[hsl(var(--primary))]">
+            <AlertDialogHeader>
+            <AlertDialogTitle>
+              Cadastre uma conta bancária
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <p>É necessário adicionar uma conta bancária antes de cadastrar uma máquina.</p>
+              <p>Se precisar atualizar alguma informação, acesse o seu perfil.</p>
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+              <div style={{ alignItems: "center", gap: "10px" }}>
+                <Label className="text-[hsl(var(--text))] mb-2">Nome do Titular</Label>
+                <Input className="border-[hsl(var(--primary))] text-[hsl(var(--text))]"
+                  value={user?.nome}
+                  disabled={true}/>
+                <Label className="text-[hsl(var(--text))] mb-2">Nome do Banco</Label>
+                <Input className="border-[hsl(var(--primary))] text-[hsl(var(--text))]"
+                onChange={(e) => setBankName(e.target.value)}
+                value={bankName}/>
+                <Label className="text-[hsl(var(--text))] mb-2">Número da Conta</Label>
+                <Input className="border-[hsl(var(--primary))] text-[hsl(var(--text))]"
+                onChange={(e) => setBankAccountNumber(e.target.value)}
+                value={bankAccountNumber}/>
+                <Label className="text-[hsl(var(--text))] mb-2">Número da Agência</Label>
+                <Input className="border-[hsl(var(--primary))] text-[hsl(var(--text))]"
+                onChange={(e) => setBankAgency(e.target.value)}
+                value={bankAgency}/>
+              </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel 
+              className="bg-[#882727] text-[hsl(var(--text))]"
+              onClick={() => {navigate('/')}}
+              > Farei isso depois
+              </AlertDialogCancel>
+              <AlertDialogAction
+              onClick={handleSubmitBankAccount}>
+                Cadastrar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
     </Layout>
   );

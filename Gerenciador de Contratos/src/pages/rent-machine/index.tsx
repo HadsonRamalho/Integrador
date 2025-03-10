@@ -13,7 +13,7 @@ import "../../components/rent-machine/rent-machine.css";
 import { Address } from "@/interfaces/address";
 import { loadAddressUserId } from "@/services/api/address/address";
 import { Input } from "@/layouts";
-import { Label } from "@radix-ui/react-dropdown-menu";
+import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/services/api/format/format";
 import {
   Select,
@@ -22,6 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { loadMachineOwnerByMachineId } from "@/services/api/machine-owner";
+import { loadBankAccountByUserId } from "@/services/api/bank-account";
+import { BankAccount } from "@/interfaces/bank-account";
+import { createContractRequest } from "@/services/api/contract-request";
 
 const RentMachine = () => {
   const { publicid } = useParams();
@@ -35,9 +39,18 @@ const RentMachine = () => {
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>();
 
+  const [machineOwnerId, setMachineOwnerId] = useState<string>();
+  const [machineOwnerName, setMachineOwnerName] = useState<string>();
+
+  const [machineOwnerAddress, setMachineOwnerAddress] = useState<Address>();
+
+  const [bankAccount, setBankAccount] = useState<BankAccount | null>();
+
   const [medidaPrazo, setMedidaPrazo] = useState<string>("Selecione um Prazo");
   const [prazo, setPrazo] = useState<string>('0');
   const [totalAluguel, setTotalAluguel] = useState<number>(0);
+
+  const [requestId, setRequestId] = useState<string>();
 
   const navigate = useNavigate();
 
@@ -55,14 +68,13 @@ const RentMachine = () => {
       setTotalAluguel(valor);
     } catch(error){
       console.error(error);
-      alert(`Erro ao calcular o valor do aluguel da máquina: ${error.message}`)
+      // alert(`Erro ao calcular o valor do aluguel da máquina: ${error.message}`)
     }
   }
 
   useEffect(() => {
     handleValorAluguel();
   }, [medidaPrazo, prazo]);
-  
 
   useEffect(() => {
     const listMachines = async () => {
@@ -86,6 +98,56 @@ const RentMachine = () => {
     };
     listMachines();
   }, [publicid]);
+
+  
+  useEffect(() => {
+    const loadMachineOwner = async () => {
+      if (machine) {
+        try{
+          const owner = await loadMachineOwnerByMachineId(machine.idmaquina);
+          setMachineOwnerId(owner.idusuario);
+          setMachineOwnerName(owner.nome);
+        } catch(error){
+          console.error(error);
+          setError(true);
+          setErrorMessage("Houve um erro ao carregar o locador da máquina.");
+        }
+      }
+    };
+    loadMachineOwner();
+  }, [machine]);
+
+  useEffect(() => {
+    const loadMachineOwnerAddress = async () => {
+      if (machineOwnerId) {
+        try{
+          const address = await loadAddressUserId(machineOwnerId);
+          setMachineOwnerAddress(address);
+        } catch(error){
+          console.error(error);
+          setError(true);
+          setErrorMessage("Houve um erro ao carregar o endereço do locador da máquina.");
+        }
+      }
+    };
+    loadMachineOwnerAddress();
+  }, [machineOwnerId]);
+
+  useEffect(() => {
+    const loadBankAccount = async () => {
+      if (machineOwnerId) {
+        try{
+          const account = await loadBankAccountByUserId(machineOwnerId);
+          setBankAccount(account);
+        } catch(error){
+          console.error(error);
+          setError(true);
+          setErrorMessage("Houve um erro ao carregar os dados para pagamento.");
+        }
+      }
+    };
+    loadBankAccount();
+  }, [machineOwnerId]);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -165,6 +227,34 @@ const RentMachine = () => {
     }
   }
 
+  const handleContractRequest = async () => {
+    if (!machineOwnerId || !user || !machine || !prazo || !medidaPrazo || !totalAluguel){
+      alert("Houve um erro na solicitação. Preencha todos os campos.");
+      return;
+    }
+    if (prazo <= "0" || totalAluguel <= 0){
+      alert("Houve um erro ao processar o valor do aluguel.");
+      return;
+    }
+    try {
+      const id = await createContractRequest(
+        machineOwnerId,
+        user?.idusuario,
+        machine?.idmaquina,
+        parseFloat(prazo),
+        medidaPrazo,
+        user?.idusuario,
+        totalAluguel,
+      );
+      setRequestId(id);
+      setStep("status-solicitação");
+      alert("A solicitação de aluguel foi enviada!");
+    } catch (err) {
+      console.error(err);
+      alert("Houve um erro ao enviar a solicitação de aluguel.");
+    }
+  };
+
   if (error){
     return (
       <Layout>
@@ -204,23 +294,23 @@ const RentMachine = () => {
               </CardDescription>
                 <CardContent className="flex flex-col items-center w-full">
                 <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
-                  <Label className="text-[hsl(var(--text))] mt-2">Nome</Label>
+                  <Label className="text-[hsl(var(--text))] mt-2 ">Nome</Label>
                   <Input
                   value={user?.nome}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))] mt-2">E-mail</Label>
                   <Input
                   value={user?.email}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))] mt-2">Documento</Label>
                   <Input
                   value={user?.documento}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
                 </Card>
                 {address ? (
                   <Card className="mt-2 w-[60%] bg-[hsl(var(--machine-card-bg))] pb-10 border-[hsl(var(--primary))]">
@@ -228,50 +318,50 @@ const RentMachine = () => {
                   <Input
                   value={address?.cep}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   
                   <Label className="text-[hsl(var(--text))] mt-2">País</Label>
                   <Input
                   value={address?.pais}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Estado</Label>
                   <Input
                   value={address?.estado}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Cidade</Label>
                   <Input
                   value={address?.cidade}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Bairro</Label>
                   <Input
                   value={address?.bairro}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Rua</Label>
                   <Input
                   value={address?.logradouro}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Número</Label>
                   <Input
                   value={address?.numero}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))]  mt-2">Complemento</Label>
                   <Input
                   value={address?.complemento}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
                 </Card>
                 ) : (
                   <Card className="w-[60%] mt-2 border-[hsl(var(--primary))] bg-white">
@@ -315,26 +405,25 @@ const RentMachine = () => {
                   <Input
                   value={machine?.nome}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
-
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
                   <Label className="text-[hsl(var(--text))] mt-2 mb-2">Categoria da Máquina</Label>
                   <Input
                   value={machine.categoria}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
 
                   <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número de Série da Máquina</Label>
                   <Input
                   value={machine?.numeroserie}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                   <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (Mensal)</Label>
                   <Input
                   value={formatCurrency(machine.valoraluguel)}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                 </CardContent>
                 )}
@@ -347,7 +436,7 @@ const RentMachine = () => {
                  <Label className="text-[hsl(var(--text))] mt-2 mb-2">Medida do Prazo</Label>
 
                 <div className="flex flex-col items-center w-full gap-4">
-                  <div className="flex flex-col w-[50%]">
+                  <div className="flex flex-col w-[100%]">
                 <Select onValueChange={(e) => {
                   setMedidaPrazo(e);
                   }}>
@@ -372,7 +461,7 @@ const RentMachine = () => {
                     setPrazo(e.target.value)
                   }}
                   onBlur={handleValorAluguel}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
                 <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel 
                   {medidaPrazo !== "Selecione um Prazo" && (
@@ -382,13 +471,100 @@ const RentMachine = () => {
                 <Input
                   value={formatCurrency(totalAluguel)}
                   disabled={true}
-                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[50%]"/>
+                  className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
                   <p className="mt-2">Foi adicionada uma taxa de 5% do valor mensal da máquina
                     para cobrir parte dos custos de manutenção após o uso.
                   </p>
 
                  </CardContent>
                  </Card>
+                 <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                 <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]"><strong>Informações para Pagamento</strong>
+                 </CardHeader>
+                    <CardContent>
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Nome do Titular da Conta</Label>
+                    <Input
+                      value={machineOwnerName}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Nome do Banco</Label>
+                    <Input
+                      value={bankAccount?.nomebanco}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                     
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número da Conta</Label>
+                    <Input
+                      value={bankAccount?.numeroconta}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número da Agência</Label>
+                    <Input
+                      value={bankAccount?.numeroagencia}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    </CardContent>
+                </Card>
+                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))] mb-10">
+                 <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]"><strong>Endereço para Retirada</strong>
+                 </CardHeader>
+                    <CardContent>
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">CEP</Label>
+                    <Input
+                      value={machineOwnerAddress?.cep}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">País</Label>
+                    <Input
+                      value={machineOwnerAddress?.pais}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Estado</Label>
+                    <Input
+                      value={machineOwnerAddress?.estado}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Cidade</Label>
+                    <Input
+                      value={machineOwnerAddress?.cidade}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Bairro</Label>
+                    <Input
+                      value={machineOwnerAddress?.bairro}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Rua</Label>
+                    <Input
+                      value={machineOwnerAddress?.logradouro}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número</Label>
+                    <Input
+                      value={machineOwnerAddress?.numero}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Complemento</Label>
+                    <Input
+                      value={machineOwnerAddress?.complemento}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    </CardContent>
+                  </Card>
+                  <Button onClick={handleContractRequest}>Solicitar aluguel da máquina</Button>
+                  <CardDescription>
+                    <p className="text-[hsl(var(--text))]">O dono da máquina vai receber uma notificação e poderá aprovar
+                    o aluguel da máquina.</p>
+                  </CardDescription>
               </CardContent> 
             </Card>
           </div>

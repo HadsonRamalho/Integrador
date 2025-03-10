@@ -5,10 +5,10 @@ use serde::{Deserialize, Serialize};
 #[diesel(table_name = crate::schema::locadoras)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Locadora{
-  pub idlocadora: String,
-  pub idusuario: String,
-  pub idendereco: String,
-  pub idconta: String
+    pub idlocadora: String,
+    pub idusuario: String,
+    pub idendereco: String,
+    pub idconta: String
 }
 
 pub async fn cadastra_locadora(conn: &mut PgConnection, locadora: Locadora)

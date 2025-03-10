@@ -31,7 +31,7 @@ export function Prohibited() {
         marginLeft: "22%"
         }}>
       <AlertCircleIcon className="h-6 w-6" />
-      <AlertTitle>Uepa!</AlertTitle>
+      <AlertTitle>Atenção!</AlertTitle>
       <AlertDescription>
         <div>
           Você não tem acesso a essa página ainda. Entre na sua conta para ver o que temos aqui.

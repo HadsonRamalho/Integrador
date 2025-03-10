@@ -10,6 +10,7 @@ import { MachineCard } from "@/components/machine-card";
 export default function Machine() {
   const [machines, setMachines] = useState<Maquina[]>([]);
   const [filter, setFilter] = useState("");
+  const [filteredMachines, setFilteredMachines] = useState<Maquina[]>([]);
 
   useEffect(() => {
     const listMachines = async () => {
@@ -20,11 +21,20 @@ export default function Machine() {
     listMachines();
   }, []);
 
+  useEffect(() => {
+    setFilteredMachines(
+      machines.filter((machine)=> 
+        filter ? machine.categoria === filter : true
+      )
+    );
+  }, [filter, machines]);
+
   return (
     <Layout>
       <main className="mt-10">
       <MachineFilter machines={machines} filter={filter} setFilter={setFilter} />
-        <div className="machine-grid">
+
+      <div className={`machine-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`} >
           {machines.length === 0 ? (
             <div>
               <p>

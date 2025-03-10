@@ -20,7 +20,6 @@ function Footer() {
         <ul>
           <strong>E-mail</strong>
           <li>gerenciadordecontratosgdc@gmail.com</li>
-          <li>Perguntas frequentes</li>
           <strong>Contato</strong>
           <li>(33)0000-0000</li>
         </ul>
