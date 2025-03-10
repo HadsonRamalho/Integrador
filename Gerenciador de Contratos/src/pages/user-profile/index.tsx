@@ -208,7 +208,7 @@ export default function UserProfile() {
             Data de Cadastro: {user.datacadastro}
           </CardDescription>
           <CardContent>
-            <Button className="user-profile-button" onClick={handleChange}>Atualizar informações do perfil</Button>
+            <Button className="user-profile-button" onClick={handleChange}>Atualizar  perfil</Button>
           </CardContent>
         </CardContent>
       </Card>
