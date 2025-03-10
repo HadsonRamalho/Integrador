@@ -21,7 +21,7 @@ Versão atual: v0.0703
    #### Extensões para a IDE:
    [(Backend) Rust-Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 
- ## Guia de desenvolvimento
+ ## Guia de desenvolvimento/teste do sistema
   Siga os passos abaixo para instalar todos as ferramentas necessárias para desenvolver o projeto:
  ### 1 - Instale o Visual Studio Code
   [Visual Studio Code](https://code.visualstudio.com/)
