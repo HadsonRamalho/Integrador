@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ProfileDropdownMenu } from "../profile-dropdown-menu";
 import { DropdownMenuDemo } from "../dropdown-menu";
 import { MachineDropdownMenu } from "../machine-dropdown-menu";
+import { ContractDropdownMenu } from "../contract-dropdown-menu";
 
 
 export function NavBar() {
@@ -72,6 +73,18 @@ export function NavBar() {
           >
             Exemplo de PDF
           </NavLink>
+        </li>
+        <li>
+        {logged ? (
+            <ContractDropdownMenu/>
+          ) : (
+            <NavLink 
+            to="/"
+            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
+              Contratos
+            </NavLink>
+            )            
+          }    
         </li>
         </ul>
 
