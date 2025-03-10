@@ -76,11 +76,9 @@ pub async fn deleta_endereco(id: String)
     }
 }
 
-pub async fn atualiza_endereco(endereco: Endereco)
+pub async fn atualiza_endereco(conn: &mut PgConnection, endereco: Endereco)
     -> Result<Endereco, String>{
     use crate::schema::enderecos::dsl::*;
-
-    let conn = &mut cria_conn().unwrap();
 
     let res: Result<Endereco, diesel::result::Error> = diesel::update(enderecos.filter(idendereco.eq(endereco.idendereco)))
         .set((

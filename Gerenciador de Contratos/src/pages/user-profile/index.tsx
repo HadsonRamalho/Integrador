@@ -27,7 +27,18 @@ export default function UserProfile() {
   const [user, setUser] = useState<User>();
   const [error, setError] = useState(false);
   const [updatedData, setUpdatedData] = useState(true);
-  const [address, setAddress] = useState<Address>();
+  const defaultAddress: Address = {
+    idendereco: "",
+    pais: "",
+    estado: "",
+    cidade: "",
+    cep: "",
+    bairro: "",
+    logradouro: "",
+    numero: "",
+    complemento: ""
+  };
+  const [address, setAddress] = useState<Address | null>(defaultAddress);
 
   const [pais, setPais] = useState<string>("Brasil");
   const [estado, setEstado] = useState<string>();
@@ -96,14 +107,16 @@ export default function UserProfile() {
 
   useEffect(() => {
     async function buscaEndereco(id: string) {
-      const res = await loadAddressUserId(id);
-      if (!res) {
-        console.log("Erro ao buscar endereço do usuário.");
-        alert("Usuário não possui endereço");
+      try{
+        const res = await loadAddressUserId(id);
+        console.log(res);
+        const endereco = res;
+        setAddress(endereco);
+        console.log(endereco);
+      } catch(error){
+        setAddress(null);
+        console.error(error);
       }
-      const endereco = res;
-      setAddress(endereco);
-      console.log(endereco);
     }
     const loadUser = async () => {
       setUpdatedData(false);
@@ -156,10 +169,10 @@ export default function UserProfile() {
           <Avatar>
             <AvatarImage className="user-profile-card-image" src={localStorage.getItem("PROFILE_IMAGE_URL") || "https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg"} />                    
           </Avatar>
-          <Label htmlFor="nome" className="text-[hsl(var(--text))]">Nome</Label>
+          <Label htmlFor="nome" className="text-[hsl(var(--text))] ">Nome</Label>
           <Input id="nome"
            value={nome}
-           className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+           className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4 "
             onChange={(e) => setNome(e.target.value)}/>
 
           <Label htmlFor="e-mail" className="text-[hsl(var(--text))]">E-mail</Label>
@@ -168,13 +181,13 @@ export default function UserProfile() {
           readOnly={true}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           />
           <Label htmlFor="documento" className="text-[hsl(var(--text))]">Documento</Label>
           <Input
           id="documento"
           value={documento}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setDocumento(e.target.value)}/>
 
           { origemConta === "Sistema" ? (
@@ -183,7 +196,7 @@ export default function UserProfile() {
             <Input
             id="senha"
             type="password"
-            className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+            className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 "
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             />
@@ -241,7 +254,7 @@ export default function UserProfile() {
           <Label htmlFor="cep" className="text-[hsl(var(--text))]">CEP</Label>
           <Input id="cep"
           value={cep}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black  rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setCep(e.target.value)}/>
           <Label htmlFor="pais" className="text-[hsl(var(--text))]">País</Label>
           <Input
@@ -249,43 +262,43 @@ export default function UserProfile() {
           readOnly={true}
           value={pais}
           onChange={(e) => setPais(e.target.value)}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           />
           <Label htmlFor="estado" className="text-[hsl(var(--text))]">Estado</Label>
           <Input
           id="estado"
           value={estado}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4" 
           onChange={(e) => setEstado(e.target.value)}/>
           <Label htmlFor="cidade" className="text-[hsl(var(--text))]">Cidade</Label>
           <Input
           id="cidade"
           value={cidade}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setCidade(e.target.value)}/>
           <Label htmlFor="bairro" className="text-[hsl(var(--text))]">Bairro</Label>
           <Input
           id="bairro"
           value={bairro}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setBairro(e.target.value)}/>
           <Label htmlFor="logradouro" className="text-[hsl(var(--text))]">Rua</Label>
           <Input
           id="logradouro"
           value={logradouro}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setLogradouro(e.target.value)}/>
           <Label htmlFor="numero" className="text-[hsl(var(--text))]">Número</Label>
           <Input
           id="numero"
           value={numero}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setNumero(e.target.value)}/>
           <Label htmlFor="complemento" className="text-[hsl(var(--text))]">Complemento</Label>
           <Input
           id="complemento"
           value={complemento}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setComplemento(e.target.value)}/>
           <CardContent>
             <Button onClick={handleUpdateAddress} className="user-profile-button">Atualizar endereço</Button>

@@ -4,6 +4,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
+  
 
 }
 
@@ -35,24 +36,8 @@ nav {
   width: auto;
 }
 
-@media (max-width: 480px) {
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1px 2px;
-    font-size: 1rem;  
-  }
-  .nav-left {
-    display: flex;
-    align-self: flex-start;
-    gap: 5px;
-    align-items: center;
-  }
-  .nav-right {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;  
-  }
-}
+.bg-nav {
+  background-color: hsl(var(--primary)) ;
+  padding: 4px;
+} 
+

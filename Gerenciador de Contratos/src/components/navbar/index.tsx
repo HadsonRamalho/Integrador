@@ -20,7 +20,7 @@ export function NavBar() {
   },[])
 
   return (
-    <nav className="navbar">
+    <nav >
      <ul className="nav-left">
         <li>
           <NavLink

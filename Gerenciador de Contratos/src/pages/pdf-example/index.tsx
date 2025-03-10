@@ -11,7 +11,6 @@ import {
 } from "@react-pdf/renderer";
 import {
   Card,
-  CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
@@ -22,44 +21,78 @@ import { Button } from "@/components/ui/button";
 export default function PdfExample() {
   const styles = StyleSheet.create({
     page: {
-      flexDirection: "row",
-      backgroundColor: "#97cfb3",
-      width: "400px",
-      height: "400px",
+      flexDirection: "column",
+      backgroundColor: "#F5F5F5",
+      padding: 15,
+      fontFamily: 'Times-Roman',
     },
     section: {
-      margin: 10,
-      padding: 0,
-      flexGrow: 1,
       backgroundColor: "#fff",
+      borderRadius: 5,
+      fontFamily: 'Times-Roman',
     },
-    title:{
-      marginBottom: 10,
-      fontSize: 25,
-    }
+    title: {
+      marginBottom: 15,
+      fontSize: 16,
+      fontFamily: 'Times-Roman',
+      textAlign: "center",
+    },
+    mainTitle: {
+      marginBottom: 15,
+      fontSize: 20,
+      fontFamily: 'Times-Bold',
+      textAlign: "center",
+    },
+    paragraph: {
+      fontSize: 12,
+      textAlign: "justify",
+      lineHeight: 1.5,
+      fontFamily: 'Times-Roman',
+      marginBottom: 10
+    },
+    bold: {
+      fontWeight: 900,
+      fontFamily: 'Times-Bold',
+    },
+    space: {
+      marginBottom: 8,
+    },
   });
 
   const MyDocument = () => (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.section}>
-          <Text style={styles.title}>
-            CONTRATO DE LOCAÇÃO DE BENS MÓVEIS
+          <Text style={styles.mainTitle}>CONTRATO DE LOCAÇÃO DE BENS MÓVEIS</Text>
+
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>LOCADORA: XXXXXXXXXX</Text>, inscrita no
+            DOCUMENTO sob o nº <Text style={styles.bold}>XXXXXXXXXXX</Text>, 
+            com sede em <Text style={styles.bold}>Rua xxxxxxxxx, Cidade/MG, </Text>
+            neste ato representada pelo seu sócio administrador, <Text style={styles.bold}> XXXXXXXXXXXX /</Text> , 
+            brasileiro, casado, inscrito no DOCUMENTO sob nº <Text style={styles.bold}> XXXXXXXXX SSP-MG </Text>, com
+            endereço em <Text style={styles.bold}>Rua XXXXXXXXXXX, Cidade/MG </Text>. 
           </Text>
-            <Text>
-             LOCADORA: XXXXXXXXXX, inscrita no
-            CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx ,Cidade/MG,
+
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>LOCATÁRIA:</Text> XXXXXXXXXX, inscrita no
+            CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx, Cidade/MG,
             neste ato representada pelo seu sócio administrador, XXXXXXXXXXXX,
             brasileiro, casado, inscrito no CPF sob nº XXXXXXXXX SSP-MG, com
-            endereço na Rua XXXXXXXXXXX, Cidade/MG. LOCATÁRIA: XXXXXXXXXX,
-            inscrita no CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx
-            ,Cidade/MG, neste ato representada pelo seu sócio administrador,
-            XXXXXXXXXXXX, brasileiro, casado, inscrito no CPF sob nº XXXXXXXXX
-            SSP-MG, com endereço na Rua XXXXXXXXXXX, Cidade/MG. Ambas as PARTES
+            endereço na Rua XXXXXXXXXXX, Cidade/MG.
+          </Text>
+          <Text style={styles.paragraph}>
+            Ambas as PARTES
             aqui representadas por quem de direito, têm justo e contratado entre
             si a celebração do presente Contrato de Locação de Bens Móveis, que
             reger-se-á de acordo com as cláusulas e condições aqui previstas.
-            DEFINIÇÕES As expressões abaixo, sempre que grafadas neste contrato
+          </Text>
+          
+          <Text style={styles.title}>
+            DEFINIÇÕES 
+          </Text>
+          <Text>
+            As expressões abaixo, sempre que grafadas neste contrato
             em “caixa alta”, terão para todos os fins e efeitos de direito, os
             seguintes significados: a) LOCADORA: Pessoa Jurídica que dará o(s)
             bem(ns) em locação. b) LOCATÁRIA: Pessoa Jurídica que receberá o(s)
@@ -409,10 +442,7 @@ export default function PdfExample() {
       <main className="mt-10">
         <div className="mt-40 mb-40">
           <Card>
-            <CardHeader>Documento:</CardHeader>
-            <CardContent className="bg-gray-400 m-4">
-              <MyDocument />
-            </CardContent>
+            <CardHeader>Documento preparado</CardHeader>
             <CardFooter>
               <Button className="ml-10" onClick={handleDownload}>
                 Baixar PDF

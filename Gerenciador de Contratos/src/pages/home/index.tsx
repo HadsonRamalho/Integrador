@@ -36,7 +36,7 @@ function Home() {
       <Layout>
         <main className="home-container">
           <section className="titulo-section">
-            <h1>Locação de Maquinas e Equipamentos</h1>
+            <h1>Locação de Máquinas e Equipamentos</h1>
             <p>
               Encontre a máquina ideal para sua obra ou disponibilize seus
               equipamentos para locação com segurança e sem burocracia.
@@ -89,33 +89,37 @@ function Home() {
               <CarouselContent>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
                   <img
+                    className="hover:cursor-pointer"
                     src={cacamba}
                     alt="caçamba"
-                    onClick={() => navigate("/machine")}
+                    onClick={() => navigate(`/maquinas/${encodeURIComponent('caçamba')}`)}
                   />
                   <CardTitle>Caçamba</CardTitle>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
                   <img
+                    className="hover:cursor-pointer"
                     src={moto_serra}
                     alt="motosserra"
-                    onClick={() => navigate("/machine")}
+                    onClick={() => navigate(`/maquinas/${encodeURIComponent('motosserra')}`)}
                   />
                   <CardTitle>Motosserra</CardTitle>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
                   <img
+                    className="hover:cursor-pointer"
                     src={escavadeira1}
                     alt="escavadeira"
-                    onClick={() => navigate("/machine")}
+                    onClick={() => navigate(`/maquinas/${encodeURIComponent('escavadeira')}`)}
                   />
                   <CardTitle>Escavadeira</CardTitle>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel">
                   <img
+                    className="hover:cursor-pointer"
                     src={trator}
                     alt="trator"
-                    onClick={() => navigate("/machine")}
+                    onClick={() => navigate(`/maquinas/${encodeURIComponent('trator')}`)}
                   />
                   <CardTitle>Trator</CardTitle>
                 </CarouselItem>
@@ -132,45 +136,50 @@ function Home() {
                 <CarouselContent>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={teste}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('Roçadeira')}`)}
                     />
                     <CardTitle>Roçadeira</CardTitle>
                     <CardContent>R$10092</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={escavadeira}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('Escavadeira')}`)}
                     />
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$12292</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={motoniveladora}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('Motoniveladora')}`)}
                     />
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$2540</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={escavadeira}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('escavadeira')}`)}
                     />
                     <CardTitle>Escavadeira</CardTitle>
                     <CardContent>R$5410</CardContent>
                   </CarouselItem>
                   <CarouselItem className="md:basis-1/2 lg:basis-1/3 carousel-item">
                     <img
+                      className="hover:cursor-pointer"
                       src={motoniveladora}
                       alt=""
-                      onClick={() => navigate("/machine")}
+                      onClick={() => navigate(`/maquinas/${encodeURIComponent('motoniveladora')}`)}
                     />
                     <CardTitle>Motoniveladora</CardTitle>
                     <CardContent>R$10000</CardContent>

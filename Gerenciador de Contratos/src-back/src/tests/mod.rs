@@ -1,6 +1,7 @@
 pub mod usuarios;
 pub mod codigos_recuperacao;
 pub mod maquinas;
+pub mod enderecos_usuarios;
 pub mod enderecos;
 
 #[tokio::test]

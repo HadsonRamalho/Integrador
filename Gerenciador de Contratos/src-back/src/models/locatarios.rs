@@ -43,10 +43,20 @@ pub async fn busca_locatario_idusuario(conn: &mut PgConnection, id: String)
     }
 }
 
-pub async fn busca_locatario_idlocatario(conn: &mut PgConnection, id: String) -> Result<Locatario, diesel::result::Error>{
-    let locatario = crate::schema::locatarios::table
-        .filter(crate::schema::locatarios::idlocatario.eq(id))
-        .first(conn)?;
-    Ok(locatario)
+pub async fn busca_locatario_idlocatario(conn: &mut PgConnection, id: String)
+     -> Result<Locatario, String>{
+    use crate::schema::locatarios::dsl::*;
+
+    let res: Result<Locatario, diesel::result::Error> = locatarios.filter(idlocatario.eq(id))
+      .get_result(conn);
+
+    match res{
+      Ok(locatario) => {
+        return Ok(locatario)
+      },
+      Err(e) => {
+        return Err(e.to_string())
+      }
+    }
 }
 

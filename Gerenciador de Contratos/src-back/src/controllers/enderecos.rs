@@ -21,6 +21,18 @@ pub struct EnderecoUsuarioInput{
     pub complemento: Option<String>
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct EnderecoInput{
+    pub pais: String,
+    pub estado: String,
+    pub cidade: String,
+    pub cep: String,
+    pub bairro: String,
+    pub logradouro: String,
+    pub numero: String,
+    pub complemento: String
+}
+
 #[utoipa::path(
     post,
     tag = "Endereço",
@@ -181,11 +193,18 @@ pub async fn busca_endereco_idusuario(Query(params): Query<UserId>)
 
 pub async fn atualiza_endereco(endereco: Json<Endereco>)
     -> Result<(StatusCode, Json<Endereco>), (StatusCode, Json<String>)>{
+    if endereco.bairro.trim().is_empty() || endereco.cep.trim().is_empty()
+        || endereco.cidade.trim().is_empty() || endereco.idendereco.trim().is_empty()
+        || endereco.estado.trim().is_empty() || endereco.logradouro.trim().is_empty()
+        || endereco.numero.trim().is_empty() || endereco.pais.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+
     let endereco = endereco.0;
 
     let conn = &mut cria_conn()?;
 
-    match models::enderecos::atualiza_endereco(endereco).await{
+    match models::enderecos::atualiza_endereco(conn, endereco).await{
         Ok(endereco) => {
             return Ok((StatusCode::OK, Json(endereco)))
         },
