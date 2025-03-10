@@ -5,14 +5,16 @@ use serde::{Deserialize, Serialize};
 #[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = crate::schema::solicitacoes_contratos)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct SolicitacaoContrato{
+pub struct SolicitacaoContrato{ 
     pub idsolicitacao: String,
     pub idlocador: String,
     pub idlocatario: String,
     pub idmaquina: String,
+    pub prazolocacao: f64,
+    pub medidatempolocacao: String,
     pub origemsolicitacao: String,
     pub statussolicitacao: String,
-    pub datasolicitacao: NaiveDateTime
+    pub datasolicitacao: NaiveDateTime 
 }
 
 pub async fn cadastra_solicitacao_contrato(conn: &mut PgConnection, solicitacao: SolicitacaoContrato)

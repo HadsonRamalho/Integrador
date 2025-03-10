@@ -4,6 +4,8 @@ CREATE TABLE solicitacoes_contratos(
     idlocador VARCHAR(64) NOT NULL,
     idlocatario VARCHAR(64) NOT NULL,
     idmaquina VARCHAR(64) NOT NULL,
+    prazolocacao FLOAT NOT NULL,
+    medidatempolocacao VARCHAR(64) NOT NULL,
     origemsolicitacao VARCHAR(64) NOT NULL,
     statussolicitacao VARCHAR(64) NOT NULL,
     datasolicitacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP

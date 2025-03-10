@@ -12,6 +12,8 @@ pub struct SolicitacaoContratoInput{
     pub idlocador: String,
     pub idlocatario: String,
     pub idmaquina: String,
+    pub prazolocacao: f64,
+    pub medidatempolocacao: String,
     pub origemsolicitacao: String,
     pub statussolicitacao: String,
 }
@@ -19,7 +21,8 @@ pub struct SolicitacaoContratoInput{
 pub async fn cadastra_solicitacao_contrato(input: Json<SolicitacaoContratoInput>)
     -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
     if input.idlocador.trim().is_empty() || input.idlocatario.trim().is_empty() || 
-      input.idmaquina.trim().is_empty() || input.origemsolicitacao.trim().is_empty(){
+      input.idmaquina.trim().is_empty() || input.origemsolicitacao.trim().is_empty()
+      || input.prazolocacao.to_string().trim().is_empty() || input.medidatempolocacao.trim().is_empty(){
       return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
 
@@ -28,6 +31,8 @@ pub async fn cadastra_solicitacao_contrato(input: Json<SolicitacaoContratoInput>
     let idmaquina = input.idmaquina.trim().to_string();
     let origemsolicitacao = input.origemsolicitacao.trim().to_string();
     let statussolicitacao = "Aguardando aprovação".to_string();
+    let medidatempolocacao = input.medidatempolocacao.to_string();
+    let prazolocacao = input.prazolocacao;
 
     let idsolicitacao = gera_hash(&idmaquina);
     let datasolicitacao = chrono::Utc::now().naive_utc();
@@ -36,6 +41,8 @@ pub async fn cadastra_solicitacao_contrato(input: Json<SolicitacaoContratoInput>
       idlocador,
       idlocatario,
       idmaquina,
+      medidatempolocacao,
+      prazolocacao,
       origemsolicitacao,
       statussolicitacao,
       datasolicitacao

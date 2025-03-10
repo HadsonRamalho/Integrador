@@ -190,6 +190,9 @@ diesel::table! {
         idlocatario -> Varchar,
         #[max_length = 64]
         idmaquina -> Varchar,
+        prazolocacao -> Float8,
+        #[max_length = 64]
+        medidatempolocacao -> Varchar,
         #[max_length = 64]
         origemsolicitacao -> Varchar,
         #[max_length = 64]
