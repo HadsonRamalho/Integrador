@@ -1,6 +1,8 @@
 use diesel::{prelude::{Insertable, Queryable}, query_dsl::methods::FilterDsl, ExpressionMethods, PgConnection, RunQueryDsl, Selectable};
 use serde::{Deserialize, Serialize};
 
+use crate::controllers::cria_conn;
+
 #[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = crate::schema::contas_bancarias)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -40,6 +42,26 @@ pub async fn busca_conta_bancaria_idusuario(conn: &mut PgConnection, id: String)
     match res{
       Ok(conta) => {
         return Ok(conta)
+      },
+      Err(e) => {
+        return Err(e.to_string())
+      }
+    }
+}
+
+pub async fn deleta_conta_bancaria(id: String)
+    -> Result<(), String>{
+    use crate::schema::contas_bancarias::dsl::*;
+
+    let conn = &mut cria_conn().unwrap();
+
+    let res = diesel::delete(contas_bancarias)
+      .filter(idconta.eq(id))
+      .execute(conn);
+    
+    match res{
+      Ok(_) => {
+        return Ok(())
       },
       Err(e) => {
         return Err(e.to_string())
