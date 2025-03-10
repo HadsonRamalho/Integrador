@@ -54,18 +54,18 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
 
 # Documentação e informações do sistema
 ## Requisitos funcionais (RF) e não funcionais (RNF)
-RF 001: Listar todas as máquinas disponíveis para aluguel
-RF 002: CRUD de usuário base
-RF 003: CRUD de usuário locatário (que aluga as máquinas)
-RF 004: CRUD de usuário locador (o proprietário das máquinas)
-RF 005: Permitir que um usuário, independente do seu tipo, alugue uma máquina
-RF 006: CRUD de máquinas
-RF 007: CRUD de endereços
+### RF 001: Listar todas as máquinas disponíveis para aluguel
+### RF 002: CRUD de usuário base
+### RF 003: CRUD de usuário locatário (que aluga as máquinas)
+### RF 004: CRUD de usuário locador (o proprietário das máquinas)
+### RF 005: Permitir que um usuário, independente do seu tipo, alugue uma máquina
+### RF 006: CRUD de máquinas
+### RF 007: CRUD de endereços
 
-RNF 001: Tema claro / escuro
-RNF 002: Testes unitários
-RNF 003: Facilitar o uso e entendimento do sistema
-RNF 004: Disponibilizar um guia de uso do sistema
+### RNF 001: Tema claro / escuro
+### RNF 002: Testes unitários
+### RNF 003: Facilitar o uso e entendimento do sistema
+### RNF 004: Disponibilizar um guia de uso do sistema
 
 
  ### Ajuda
