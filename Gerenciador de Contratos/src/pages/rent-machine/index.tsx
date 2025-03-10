@@ -22,6 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { loadMachineOwnerByMachineId } from "@/services/api/machine-owner";
+import { loadBankAccountByUserId } from "@/services/api/bank-account";
+import { BankAccount } from "@/interfaces/bank-account";
 
 const RentMachine = () => {
   const { publicid } = useParams();
@@ -34,6 +37,11 @@ const RentMachine = () => {
   const [renterId, setRenterId] = useState<string>();
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>();
+
+  const [machineOwnerId, setMachineOwnerId] = useState<string>();
+  const [machineOwnerName, setMachineOwnerName] = useState<string>();
+
+  const [bankAccount, setBankAccount] = useState<BankAccount | null>();
 
   const [medidaPrazo, setMedidaPrazo] = useState<string>("Selecione um Prazo");
   const [prazo, setPrazo] = useState<string>('0');
@@ -86,6 +94,40 @@ const RentMachine = () => {
     };
     listMachines();
   }, [publicid]);
+
+  
+  useEffect(() => {
+    const loadMachineOwner = async () => {
+      if (machine) {
+        try{
+          const owner = await loadMachineOwnerByMachineId(machine.idmaquina);
+          setMachineOwnerId(owner.idusuario);
+          setMachineOwnerName(owner.nome);
+        } catch(error){
+          console.error(error);
+          setError(true);
+          setErrorMessage("Houve um erro ao carregar o locador da máquina.");
+        }
+      }
+    };
+    loadMachineOwner();
+  }, [machine]);
+
+  useEffect(() => {
+    const loadBankAccount = async () => {
+      if (machineOwnerId) {
+        try{
+          const account = await loadBankAccountByUserId(machineOwnerId);
+          setBankAccount(account);
+        } catch(error){
+          console.error(error);
+          setError(true);
+          setErrorMessage("Houve um erro ao carregar os dados para pagamento.");
+        }
+      }
+    };
+    loadBankAccount();
+  }, [machineOwnerId]);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -388,6 +430,36 @@ const RentMachine = () => {
 
                  </CardContent>
                  </Card>
+                 <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                 <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]"><strong>Informações para Pagamento</strong>
+                 </CardHeader>
+                    <CardContent>
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Nome do Titular da Conta</Label>
+                    <Input
+                      value={machineOwnerName}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Nome do Banco</Label>
+                    <Input
+                      value={bankAccount?.nomebanco}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                     
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número da Conta</Label>
+                    <Input
+                      value={bankAccount?.numeroconta}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                    
+                    <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número da Agência</Label>
+                    <Input
+                      value={bankAccount?.numeroagencia}
+                      disabled={true}
+                      className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+                      
+                    </CardContent>
+                  </Card>
               </CardContent> 
             </Card>
           </div>
