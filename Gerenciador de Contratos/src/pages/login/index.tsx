@@ -111,7 +111,7 @@ export default function AuthPage() {
                     placeholder="Senha"
                     value={senha}
                     className="input-login"
-                    onChange={(e) => setSenha(e.target.value)}
+                    onChange={(e) => setSenha(e.target.value)}git
                   />
                   <a
                     className="password"
