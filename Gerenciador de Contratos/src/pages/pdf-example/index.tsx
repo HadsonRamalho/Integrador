@@ -8,6 +8,7 @@ import {
   View,
   StyleSheet,
   pdf,
+  
 } from "@react-pdf/renderer";
 import {
   Card,
@@ -22,10 +23,12 @@ import { Button } from "@/components/ui/button";
 export default function PdfExample() {
   const styles = StyleSheet.create({
     page: {
-      flexDirection: "row",
+      flexDirection: "column",
       backgroundColor: "#97cfb3",
       width: "400px",
       height: "400px",
+      padding:"20px"
+  
     },
     section: {
       margin: 10,
@@ -34,9 +37,18 @@ export default function PdfExample() {
       backgroundColor: "#fff",
     },
     title:{
-      marginBottom: 10,
+      marginBottom: 20,
       fontSize: 25,
-    }
+      fontWeight:'bold',
+      textAlign:"center",
+      
+    },
+    text:{
+      
+      marginBottom:10,
+
+    },
+    
   });
 
   const MyDocument = () => (
@@ -46,16 +58,22 @@ export default function PdfExample() {
           <Text style={styles.title}>
             CONTRATO DE LOCAÇÃO DE BENS MÓVEIS
           </Text>
-            <Text>
+          
+
+          <Text style={styles.text}>
+            
              LOCADORA: XXXXXXXXXX, inscrita no
             CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx ,Cidade/MG,
             neste ato representada pelo seu sócio administrador, XXXXXXXXXXXX,
             brasileiro, casado, inscrito no CPF sob nº XXXXXXXXX SSP-MG, com
-            endereço na Rua XXXXXXXXXXX, Cidade/MG. LOCATÁRIA: XXXXXXXXXX,
+            endereço na Rua XXXXXXXXXXX, Cidade/MG.
+            LOCATÁRIA: XXXXXXXXXX,
             inscrita no CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx
             ,Cidade/MG, neste ato representada pelo seu sócio administrador,
             XXXXXXXXXXXX, brasileiro, casado, inscrito no CPF sob nº XXXXXXXXX
-            SSP-MG, com endereço na Rua XXXXXXXXXXX, Cidade/MG. Ambas as PARTES
+            SSP-MG, com endereço na Rua XXXXXXXXXXX, Cidade/MG.
+            
+             Ambas as PARTES
             aqui representadas por quem de direito, têm justo e contratado entre
             si a celebração do presente Contrato de Locação de Bens Móveis, que
             reger-se-á de acordo com as cláusulas e condições aqui previstas.
