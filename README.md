@@ -129,7 +129,7 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
 
  ### Caso 4 - Atualização de Dados do Usuário
 - Ator: Usuário
-- Objetivo: Atualizar informações (Nome e Documento) da conta de um usuário. 
+- Objetivo: Atualizar informações (Nome e Documento) da conta de um usuário
 - Pré-Condição: Estar logado em uma conta
 - Fluxo Principal:
  1. - O usuário acessa a página 'Minhas Informações'
@@ -139,6 +139,24 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
  5. - O sistema valida a senha, atualizando os dados caso seja válida
  6. - A interface é atualizada com as novas informações do usuário
 
+ ### Caso 5 - Cadastro de Endereço do Usuário
+- Ator: Usuário
+- Objetivo: Cadastrar o endereço de um usuário
+- Pré-Condição: Estar logado em uma conta
+- Fluxo Principal:
+ 1. - O usuário acessa a página 'Minhas Informações'
+ 2. - O sistema exibe um card com campos a serem preenchidos
+ 3. - O usuário preenche o CEP
+ 4. - Se o CEP for válido, o sistema preenche os campos restantes
+ 5. - O usuário corrige os campos necessários
+ 6. - Clica no botão 'Cadastrar'
+ 7. - O sistema faz o cadastro do endereço
+- Fluxo Alternativo:
+  1. - O usuário acessa a página 'Minhas Informações'
+  2. - O sistema exibe um card com campos a serem preenchidos
+  3. - Clica no botão 'Vou fazer isso depois'
+  4. - O usuário é redirecionado para a página 'Home'
+     
  ### Ajuda
   
 Se tiver problemas com qualquer um dos tópicos acima, não hesite em nos procurar!
