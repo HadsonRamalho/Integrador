@@ -258,13 +258,7 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
         </Text>
 
         <Text style={styles.paragraph}>
-          3.1.1 O pagamento da locação será adiantado,
-          vencendo todo dia 23 (vinte e três), com início em 23/11/2023,
-          mediante boleto bancário, com exceção da primeira parcela (entrada).
-        </Text>
-
-        <Text style={styles.paragraph}>
-          3.1.2 O pagamento da entrada será efetuado imediatamente, mediante transferência
+          3.1.1 O pagamento do valor relativo à locação será efetuado imediatamente, mediante transferência
           bancária para a LOCADORA, na conta que segue:
         </Text>
 
