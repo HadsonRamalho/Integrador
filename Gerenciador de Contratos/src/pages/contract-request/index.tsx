@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/layouts";
-import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import "@/components/contract-dropdown-menu/index.css";
 import "@/components/helpcenter/helpcenter.css"
@@ -9,20 +8,20 @@ import Layout from "@/layouts/default";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { ContractRequest as SolicitacaoContrato } from "@/interfaces/contract-request";
-import { loadContractRequestById, loadContractRequestsByOwnerId, updateContractRequestStatus } from "@/services/api/contract-request";
+import { loadContractRequestsByOwnerId, loadContractRequestsByRenterId, updateContractRequestStatus } from "@/services/api/contract-request";
 import { formatDate } from "@/services/api/format/format";
 import { loadUserById } from "@/services/api/user/user";
 import { User } from "@/interfaces/user";
 import { loadMachineById } from "@/services/api/machine/machine";
 import { Machine } from "@/interfaces/machine";
 import { loadPdfByRequestId } from "@/services/api/contract";
-import { ContractPDF } from "@/interfaces/contract";
 import { pdf } from "@react-pdf/renderer";
 import { PdfDocument } from "../pdf-example";
 
 export default function ContractRequest() {
 
   const [requests, setRequests] = useState<SolicitacaoContrato[]>();
+  const [renterRequests, setRenterRequests] = useState<SolicitacaoContrato[]>();
   const [updated, setUpdated] = useState(true);
 
   const loadRequests = async (id: string) => {
@@ -35,10 +34,20 @@ export default function ContractRequest() {
     }
   }
 
+  const loadRenterRequests = async (id: string) => {
+    try{
+      const res = await loadContractRequestsByRenterId(id);
+      setRenterRequests(res);
+    }catch(error){
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     const id = localStorage.getItem("USER_ID");
     if (id && updated){
       loadRequests(id);
+      loadRenterRequests(id);
     }
   }, [updated]);
 
@@ -50,13 +59,10 @@ export default function ContractRequest() {
 
     const tempoAluguel = request.prazolocacao + " " + request.medidatempolocacao;
 
-    const [pdfData, setPdfData] = useState<ContractPDF>();
-
     const handleLoadPdf = async () => {
       setLoadingPdf(true);
       try {
       const data = await loadPdfByRequestId(request.idsolicitacao);
-      setPdfData(data);
       const blob = await pdf(<PdfDocument contract={data} />).toBlob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -147,14 +153,19 @@ export default function ContractRequest() {
           disabled={true}
           className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
       </CardContent>
-      {request.statussolicitacao === "Aguardando aprovação" && (
-        <CardFooter className="flex justify-center gap-4">
-          <Button className="bg-[#882727]"
-          onClick={() => {handleUpdateRequest("Solicitação recusada")}}>Recusar Aluguel</Button>
-          <Button
-          onClick={() => {handleUpdateRequest("Solicitação aprovada")}}>Aprovar Aluguel</Button>
-        </CardFooter>
+      {request.origemsolicitacao !== localStorage.getItem("USER_ID") && (
+        <div>
+        {request.statussolicitacao === "Aguardando aprovação" && (
+          <CardFooter className="flex justify-center gap-4">
+            <Button className="bg-[#882727]"
+            onClick={() => {handleUpdateRequest("Solicitação recusada")}}>Recusar Aluguel</Button>
+            <Button
+            onClick={() => {handleUpdateRequest("Solicitação aprovada")}}>Aprovar Aluguel</Button>
+          </CardFooter>
+        )}
+        </div>
       )}
+
       {request.statussolicitacao === "Solicitação aprovada" && (
         <CardFooter className="flex justify-center gap-4">
           <Button onClick={handleLoadPdf} disabled={loadingPdf}>
@@ -195,7 +206,13 @@ export default function ContractRequest() {
           ))}
 
           </TabsContent>
-          <TabsContent value="emitidas">Change your password here.</TabsContent>
+          <TabsContent value="emitidas">
+            
+          {renterRequests?.map((req) => (
+            <RequestCard request={req}/>
+          ))}
+
+          </TabsContent>
         </Tabs>
         </CardContent>
         </Card>

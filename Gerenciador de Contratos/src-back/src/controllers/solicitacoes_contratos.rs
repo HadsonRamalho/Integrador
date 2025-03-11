@@ -154,3 +154,28 @@ pub async fn atualiza_status_solicitacao(input: Json<StatusSolicitacaoInput>)
 
     return Ok((StatusCode::OK, Json(solicitacao)));
 }
+
+pub async fn busca_solicitacoes_idlocatario(Query(id): Query<IdInput>)
+    -> Result<(StatusCode, Json<Vec<SolicitacaoContrato>>), (StatusCode, Json<String>)>{
+    if id.id.trim().is_empty(){
+      return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    let id = id.id.trim().to_string();
+
+    let conn = &mut cria_conn()?;
+
+    let solicitacoes = match models::solicitacoes_contratos::busca_solicitacoes_idlocatario(conn, id).await{
+      Ok(solicitacoes) => {
+        solicitacoes
+      },
+      Err(e) => {
+        return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+      }
+    };
+
+    if solicitacoes.is_empty(){
+      return Err((StatusCode::INTERNAL_SERVER_ERROR, Json("Você não emitiu solicitações de contratos.".to_string())))
+    }
+
+    return Ok((StatusCode::OK, Json(solicitacoes)))
+}

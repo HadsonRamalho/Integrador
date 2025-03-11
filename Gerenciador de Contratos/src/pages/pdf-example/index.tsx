@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ContractPDF } from "@/interfaces/contract";
+import { formatCurrency } from "@/services/api/format/format";
+import { Machine } from "@/interfaces/machine";
 
 // react-pdf/renderer
 
@@ -59,6 +61,72 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
       marginBottom: 8,
     },
   });
+
+  const tableStyles = StyleSheet.create({
+    table: {
+      width: '100%',
+      borderWidth: 1,
+      borderColor: 'black'
+    },
+    row: {
+      display: 'flex',
+      flexDirection: 'row',
+      borderTop: '1px solid #EEE',
+      paddingTop: 8,
+      paddingBottom: 8,
+    },
+    header: {
+      borderTop: 'none',
+      borderWidth: 1,
+      borderColor: 'black'
+    },
+    bold: {
+      fontWeight: 'bold',
+    },
+    bold2: {
+      fontWeight: 900,
+      fontFamily: 'Times-Bold',
+    },
+    col1: {
+      width: '33%',
+    },
+    col2: {
+      width: '33%',
+    },
+    col3: {
+      width: '33%',
+    },
+    col4: {
+      width: '33%',
+      fontSize: 14
+    },
+    col5: {
+      width: '27%',
+    },
+  })
+  
+  const ReportTable = ({ data }: { data: ContractPDF[] }) => {
+    return (
+      <View style={tableStyles.table}>
+        <View style={[tableStyles.row, tableStyles.bold2, tableStyles.header]}>
+          <Text style={tableStyles.col1}>Item</Text>
+          <Text style={tableStyles.col2}>Número de Série</Text>
+          <Text style={tableStyles.col3}>Valor da Locação</Text>
+        </View>
+        {data.map((row, i) => (
+          <View key={i} style={tableStyles.row} wrap={false}>
+            <Text style={tableStyles.col4}>
+              <Text style={tableStyles.bold}>{row.nomemaquina}</Text>
+            </Text>
+            <Text style={tableStyles.col4}>{row.numeroseriemaquina}</Text>
+            <Text style={tableStyles.col4}>{formatCurrency(row.valorlocacao)}</Text>
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+
   return(
   <Document>
     <Page size="A4" style={styles.page}>
@@ -75,12 +143,14 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
         </Text>
 
         <Text style={styles.paragraph}>
-          <Text style={styles.bold}>LOCATÁRIA:</Text> {contract.nomelocatario}, inscrita no
-          CNPJ sob o nº XXXXXXXXXXX, com sede na Rua xxxxxxxxx, Cidade/MG,
-          neste ato representada pelo seu sócio administrador, XXXXXXXXXXXX,
-          brasileiro, casado, inscrito no CPF sob nº XXXXXXXXX SSP-MG, com
-          endereço na Rua XXXXXXXXXXX, Cidade/MG.
+          <Text style={styles.bold}>Locatária: {contract.nomelocatario}</Text>, inscrita no 
+           {" " + contract.tipodocumentolocatario + " "} sob o nº <Text style={styles.bold}>
+            {" " + contract.documentolocatario + " "}</Text>
+          , com endereço em <Text style={styles.bold}>Rua {" " + contract.logradouroenderecolocatario + " " }, 
+            {" " + contract.cidadeenderecolocatario}/{contract.estadoenderecolocatario},
+          N° {" " + contract.numeroenderecolocatario+ " " } e com complemento "{contract.complementoenderecolocatario}"</Text>. 
         </Text>
+
         <Text style={styles.paragraph}>
           Ambas as PARTES
           aqui representadas por quem de direito, têm justo e contratado entre
@@ -91,69 +161,149 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
         <Text style={styles.title}>
           DEFINIÇÕES 
         </Text>
-        <Text>
+
+        <Text style={styles.paragraph}>
           As expressões abaixo, sempre que grafadas neste contrato
           em “caixa alta”, terão para todos os fins e efeitos de direito, os
-          seguintes significados: a) LOCADORA: Pessoa Jurídica que dará o(s)
-          bem(ns) em locação. b) LOCATÁRIA: Pessoa Jurídica que receberá o(s)
-          bem(ns) dado(s) em locação. c) PARTES: São a LOCADORA e a LOCATÁRIA
+          seguintes significados: 
+        </Text>
+        <Text style={styles.paragraph}>
+          a) <Text style={styles.bold}>LOCADORA</Text>: Pessoa Jurídica que dará o(s) bem(ns) em locação. 
+        </Text>
+        <Text style={styles.paragraph}>
+        b) <Text style={styles.bold}>LOCATÁRIA</Text>: Pessoa Jurídica que receberá o(s)
+        bem(ns) dado(s) em locação. 
+        </Text>
+        <Text style={styles.paragraph}>
+        c) PARTES: São a <Text style={styles.bold}>LOCADORA</Text> e a <Text style={styles.bold}>LOCATÁRIA</Text>
           qualificadas no preâmbulo deste contrato, quando consideradas em
-          conjunto. d) PARTE: São a LOCADORA e a LOCATÁRIA qualificadas no
-          preâmbulo deste contrato, quando consideradas isoladamente. CLÁUSULA
-          PRIMEIRA – DO OBJETO, PRAZO E USO 1.1 A LOCADORA dará em locação à
-          LOCATÁRIA, bens móveis que declara ser a legítima possuidora e/ou
+          conjunto. 
+        </Text>
+        <Text style={styles.paragraph}>
+        d) PARTE: São a <Text style={styles.bold}>LOCADORA</Text> e a <Text style={styles.bold}>LOCATÁRIA</Text> qualificadas no
+        preâmbulo deste contrato, quando consideradas isoladamente. 
+        </Text>
+        <Text style={styles.title}>
+        CLÁUSULA PRIMEIRA – DO OBJETO, PRAZO E USO
+        </Text>
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}>1.1</Text> A <Text style={styles.bold}>LOCADORA</Text> dará em locação à <Text style={styles.bold}> LOCATÁRIA</Text>, bens móveis que declara ser a legítima possuidora e/ou
           proprietária. Os bens estão descritos conforme lista de equipamentos
           abaixo. Assim, os objetos desta locação são os seguintes
-          equipamentos: ITEM QUANT. EQUIPAMENTO NÚMEROS DE SÉRIE LOCAÇÃO 1 2
-          Máquina a Fio Diamantado 75C MF75S20046, MF75D20022 R$ 30.000,00 2 1
-          Gerador Diesel trifasico de 230 GS2300019 1.1.1 Os equipamentos
+          equipamentos:
+        </Text>
+
+        <ReportTable data={[contract]}/>
+        
+        <Text style={styles.paragraph}></Text>
+
+        <Text style={styles.paragraph}>
+          <Text style={styles.bold}>1.1.1 </Text> Os equipamentos
           previstos nessa cláusula, sendo objetos do presente contrato, serão
-          retirados no seguinte endereço: • Endereço de retirada 1.1.2 Os
-          equipamentos serão utilizados pela LOCATÁRIA no endereço
+          retirados no seguinte endereço:          
+        </Text>
+        <Text style={[styles.paragraph, styles.bold]}>
+          • {contract.cidadeenderecoretirada}, {contract.estadoenderecoretirada},  {contract.cependerecoretirada}
+          , {contract.bairroenderecoretirada}, {contract.logradouroenderecoretirada}, N° {contract.numeroenderecoretirada}, 
+           com complemento "{contract.complementoenderecoretirada}".
+        </Text>
+        
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}>1.1.2 </Text>
+         Os equipamentos serão utilizados pela <Text style={styles.bold}>LOCATÁRIA</Text> no endereço
           supramencionado, sendo que todas as responsabilidades sobre o uso do
-          equipamento permanecem integrais à LOCATÁRIA, referentes à guarda,
-          ao depósito e ao uso dos bens. Mediante prévia comunicação da
-          LOCATÁRIA à LOCADORA, bem como mediante expressa autorização dessa
-          última, os equipamentos locados poderão ser transferidos para outras
-          pedreiras do grupo econômico da LOCATÁRIA, localizadas no Estado de
-          Minas Gerais, mantidas inalteradas todas as obrigações previstas
-          neste Contrato. 1.1.3 Os equipamentos permanecerão sob a guarda,
-          depósito e responsabilidade da LOCATÁRIA na qualidade de fiel
+          equipamento permanecem integrais à <Text style={styles.bold}>LOCATÁRIA</Text>, referentes à guarda,
+          ao depósito e ao uso dos bens.
+        </Text>
+
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}>1.1.3 </Text> Os equipamentos permanecerão sob a guarda,
+          depósito e responsabilidade da <Text style={styles.bold}>LOCATÁRIA</Text> na qualidade de fiel
           depositária, declarando assumir todas as responsabilidades e
-          encargos que lhe incumbem de acordo com a lei civil e penal.
-          CLÁUSULA SEGUNDA – PRAZO DE VIGÊNCIA DO CONTRATO 2.1 O prazo da
-          presente locação é de 03 (três) meses, passando a vigorar a partir
-          da data de entrega dos equipamento, qual seja, a data de 23 de
-          novembro de 2023, nos termos previstos da Cláusula Primeira, item
-          1.1.1. 2.2.1 Findo prazo acima estipulado, o mesmo poderá ser
-          renovado através de aditivo ou outro instrumento contratual por
-          igual período, com pagamento mínimo do valor previsto conforme
-          Cláusula Terceira, item 3.1, podendo este vir a ser reajustado na
-          ocasião por acordo entre as partes. 2.2.2 Não havendo interesse em
-          renovação, os equipamentos deverão ser devolvidos à LOCADORA nas
-          mesmas condições recebidas, qual seja, conforme o laudo de entrega
-          inicial e no mesmo local em que se encontrava quando locado. 2.2.3
-          Os bens locados somente poderão ser destinados para uso exclusivo ao
-          qual se destinam, qual seja, mineração. 2.2.4 Os bens locados apenas
+          encargos que lhe incumbem de acordo com a lei civil e penal.          
+        </Text>
+
+        <Text style={styles.title}>
+          CLÁUSULA SEGUNDA – PRAZO DE VIGÊNCIA DO CONTRATO 
+        </Text>
+
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}>2.1 </Text> O prazo da
+          presente locação é de {contract.prazolocacao} {contract.medidatempolocacao}, passando a vigorar a partir
+          da data de entrega dos equipamentos, nos termos previstos da Cláusula Primeira, item 1.1.1. 
+        </Text>
+
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}>2.1.1 </Text> Findo prazo acima estipulado, os equipamentos 
+          deverão ser devolvidos à <Text style={styles.bold}>LOCADORA</Text> nas mesmas condições recebidas,
+          qual seja, conforme o laudo de entrega inicial e no mesmo local em que se encontrava 
+          quando locado.  
+        </Text>
+
+        <Text style={styles.paragraph}>
+          2.1.2 Os bens locados apenas
           poderão ser operados por Operador devidamente habilitado para
-          manuseio de cada equipamento. CLAÚSULA TERCEIRA – DO VALOR E FORMA
-          DE PAGAMENTO 3.1 A LOCATÁRIA pagará à LOCADORA a título de
-          contraprestação pela locação dos equipamentos, o valor mensal de R$
-          19.000,00 (Dezenove Mil Reais) e, na hipótese de renovação deste
-          contrato, os valores passarão a ser corrigidos anualmente pelo valor
-          positivo do índice IPCA ou por outro que venha eventualmente a
-          substituí-lo. 3.1.1 O pagamento da locação será mensal e adiantado,
+          manuseio de cada equipamento. 
+        </Text>
+
+        <Text style={styles.title}>CLAÚSULA TERCEIRA – DO VALOR E FORMA DE PAGAMENTO </Text>
+
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}>3.1</Text> A <Text style={styles.bold}> LOCATÁRIA </Text> 
+          pagará à <Text style={styles.bold}> LOCADORA </Text> a título de
+          contraprestação pela locação dos equipamentos, o valor de {formatCurrency(contract.valorlocacao)}.
+        </Text>
+
+        <Text style={styles.paragraph}>
+          3.1.1 O pagamento da locação será adiantado,
           vencendo todo dia 23 (vinte e três), com início em 23/11/2023,
           mediante boleto bancário, com exceção da primeira parcela (entrada).
-          3.1.2 O pagamento da entrada será efetuado mediante transferência
-          bancária para a LOCADORA, na conta que segue: DADOS da CONTA 3.1.3 O
-          atraso no pagamento do acordo da cláusula acima sujeita a LOCATÁRIA
+        </Text>
+
+        <Text style={styles.paragraph}>
+          3.1.2 O pagamento da entrada será efetuado imediatamente, mediante transferência
+          bancária para a LOCADORA, na conta que segue:
+        </Text>
+
+        <Text style={styles.paragraph}>
+          <Text style={styles.bold}>Nome do Banco: </Text> {contract.nomebanco}
+        </Text>
+        <Text style={styles.paragraph}>
+          <Text style={styles.bold}>Número da Conta: </Text> {contract.numerocontabanco}
+        </Text>
+        <Text style={styles.paragraph}>
+          <Text style={styles.bold}>Número da Agência: </Text> {contract.numeroagenciabanco}
+        </Text>
+
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}> 3.1.3 </Text> 
+          O atraso no pagamento do acordo da cláusula acima sujeita a 
+          <Text style={styles.bold}> LOCATÁRIA </Text>
           ao pagamento de multa de 2% (dois por cento) e juros de 1% (um por
           cento) ao mês, sobre o valor do débito devidamente corrigido pelo
           valor positivo do índice IPCA ou por outro que venha eventualmente a
           substitui-lo, sem prejuízo da rescisão da locação que poderá ser
-          exigida pela LOCADORA, após notificação à LOCATÁRIA oportunizando o
+          exigida pela <Text style={styles.bold}> LOCADORA</Text>, após notificação à <Text style={styles.bold}> LOCATÁRIA </Text> oportunizando o
           adimplemento do débito mais encargos no prazo de 10 (dez) dias.
+        </Text>
+
+        <Text style={styles.paragraph}>
+
+        </Text>
+
+        <Text style={styles.paragraph}>
+
+        </Text>
+          
+        <Text style={styles.paragraph}>
+
+        </Text>
+  
+
+
+        <Text>
+            
+          
           3.1.4 Em caso de atraso no pagamento a LOCADORA poderá ainda,
           incluir a LOCATÁRIA na lista de inadimplentes do SPC e/ou outras
           instituições de proteção ao crédito. 3.1.5 Na formação de preço da

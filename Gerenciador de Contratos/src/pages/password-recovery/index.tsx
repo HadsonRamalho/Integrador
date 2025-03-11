@@ -29,7 +29,7 @@ export default function PasswordRecovery() {
 
   const loadUserId = async () => {
     try {
-      const res = await fetch(`${API_URL}/busca_usuario_email/{email}?email=${encodeURIComponent(email)}`, {
+      const res = await fetch(`${API_URL}/busca_usuario_email/?email=${encodeURIComponent(email)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -146,6 +146,8 @@ export default function PasswordRecovery() {
 
       setIsUpdating(false);
       setMessage("Senha alterada com sucesso!");
+      alert("Senha alterada com sucesso!");
+      navigate("/login");
     } catch (error) {
       setIsUpdating(false);
       setMessage("Erro ao alterar a senha.");

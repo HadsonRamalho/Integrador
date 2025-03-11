@@ -102,3 +102,24 @@ export async function updateContractRequestStatus(
     );
   }  
 }
+
+export async function loadContractRequestsByRenterId(
+  id: string
+):Promise<ContractRequest[]>{
+  try {
+    const url = `/busca_solicitacoes_idlocatario/?id=${encodeURIComponent(id)}`;
+    const response = await client.get<ContractRequest[]>(url);
+
+    if (response.status === 200) {
+      return response.data;
+    }
+    console.warn("Resposta inesperada:", response.status);
+    throw new Error(`Erro ao buscar as solicitações. Status code: ${response.status}`);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error("Erro ao buscar as solicitações:", error.response?.status, error.message);
+    throw new Error(
+      `Falha ao buscar as solicitações: ${error.response?.status || "sem status"}`
+    );
+  }  
+}
