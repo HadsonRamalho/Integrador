@@ -203,9 +203,11 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
 - Objetivo: Atualizar uma máquina do usuário
 - Pré-Condição: Estar logado em uma conta de usuário que possua ao menos uma máquina cadastrada
 - Fluxo Principal:
- 1. - Através da barra de navegação, o usuário acessa a página 'Cadastrar Máquinas' 
- 2. - Preenche todos os campos necessários
- 3. - Adiciona ao menos uma imagem para a máquina
- 4. - Clica no botão 'Cadastrar máquina'
- 5. - A máquina é cadastrada no sistema
+ 1. - Através da barra de navegação, o usuário acessa a página 'Minhas Máquinas' 
+ 2. - O sistema exibe uma lista com cards contendo as máquinas do usuário
+ 3. - Seleciona uma máquina
+ 4. - Clica no botão 'Atualizar máquina'
+ 5. - Altera os campos desejados
+ 6. - Clica no botão 'Atualizar Máquina'
+ 7. - A máquina é atualizada
 
