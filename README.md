@@ -156,6 +156,14 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
   2. - O sistema exibe um card com campos a serem preenchidos
   3. - Clica no botão 'Vou fazer isso depois'
   4. - O usuário é redirecionado para a página 'Home'
+
+### Caso 6 - Listar Máquinas Disponíveis
+- Ator: Usuário
+- Objetivo: Ver quais máquinas estão disponíveis para aluguel
+- Pré-Condição: O sistema deve ter ao menos uma máquina disponível
+- Fluxo Principal:
+ 1. - Através da barra de navegação, o usuário acessa a página 'Máquinas Disponíveis' 
+ 2. - O sistema exibe a lista de máquinas disponíveis, com cada máquina disposta num card único
      
  ### Ajuda
   
