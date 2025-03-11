@@ -73,6 +73,18 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
 - RNF 005: Permitir que o usuário pesquise por máquinas
 - RNF 006: Permitir que o usuário filtre  máquinas por categoria
 
+## Casos de Uso
+### Caso 1 - Cadastro de Usuário
+- Ator: Usuário
+- Objetivo: Cadastrar uma nova conta no sistema
+- Pré-Condição:
+- Fluxo Principal:
+ 1. - O usuário acessa a página "Criar Conta'
+ 2. - Preenche todos os campos
+ 3. - Confirma o cadastro
+ 4. - O sistema valida e armazena as informações
+ 5. - O usuário é redirecionado para a página 'Login'
+
 
  ### Ajuda
   
