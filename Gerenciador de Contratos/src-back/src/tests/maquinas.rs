@@ -99,7 +99,7 @@ async fn busca_maquina_id_ok(){
         ).await)).await.unwrap().1;
     let id = idsmaquina.0.idmaquina.to_string();
 
-    assert!(busca_maquina_id(Json(id.clone())).await.is_ok());
+    assert!(busca_maquina_id(Query(IdInput{id: id.clone()})).await.is_ok());
     
     assert!(deleta_usuario(idusuario).await.is_ok());
     assert!(deleta_maquina_id(id).await.is_ok());
@@ -119,7 +119,7 @@ async fn busca_maquina_id_err(){
         ).await)).await.unwrap().1;
     let id = idsmaquina.0.idmaquina.to_string();
 
-    assert!(busca_maquina_id(Json("idinvalido".to_string())).await.is_err());
+    assert!(busca_maquina_id(Query(IdInput{id: "idinvalido".to_string()})).await.is_err());
     
     assert!(deleta_usuario(idusuario).await.is_ok());
     assert!(deleta_maquina_id(id).await.is_ok());

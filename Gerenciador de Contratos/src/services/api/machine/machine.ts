@@ -152,3 +152,23 @@ export async function loadMachineRentValue(dados: MachineRentValue): Promise<num
     );
   }
 }
+
+export async function loadMachineById(id: string): Promise<Machine> {
+  try {
+    const response = await client.get<Machine>(`/busca_maquina_id/?id=${encodeURIComponent(id)}`);
+
+    if (response.status === 200) {
+      const data = response.data;
+      return data;
+    }else {
+      console.warn("Resposta inesperada:", response.status);
+      throw new Error(`Erro ao carregar a máquina. Status code: ${response.status}`);
+    }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error(error.response?.status, error.message);
+    throw new Error(
+      `Falha ao carregar informações da máquina: Código [${error.response?.status}]`
+    );
+  }
+}

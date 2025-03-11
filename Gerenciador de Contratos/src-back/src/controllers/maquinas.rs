@@ -174,13 +174,13 @@ pub async fn lista_todas_maquinas()
     };
 }
 
-pub async fn busca_maquina_id(input: Json<String>)
+pub async fn busca_maquina_id(Query(input): Query<IdInput>)
     -> Result<(StatusCode, Json<Maquina>), (StatusCode, Json<String>)>{
-    if input.0.trim().is_empty(){
+    if input.id.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
     let conn = &mut cria_conn()?;
-    let id = input.0.trim().to_string();
+    let id = input.id.trim().to_string();
     match models::maquinas::busca_maquina_id(conn, id).await{
         Ok(maq) => {
             return Ok((StatusCode::OK, Json(maq)))
@@ -314,7 +314,7 @@ pub async fn calcula_valor_aluguel(input: Json<CalculoValorAluguel>)
     let valores = input.0;
     let medida_prazo = valores.medida_prazo.to_string();
 
-    let maquina = busca_maquina_id(Json(valores.idmaquina.to_string())).await?.1.0;
+    let maquina = busca_maquina_id(Query(IdInput{id: valores.idmaquina.to_string()})).await?.1.0;
     
     let valor_por_hora = maquina.valoraluguel / 720.0;
     let valor_taxa = maquina.valoraluguel * 0.05;
