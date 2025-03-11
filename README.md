@@ -61,11 +61,15 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
 - RF 005: Permitir que um usuário, independente do seu tipo, alugue uma máquina
 - RF 006: CRUD de máquinas
 - RF 007: CRUD de endereços
+- RF 008: Permitir a criação e atualização de solicitações de contratos
+- RF 009: Permitir que um contrato seja exportado para PDF
+- RF 010: Permitir que um locador veja as solicitações de contratos que recebeu
+- RF 011: Permitir que um locatário veja as solicitações de contratos que emitiu
 
-- RNF 001: Tema claro / escuro
-- RNF 002: Testes unitários
+- RNF 001: Permitir que o usuário alterne entre tema claro / escuro
+- RNF 002: Criar testes unitários para testar as funcionalidades da API
 - RNF 003: Facilitar o uso e entendimento do sistema
-- RNF 004: Disponibilizar um guia de uso do sistema
+- RNF 004: Disponibilizar um guia simples para uso do sistema
 - RNF 005: Permitir que o usuário pesquise por máquinas
 - RNF 006: Permitir que o usuário filtre  máquinas por categoria
 
