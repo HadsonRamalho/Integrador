@@ -186,3 +186,26 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
  3. - Clica no botão 'Atualizar conta bancária'
  4. - O sistema atualiza a conta bancária do usuário
 
+### Caso 9 - Cadastrar uma Máquina
+- Ator: Usuário
+- Objetivo: Cadastrar uma máquina no sistema
+- Pré-Condição: Estar logado em uma conta de usuário que possua uma conta bancária cadastrada
+- Fluxo Principal:
+ 1. - Através da barra de navegação, o usuário acessa a página 'Cadastrar Máquinas' 
+ 2. - Preenche todos os campos necessários
+ 3. - Adiciona ao menos uma imagem para a máquina
+ 4. - Clica no botão 'Cadastrar máquina'
+ 5. - A máquina é cadastrada no sistema
+
+
+### Caso 10 - Atualizar uma Máquina
+- Ator: Usuário
+- Objetivo: Atualizar uma máquina do usuário
+- Pré-Condição: Estar logado em uma conta de usuário que possua ao menos uma máquina cadastrada
+- Fluxo Principal:
+ 1. - Através da barra de navegação, o usuário acessa a página 'Cadastrar Máquinas' 
+ 2. - Preenche todos os campos necessários
+ 3. - Adiciona ao menos uma imagem para a máquina
+ 4. - Clica no botão 'Cadastrar máquina'
+ 5. - A máquina é cadastrada no sistema
+
