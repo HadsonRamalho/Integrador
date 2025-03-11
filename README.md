@@ -84,7 +84,30 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
  3. - Confirma o cadastro
  4. - O sistema valida e armazena as informações
  5. - O usuário é redirecionado para a página 'Login'
-
+- Fluxo Alternativo:
+  1. - O usuário acessa a página 'Login'
+  2. - Clica em 'Entrar com o Google'
+  3. - É redirecionado para a página de login do Google
+  4. - Faz login em sua conta Google e permite a autenticação
+  5. - É redirecionado de volta para o sistema
+  6. - O sistema valida o login e o usuário é redirecionado para a página 'Minhas Informações'
+     
+ ### Caso 2 - Login de Usuário
+- Ator: Usuário
+- Objetivo: Entrar em uma conta já registrada no sistema
+- Pré-Condição: Possuir uma conta cadastrada
+- Fluxo Principal:
+ 1. - O usuário acessa a página 'Login'
+ 2. - Preenche os campos de e-mail e senha
+ 3. - Clica no botão 'Entrar'
+ 4. - O usuário é redirecionado para a página 'Minhas Informações'
+- Fluxo Alternativo:
+  1. - O usuário acessa a página 'Login'
+  2. - Clica em 'Entrar com o Google'
+  3. - É redirecionado para a página de login do Google
+  4. - Faz login em sua conta Google e permite a autenticação
+  5. - É redirecionado de volta para o sistema
+  6. - O sistema valida o login e o usuário é redirecionado para a página 'Minhas Informações'
 
  ### Ajuda
   
