@@ -127,6 +127,18 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
  11. - Clica no botão 'Alterar senha'
  12. - A senha é alterada e o usuário é redirecionado para a página 'Login'
 
+ ### Caso 4 - Atualização de Dados do Usuário
+- Ator: Usuário
+- Objetivo: Atualizar informações (Nome e Documento) da conta de um usuário. 
+- Pré-Condição: Estar logado em uma conta
+- Fluxo Principal:
+ 1. - O usuário acessa a página 'Minhas Informações'
+ 2. - Altera os campos Nome ou Documento
+ 3. - Preenche o campo Senha
+ 4. - Clica no botão 'Atualizar perfil'
+ 5. - O sistema valida a senha, atualizando os dados caso seja válida
+ 6. - A interface é atualizada com as novas informações do usuário
+
  ### Ajuda
   
 Se tiver problemas com qualquer um dos tópicos acima, não hesite em nos procurar!
