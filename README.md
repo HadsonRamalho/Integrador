@@ -109,6 +109,24 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
   5. - É redirecionado de volta para o sistema
   6. - O sistema valida o login e o usuário é redirecionado para a página 'Minhas Informações'
 
+### Caso 3 - Recuperação de Senha
+- Ator: Usuário
+- Objetivo: Recuperar e redefinir a senha de uma conta registrada no sistema
+- Pré-Condição: Possuir uma conta cadastrada pelo sistema (que não tenha utilizado o login via Google)
+- Fluxo Principal:
+ 1. - O usuário acessa a página 'Login'
+ 2. - Clica no botão 'Esqueci a senha'
+ 3. - É redirecionado para a página 'Recuperação de Senha'
+ 4. - Preenche o campo com o e-mail da conta
+ 5. - Clica no botão 'Enviar código'
+ 6. - O sistema verifica se o e-mail pertence a alguma conta e envia um código de recuperação para o usuário
+ 7. - O usuário preenche o código recebido por e-mail
+ 8. - Clica em 'Verificar código'
+ 9. - O sistema verifica se o código é válido
+ 10. - Preenche os campos com a nova senha
+ 11. - Clica no botão 'Alterar senha'
+ 12. - A senha é alterada e o usuário é redirecionado para a página 'Login'
+
  ### Ajuda
   
 Se tiver problemas com qualquer um dos tópicos acima, não hesite em nos procurar!
