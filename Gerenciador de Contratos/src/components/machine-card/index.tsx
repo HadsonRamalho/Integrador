@@ -57,13 +57,8 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
   }, [machine.idmaquina]);
 
   return (
-      <Card
-        className="machine-card  hover:cursor-pointer p-0 m-0"
-        onClick={() => {
-          verifyAccountStatus(machine.idpublico);
-        }}
-      >
-        <div>
+    <div>
+              <div>
           <AlertDialog open={showAlert} onOpenChange={toggleAlert}>
             <AlertDialogTrigger asChild></AlertDialogTrigger>
             <AlertDialogContent>
@@ -93,18 +88,23 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
+        <Card
+          className="machine-card  hover:cursor-pointer p-0 m-0"
+          onClick={() => {
+            verifyAccountStatus(machine.idpublico);
+          }}>
         <CardContent className=" p-0 m-0">
           <div className="machine-image-container">
             {loadingImage ? (
               <div>
                 <Skeleton className="h-[30vh] w-[90%] rounded-xl" />
-               
               </div>
             ) : error ? (
               <div className="image-placeholder">Erro ao carregar imagem</div>
             ) : image ? (
                 <AspectRatio ratio={1/1}>
                   <img
+                    className="m-0 p-0"
                     src={image}
                     alt={`Imagem de ${machine.nome}`}
                   />
@@ -126,5 +126,8 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
           </CardDescription>
         </CardContent>
       </Card>
+    </div>
+
+      
   );
 };

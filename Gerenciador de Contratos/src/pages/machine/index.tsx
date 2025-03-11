@@ -50,7 +50,6 @@ export default function Machine() {
               .map((machine: Maquina) => (
                 <div
                   key={machine.idmaquina}
-                  style={{ marginTop: "4vh", width: "90%", height: "600px" }}
                 >
                   <MachineCard machine={machine} />
                 </div>
