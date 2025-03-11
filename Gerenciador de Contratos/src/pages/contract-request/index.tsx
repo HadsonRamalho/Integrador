@@ -16,6 +16,9 @@ import { User } from "@/interfaces/user";
 import { loadMachineById } from "@/services/api/machine/machine";
 import { Machine } from "@/interfaces/machine";
 import { loadPdfByRequestId } from "@/services/api/contract";
+import { ContractPDF } from "@/interfaces/contract";
+import { pdf } from "@react-pdf/renderer";
+import { PdfDocument } from "../pdf-example";
 
 export default function ContractRequest() {
 
@@ -47,12 +50,26 @@ export default function ContractRequest() {
 
     const tempoAluguel = request.prazolocacao + " " + request.medidatempolocacao;
 
+    const [pdfData, setPdfData] = useState<ContractPDF>();
+
     const handleLoadPdf = async () => {
       setLoadingPdf(true);
-      try{
-        await loadPdfByRequestId(request.idsolicitacao);
-      } catch(error){
-        console.error(error);
+      try {
+      const data = await loadPdfByRequestId(request.idsolicitacao);
+      setPdfData(data);
+      const blob = await pdf(<PdfDocument contract={data} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "documento.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      } catch (error) {
+      console.error(error);
+      } finally {
+      setLoadingPdf(false);
       }
     }
 
