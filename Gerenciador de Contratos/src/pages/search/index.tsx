@@ -54,8 +54,7 @@ const DetalhesMaquina = () => {
               filteredMachines.map((maquina) => (
                 <div 
                   className={`search-machine-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`}
-                  key={maquina.idmaquina}
-                  style={{ marginTop: "4vh", width: "90%", height: "600px" }}
+                  key={maquina.idmaquina}                  
                 >
                   <MachineCard machine={maquina} />
                 </div>

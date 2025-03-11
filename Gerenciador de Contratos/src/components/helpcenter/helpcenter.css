@@ -11,11 +11,3 @@
     color: hsl(var(--primary));
     margin-right: 8px;
 }
-.search-busca {
-    display: flex;
-    align-items: center;
-    border: 1px solid hsl(var(--chart-2));
-    border-radius: 8px;
-    padding: 10px;
-    background: hsl(var(--card));
-}

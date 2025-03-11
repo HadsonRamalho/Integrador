@@ -78,7 +78,7 @@ export const MachineList = () => {
             filteredMachines.map((machine: Maquina) => (
               <div
                 key={machine.idmaquina}
-                style={{ width: "90%", height: "500px", padding: '0' }}
+                style={{ width: "90%", height: "600px", padding: '0' }}
               >
                 <MachineCard machine={machine} />
               </div>

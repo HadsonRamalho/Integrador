@@ -48,7 +48,7 @@ pub async fn busca_maquinas_usuario_idusuario(Query(input): Query<IdInput>)
     };
     let mut maquinas = vec![];
     for maq in maqs{
-        maquinas.push(busca_maquina_id(Json(maq.idmaquina)).await?.1.0);
+        maquinas.push(busca_maquina_id(Query(IdInput{id: maq.idmaquina})).await?.1.0);
     }
     return Ok((StatusCode::OK, Json(maquinas)))
 }

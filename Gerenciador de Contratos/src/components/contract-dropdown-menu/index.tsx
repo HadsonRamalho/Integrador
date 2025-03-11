@@ -23,7 +23,7 @@ export const ContractDropdownMenu = () => {
           </DropdownMenuItem>
           <DropdownMenuSeparator/>   
           <DropdownMenuItem>
-              <NavLink to={"/"}>
+              <NavLink to={"/contract-request"}>
                 <p style={{color: "black", fontSize: '15px'}}>Solicitações de Contratos</p>
               </NavLink>
           </DropdownMenuItem> 

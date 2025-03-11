@@ -578,9 +578,26 @@ const RentMachine = () => {
           </div>
         ) 
         : step === "status-solicitação" ? (
-          <div>
-            <h1>Status da Solicitação</h1>
-          </div>
+          <div className="rent-machine-container">
+          <Card className="bg-[hsl(var(--machine-card-bg))] w-[60vw] m-4 border-[hsl(var(--primary))]">
+            <CardHeader>
+            <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Status da Solicitação</CardTitle>
+            </CardHeader>
+              <CardContent>
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Status da Solicitação</Label>
+              <Input
+                value={"Aguardando aprovação"}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Data da Solicitação</Label>
+              <Input
+                value={"19:57 10/03/2025"}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+              </CardContent>
+          </Card>
+        </div>
         ) : 
         <div>
           <p className="text-[black]">

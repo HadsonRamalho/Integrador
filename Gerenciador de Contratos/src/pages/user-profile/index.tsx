@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { loadBankAccountByUserId, updateBankAccount } from "@/services/api/bank-account";
 import { BankAccount } from "@/interfaces/bank-account";
+import { formatDate } from "@/services/api/format/format";
 
 export default function UserProfile() {
   const navigate = useNavigate();
@@ -205,7 +206,7 @@ export default function UserProfile() {
           </>) : (<></>)}
 
           <CardDescription className="user-profile-card-description">
-            Data de Cadastro: {user.datacadastro}
+            Data de Cadastro: {formatDate(user.datacadastro)}
           </CardDescription>
           <CardContent>
             <Button className="user-profile-button" onClick={handleChange}>Atualizar  perfil</Button>

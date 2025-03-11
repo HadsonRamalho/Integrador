@@ -19,6 +19,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Skeleton } from "../ui/skeleton";
+import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
   const [image, setImage] = useState("");
   const [loadingImage, setLoadingImage] = useState(true);
@@ -56,13 +57,8 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
   }, [machine.idmaquina]);
 
   return (
-      <Card
-        className="machine-card  hover:cursor-pointer"
-        onClick={() => {
-          verifyAccountStatus(machine.idpublico);
-        }}
-      >
-        <div>
+    <div>
+              <div>
           <AlertDialog open={showAlert} onOpenChange={toggleAlert}>
             <AlertDialogTrigger asChild></AlertDialogTrigger>
             <AlertDialogContent>
@@ -92,7 +88,12 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <CardContent>
+        <Card
+          className="machine-card  hover:cursor-pointer p-0 m-0"
+          onClick={() => {
+            verifyAccountStatus(machine.idpublico);
+          }}>
+        <CardContent className=" p-0 m-0">
           <div className="machine-image-container">
             {loadingImage ? (
               <div>
@@ -101,10 +102,13 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
             ) : error ? (
               <div className="image-placeholder">Erro ao carregar imagem</div>
             ) : image ? (
-                <img
-                src={image}
-                alt={`Imagem de ${machine.nome}`}
-              />
+                <AspectRatio ratio={1/1}>
+                  <img
+                    className="m-0 p-0"
+                    src={image}
+                    alt={`Imagem de ${machine.nome}`}
+                  />
+                </AspectRatio>
             ) : (
               <div className="image-placeholder">Imagem indisponível</div>
             )}
@@ -122,5 +126,8 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
           </CardDescription>
         </CardContent>
       </Card>
+    </div>
+
+      
   );
 };

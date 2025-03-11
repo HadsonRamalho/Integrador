@@ -108,3 +108,21 @@ pub async fn atualiza_status_solicitacao(conn: &mut PgConnection, id: String, no
       }
     }
 }
+
+pub async fn busca_solicitacao_idsolicitacao(conn: &mut PgConnection, id: String)
+  -> Result<SolicitacaoContrato, String>{
+  use crate::schema::solicitacoes_contratos::dsl::*;
+
+  let res = solicitacoes_contratos
+    .filter(idsolicitacao.eq(id))
+    .get_result(conn);
+  
+  match res{
+    Ok(solicitacao) => {
+      return Ok(solicitacao)
+    },
+    Err(e) => {
+      return Err(e.to_string())
+    }
+  }
+}
