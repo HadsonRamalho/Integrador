@@ -3,8 +3,8 @@
 }
 
 .machine-image-container img{
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+
     object-fit: cover;
 }
 
@@ -25,7 +25,6 @@
     margin: 0;
     overflow: hidden;
     transition: transform 0.3s ease;
-    display: flex;
     justify-content: space-between;
 }
 
