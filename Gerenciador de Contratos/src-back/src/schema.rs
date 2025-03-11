@@ -49,18 +49,16 @@ diesel::table! {
         #[max_length = 64]
         idsolicitacaocontrato -> Varchar,
         #[max_length = 64]
-        prazolocacao -> Varchar,
+        idcontabancarialocador -> Varchar,
         #[max_length = 64]
         medidatempolocacao -> Varchar,
         #[max_length = 64]
-        valorlocacao -> Varchar,
-        #[max_length = 64]
-        contabancarialocador -> Varchar,
-        #[max_length = 64]
         cidadeforo -> Varchar,
-        datacontrato -> Timestamp,
         #[max_length = 64]
         statuscontrato -> Varchar,
+        prazolocacao -> Float8,
+        valorlocacao -> Float8,
+        datacontrato -> Timestamp,
     }
 }
 

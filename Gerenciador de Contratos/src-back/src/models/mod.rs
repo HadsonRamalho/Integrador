@@ -12,6 +12,7 @@ pub mod locatarios;
 pub mod locadoras;
 pub mod contas_bancarias;
 pub mod solicitacoes_contratos;
+pub mod contratos;
 
 pub fn str_to_f64_bigdecimal(price_str: &str) -> f64 {
     let decimal = BigDecimal::parse_bytes(price_str.as_bytes(), 10).unwrap();

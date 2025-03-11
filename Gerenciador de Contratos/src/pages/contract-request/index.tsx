@@ -15,6 +15,7 @@ import { loadUserById } from "@/services/api/user/user";
 import { User } from "@/interfaces/user";
 import { loadMachineById } from "@/services/api/machine/machine";
 import { Machine } from "@/interfaces/machine";
+import { loadPdfByRequestId } from "@/services/api/contract";
 
 export default function ContractRequest() {
 
@@ -42,7 +43,18 @@ export default function ContractRequest() {
     const [requestOrigin, setRequestOrigin] = useState<User>();
     const [requestMachine, setRequestMachine] = useState<Machine>();
 
+    const [loadingPdf, setLoadingPdf] = useState(false);
+
     const tempoAluguel = request.prazolocacao + " " + request.medidatempolocacao;
+
+    const handleLoadPdf = async () => {
+      setLoadingPdf(true);
+      try{
+        await loadPdfByRequestId(request.idsolicitacao);
+      } catch(error){
+        console.error(error);
+      }
+    }
 
     const loadRequestOrigin = async () => {
       try{
@@ -80,7 +92,7 @@ export default function ContractRequest() {
     }
 
     return (
-    <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))]">
+    <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-2">
       <CardContent className="grid grid-cols-4 gap-4 mt-4">
         <Label className="mt-2 mb-2">Nome do Solicitante</Label>
         <Input
@@ -124,6 +136,12 @@ export default function ContractRequest() {
           onClick={() => {handleUpdateRequest("Solicitação recusada")}}>Recusar Aluguel</Button>
           <Button
           onClick={() => {handleUpdateRequest("Solicitação aprovada")}}>Aprovar Aluguel</Button>
+        </CardFooter>
+      )}
+      {request.statussolicitacao === "Solicitação aprovada" && (
+        <CardFooter className="flex justify-center gap-4">
+          <Button onClick={handleLoadPdf} disabled={loadingPdf}>
+            {loadingPdf ? ("Carregando...") : ("Ver contrato")}</Button>
         </CardFooter>
       )}
     </Card>

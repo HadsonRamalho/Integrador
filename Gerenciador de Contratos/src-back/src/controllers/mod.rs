@@ -18,6 +18,7 @@ pub mod locatarios;
 pub mod locadoras;
 pub mod contas_bancarias;
 pub mod solicitacoes_contratos;
+pub mod contratos;
 
 pub fn cria_conn() -> Result<PgConnection, (StatusCode, Json<String>)> {
     dotenv().ok();

@@ -8,11 +8,11 @@ CREATE TABLE contratos(
     idenderecoretirada VARCHAR(64) NOT NULL,
     idmaquina VARCHAR(64) NOT NULL,
     idsolicitacaocontrato VARCHAR(64) NOT NULL,
-    prazolocacao VARCHAR(64) NOT NULL,
+    idcontabancarialocador VARCHAR(64) NOT NULL,
     medidatempolocacao VARCHAR(64) NOT NULL,
-    valorlocacao VARCHAR(64) NOT NULL,
-    contabancarialocador VARCHAR(64) NOT NULL,
     cidadeforo VARCHAR(64) NOT NULL,
-    datacontrato TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    statuscontrato VARCHAR(64) NOT NULL
+    statuscontrato VARCHAR(64) NOT NULL,
+    prazolocacao FLOAT NOT NULL,
+    valorlocacao FLOAT NOT NULL,
+    datacontrato TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

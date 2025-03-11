@@ -2,7 +2,7 @@ use axum::{extract::Query, Json};
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 
-use crate::models::{self, solicitacoes_contratos::SolicitacaoContrato};
+use crate::{controllers::{contratos::{cadastra_contrato, ContratoInput}, enderecos::busca_endereco_idusuario, usuarios::UserId}, models::{self, solicitacoes_contratos::SolicitacaoContrato}};
 
 use super::{cria_conn, gera_hash, usuarios::IdInput};
 
@@ -124,12 +124,33 @@ pub async fn atualiza_status_solicitacao(input: Json<StatusSolicitacaoInput>)
 
     let id = input.id.trim().to_string();
     let novostatus = input.status.to_string();
-    match models::solicitacoes_contratos::atualiza_status_solicitacao(conn, id, novostatus).await{
+    let solicitacao = match models::solicitacoes_contratos::atualiza_status_solicitacao(conn, id, novostatus).await{
         Ok(solicitacao) => {
-            return Ok((StatusCode::OK, Json(solicitacao)))
+            solicitacao
         },
         Err(e) => {
           return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
         }
+    };
+
+    if solicitacao.statussolicitacao != "Solicitação aprovada"{
+      return Ok((StatusCode::OK, Json(solicitacao)))
     }
+
+    let idenderecolocatario = busca_endereco_idusuario(Query(UserId{idusuario: solicitacao.idlocatario.clone()})).await?.1.0.idendereco;
+    let idenderecolocador = busca_endereco_idusuario(Query(UserId{idusuario: solicitacao.idlocador.clone()})).await?.1.0.idendereco;
+
+    let idcontrato = cadastra_contrato(Json(ContratoInput{
+        idlocatario: solicitacao.idlocatario.clone(),
+        idlocador: solicitacao.idlocador.clone(),
+        idenderecolocatario,
+        idenderecolocador: idenderecolocador.clone(),
+        idenderecoretirada: idenderecolocador,
+        idmaquina: solicitacao.idmaquina.clone(),
+        idsolicitacaocontrato: solicitacao.idsolicitacao.clone(),
+    })).await?.1.0;
+
+    println!("Contrato registrado!");
+
+    return Ok((StatusCode::OK, Json(solicitacao)));
 }
