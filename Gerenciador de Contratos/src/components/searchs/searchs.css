@@ -59,11 +59,10 @@
 .search-machine-grid{
     display: grid;
     grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
+    grid-template-rows: repeat(1, 1fr);
     gap: 16px;
-    padding: 10px;
-    justify-content: center;
-  
-    
+    justify-items: center;
+    height: 600px;
 }
 
 .search-input-result {

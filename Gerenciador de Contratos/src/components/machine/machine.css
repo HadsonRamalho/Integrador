@@ -4,17 +4,20 @@
 
 .machine-image-container img{
     width: 100%;
+
     object-fit: cover;
 }
 
 .machine-grid{
     display: grid;
     grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
-    justify-content: center;
+    grid-template-rows: repeat(1, 1fr);
     gap: 16px;
+    justify-items: center;
 }
 
 .machine-card{
+    width: 100%;
     height: 80%;
     border-color: hsl(var(--primary));
     background-color: hsl(var(--machine-card-bg));
@@ -46,6 +49,7 @@
         overflow: hidden;
     }
     .machine-grid{
+        display: flex;
         width: 450%;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         justify-items: center;
@@ -53,7 +57,6 @@
   }
 
 .machine-grid.single-item {
-    display:flex;
     max-width: 350px;
     max-height: 600px;
     margin: 0;
