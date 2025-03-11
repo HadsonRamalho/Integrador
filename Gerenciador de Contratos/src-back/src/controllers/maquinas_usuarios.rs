@@ -3,7 +3,7 @@ use hyper::StatusCode;
 
 use crate::models::{self, maquinas_usuarios::MaquinaUsuario};
 
-use super::{cria_conn, gera_hash, maquinas::busca_maquina_id, usuarios::IdInput};
+use super::{cria_conn, gera_hash, maquinas::busca_maquina_id, usuarios::{busca_usuario_id, IdInput, UsuarioReturn}};
 
 pub struct MaquinaUsuarioInput{
     pub idmaquina: String,
@@ -48,7 +48,29 @@ pub async fn busca_maquinas_usuario_idusuario(Query(input): Query<IdInput>)
     };
     let mut maquinas = vec![];
     for maq in maqs{
-        maquinas.push(busca_maquina_id(Json(maq.idmaquina)).await?.1.0);
+        maquinas.push(busca_maquina_id(Query(IdInput{id: maq.idmaquina})).await?.1.0);
     }
     return Ok((StatusCode::OK, Json(maquinas)))
+}
+
+pub async fn busca_usuario_idmaquina(Query(id): Query<IdInput>)
+    -> Result<(StatusCode, Json<UsuarioReturn>), (StatusCode, Json<String>)>{
+    if id.id.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+    let id = id.id.trim().to_string();
+
+    let conn = &mut cria_conn()?;
+
+    let idusuario = match models::maquinas_usuarios::busca_idusuario_idmaquina(conn, id).await{
+        Ok(id) => {
+            id
+        },
+        Err(e) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+        }
+    };
+
+    let usuario = busca_usuario_id(Query(IdInput{id: idusuario})).await?;
+    return Ok(usuario)
 }

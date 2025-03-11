@@ -174,13 +174,13 @@ pub async fn lista_todas_maquinas()
     };
 }
 
-pub async fn busca_maquina_id(input: Json<String>)
+pub async fn busca_maquina_id(Query(input): Query<IdInput>)
     -> Result<(StatusCode, Json<Maquina>), (StatusCode, Json<String>)>{
-    if input.0.trim().is_empty(){
+    if input.id.trim().is_empty(){
         return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
     }
     let conn = &mut cria_conn()?;
-    let id = input.0.trim().to_string();
+    let id = input.id.trim().to_string();
     match models::maquinas::busca_maquina_id(conn, id).await{
         Ok(maq) => {
             return Ok((StatusCode::OK, Json(maq)))
@@ -295,4 +295,47 @@ pub async fn pesquisa_maquina(pesquisa: Json<String>)
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
         }
     }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CalculoValorAluguel{
+    pub medida_prazo: String,
+    pub prazo: f64,
+    pub idmaquina: String
+}
+
+pub async fn calcula_valor_aluguel(input: Json<CalculoValorAluguel>)
+    -> Result<(StatusCode, Json<f64>), (StatusCode, Json<String>)>{
+    if input.medida_prazo.trim().is_empty() || input.prazo.to_string().trim().is_empty()
+        || input.idmaquina.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+
+    let valores = input.0;
+    let medida_prazo = valores.medida_prazo.to_string();
+
+    let maquina = busca_maquina_id(Query(IdInput{id: valores.idmaquina.to_string()})).await?.1.0;
+    
+    let valor_por_hora = maquina.valoraluguel / 720.0;
+    let valor_taxa = maquina.valoraluguel * 0.05;
+
+    let valor_aluguel = match medida_prazo.as_str() {
+        "Horas" => {
+            (valor_por_hora * valores.prazo) + valor_taxa
+        },
+        "Dias" => {
+            (valor_por_hora * 24.0 * valores.prazo) + valor_taxa
+        },
+        "Semanas" => {
+            (valor_por_hora * 24.0 * (30. / 4.) * valores.prazo) + valor_taxa
+        },
+        "Meses" => {
+            (valor_por_hora * 24.0 * 30. * valores.prazo) + valor_taxa
+        },
+        _ => {
+            return Err((StatusCode::BAD_REQUEST, Json("Medida de tempo inválida.".to_string())))
+        }
+    };
+
+    return Ok((StatusCode::OK, Json(valor_aluguel)))
 }

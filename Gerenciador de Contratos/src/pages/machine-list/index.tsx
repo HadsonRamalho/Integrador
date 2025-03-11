@@ -39,7 +39,7 @@ export const MachineList = () => {
   return (
     <Layout>
       <main className="mt-10 mb-10">
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center ">
           <div className="rounded-md w-[50vw]">
             <MachineFilter
               machines={machines}
@@ -53,7 +53,7 @@ export const MachineList = () => {
             <p className="text-[1.2rem]">Minhas Máquinas</p>
             </CardHeader>
           <CardContent>
-          <div className={`machine-list-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`}>
+          <div className={`machine-list-grid pt-10 pb-20 ${filteredMachines.length === 1 ? 'single-item' : ''}`}>
           {filteredMachines.length === 0 ? (
             <Card>
               <CardHeader>
@@ -78,7 +78,7 @@ export const MachineList = () => {
             filteredMachines.map((machine: Maquina) => (
               <div
                 key={machine.idmaquina}
-                style={{ width: "90%", height: "500px", padding: '0' }}
+                style={{ width: "90%", height: "600px", padding: '0' }}
               >
                 <MachineCard machine={machine} />
               </div>

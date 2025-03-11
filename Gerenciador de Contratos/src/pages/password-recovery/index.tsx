@@ -29,7 +29,7 @@ export default function PasswordRecovery() {
 
   const loadUserId = async () => {
     try {
-      const res = await fetch(`${API_URL}/busca_usuario_email/{email}?email=${encodeURIComponent(email)}`, {
+      const res = await fetch(`${API_URL}/busca_usuario_email/?email=${encodeURIComponent(email)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -82,6 +82,9 @@ export default function PasswordRecovery() {
     } catch (error) {
       setTimeout(() => setIsUpdating(false));
       setMessage("Erro ao enviar o código de recuperação.");
+      if (error.message.includes("Google")){
+        setMessage(JSON.parse(error.message));
+      }
       console.error(error);
     }
   };
@@ -143,6 +146,8 @@ export default function PasswordRecovery() {
 
       setIsUpdating(false);
       setMessage("Senha alterada com sucesso!");
+      alert("Senha alterada com sucesso!");
+      navigate("/login");
     } catch (error) {
       setIsUpdating(false);
       setMessage("Erro ao alterar a senha.");
@@ -155,7 +160,7 @@ export default function PasswordRecovery() {
       <Layout>
         <main>
           <div className="password-recovery">
-            <div className="input-box height-[400px]">
+            <div className="input-box height-[400px] mb-10">
               <h2 className="title">Recuperação de senha</h2>
               {(!isCodeInputVisible && !isPasswordInputVisible) && (
                 <>                 
@@ -213,7 +218,7 @@ export default function PasswordRecovery() {
                   </Button>
                 </>
               )}
-              <span>{message}</span>
+              <p className="m-4">{message}</p>
               <Button onClick={() => {navigate(-1)}}>
                 Voltar
               </Button>

@@ -4,19 +4,29 @@ use serde::{Deserialize, Serialize};
 
 use crate::models::{self, locatarios::Locatario};
 
-use super::{cria_conn, gera_hash, usuarios::IdInput};
+use super::{cria_conn, gera_hash, usuarios::{busca_usuario_id, IdInput}};
 
 
 #[derive(Serialize, Deserialize)]
 pub struct LocatarioInput{
-  idusuario: String,
-  idendereco: String
+  pub idusuario: String,
+  pub idendereco: String
 }
 
 pub async fn cadastra_locatario(input: Json<LocatarioInput>)
   -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
   if input.idusuario.trim().is_empty() || input.idendereco.trim().is_empty(){
     return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())));
+  }
+
+  let res = busca_usuario_id(Query(IdInput{id: input.idusuario.clone()})).await;
+  match res{
+    Ok(res) => {
+      ()
+    },
+    Err(e) => {
+      return Err(e)
+    }
   }
 
   let conn = &mut cria_conn()?;

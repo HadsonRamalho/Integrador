@@ -10,5 +10,10 @@ export interface Machine {
     datacadastro: string; // ISO 8601 ("2023-01-01T12:00:00")
     dataatualizacao: string; // ISO 8601 ("2023-01-01T12:00:00")
     descricao: string;
-  }
-  
+}
+
+export interface MachineRentValue{
+    idmaquina: string;
+    medida_prazo: string;
+    prazo: number;
+}

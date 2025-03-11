@@ -22,12 +22,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { loadBankAccountByUserId, updateBankAccount } from "@/services/api/bank-account";
+import { BankAccount } from "@/interfaces/bank-account";
+import { formatDate } from "@/services/api/format/format";
 
 export default function UserProfile() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState<User>();
   const [error, setError] = useState(false);
   const [updatedData, setUpdatedData] = useState(true);
-  const [address, setAddress] = useState<Address>();
+  const defaultAddress: Address = {
+    idendereco: "",
+    pais: "",
+    estado: "",
+    cidade: "",
+    cep: "",
+    bairro: "",
+    logradouro: "",
+    numero: "",
+    complemento: ""
+  };
+  const [address, setAddress] = useState<Address | null>(defaultAddress);
 
   const [pais, setPais] = useState<string>("Brasil");
   const [estado, setEstado] = useState<string>();
@@ -37,8 +53,6 @@ export default function UserProfile() {
   const [logradouro, setLogradouro] = useState<string>();
   const [numero, setNumero] = useState<string>();
   const [complemento, setComplemento] = useState<string>();
-
-  const navigate = useNavigate();
 
   async function AtualizaUsuario(nome_novo: string, email_novo: string, documento_novo: string, senha: string) {
     try {
@@ -96,14 +110,16 @@ export default function UserProfile() {
 
   useEffect(() => {
     async function buscaEndereco(id: string) {
-      const res = await loadAddressUserId(id);
-      if (!res) {
-        console.log("Erro ao buscar endereço do usuário.");
-        alert("Usuário não possui endereço");
+      try{
+        const res = await loadAddressUserId(id);
+        console.log(res);
+        const endereco = res;
+        setAddress(endereco);
+        console.log(endereco);
+      } catch(error){
+        setAddress(null);
+        console.error(error);
       }
-      const endereco = res;
-      setAddress(endereco);
-      console.log(endereco);
     }
     const loadUser = async () => {
       setUpdatedData(false);
@@ -156,10 +172,10 @@ export default function UserProfile() {
           <Avatar>
             <AvatarImage className="user-profile-card-image" src={localStorage.getItem("PROFILE_IMAGE_URL") || "https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg"} />                    
           </Avatar>
-          <Label htmlFor="nome" className="text-[hsl(var(--text))]">Nome</Label>
+          <Label htmlFor="nome" className="text-[hsl(var(--text))] ">Nome</Label>
           <Input id="nome"
            value={nome}
-           className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+           className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4 "
             onChange={(e) => setNome(e.target.value)}/>
 
           <Label htmlFor="e-mail" className="text-[hsl(var(--text))]">E-mail</Label>
@@ -168,13 +184,13 @@ export default function UserProfile() {
           readOnly={true}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           />
           <Label htmlFor="documento" className="text-[hsl(var(--text))]">Documento</Label>
           <Input
           id="documento"
           value={documento}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setDocumento(e.target.value)}/>
 
           { origemConta === "Sistema" ? (
@@ -183,17 +199,17 @@ export default function UserProfile() {
             <Input
             id="senha"
             type="password"
-            className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+            className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 "
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             />
           </>) : (<></>)}
 
           <CardDescription className="user-profile-card-description">
-            Data de Cadastro: {user.datacadastro}
+            Data de Cadastro: {formatDate(user.datacadastro)}
           </CardDescription>
           <CardContent>
-            <Button className="user-profile-button" onClick={handleChange}>Atualizar informações do perfil</Button>
+            <Button className="user-profile-button" onClick={handleChange}>Atualizar  perfil</Button>
           </CardContent>
         </CardContent>
       </Card>
@@ -241,7 +257,7 @@ export default function UserProfile() {
           <Label htmlFor="cep" className="text-[hsl(var(--text))]">CEP</Label>
           <Input id="cep"
           value={cep}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black  rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setCep(e.target.value)}/>
           <Label htmlFor="pais" className="text-[hsl(var(--text))]">País</Label>
           <Input
@@ -249,43 +265,43 @@ export default function UserProfile() {
           readOnly={true}
           value={pais}
           onChange={(e) => setPais(e.target.value)}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           />
           <Label htmlFor="estado" className="text-[hsl(var(--text))]">Estado</Label>
           <Input
           id="estado"
           value={estado}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4" 
           onChange={(e) => setEstado(e.target.value)}/>
           <Label htmlFor="cidade" className="text-[hsl(var(--text))]">Cidade</Label>
           <Input
           id="cidade"
           value={cidade}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setCidade(e.target.value)}/>
           <Label htmlFor="bairro" className="text-[hsl(var(--text))]">Bairro</Label>
           <Input
           id="bairro"
           value={bairro}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setBairro(e.target.value)}/>
           <Label htmlFor="logradouro" className="text-[hsl(var(--text))]">Rua</Label>
           <Input
           id="logradouro"
           value={logradouro}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setLogradouro(e.target.value)}/>
           <Label htmlFor="numero" className="text-[hsl(var(--text))]">Número</Label>
           <Input
           id="numero"
           value={numero}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setNumero(e.target.value)}/>
           <Label htmlFor="complemento" className="text-[hsl(var(--text))]">Complemento</Label>
           <Input
           id="complemento"
           value={complemento}
-          className="text-[hsl(var(--text))] rounded-md border-[1px] border-[hsl(var(--primary))]"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setComplemento(e.target.value)}/>
           <CardContent>
             <Button onClick={handleUpdateAddress} className="user-profile-button">Atualizar endereço</Button>
@@ -294,8 +310,94 @@ export default function UserProfile() {
       </Card>
     );
   };
+
+  const BankAccountCard: React.FC<UserCardProps> = ({ user }) => {
+    const [bankName, setBankName] = useState<string>();
+    const [bankAccountNumber, setBankAccountNumber] = useState<string>();
+    const [bankAgency, setBankAgency] = useState<string>();
+    const [bankAccountId, setBankAccountId] = useState<string>();
+
+    const loadBankAccount = async () => {
+      if(!user){
+        return;
+      }
+      try{
+        const res = await loadBankAccountByUserId(user.idusuario);
+        setBankName(res.nomebanco);
+        setBankAccountNumber(res.numeroconta);
+        setBankAgency(res.numeroagencia);
+        setBankAccountId(res.idconta);
+      } catch(error){
+        console.error(error);
+      }
+    }
+
+    useEffect(() => {
+      if(user){
+        loadBankAccount();
+      }
+    }, [user]);
+    
+    const handleUpdateBankAccount = async () => {
+      if (!bankAccountId || !bankAgency || !bankAccountNumber || !bankName){
+        alert("Preencha todos os campos para atualizar a conta bancária.");
+        return;
+      }
+      const newBankAccount: BankAccount = {
+        idconta: bankAccountId,
+        idusuario: user.idusuario,
+        nomebanco: bankName,
+        numeroagencia: bankAgency,
+        numeroconta: bankAccountNumber        
+      };
+      const updatedBankAccount = await updateBankAccount(newBankAccount);
+      if (!updatedBankAccount) {
+        alert("Erro ao atualizar a conta bancária.");
+        return;
+      }
+      setBankAccountNumber(updatedBankAccount.numeroconta);
+      setBankAgency(updatedBankAccount.numeroagencia);
+      setBankName(updatedBankAccount.nomebanco);
+      alert("Conta bancária atualizada!");
+    }
+
+    return (
+      <div>
+        {bankAccountId && (
+          <Card className="mt-2 border-[hsl(var(--primary))] bg-[hsl(var(--machine-card-bg))]">
+          <CardHeader>
+            <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Minha Conta Bancária</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Label htmlFor="cep" className="text-[hsl(var(--text))]">Nome do Banco</Label>
+            <Input id="cep"
+            value={bankName}
+            className="text-black  rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
+            onChange={(e) => setBankName(e.target.value)}/>
   
-  const handleSubtmitAddress = async () => {
+            <Label htmlFor="cep" className="text-[hsl(var(--text))]">Número da Conta</Label>
+            <Input id="cep"
+            value={bankAccountNumber}
+            className="text-black  rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
+            onChange={(e) => setBankAccountNumber(e.target.value)}/>
+  
+            <Label htmlFor="cep" className="text-[hsl(var(--text))]">Número da Agência da Conta</Label>
+            <Input id="cep"
+            value={bankAgency}
+            className="text-black  rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
+            onChange={(e) => setBankAgency(e.target.value)}/>
+            
+            <CardContent>
+              <Button onClick={handleUpdateBankAccount} className="user-profile-button">Atualizar conta bancária</Button>
+            </CardContent>
+          </CardContent>
+        </Card>
+        )}
+      </div>
+    );
+  };
+  
+  const handleSubmitAddress = async () => {
     if(!user){
       return;
     }
@@ -358,12 +460,15 @@ export default function UserProfile() {
         ) : (
           <p>Carregando endereço...</p>
         )}
+        {user && (
+          <BankAccountCard user={user}/>
+        )}
         </div>      
         </div>
         <div>
           <AlertDialog open={!address}>
             <AlertDialogTrigger asChild></AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="border-[hsl(var(--primary))]">
               <AlertDialogHeader>
                 <AlertDialogTitle style={{ color: "hsl(var(--text))" }}>
                   Cadastre um endereço
@@ -373,53 +478,53 @@ export default function UserProfile() {
                 </AlertDialogDescription>
               </AlertDialogHeader>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
-                  <input
+                  <Input
                   placeholder="CEP"
                   onChange={(e) => setCep(e.target.value)}
                   onBlur={() => {handleCepChange()}}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
-                  <input
+                  <Input
                   placeholder="País"
                   disabled={true}
                   value={pais}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
-                  <input
+                  <Input
                   placeholder="Estado"
                   onChange={(e) => setEstado(e.target.value)}
                   value={estado}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
-                  <input
+                  <Input
                   placeholder="Cidade"
                   value={cidade}
                   onChange={(e) => setCidade(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
-                  <input
+                  <Input
                   placeholder="Bairro"
                   value={bairro}
                   onChange={(e) => setBairro(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
-                  <input
+                  <Input
                   placeholder="Rua"
                   value={logradouro}
                   onChange={(e) => setLogradouro(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
-                  <input
+                  <Input
                   placeholder="Número"
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />
-                  <input
+                  <Input
                   placeholder="Complemento"
                   value={complemento}
                   onChange={(e) => setComplemento(e.target.value)}
-                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%" }}
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid hsl(var(--primary))", width: "100%", color: 'hsl(var(--text))' }}
                   />                  
                 </div>
               <AlertDialogFooter>
@@ -429,7 +534,7 @@ export default function UserProfile() {
                   Vou fazer isso depois
                 </AlertDialogCancel>
                 <AlertDialogAction onClick={() => {
-                  handleSubtmitAddress();
+                  handleSubmitAddress();
                 }}>
                   Cadastrar
                 </AlertDialogAction>

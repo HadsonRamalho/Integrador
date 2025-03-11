@@ -3,6 +3,7 @@
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 16px;
     justify-items: center;
+    
 }
 
 @media (max-width: 480px) {
@@ -12,15 +13,13 @@
         justify-items: center;
     }
 }
-.machine-list-grid.single-item {
-    grid-template-columns: 1fr;
-    justify-content: center;
-}
 
 .machine-list-grid.single-item {
-    max-width: 600px;
+    max-width: 350px;
     max-height: 600px;
     margin: 0;
     overflow: hidden;
     transition: transform 0.3s ease;
+    grid-template-columns: 1fr;
+    justify-content: center;
 }

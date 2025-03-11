@@ -203,11 +203,11 @@ export default function MachineDetails() {
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle style={{ color: "hsl(var(--text))" }}>
-                  UEPA! Pode não!
+                  Você não está conectado!
                 </AlertDialogTitle>
                 <AlertDialogDescription style={{ color: "hsl(var(--text))" }}>
-                  Você precisa estar logado pra fazer isso {">"}:( faz favor de
-                  entrar na sua conta.
+                  Você precisa estar logado pra fazer isso, por favor 
+                  entre na sua conta.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -215,19 +215,16 @@ export default function MachineDetails() {
                   onClick={() => {
                     navigate("/");
                   }}
-                  style={{
-                    color: "hsl(var(--text))",
-                    backgroundColor: "rgb(136, 39, 39)",
-                  }}
+                  className="text-[hsl(var(--text)) bg-[#882727]"
                 >
-                  Depois eu entro, tmj
+                  Cancelar
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => {
                     navigate("/login");
                   }}
                 >
-                  Tabo, vou entrar :(
+                Entrar/Registrar 
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

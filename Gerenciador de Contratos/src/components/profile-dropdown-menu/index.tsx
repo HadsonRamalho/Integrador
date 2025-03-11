@@ -12,13 +12,14 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom";
 
 
-export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
+export const ProfileDropdownMenu = () => {
     const { signOut } = useAuth();
     const navigate = useNavigate();
     const LogOut = () => {
         signOut();
         localStorage.removeItem("PROFILE_IMAGE_URL");
         localStorage.removeItem("USER_ID");
+        localStorage.removeItem("cidade_dropdownmenu");
         navigate("/login");
     };
     
@@ -53,7 +54,9 @@ export const ProfileDropdownMenu = ({titulo}:{titulo:string}) => {
             </DropdownMenuLabel>
            
             <DropdownMenuItem>
-                Central de Ajuda
+            <NavLink to={"/helpcenter"} className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
+            <p style={{color: "black", fontSize: '15px'}}>Central de Ajuda</p>
+            </NavLink>
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuItem onClick={LogOut}>

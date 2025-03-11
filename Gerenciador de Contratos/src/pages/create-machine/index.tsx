@@ -5,8 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BankAccount } from "@/interfaces/bank-account";
 import Layout from "@/layouts/default";
-import { useState } from "react";
+import { createBankAccount, loadBankAccountByUserId } from "@/services/api/bank-account";
+import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { loadUserById } from "@/services/api/user/user";
+import { User } from "@/interfaces/user";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateMachine() {
   const [name, setName] = useState("");
@@ -18,6 +34,67 @@ export default function CreateMachine() {
   const imageIds: string[] = [];
   const [loading, setIsLoading] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState("");
+
+  const navigate = useNavigate();
+  
+  const [user, setUser] = useState<User>();
+  const [bankAccount, setBankAccount] = useState<BankAccount>();
+
+  const [bankName, setBankName] = useState<string>();
+  const [bankAccountNumber, setBankAccountNumber] = useState<string>();
+  const [bankAgency, setBankAgency] = useState<string>();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const id = localStorage.getItem("USER_ID");
+      if(!id){
+        return;
+      }
+      try{
+        const user = await loadUserById(id);
+        setUser(user);
+      } catch(err){
+        console.error(err);
+      }
+    };
+    loadUser();    
+  }, []);
+
+  const loadBankAccount = async () => {
+    if(!user){
+      return;
+    }
+    try{
+      const res = await loadBankAccountByUserId(user.idusuario);
+      setBankAccount(res);
+    } catch(error){
+      console.error(error);
+    }
+  }
+
+  const handleSubmitBankAccount = () => {
+    if(!user){
+      console.warn("Usuário não está logado");
+      return;
+    }
+    if(!bankAccountNumber || !bankAgency || !bankName){
+      alert("Preencha todos os campos.");
+      return;
+    }
+    try{
+      createBankAccount(user.idusuario, bankAccountNumber, bankAgency, bankName);
+      loadBankAccount();
+      console.log("Conta criada!");
+    } catch(error){
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if(user){
+      loadBankAccount();
+    }
+  }, [user]);
 
   const handleImageChange = (index: number, file: File) => {
     const updatedImages = [...machineImages];
@@ -152,7 +229,7 @@ export default function CreateMachine() {
             <Label htmlFor="machine-name" className="mb-1">Nome da Máquina</Label>
             <Input
               id="machine-name"
-              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              className="text-black   mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"
               required
               placeholder="Nome da Máquina"
               onChange={(e) => setName(e.target.value)}
@@ -162,7 +239,7 @@ export default function CreateMachine() {
             <Label htmlFor="serial-number" className="mb-1">Número de Série</Label>
             <Input
               id="serial-number"
-              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"              
+              className="text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100 "              
               required
               placeholder="Número de Série"
               onChange={(e) => setSerialNumber(e.target.value)}
@@ -173,7 +250,7 @@ export default function CreateMachine() {
             <Input
               id="rent-value"
               type="number"
-              className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"              
+              className="text-black bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"              
               value={rentValue}
               onChange={(e) => setRentValue(e.target.value ? Number(e.target.value) : 0)}
               min="0.01"
@@ -185,7 +262,7 @@ export default function CreateMachine() {
             <br></br>
             <select
               id="rent-disponibility"
-              className="w-full bg-[hsl(var(--background))] h-[30px] text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              className="w-full  h-[30px] text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"
               onChange={(e) => setRentDisponibility(e.target.value)}
               value={rentDisponibility}
               required
@@ -197,7 +274,7 @@ export default function CreateMachine() {
             <Label htmlFor="description" className="mb-1">Descrição da Máquina</Label>
             <textarea
               id="description"
-              className="w-full p-2 border bg-[hsl(var(--background))] rounded-md mb-4 h-20 text-[hsl(var(--text))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px]"
+              className="w-full p-2 border  rounded-md mb-4 h-20 text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"
               placeholder="Descrição da Máquina"
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -205,14 +282,14 @@ export default function CreateMachine() {
             />
   
             <Label htmlFor="category" className="mb-1">Categoria da Máquina</Label>
-            <EquipmentSelect className="text-[hsl(var(--text))] bg-[hsl(var(--background))] mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] w-full" onChange={(e) => setSelectedEquipment(e.target.value)} />
+            <EquipmentSelect className="text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] w-full bg-neutral-100" onChange={(e) => setSelectedEquipment(e.target.value)} />
   
             <Label className="mb-1">Imagens da Máquina</Label>
             <div className="space-y-2">
               {machineImages.map((image, index) => (
                 <div key={index} className="mb-2">
                   <Input
-                    className="mb-4 border-[hsl(var(--primary))] bg-[hsl(var(--background))] rounded-m border-[1px]"
+                    className="mb-4 border-[hsl(var(--primary))]  rounded-m border-[1px] bg-neutral-100"
 
                     type="file"
                     accept="image/*"
@@ -240,6 +317,51 @@ export default function CreateMachine() {
           </CardDescription>
         </CardContent>
       </Card>
+      <div>
+        <AlertDialog open={!bankAccount}>
+          <AlertDialogTrigger asChild></AlertDialogTrigger>
+          <AlertDialogContent className="border-[hsl(var(--primary))]">
+            <AlertDialogHeader>
+            <AlertDialogTitle>
+              Cadastre uma conta bancária
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <p>É necessário adicionar uma conta bancária antes de cadastrar uma máquina.</p>
+              <p>Se precisar atualizar alguma informação, acesse o seu perfil.</p>
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+              <div style={{ alignItems: "center", gap: "10px" }}>
+                <Label className="text-[hsl(var(--text))] mb-2">Nome do Titular</Label>
+                <Input className="border-[hsl(var(--primary))] text-[hsl(var(--text))]"
+                  value={user?.nome}
+                  disabled={true}/>
+                <Label className="text-[hsl(var(--text))] mb-2">Nome do Banco</Label>
+                <Input className="border-[hsl(var(--primary))] text-[hsl(var(--text))]"
+                onChange={(e) => setBankName(e.target.value)}
+                value={bankName}/>
+                <Label className="text-[hsl(var(--text))] mb-2">Número da Conta</Label>
+                <Input className="border-[hsl(var(--primary))] text-[hsl(var(--text))]"
+                onChange={(e) => setBankAccountNumber(e.target.value)}
+                value={bankAccountNumber}/>
+                <Label className="text-[hsl(var(--text))] mb-2">Número da Agência</Label>
+                <Input className="border-[hsl(var(--primary))] text-[hsl(var(--text))]"
+                onChange={(e) => setBankAgency(e.target.value)}
+                value={bankAgency}/>
+              </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel 
+              className="bg-[#882727] text-[hsl(var(--text))]"
+              onClick={() => {navigate('/')}}
+              > Farei isso depois
+              </AlertDialogCancel>
+              <AlertDialogAction
+              onClick={handleSubmitBankAccount}>
+                Cadastrar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
     </Layout>
   );

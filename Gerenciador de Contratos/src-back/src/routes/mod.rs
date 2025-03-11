@@ -4,7 +4,7 @@ use axum::{
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
 use utoipa::openapi::Contact;
-use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, enderecos::{atualiza_endereco, busca_endereco_id, busca_endereco_idusuario, cadastra_endereco_usuario}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina, recupera_imagens_maquina}, locatarios::{busca_locatario_idusuario, cadastra_locatario}, maquinas::{atualiza_maquina, busca_maquina_idpublico, cadastra_maquina, lista_todas_maquinas, pesquisa_maquina}, maquinas_usuarios::busca_maquinas_usuario_idusuario, multipart::cadastra_imagem, oauth::{google_oauth_handler, Config}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_documento, busca_usuario_id, cadastra_usuario, deleta_usuario, realiza_login, redefine_senha_usuario}};
+use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, contas_bancarias::{atualiza_conta_bancaria, busca_conta_bancaria_idusuario, cadastra_conta_bancaria}, contratos::gera_contrato_idsolicitacao, enderecos::{atualiza_endereco, busca_endereco_id, busca_endereco_idusuario, cadastra_endereco_usuario}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina, recupera_imagens_maquina}, locadoras::{busca_locadora_idusuario, cadastra_locadora}, locatarios::{busca_locatario_idusuario, cadastra_locatario}, maquinas::{atualiza_maquina, busca_maquina_id, busca_maquina_idpublico, cadastra_maquina, calcula_valor_aluguel, lista_todas_maquinas, pesquisa_maquina}, maquinas_usuarios::{busca_maquinas_usuario_idusuario, busca_usuario_idmaquina}, multipart::cadastra_imagem, oauth::{google_oauth_handler, Config}, solicitacoes_contratos::{atualiza_status_solicitacao, busca_solicitacao_idsolicitacao, busca_solicitacoes_idlocador, busca_solicitacoes_idlocatario, cadastra_solicitacao_contrato}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_documento, busca_usuario_id, cadastra_usuario, deleta_usuario, realiza_login, redefine_senha_usuario}};
 use crate::controllers::usuarios::busca_usuario_email;
 use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario, __path_busca_usuario_email, __path_atualiza_usuario, __path_atualiza_senha_usuario, __path_redefine_senha_usuario, __path_busca_email_usuario, __path_atualiza_email_usuario, __path_busca_usuario_id};
 use crate::controllers::codigos_recuperacao::__path_envia_codigo_recuperacao;
@@ -74,6 +74,7 @@ pub fn cria_rotas() -> Router<>{
         .route("/busca_maquina_idpublico/", get(busca_maquina_idpublico))
         .route("/pesquisa_maquina", post(pesquisa_maquina))
         .route("/atualiza_maquina", put(atualiza_maquina))
+        .route("/busca_maquina_id/", get(busca_maquina_id))
 
         .route("/cadastra_imagem", post(cadastra_imagem))
         .route("/cadastra_imagem_maquina", post(cadastra_imagem_maquina))
@@ -87,6 +88,24 @@ pub fn cria_rotas() -> Router<>{
 
         .route("/cadastra_locatario", post(cadastra_locatario))
         .route("/busca_locatario_idusuario/", get(busca_locatario_idusuario))
+
+        .route("/cadastra_locadora", post(cadastra_locadora))
+        .route("/busca_locadora_idusuario/", get(busca_locadora_idusuario))
+
+        .route("/cadastra_conta_bancaria", post(cadastra_conta_bancaria))
+        .route("/busca_conta_bancaria_idusuario/", get(busca_conta_bancaria_idusuario))
+        .route("/atualiza_conta_bancaria", put(atualiza_conta_bancaria))
+        .route("/busca_usuario_idmaquina/", get(busca_usuario_idmaquina))
+
+        .route("/cadastra_solicitacao_contrato", post(cadastra_solicitacao_contrato))
+        .route("/busca_solicitacao_idsolicitacao/", get(busca_solicitacao_idsolicitacao))
+        .route("/busca_solicitacoes_idlocador/", get(busca_solicitacoes_idlocador))
+        .route("/atualiza_status_solicitacao", patch(atualiza_status_solicitacao))
+        .route("/busca_solicitacoes_idlocatario/", get(busca_solicitacoes_idlocatario))
+
+        .route("/gera_contrato_idsolicitacao/", get(gera_contrato_idsolicitacao))
+
+        .route("/calcula_valor_aluguel", post(calcula_valor_aluguel))
 
         .route("/busca_maquinas_usuario_idusuario/", get(busca_maquinas_usuario_idusuario))
 

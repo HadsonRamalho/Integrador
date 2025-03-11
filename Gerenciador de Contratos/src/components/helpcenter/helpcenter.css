@@ -1,0 +1,13 @@
+.search-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+ 
+}
+
+.search-icon {
+    color: hsl(var(--primary));
+    margin-right: 8px;
+}

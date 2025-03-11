@@ -31,7 +31,7 @@
 } */
 
 .user-profile-card-description{
-    color: hsl(var(--primary));
+    color: hsl(var(--text));
     font-size: 1.5vh;
 }
 
@@ -63,5 +63,12 @@
 
 .user-profile-button:hover{    
     background-color: #169e69;
+}
+
+label{
+text-align: left;
+font-size: 1.1em;
+display: block;
+margin-bottom: 2px;
 }
 

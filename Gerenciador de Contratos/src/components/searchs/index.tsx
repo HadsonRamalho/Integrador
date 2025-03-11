@@ -1,30 +1,38 @@
 import { Input } from "@/layouts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../ui/button";
 import { Search } from "lucide-react";
-
-const maquinas = [
-  {id: 1, nome: "Escavadeira"},
-  {id: 2, nome: "Roçadeira"},
-  {id: 3, nome: "Maquina"},
-  {id: 4, nome: "Trator"},
-  {id: 5, nome: "Motoniveladora de Combate"},
-];
+import "@/components/searchs/searchs.css"
+import { listMachine } from "@/services/api/machine/machine";
+import { Machine } from "@/interfaces/machine";
 
 const SearchFilter = () => {
   const [search, setSearch] = useState("");
   const navigate  = useNavigate();
   
   const PalavraBuscada = search.toLowerCase();
+
+  const [maquinas, setMaquinas] = useState<Machine[]>([]);
+  
+  useEffect(() => {
+    const listMachines = async () => {
+      const maquinas = await listMachine();
+      console.log(maquinas);
+      setMaquinas(maquinas);
+    };
+    listMachines();
+  }, []);
   
   const filteredItems = maquinas.filter((maquina) =>
-    maquina.nome.toLowerCase().includes(PalavraBuscada)
+    maquina.nome.toLowerCase().includes(PalavraBuscada.toLowerCase()) ||
+    maquina.categoria.toLowerCase().includes(PalavraBuscada.toLowerCase())
   );
   
 
   return (
-    <div className="busca-search">
+      <div className="container-search">
+        <div className="search-busca">
+        <Search  className="search-icon"/>
       <Input
         type="text"
         value={search}
@@ -32,17 +40,15 @@ const SearchFilter = () => {
         onChange={(e) => setSearch(e.target.value)}
         className="search-input"
       />
-      <Button>
-        <Search />
-        Buscar
-      </Button>
+      </div>
 
 
       {search && filteredItems.length > 0 && (
         <ul className="search-results">
           {filteredItems.map((maquina) => (
             <li
-             key={maquina.id}
+             key={maquina.idmaquina}
+             className="search-item"
              onClick={() => navigate(`/maquinas/${encodeURIComponent(maquina.nome)}`)}
               >
              {maquina.nome}

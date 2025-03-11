@@ -16,6 +16,8 @@ import { MachineList } from "@/pages/machine-list";
 import UpdateMachine from "@/pages/update-machine";
 import DetalhesMaquina from "@/pages/search";
 import RentMachine from "@/pages/rent-machine";
+import HelpCenter from "@/pages/helpcenter";
+import ContractRequest from "@/pages/contract-request";
 
 
 const router = createBrowserRouter([
@@ -37,7 +39,7 @@ const router = createBrowserRouter([
     element: <MachineDetails/>,
   },  
   {
-    path: "/maquinas/:id",
+    path: "/maquinas/:busca",
     element: <DetalhesMaquina />,
   },
   {
@@ -81,6 +83,19 @@ const router = createBrowserRouter([
       <PrivateRoute>
         <UserProfile/>
       </PrivateRoute>)
+  },
+  {
+    path: "/helpcenter",
+    element: (
+      <PrivateRoute>
+        <HelpCenter/>
+      </PrivateRoute>)
+  },
+  {
+    path: "/contract-request",
+    element: (
+      <ContractRequest/>
+    )
   },
   {
     path: "/logado",

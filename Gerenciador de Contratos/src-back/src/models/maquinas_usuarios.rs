@@ -48,3 +48,20 @@ pub async fn busca_maquinas_usuario_idusuario(conn: &mut PgConnection, id: Strin
         }
     }
 }
+
+pub async fn busca_idusuario_idmaquina(conn: &mut PgConnection, id: String)
+    -> Result<String, String>{
+    use crate::schema::maquinas_usuarios::dsl::*;
+
+    let res: Result<MaquinaUsuario, diesel::result::Error> = maquinas_usuarios.filter(idmaquina.eq(id))
+        .first(conn);
+
+    match res{
+        Ok(info) => {
+            return Ok(info.idusuario)
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
+    }
+}

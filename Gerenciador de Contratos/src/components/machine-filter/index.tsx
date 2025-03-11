@@ -18,7 +18,7 @@ const MachineFilter: React.FC<MachineFilterProps> = ({ machines, filter, setFilt
           <CardDescription className="mb-4">
             <div className="flex justify-center">
               <select
-                className="w-[60%] pl-2 bg-[hsl(var(--background))] h-[30px] text-[hsl(var(--text))] border-[hsl(var(--primary))] rounded-md border-[1px]"
+                className="w-[60%] pl-2 bg-white h-[30px] text-black border-[hsl(var(--primary))] rounded-md border-[1px]"
                 onChange={(e) => setFilter(e.target.value)}
                 value={filter}
                 required

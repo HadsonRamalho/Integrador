@@ -1,5 +1,5 @@
 import { client } from "..";
-import { Machine } from "@/interfaces/machine";
+import { Machine, MachineRentValue } from "@/interfaces/machine";
 
 export async function listMachine(): Promise<Machine[]> {
   try {
@@ -128,3 +128,47 @@ export const loadMachineImages = async (machineId: string): Promise<string[]> =>
     throw error;
   }
 };
+
+export async function loadMachineRentValue(dados: MachineRentValue): Promise<number> {
+  try {
+    const response = await client.post<number>("/calcula_valor_aluguel", 
+      {idmaquina: dados.idmaquina,
+        medida_prazo: dados.medida_prazo,
+        prazo: dados.prazo
+      }
+    );
+
+    if (response.status === 200) {
+      const data = response.data;
+      return data;
+    }
+    console.warn("Resposta inesperada:", response.status);
+    throw new Error(`Erro ao calcular o valor do aluguel da máquina. Status code: ${response.status}`);    
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error(error.response?.status, error.message);
+    throw new Error(
+      `Falha ao calcular o valor do aluguel da máquina: Código [${error.response?.status}]`
+    );
+  }
+}
+
+export async function loadMachineById(id: string): Promise<Machine> {
+  try {
+    const response = await client.get<Machine>(`/busca_maquina_id/?id=${encodeURIComponent(id)}`);
+
+    if (response.status === 200) {
+      const data = response.data;
+      return data;
+    }else {
+      console.warn("Resposta inesperada:", response.status);
+      throw new Error(`Erro ao carregar a máquina. Status code: ${response.status}`);
+    }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error(error.response?.status, error.message);
+    throw new Error(
+      `Falha ao carregar informações da máquina: Código [${error.response?.status}]`
+    );
+  }
+}

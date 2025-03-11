@@ -1,11 +1,16 @@
-.machine-image-home img{
-    max-width: 90%;
-    max-height: 40%;
+.machine-image-container{
+    max-height: 230px;
+}
+
+.machine-image-container img{
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
 }
 
 .machine-grid{
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
     grid-template-rows: repeat(1, 1fr);
     gap: 16px;
     justify-items: center;
@@ -13,13 +18,15 @@
 
 .machine-card{
     width: 100%;
-    height: auto;
+    height: 80%;
     border-color: hsl(var(--primary));
     background-color: hsl(var(--machine-card-bg));
     color: hsl(var(--text));
     margin: 0;
     overflow: hidden;
     transition: transform 0.3s ease;
+    display: flex;
+    justify-content: space-between;
 }
 
 .machine-card:hover{
@@ -30,6 +37,7 @@
 .machine-card-description{
     font-size: 1rem;
     margin-bottom: 10px;
+ 
 }
 
 @media (max-width: 480px) {
@@ -44,7 +52,17 @@
     .machine-grid{
         display: flex;
         width: 450%;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         justify-items: center;
     }
   }
+
+.machine-grid.single-item {
+    max-width: 350px;
+    max-height: 600px;
+    margin: 0;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    grid-template-columns: 1fr;
+    justify-content: center;
+}

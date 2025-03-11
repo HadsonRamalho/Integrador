@@ -1,5 +1,4 @@
 import { loadMachineImage } from "@/services/api/machine/machine";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { useEffect, useState } from "react";
 import { Card } from "../ui/card";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +30,6 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
 
   const fetchMachineImage = async (machineId: string) => {
     try {
-      console.log("machineId: ", machineId);
       const response = await loadMachineImage(machineId);
       const imageUrl = response;
       setImage(imageUrl);
@@ -58,7 +56,6 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
   }, [machine.idmaquina]);
 
   return (
-    <AspectRatio ratio={16 / 9}>
       <Card
         className="machine-card  hover:cursor-pointer"
         onClick={() => {
@@ -71,52 +68,51 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle style={{ color: "hsl(var(--text))" }}>
-                  UEPA! Pode não!
+                  Você não está conectado!
                 </AlertDialogTitle>
                 <AlertDialogDescription style={{ color: "hsl(var(--text))" }}>
-                  Você precisa estar logado pra fazer isso {">"}:( faz favor de
-                  entrar na sua conta.
+                Você precisa estar logado pra fazer isso, por favor 
+                entre na sua conta.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel
-                  style={{
-                    color: "hsl(var(--text))",
-                    backgroundColor: "rgb(136, 39, 39)",
-                  }}
+                  className="text-[hsl(var(--text))] bg-[#882727]"
                 >
-                  Depois eu entro, tmj
+                  Cancelar
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => {
                     navigate("/login");
                   }}
                 >
-                  Tabo, vou entrar :(
+                  Entrar/Registrar 
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </div>
         <CardContent>
-          <div className="machine-image-home">
+          <div className="machine-image-container">
             {loadingImage ? (
               <div>
                 <Skeleton className="h-[30vh] w-[90%] rounded-xl" />
+               
               </div>
             ) : error ? (
               <div className="image-placeholder">Erro ao carregar imagem</div>
             ) : image ? (
-              <img
+                <img
                 src={image}
-                className="p-0 w-full"
                 alt={`Imagem de ${machine.nome}`}
               />
             ) : (
               <div className="image-placeholder">Imagem indisponível</div>
             )}
           </div>
-          <h1>{machine.nome}</h1>
+          <div>
+            <h1 className="ml-0 w-[250px]">{machine.nome}</h1>
+          </div>
           <CardDescription>
             <p className="machine-card-description">
               Preço: <strong>R$ {machine.valoraluguel}</strong>
@@ -127,6 +123,5 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
           </CardDescription>
         </CardContent>
       </Card>
-    </AspectRatio>
   );
 };
