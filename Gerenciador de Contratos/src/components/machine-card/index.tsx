@@ -97,6 +97,7 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
             {loadingImage ? (
               <div>
                 <Skeleton className="h-[30vh] w-[90%] rounded-xl" />
+               
               </div>
             ) : error ? (
               <div className="image-placeholder">Erro ao carregar imagem</div>
