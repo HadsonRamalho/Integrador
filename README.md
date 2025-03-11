@@ -211,3 +211,4 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
  6. - Clica no botão 'Atualizar Máquina'
  7. - A máquina é atualizada
 
+[EM ANDAMENTO]
