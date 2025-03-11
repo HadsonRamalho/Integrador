@@ -164,7 +164,25 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
 - Fluxo Principal:
  1. - Através da barra de navegação, o usuário acessa a página 'Máquinas Disponíveis' 
  2. - O sistema exibe a lista de máquinas disponíveis, com cada máquina disposta num card único
-     
- ### Ajuda
-  
-Se tiver problemas com qualquer um dos tópicos acima, não hesite em nos procurar!
+
+### Caso 7 - Cadastrar uma Conta Bancária
+- Ator: Usuário
+- Objetivo: Adicionar uma conta bancária à conta do usuário
+- Pré-Condição: Estar logado em uma conta de usuário
+- Fluxo Principal:
+ 1. - Através da barra de navegação, o usuário acessa a página 'Cadastrar Máquinas'
+ 2. - Se for a primeira vez que o usuário cadastra uma máquina, o sistema solicita que ele adicione uma conta bancária
+ 3. - Preenche todos os campos com os dados da conta
+ 4. - Clica no botão 'Cadastrar'
+ 5. - O sistema cadastra a conta bancária do usuário
+    
+### Caso 8 - Atualizar uma Conta Bancária
+- Ator: Usuário
+- Objetivo: Atualizar a conta bancária de um usuário
+- Pré-Condição: Estar logado em uma conta de usuário que possua uma conta bancária cadastrada
+- Fluxo Principal:
+ 1. - O usuário acessa a página 'Minhas Informações'
+ 2. - Altera os campos do card 'Minha Conta Bancária'
+ 3. - Clica no botão 'Atualizar conta bancária'
+ 4. - O sistema atualiza a conta bancária do usuário
+
