@@ -202,7 +202,6 @@ export default function ContractRequest() {
         </div>
       )}
 
-
       {request.statussolicitacao === "Solicitação aprovada" && (
         <CardFooter className="flex justify-center gap-4">
             <ContractInfo request={request}/>
