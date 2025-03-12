@@ -24,6 +24,7 @@ export default function ContractRequest() {
   const [requests, setRequests] = useState<SolicitacaoContrato[]>();
   const [renterRequests, setRenterRequests] = useState<SolicitacaoContrato[]>();
   const [updated, setUpdated] = useState(true);
+  
 
   const loadRequests = async (id: string) => {
     try{
@@ -54,46 +55,7 @@ export default function ContractRequest() {
 
   const ContractInfo = ({ request }: { request: SolicitacaoContrato }) => {
     const [contractInfo, setContractInfo] = useState<Contract>();
-
-    const loadContractInfo = async () => {
-      try{
-        const res = await loadContractByRequestId(request.origemsolicitacao);
-        setContractInfo(res);
-      }catch(error){
-        console.error(error);
-      }
-    }
-    useEffect(() => {
-      loadContractInfo();
-    }, []);
-
-    return (
-    <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-2">
-      <CardContent className="grid grid-cols-4 gap-4 mt-4">
-        <Label className="mt-2 mb-2">Data do Contrato</Label>
-        <Input
-          value={contractInfo?.datacontrato}
-          disabled={true}
-          className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
-        
-        <Label className="mt-2 mb-2">Status do Contrato</Label>
-        <Input
-          value={contractInfo?.statuscontrato}
-          disabled={true}
-          className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
-      
-      </CardContent>
-    </Card>
-    )
-  }
-
-  const RequestCard = ({ request }: { request: SolicitacaoContrato }) => {
-    const [requestOrigin, setRequestOrigin] = useState<User>();
-    const [requestMachine, setRequestMachine] = useState<Machine>();
-
     const [loadingPdf, setLoadingPdf] = useState(false);
-
-    const tempoAluguel = request.prazolocacao + " " + request.medidatempolocacao;
 
     const handleLoadPdf = async () => {
       setLoadingPdf(true);
@@ -114,6 +76,47 @@ export default function ContractRequest() {
       setLoadingPdf(false);
       }
     }
+
+    const loadContractInfo = async () => {
+      try{
+        const res = await loadContractByRequestId(request.idsolicitacao);
+        setContractInfo(res);
+      }catch(error){
+        console.error(error);
+      }
+    }
+    useEffect(() => {
+      loadContractInfo();
+    }, []);
+
+    return (
+    <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-2 w-full">
+      <CardContent className="flex grid-cols-4 gap-4 mt-4">
+        <Label className="mt-2 mb-2 w-[30%]">Data do Contrato</Label>
+        <Input
+          value={formatDate(contractInfo?.datacontrato)}
+          disabled={true}
+          className="p-2 w-[50%] text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+        
+        <Label className="mt-2 mb-2 w-[50%]">Status do Contrato</Label>
+        <Input
+          value={contractInfo?.statuscontrato}
+          disabled={true}
+          className="p-2 text-black w-[50%] bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+        <Button onClick={handleLoadPdf} disabled={loadingPdf}>
+         {loadingPdf ? ("Carregando...") : ("Ver contrato")}</Button>  
+      </CardContent>
+    </Card>
+    )
+  }
+
+  const RequestCard = ({ request }: { request: SolicitacaoContrato }) => {
+    const [requestOrigin, setRequestOrigin] = useState<User>();
+    const [requestMachine, setRequestMachine] = useState<Machine>();
+
+
+    const tempoAluguel = request.prazolocacao + " " + request.medidatempolocacao;
+
 
     const loadRequestOrigin = async () => {
       try{
@@ -204,9 +207,7 @@ export default function ContractRequest() {
 
       {request.statussolicitacao === "Solicitação aprovada" && (
         <CardFooter className="flex justify-center gap-4">
-            <ContractInfo request={request}/>
-            <Button onClick={handleLoadPdf} disabled={loadingPdf}>
-            {loadingPdf ? ("Carregando...") : ("Ver contrato")}</Button>        
+            <ContractInfo request={request}/>      
         </CardFooter>
       )}
     </Card>

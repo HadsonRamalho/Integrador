@@ -104,7 +104,7 @@ pub fn cria_rotas() -> Router<>{
         .route("/busca_solicitacoes_idlocatario/", get(busca_solicitacoes_idlocatario))
 
         .route("/gera_contrato_idsolicitacao/", get(gera_contrato_idsolicitacao))
-        .route("/busca_contrato_idsolicitacao", get(busca_contrato_idsolicitacao))
+        .route("/busca_contrato_idsolicitacao/", get(busca_contrato_idsolicitacao))
 
         .route("/calcula_valor_aluguel", post(calcula_valor_aluguel))
 
