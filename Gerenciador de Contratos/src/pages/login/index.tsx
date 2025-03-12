@@ -115,7 +115,6 @@ export default function AuthPage() {
                   />
                   <a
                     className="password"
-                    href=""
                     onClick={() => navigate("/password-recovery")}
                   >
                     Esqueci a senha
@@ -126,9 +125,8 @@ export default function AuthPage() {
                   <GoogleLoginButton onClick={redirectGoogle}></GoogleLoginButton>
                   <span className="link">
                     Não possui conta?{" "}
-                    <a
-                      className="link-login"
-                      href=""
+                    <a 
+                      className="link-login hover:cursor-pointer"
                       onClick={() => setMode("create")}
                     >
                       Clique aqui
@@ -171,11 +169,10 @@ export default function AuthPage() {
                   <span className="link">
                     Já possui conta?{" "}
                     <a
-                      className="link-login"
-                      href="#"
+                      className="link-login  hover:cursor-pointer"
                       onClick={() => setMode("login")}
                     >
-                      clique aqui!
+                      Clique aqui!
                     </a>{" "}
                     para entrar
                   </span>
