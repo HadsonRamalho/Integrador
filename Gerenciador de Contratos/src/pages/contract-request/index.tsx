@@ -18,13 +18,14 @@ import { loadContractByRequestId, loadPdfByRequestId } from "@/services/api/cont
 import { pdf } from "@react-pdf/renderer";
 import { PdfDocument } from "../pdf-example";
 import { Contract } from "@/interfaces/contract";
+import { loadAddressUserId } from "@/services/api/address/address";
+import { Address } from "@/interfaces/address";
 
 export default function ContractRequest() {
 
   const [requests, setRequests] = useState<SolicitacaoContrato[]>();
   const [renterRequests, setRenterRequests] = useState<SolicitacaoContrato[]>();
   const [updated, setUpdated] = useState(true);
-  
 
   const loadRequests = async (id: string) => {
     try{
@@ -52,6 +53,70 @@ export default function ContractRequest() {
       loadRenterRequests(id);
     }
   }, [updated]);
+
+  const RequestInfo = ({ request }: { request: SolicitacaoContrato }) => {
+    const [addressInfo, setAddressInfo] = useState<Address>();
+
+    const loadRenterAddress = async () => {
+      try {
+        const address = await loadAddressUserId(request.idlocatario);
+        setAddressInfo(address);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    useEffect(() => {
+      loadRenterAddress();
+    }, []);
+
+    return(
+      <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] m-2 mt-4">
+        <CardContent>
+          <p className="text-black mt-4 mb-4">Endereço do Solicitante</p>
+          <CardContent className="grid grid-cols-4 gap-4 mt-4">
+            <Label className="mt-2 mb-2">CEP</Label>
+            <Input
+              value={addressInfo?.cep}
+              disabled={true}
+              className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+
+            <Label className="mt-2 mb-2">Estado</Label>
+            <Input
+              value={addressInfo?.estado}
+              disabled={true}
+              className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+
+            <Label className="mt-2 mb-2">Cidade</Label>
+            <Input
+              value={addressInfo?.cidade}
+              disabled={true}
+              className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+      
+
+            <Label className="mt-2 mb-2">Bairro</Label>
+            <Input
+              value={addressInfo?.bairro}
+              disabled={true}
+              className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+            
+            <Label className="mt-2 mb-2">Rua</Label>
+            <Input
+              value={addressInfo?.logradouro}
+              disabled={true}
+              className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+          
+            <Label className="mt-2 mb-2">Número</Label>
+            <Input
+              value={addressInfo?.numero}
+              disabled={true}
+              className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/> 
+          </CardContent>
+        </CardContent>
+      </Card>
+    );
+
+  }
 
   const ContractInfo = ({ request }: { request: SolicitacaoContrato }) => {
     const [contractInfo, setContractInfo] = useState<Contract>();
@@ -91,7 +156,7 @@ export default function ContractRequest() {
 
     return (
     <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-2 w-full">
-      <CardContent className="flex grid-cols-4 gap-4 mt-4">
+      <CardContent className="flex gap-4 mt-4">
         <Label className="mt-2 mb-2 w-[30%]">Data do Contrato</Label>
         <Input
           value={formatDate(contractInfo?.datacontrato)}
@@ -113,6 +178,7 @@ export default function ContractRequest() {
   const RequestCard = ({ request }: { request: SolicitacaoContrato }) => {
     const [requestOrigin, setRequestOrigin] = useState<User>();
     const [requestMachine, setRequestMachine] = useState<Machine>();
+    const [showRequestInfo, setShowRequestInfo] = useState(false);
 
 
     const tempoAluguel = request.prazolocacao + " " + request.medidatempolocacao;
@@ -155,7 +221,9 @@ export default function ContractRequest() {
 
     return (
     <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-2">
-      <CardContent className="grid grid-cols-4 gap-4 mt-4">
+      <CardContent>
+        <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-0 mt-4">
+        <CardContent className="grid grid-cols-4 gap-4 mt-4">
         <Label className="mt-2 mb-2">Nome do Solicitante</Label>
         <Input
           value={requestOrigin?.nome}
@@ -191,6 +259,14 @@ export default function ContractRequest() {
           value={formatDate(request?.datasolicitacao)}
           disabled={true}
           className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+          </CardContent>
+            <CardFooter className="flex justify-center">
+            <Button onClick={() => setShowRequestInfo(!showRequestInfo)}>
+              {showRequestInfo ? ("Ocultar detalhes da solicitação")
+              : ("Ver detalhes da solicitação")} </Button>
+            </CardFooter>
+            {showRequestInfo && <RequestInfo request={request} />}
+        </Card>
       </CardContent>
       {request.origemsolicitacao !== localStorage.getItem("USER_ID") && (
         <div>
@@ -239,9 +315,9 @@ export default function ContractRequest() {
             </TabsList>
           <TabsContent value="recebidas">
 
-          {requests?.map((req) => (
-            <RequestCard request={req}/>
-          ))}
+            {requests?.map((req) => (
+              <RequestCard request={req}/>
+            ))}
 
           </TabsContent>
           <TabsContent value="emitidas">
