@@ -48,3 +48,21 @@ export interface ContractPDF {
 
   datacontrato: string;
 }
+
+export interface Contract {
+  idcontrato: string;
+  idlocatario: string;
+  idlocador: string;
+  idenderecolocatario: string;
+  idenderecolocador: string;
+  idenderecoretirada: string;
+  idmaquina: string;
+  idsolicitacaocontrato: string;
+  idcontabancarialocador: string;
+  medidatempolocacao: string;
+  cidadeforo: string;
+  statuscontrato: string;
+  prazolocacao: number;
+  valorlocacao: number;
+  datacontrato: string;
+}

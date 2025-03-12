@@ -14,9 +14,10 @@ import { loadUserById } from "@/services/api/user/user";
 import { User } from "@/interfaces/user";
 import { loadMachineById } from "@/services/api/machine/machine";
 import { Machine } from "@/interfaces/machine";
-import { loadPdfByRequestId } from "@/services/api/contract";
+import { loadContractByRequestId, loadPdfByRequestId } from "@/services/api/contract";
 import { pdf } from "@react-pdf/renderer";
 import { PdfDocument } from "../pdf-example";
+import { Contract } from "@/interfaces/contract";
 
 export default function ContractRequest() {
 
@@ -50,6 +51,41 @@ export default function ContractRequest() {
       loadRenterRequests(id);
     }
   }, [updated]);
+
+  const ContractInfo = ({ request }: { request: SolicitacaoContrato }) => {
+    const [contractInfo, setContractInfo] = useState<Contract>();
+
+    const loadContractInfo = async () => {
+      try{
+        const res = await loadContractByRequestId(request.origemsolicitacao);
+        setContractInfo(res);
+      }catch(error){
+        console.error(error);
+      }
+    }
+    useEffect(() => {
+      loadContractInfo();
+    }, []);
+
+    return (
+    <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-2">
+      <CardContent className="grid grid-cols-4 gap-4 mt-4">
+        <Label className="mt-2 mb-2">Data do Contrato</Label>
+        <Input
+          value={contractInfo?.datacontrato}
+          disabled={true}
+          className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+        
+        <Label className="mt-2 mb-2">Status do Contrato</Label>
+        <Input
+          value={contractInfo?.statuscontrato}
+          disabled={true}
+          className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+      
+      </CardContent>
+    </Card>
+    )
+  }
 
   const RequestCard = ({ request }: { request: SolicitacaoContrato }) => {
     const [requestOrigin, setRequestOrigin] = useState<User>();
@@ -166,10 +202,12 @@ export default function ContractRequest() {
         </div>
       )}
 
+
       {request.statussolicitacao === "Solicitação aprovada" && (
         <CardFooter className="flex justify-center gap-4">
-          <Button onClick={handleLoadPdf} disabled={loadingPdf}>
-            {loadingPdf ? ("Carregando...") : ("Ver contrato")}</Button>
+            <ContractInfo request={request}/>
+            <Button onClick={handleLoadPdf} disabled={loadingPdf}>
+            {loadingPdf ? ("Carregando...") : ("Ver contrato")}</Button>        
         </CardFooter>
       )}
     </Card>

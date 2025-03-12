@@ -54,6 +54,11 @@ export default function UserProfile() {
   const [numero, setNumero] = useState<string>();
   const [complemento, setComplemento] = useState<string>();
 
+
+  function replaceSubstring(str: string, start: number, end: number, replacement: string) {
+    return str.slice(0, start) + replacement + str.slice(end);
+  }
+
   async function AtualizaUsuario(nome_novo: string, email_novo: string, documento_novo: string, senha: string) {
     try {
       const res = await fetch(
@@ -129,7 +134,19 @@ export default function UserProfile() {
       }
       try{
         const user = await loadUserById(id);
-        setUser(user);
+
+        const u: User = {
+          nome: user.nome,
+          datacadastro: user.datacadastro,
+          documento: replaceSubstring(user.documento, 3, 11, "********"),
+          email:  replaceSubstring(user.email, 3, (user.email.length / 2), "********"),
+          idusuario: user.idusuario,
+          origemconta: user.origemconta,
+          senha: user.senha
+        };
+
+        setUser(u);
+        
         await buscaEndereco(id);
       } catch(err){
         setError(true);
@@ -323,9 +340,12 @@ export default function UserProfile() {
       }
       try{
         const res = await loadBankAccountByUserId(user.idusuario);
-        setBankName(res.nomebanco);
-        setBankAccountNumber(res.numeroconta);
-        setBankAgency(res.numeroagencia);
+        const nomebanco = replaceSubstring(res.nomebanco, 2, (res.nomebanco.length / 2), "****");
+        const agencia = replaceSubstring(res.numeroagencia, 2, 6, "****");
+        const conta = replaceSubstring(res.numeroconta, 2, 6, "****");
+        setBankName(nomebanco);
+        setBankAccountNumber(conta);
+        setBankAgency(agencia);
         setBankAccountId(res.idconta);
       } catch(error){
         console.error(error);

@@ -46,6 +46,12 @@ export const ProfileDropdownMenu = () => {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
+                <NavLink to={"/contract-request"}>
+                    <p style={{color: "black", fontSize: '15px'}}>Solicitações de Contratos</p>
+                </NavLink>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator/>
+            <DropdownMenuItem>
                 Notificações
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
