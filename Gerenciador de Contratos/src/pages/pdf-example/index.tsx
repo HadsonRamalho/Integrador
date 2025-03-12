@@ -26,14 +26,14 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
   const styles = StyleSheet.create({
     page: {
       flexDirection: "column",
-      backgroundColor: "#F5F5F5",
-      padding: 15,
+      backgroundColor: "#fff",
+      padding: 25,
       fontFamily: 'Times-Roman',
 
     },
     section: {
       backgroundColor: "#fff",
-      borderRadius: 5,
+      borderRadius: 15,
       fontFamily: 'Times-Roman',
     },
     title: {
@@ -244,7 +244,7 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
         </Text>
 
         <Text style={styles.paragraph}>
-          2.1.2 Os bens locados apenas
+        <Text style={styles.bold}> 2.1.2 </Text>Os bens locados apenas
           poderão ser operados por Operador devidamente habilitado para
           manuseio de cada equipamento. 
         </Text>
@@ -258,7 +258,7 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
         </Text>
 
         <Text style={styles.paragraph}>
-          3.1.1 O pagamento do valor relativo à locação será efetuado imediatamente, mediante transferência
+        <Text style={styles.bold}> 3.1.1 </Text>  O pagamento do valor relativo à locação será efetuado imediatamente, mediante transferência
           bancária para a LOCADORA, na conta que segue:
         </Text>
 
@@ -273,61 +273,82 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
         </Text>
 
         <Text style={styles.paragraph}>
-        <Text style={styles.bold}> 3.1.3 </Text> 
+        <Text style={styles.bold}> 3.1.2 </Text> 
           O atraso no pagamento do acordo da cláusula acima sujeita a 
           <Text style={styles.bold}> LOCATÁRIA </Text>
           ao pagamento de multa de 2% (dois por cento) e juros de 1% (um por
           cento) ao mês, sobre o valor do débito devidamente corrigido pelo
           valor positivo do índice IPCA ou por outro que venha eventualmente a
           substitui-lo, sem prejuízo da rescisão da locação que poderá ser
-          exigida pela <Text style={styles.bold}> LOCADORA</Text>, após notificação à <Text style={styles.bold}> LOCATÁRIA </Text> oportunizando o
+          exigida pela <Text style={styles.bold}> LOCADORA </Text>, após notificação à <Text style={styles.bold}> LOCATÁRIA </Text> oportunizando o
           adimplemento do débito mais encargos no prazo de 10 (dez) dias.
         </Text>
 
         <Text style={styles.paragraph}>
-
+        <Text style={styles.bold}> 3.1.3 </Text> Em caso de atraso no pagamento, a <Text style={styles.bold}> LOCADORA </Text> poderá
+          incluir a <Text style={styles.bold}> LOCATÁRIA </Text> na lista de inadimplentes do SPC e/ou outras
+          instituições de proteção ao crédito. 
         </Text>
 
         <Text style={styles.paragraph}>
-
+        <Text style={styles.bold}>  3.1.4 </Text>Na formação de preço da
+          locação levou-se em conta que caberá à <Text style={styles.bold}> LOCADORA </Text> o custeio de todas
+          as manutenções preventivas do equipamento, devendo tais manutenções serem feitas conforme
+          especificações técnicas dos fabricantes dos equipamentos. 
         </Text>
           
-        <Text style={styles.paragraph}>
-
+        <Text style={styles.title}>
+        CLAÚSULA QUARTA – DO ESTADO DE CONSERVAÇÃO DOS EQUIPAMENTOS
         </Text>
   
-
-
-        <Text>
-            
-          
-          3.1.4 Em caso de atraso no pagamento a LOCADORA poderá ainda,
-          incluir a LOCATÁRIA na lista de inadimplentes do SPC e/ou outras
-          instituições de proteção ao crédito. 3.1.5 Na formação de preço da
-          locação levou-se em conta que caberá à LOCADORA o custeio de todas
-          as manutenções preventivas e daquelas decorrentes do uso normal dos
-          equipamentos, devendo tais manutenções serem feitas conforme
-          especificações técnicas dos fabricantes dos equipamentos. 3.1.6 Fica
-          devidamente e expressamente ajustado entre as PARTES que o valor
-          mensal acordado neste contrato, conforme Cláusula Terceira, item
-          3.1, a título de contraprestação pela locação dos equipamentos, está
-          condicionado ao uso de 200 (duzentas) horas por mês. Deste modo,
-          caso esse limite seja ultrapassado, as horas excedentes serão
-          cobradas a parte no fechamento da planilha mensal. CLAÚSULA QUARTA –
-          DO ESTADO DE CONSERVAÇÃO DOS EQUIPAMENTOS 4.1 Os equipamentos
-          objetos da presente locação encontram-se no estado de conservação e
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}> 4.1 </Text> Os equipamentos, objetos da presente locação encontram-se no estado de conservação e
           funcionamento constantes dos laudos de entrega/recebimento inicial,
-          fato que ambas as PARTES expressamente reconhecem. CLAÚSULA QUINTA –
-          DA UTILIZAÇÃO E MANUTENÇÃO DOS BENS, INSPEÇÃO, IDENTIFICAÇÃO, SIGILO
-          E PATENTE 5.1 A LOCATÁRIA se obriga a utilizar os bens única e
+          fato que ambas as PARTES expressamente reconhecem.
+        </Text>
+
+
+        <Text style={styles.title}>
+        CLAÚSULA QUINTA – DA UTILIZAÇÃO E MANUTENÇÃO DOS BENS, INSPEÇÃO, IDENTIFICAÇÃO, SIGILO E PATENTE
+        </Text>
+
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}> 5.1 </Text> A <Text style={styles.bold}> LOCATÁRIA </Text> se obriga a utilizar os bens única e
           exclusivamente para as atividades a que se destinam e a operá-los de
           acordo com as recomendações técnicas do fabricante, por pessoa
-          tecnicamente qualificada a fazê-lo. 5.2 À LOCATÁRIA são transferidas
+          tecnicamente qualificada a fazê-lo. 
+        </Text>
+
+        <Text style={styles.paragraph}>
+        <Text style={styles.bold}> 5.2 </Text> À <Text style={styles.bold}> LOCATÁRIA </Text> são transferidas
           todas as garantias e o direito de assistência técnica, dados pelo
-          fabricante, ficando a LOCADORA, responsável pela execução e/ou
+          fabricante, ficando a <Text style={styles.bold}> LOCADORA </Text>, responsável pela execução e/ou
           custeio das manutenções preventivas e por quaisquer outras
           decorrentes do uso normal dos equipamentos. Mas, ressalta-se que a
-          LOCADORA poderá ser acionada sempre que for necessário. 5.3 A
+          LOCADORA poderá ser acionada sempre que for necessário. 
+        </Text>
+
+        <Text style={styles.paragraph}>
+
+</Text>
+<Text style={styles.paragraph}>
+
+</Text>
+<Text style={styles.paragraph}>
+
+</Text>
+<Text style={styles.paragraph}>
+
+</Text>
+<Text style={styles.paragraph}>
+
+</Text>
+<Text style={styles.paragraph}>
+
+</Text>
+        <Text>
+          
+             5.3 A
           LOCATÁRIA se responsabiliza pelos danos que os bens venham a sofrer
           na constância do contrato, em virtude de mau uso ou negligência na
           sua conservação, competindo-lhe tomar todas as providências para a
