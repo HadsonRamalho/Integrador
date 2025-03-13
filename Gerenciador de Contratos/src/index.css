@@ -83,6 +83,7 @@
 
 body {
   background-color: hsl(var(--background)); 
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif,'Inter', 'Poppins', 'Open Sans', 'Roboto';
 }
 
 p {

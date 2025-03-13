@@ -158,16 +158,6 @@ export default function MachineDetails() {
                 <p className="machine-card-description">
                   Descrição: {machine?.descricao}
                 </p>
-
-                <p className="machine-card-description">
-                  Data de cadastro da máquina:{" "}
-                  {formatDate(machine?.datacadastro)}
-                </p>
-                <p className="machine-card-description">
-                  Data de atualização da máquina:{" "}
-                  {formatDate(machine?.dataatualizacao, +0)}
-                </p>
-
                 <div className="m-2">
                 {machine?.disponivelaluguel === "Sim" ?
                 (
