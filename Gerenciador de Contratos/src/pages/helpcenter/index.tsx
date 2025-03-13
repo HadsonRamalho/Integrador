@@ -9,9 +9,9 @@ export default function HelpCenter() {
       const [search, setSearch] = useState("");
 
 const duvidas =[
-  {id: 1, categoria :"FAQ"},
-  {id: 2, categoria: "Tutorial"},
-  {id: 3, categoria: "Suporte"},
+  {id: 1, categoria :"FAQ", descricao:"como faço isso?"},
+  {id: 2, categoria: "Tutorial", descricao: "como faço pra atualizar meus dados?"},
+  {id: 3, categoria: "Suporte", descricao:"Como entro em contato com suporte?"},
 ]
   const filteredDoubts = duvidas.filter((duvidas) =>
     duvidas.categoria.toLowerCase().includes(search.toLowerCase())
@@ -36,9 +36,10 @@ const duvidas =[
 
        {filteredDoubts.length > 0 ? (
         filteredDoubts.map((duvidas) => (
-          <Card key={duvidas.id} className="">
+          <Card key={duvidas.id} className="faq">
             <CardContent>
               <h2 className="text-black">{duvidas.categoria}</h2>
+              <h4 className="text-black">{duvidas.descricao}</h4>
             
             </CardContent>
           </Card>
@@ -46,7 +47,7 @@ const duvidas =[
       ) : (
         <p className="">Nenhum resultado encontrado.</p>
       )}
-        <Button >Falar com o Suporte</Button>
+        <Button  className="botao">Falar com o Suporte</Button>
       </div>
       </div>
    
