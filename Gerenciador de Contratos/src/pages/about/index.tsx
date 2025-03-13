@@ -1,9 +1,11 @@
 import "@/components/about/about.css";
 import { Button } from "@/components/ui/button";
+import Layout from "@/layouts/default";
 import { useNavigate } from "react-router-dom";
 export default function About() {
     const navigate = useNavigate();
   return (
+    <Layout>
   <>
   <div className="a">
   <section className="about-maqexpress">
@@ -54,6 +56,7 @@ export default function About() {
       </section>
     </div>
       </>
+      </Layout>
   
   );
 }
