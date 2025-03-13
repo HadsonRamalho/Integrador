@@ -2,7 +2,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
 }
 
 section {
@@ -87,11 +86,11 @@ section {
 
 .card:hover {
     transform: scale(1.1);
-    transition: transform 0.5s ease;
+    transition: transform 0.10s ease;
    
 }
 
-.carousel:active{
+.carousel:hover{
     transform: scale(1.05);
     transition: transform 0.2s ease; 
     

@@ -27,6 +27,17 @@ export default function About() {
     </section>
    
       <section className="purpose-personality">
+      <h2>Nosso Propósito</h2>
+      <p>
+        A <strong>MaqExpress</strong> nasceu para transformar o setor de aluguel de máquinas e equipamentos, 
+        proporcionando mais agilidade, acessibilidade e segurança para locadoras e contratantes.
+      </p>
+      <p>
+        Nosso objetivo é simplificar a busca e a contratação de equipamentos, 
+        eliminando burocracias e otimizando o processo para que empresas possam focar no que realmente importa: produtividade e crescimento.
+      </p>
+      </section>
+      <section className="mt-4  purpose-personality">
       <h2>Nosso Compromisso</h2>
       <p>
         Estamos comprometidos em oferecer uma plataforma <strong>eficiente, transparente e confiável</strong>, 
