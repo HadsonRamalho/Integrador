@@ -45,7 +45,7 @@ export default function About() {
       </p>
       <p>
         Buscamos inovação constante para melhorar nossos serviços e contribuir para um setor de aluguel mais 
-        <strong> moderno, acessível e justo</strong>.
+        <strong>moderno, acessível e justo</strong>.
       </p>
     </section>
     <section>
