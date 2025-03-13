@@ -8,7 +8,7 @@ function Footer() {
       <section className="footer-section ">
         <h2 className="uppercase" >Institucional</h2>
         <ul>
-          <li> Sobre nós</li>
+          <li><a href="/About">Sobre nós</a> </li>
           <li><a href="/">Página inicial</a></li>
           <li><a href="/HowWorks">Como funciona</a></li>
           <li><a href="/Machine"> Máquinas</a></li>
@@ -19,9 +19,13 @@ function Footer() {
         <h2 className="uppercase">Fale conosco</h2>
         <ul>
           <strong>E-mail</strong>
-          <li>gerenciadordecontratosgdc@gmail.com</li>
+          <li>
+            <a href="mailto:gerenciadordecontratosgdc@gmail.com">gerenciadordecontratosgdc@gmail.com
+            </a>
+            </li>
+          
           <strong>Contato</strong>
-          <li>(33)0000-0000</li>
+          <li>(33)1234-5678</li>
         </ul>
       </section>
     

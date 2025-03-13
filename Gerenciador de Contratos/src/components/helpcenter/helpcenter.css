@@ -26,3 +26,22 @@
     display: flex;
     justify-self: center;
 }
+
+.nav-container{
+    background-color: hsl(var(--primary));
+    margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    height: 60px;
+}
+
+hr{
+    background-color:hsl(var(--background));
+    border-top: 1px solid #6b7280;
+    display: block;
+    height: 1px;
+    line-height: 19px;
+    margin-top: 0;
+}

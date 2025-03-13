@@ -18,6 +18,7 @@ import DetalhesMaquina from "@/pages/search";
 import RentMachine from "@/pages/rent-machine";
 import HelpCenter from "@/pages/helpcenter";
 import ContractRequest from "@/pages/contract-request";
+import About from "@/pages/about";
 
 
 const router = createBrowserRouter([
@@ -89,6 +90,13 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <HelpCenter/>
+      </PrivateRoute>)
+  },
+  {
+    path: "/about",
+    element: (
+      <PrivateRoute>
+        <About/>
       </PrivateRoute>)
   },
   {
