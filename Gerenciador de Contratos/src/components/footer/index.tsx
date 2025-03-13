@@ -8,7 +8,7 @@ function Footer() {
       <section className="footer-section ">
         <h2 className="uppercase" >Institucional</h2>
         <ul>
-          <li> Sobre nós</li>
+          <li><a href="/About">Sobre nós</a> </li>
           <li><a href="/">Página inicial</a></li>
           <li><a href="/HowWorks">Como funciona</a></li>
           <li><a href="/Machine"> Máquinas</a></li>
