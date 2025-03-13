@@ -4,9 +4,13 @@ import { Input } from "@/layouts";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import "@/components/helpcenter/helpcenter.css"
+import maq from "@/assets/maq.png";
+import { useNavigate } from "react-router-dom";
+
 
 export default function HelpCenter() {
-      const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("");
+   const navigate = useNavigate();
 
 const duvidas =[
   {id: 1, categoria :"FAQ", descricao:"como faço isso?"},
@@ -17,9 +21,15 @@ const duvidas =[
     duvidas.categoria.toLowerCase().includes(search.toLowerCase())
   );
     return (
-
-        <div>
-      <h1 >Central de Ajuda</h1>
+    <div>
+      <div className="nav-container">
+      <a onClick={() => navigate("/")}>
+      <img className="imagem" src={maq} alt="" />
+      </a>
+      <p >Central de Ajuda</p>
+      
+      </div>
+      <hr />
       <div  className="search-busca mt-10 ml-10 mr-10">
         <Search className="search-icon" />
         <Input
@@ -47,7 +57,7 @@ const duvidas =[
       ) : (
         <p className="">Nenhum resultado encontrado.</p>
       )}
-        <Button  className="botao">Falar com o Suporte</Button>
+        <Button className="botao"><a href="mailto:gerenciadordecontratosgdc@gmail.com">Falar com o Suporte</a></Button>
       </div>
       </div>
    

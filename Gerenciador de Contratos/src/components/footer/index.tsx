@@ -19,9 +19,13 @@ function Footer() {
         <h2 className="uppercase">Fale conosco</h2>
         <ul>
           <strong>E-mail</strong>
-          <li>gerenciadordecontratosgdc@gmail.com</li>
+          <li>
+            <a href="mailto:gerenciadordecontratosgdc@gmail.com">gerenciadordecontratosgdc@gmail.com
+            </a>
+            </li>
+          
           <strong>Contato</strong>
-          <li>(33)0000-0000</li>
+          <li>(33)1234-5678</li>
         </ul>
       </section>
     
