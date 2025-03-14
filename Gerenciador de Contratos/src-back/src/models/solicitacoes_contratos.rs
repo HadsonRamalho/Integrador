@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use diesel::{prelude::{Insertable, Queryable}, query_dsl::methods::FilterDsl, ExpressionMethods, PgConnection, RunQueryDsl, Selectable};
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
+#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug, Clone)]
 #[diesel(table_name = crate::schema::solicitacoes_contratos)]
 #[diesel(check_for_backend(diesel::pg::Pg))] 
 pub struct SolicitacaoContrato{ 

@@ -10,6 +10,8 @@ import { Machine as Maquina } from "@/interfaces/machine";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import "@/components/machine-details/machine-details.css";
+import { Input } from "@/layouts";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -107,9 +109,10 @@ export default function MachineDetails() {
   return (
     <Layout>
       <main>
-        <div>
+        <div className="flex justify-center items-center">
           <Card className="machine-details-card">
-            <CardContent className="mt-4">
+            {machine ? (
+              <CardContent className="mt-4">
               <div className="machine-details-image">
                 {loadingImage ? (
                   <div>
@@ -135,30 +138,44 @@ export default function MachineDetails() {
                   <div className="image-placeholder">Imagem indisponível</div>
                 )}
               </div>
-              <p className="machine-details-name">{machine?.nome}</p>
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Nome da Máquina</Label>
+              <Input
+                value={machine.nome}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+
               <CardDescription className="m-2">
-                <p className="machine-card-description">
-                  Preço:{" "}
-                  <strong>{formatCurrency(machine?.valoraluguel || 0)}</strong>
-                </p>
-                <p className="machine-card-description">
-                  Categoria: {machine?.categoria}
-                </p>
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (Mensal)</Label>
+              <Input
+                value={formatCurrency(machine.valoraluguel)}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
-                <p className="machine-card-description">
-                  Número de série: {machine?.numeroserie}
-                </p>
-                <p className="machine-card-description">
-                  Disponível para aluguel: {machine?.disponivelaluguel}
-                </p>
-                <p className="machine-card-description">
-                  Status do anúncio: {machine?.status}
-                </p>
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Categoria da Máquina</Label>
+              <Input
+                value={machine.categoria}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
-                <p className="machine-card-description">
-                  Descrição: {machine?.descricao}
-                </p>
-                <div className="m-2">
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Número de Série</Label>
+              <Input
+                value={machine.numeroserie}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Disponível para Aluguel?</Label>
+              <Input
+                value={machine.disponivelaluguel}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Descrição</Label>
+              <textarea
+                value={machine.descricao}
+                disabled={true}
+                className="p-2 h-20 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+
+                <div className="flex justify-center items-center m-2">
                 {machine?.disponivelaluguel === "Sim" ?
                 (
                   <Button className="m-2"
@@ -185,6 +202,9 @@ export default function MachineDetails() {
                 </div>
               </CardDescription>
             </CardContent>
+            ) : (<CardContent>
+              <p className="text-[hsl(var(--text))]">Carregando a máquina...</p>
+            </CardContent>)}
           </Card>
         </div>
         <div>

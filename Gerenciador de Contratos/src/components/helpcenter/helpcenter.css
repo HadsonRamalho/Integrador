@@ -4,7 +4,6 @@
     font-size: 16px;
     border: none;
     outline: none;
- 
 }
 
 .search-icon {
@@ -18,7 +17,7 @@
     width: 90%;
     justify-self: center;
     margin-bottom: 10px;
-    margin-top: 10px;
+    margin-top: 15px;
     cursor: pointer;
 }
 
@@ -27,15 +26,7 @@
     justify-self: center;
 }
 
-.nav-container{
-    background-color: hsl(var(--primary));
-    margin: 0;
-    box-sizing: border-box;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    height: 60px;
-}
+
 
 hr{
     background-color:hsl(var(--background));

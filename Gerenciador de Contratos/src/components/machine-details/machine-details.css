@@ -1,5 +1,5 @@
 .machine-details-card{
-    width: 98vw;
+    width: 70vw;
     height: auto;
     border-color: hsl(var(--primary));
     background-color: hsl(var(--machine-card-bg));

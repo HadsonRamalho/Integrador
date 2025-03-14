@@ -179,6 +179,23 @@ diesel::table! {
 }
 
 diesel::table! {
+    notificacoes (idnotificacao) {
+        #[max_length = 64]
+        idnotificacao -> Varchar,
+        #[max_length = 64]
+        idusuario -> Varchar,
+        #[max_length = 128]
+        titulo -> Varchar,
+        mensagem -> Text,
+        #[max_length = 64]
+        onclick -> Varchar,
+        #[max_length = 64]
+        status -> Varchar,
+        datacriacao -> Timestamp,
+    }
+}
+
+diesel::table! {
     solicitacoes_contratos (idsolicitacao) {
         #[max_length = 64]
         idsolicitacao -> Varchar,
@@ -232,6 +249,7 @@ diesel::allow_tables_to_appear_in_same_query!(
     locatarios,
     maquinas,
     maquinas_usuarios,
+    notificacoes,
     solicitacoes_contratos,
     usuarios,
 );

@@ -19,6 +19,7 @@ import RentMachine from "@/pages/rent-machine";
 import HelpCenter from "@/pages/helpcenter";
 import ContractRequest from "@/pages/contract-request";
 import About from "@/pages/about";
+import { NotificationList } from "@/pages/notification-list";
 
 
 const router = createBrowserRouter([
@@ -64,6 +65,11 @@ const router = createBrowserRouter([
     element: <Login/>,
   },
   {
+    path: "/about",
+    element: 
+      <About/>
+  },
+  {
     path: "/rent-machine/:publicid",
     element: ( 
     <PrivateRoute>
@@ -92,18 +98,20 @@ const router = createBrowserRouter([
         <HelpCenter/>
       </PrivateRoute>)
   },
-  {
-    path: "/about",
-    element: (
-      <PrivateRoute>
-        <About/>
-      </PrivateRoute>)
-  },
+ 
   {
     path: "/contract-request",
     element: (
       <ContractRequest/>
     )
+  },
+  {
+    path: "/notification-list",
+    element: ( 
+    <PrivateRoute>
+      <NotificationList/>
+    </PrivateRoute>
+  ),
   },
   {
     path: "/logado",
