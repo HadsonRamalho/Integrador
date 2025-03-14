@@ -65,6 +65,15 @@ export function NavBar() {
             )            
           }              
         </li>
+        <li>
+          <NavLink
+            to="/about"
+            className={({ isActive }) => `class1 ${isActive ? "link-nav-active" : ""}`
+          }
+          >
+            Sobre Nós
+          </NavLink>
+        </li>
         </ul>
 
         <ul className="nav-right">

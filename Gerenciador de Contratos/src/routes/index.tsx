@@ -64,6 +64,11 @@ const router = createBrowserRouter([
     element: <Login/>,
   },
   {
+    path: "/about",
+    element: 
+      <About/>
+  },
+  {
     path: "/rent-machine/:publicid",
     element: ( 
     <PrivateRoute>
@@ -92,13 +97,7 @@ const router = createBrowserRouter([
         <HelpCenter/>
       </PrivateRoute>)
   },
-  {
-    path: "/about",
-    element: (
-      <PrivateRoute>
-        <About/>
-      </PrivateRoute>)
-  },
+ 
   {
     path: "/contract-request",
     element: (

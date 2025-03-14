@@ -1,9 +1,11 @@
 import "@/components/about/about.css";
 import { Button } from "@/components/ui/button";
+import Layout from "@/layouts/default";
 import { useNavigate } from "react-router-dom";
 export default function About() {
     const navigate = useNavigate();
   return (
+    <Layout>
   <>
   <div className="a">
   <section className="about-maqexpress">
@@ -38,14 +40,14 @@ export default function About() {
       </p>
       </section>
       <section className="mt-4  purpose-personality">
-      <h2>Nossa Personalidade</h2>
+      <h2>Nosso Compromisso</h2>
       <p>
-        Somos inovadores, confiáveis e eficientes. Nossa plataforma foi criada para conectar 
-        empresas de forma intuitiva e transparente, garantindo negociações seguras e satisfatórias.
+        Estamos comprometidos em oferecer uma plataforma <strong>eficiente, transparente e confiável</strong>, 
+        garantindo que locadores e contratantes tenham uma experiência segura e satisfatória.
       </p>
       <p>
-        Acreditamos no trabalho em equipe, na tecnologia e na confiança mútua como pilares 
-        fundamentais para um mercado de aluguel mais eficiente e acessível.
+        Buscamos inovação constante para melhorar nossos serviços e contribuir para um setor de aluguel mais 
+        <strong> moderno, acessível e justo</strong>.
       </p>
     </section>
     <section>
@@ -54,6 +56,7 @@ export default function About() {
       </section>
     </div>
       </>
+      </Layout>
   
   );
 }
