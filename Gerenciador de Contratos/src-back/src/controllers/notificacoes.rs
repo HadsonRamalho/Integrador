@@ -2,7 +2,7 @@ use axum::{extract::Query, Json};
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 
-use crate::models::{self, notificacoes::Notificacao};
+use crate::models::{self, notificacoes::{Notificacao, NotificaoStatusInput}};
 
 use super::{cria_conn, gera_hash, usuarios::IdInput};
 
@@ -62,6 +62,32 @@ pub async fn busca_notificacoes_idusuario(Query(id): Query<IdInput>)
           return Err((StatusCode::INTERNAL_SERVER_ERROR, Json("Esse usuário não possui notificações.".to_string())))
         }
         return Ok((StatusCode::OK, Json(res)))
+      },
+      Err(e) => {
+        return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+      }
+    }
+}
+
+pub async fn atualiza_status_notificacao(input: Json<NotificaoStatusInput>)
+    -> Result<(StatusCode, Json<String>), (StatusCode, Json<String>)>{
+    if input.id.trim().is_empty() || input.novostatus.trim().is_empty(){
+        return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+
+    let id = input.id.trim().to_string();
+    let novostatus = input.novostatus.trim().to_string();
+
+    let atualizacao = NotificaoStatusInput{
+      id,
+      novostatus
+    };
+
+    let conn = &mut cria_conn()?;
+
+    match models::notificacoes::atualiza_status_notificacao(conn, atualizacao).await{
+      Ok(id) => {
+        return Ok((StatusCode::OK, Json(id)))
       },
       Err(e) => {
         return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))

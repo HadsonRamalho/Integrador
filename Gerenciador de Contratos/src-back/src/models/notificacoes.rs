@@ -51,3 +51,28 @@ pub async fn busca_notificacoes_idusuario(conn: &mut PgConnection, id: String)
       }
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct NotificaoStatusInput{
+    pub id: String,
+    pub novostatus: String
+}
+
+pub async fn atualiza_status_notificacao(conn: &mut PgConnection, atualizacao: NotificaoStatusInput)
+    -> Result<String, String>{
+    use crate::schema::notificacoes::dsl::*;
+
+    let res: Result<Notificacao, diesel::result::Error> = diesel::update(notificacoes)
+      .filter(idnotificacao.eq(atualizacao.id))
+      .set(status.eq(atualizacao.novostatus))
+      .get_result(conn);
+
+    match res{
+      Ok(notificacao) => {
+        return Ok(notificacao.idnotificacao)
+      },
+      Err(e) => {
+        return Err(e.to_string())
+      }
+    }
+}
