@@ -73,7 +73,7 @@ pub async fn cadastra_solicitacao_contrato(input: Json<SolicitacaoContratoInput>
     cadastra_notificacao(Json(NotificacaoInput{
       idusuario: solicitacao.idlocatario.clone(),
       titulo: "Você solicitou uma máquina!".to_string(),
-      mensagem: "Enviamos uma notificação para o dono da máquina que você solicitou. Ele receberá a notificação em breve, e poderá decidir se aprova ou recusa sua solicitação. Clique nessa mensagem para acompanhar o status da solicitação.".to_string(),
+      mensagem: "Enviamos uma notificação para o dono da máquina que você solicitou. Ele receberá a notificação em breve, e poderá decidir se aprova ou recusa sua solicitação. Clique nessa mensagem para acompanhar suas solicitações.".to_string(),
       onclick: "/contract-request".to_string(),
     })).await?.1.0;
 
