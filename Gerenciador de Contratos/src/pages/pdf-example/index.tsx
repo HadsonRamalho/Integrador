@@ -330,22 +330,22 @@ export const PdfDocument = ({ contract }: { contract: ContractPDF }) => {
 
         <Text style={styles.paragraph}>
 
-</Text>
-<Text style={styles.paragraph}>
+        </Text>
+        <Text style={styles.paragraph}>
 
-</Text>
-<Text style={styles.paragraph}>
+        </Text>
+        <Text style={styles.paragraph}>
 
-</Text>
-<Text style={styles.paragraph}>
+        </Text>
+        <Text style={styles.paragraph}>
 
-</Text>
-<Text style={styles.paragraph}>
+        </Text>
+        <Text style={styles.paragraph}>
 
-</Text>
-<Text style={styles.paragraph}>
+        </Text>
+        <Text style={styles.paragraph}>
 
-</Text>
+        </Text>
         <Text>
           
              5.3 A
