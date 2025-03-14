@@ -21,12 +21,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y pkg-config libssl-dev build-essential
-        
-    - name: Set environment variables
-      run: |
-        echo "OPENSSL_DIR=$(openssl version -d | awk '{print $2}')" >> $GITHUB_ENV
-        echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
-        echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
 
     - name: Build
       working-directory: Gerenciador de Contratos/src-back
