@@ -7,11 +7,13 @@ import { ProfileDropdownMenu } from "../profile-dropdown-menu";
 import { DropdownMenuDemo } from "../dropdown-menu";
 import { MachineDropdownMenu } from "../machine-dropdown-menu";
 import { ContractDropdownMenu } from "../contract-dropdown-menu";
+import { MenuIcon } from "lucide-react";
 
 
 export function NavBar() {
   const [logged, setLogged] = useState(false);
-  
+  const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
     const id = localStorage.getItem("USER_ID");
     if(id){
@@ -36,7 +38,7 @@ export function NavBar() {
         <li>
           <NavLink 
           to="/"
-          className={({isActive}) => ` class1 ${isActive ? "link-nav-active" : ""}`
+          className={({isActive}) => ` class1 ${isActive ? "link-nav-active" : ""} hidden sm:flex`
           }
           >
             Pagina Inicial   
@@ -46,20 +48,20 @@ export function NavBar() {
         <li>
           <NavLink
             to="/howworks"
-            className={({ isActive }) => `class1 ${isActive ? "link-nav-active" : ""}`
+            className={({ isActive }) => `class1 ${isActive ? "link-nav-active" : ""} hidden sm:flex`
           }
           >
             Como Funciona
           </NavLink>
         </li>
-        <li>
+        <li className=" hidden sm:flex">
         {logged ? (
             <MachineDropdownMenu>
             </MachineDropdownMenu>
           ) : (
             <NavLink 
             to="/machine"
-            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
+            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""} hidden sm:flex`}>
               Máquinas
             </NavLink>
             )            
@@ -68,38 +70,90 @@ export function NavBar() {
         <li>
           <NavLink
             to="/about"
-            className={({ isActive }) => `class1 ${isActive ? "link-nav-active" : ""}`
+            className={({ isActive }) => `class1 ${isActive ? "link-nav-active" : ""} hidden sm:flex`
           }
           >
             Sobre Nós
           </NavLink>
         </li>
         </ul>
+        {menuOpen && (
+          <ul className="sm:hidden absolute top-0 left-0 w-full h-[60svh] bg-[hsl(var(--machine-card-bg))] text-red flex flex-col items-center justify-center space-y-6 text-lg">
+            <li>
+              <NavLink to="/" className="class1" onClick={() => setMenuOpen(false)}>
+                <p className="text-[hsl(var(--text))]">Início</p>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/howworks" className="class1" onClick={() => setMenuOpen(false)}>
+              <p className="text-[hsl(var(--text))]">Como Funciona</p>
+              </NavLink>
+            </li>
+            <li>
+              {logged ? <MachineDropdownMenu triggerColor="hsl(var(--text))" /> : (
+                <NavLink to="/machine" className="class1" onClick={() => setMenuOpen(false)}>
+                  <p className="text-[hsl(var(--text))]">Máquinas</p>
+                </NavLink>
+              )}
+            </li>
+            <li>
+              <NavLink to="/about" className="class1" onClick={() => setMenuOpen(false)}>
+              <p className="text-[hsl(var(--text))]">Sobre</p>
+              </NavLink>
+            </li>
+            <li>
+              <DropdownMenuDemo  triggerColor="hsl(var(--text))"/>
+            </li>
+            <li>
+              {logged ? (
+                <ProfileDropdownMenu titulo="Perfil" />
+              ) : (
+                <NavLink to="/login" className="class1" onClick={() => setMenuOpen(false)}>
+                  <p className="text-[hsl(var(--text))]">Entrar</p>
+                </NavLink>
+              )}
+            </li>
+            <li>
+              <ModeToggle />
+            </li>
+            <button
+              className="absolute top-4 right-4 text-white text-3xl"
+              onClick={() => setMenuOpen(false)}
+            >
+              <p className="text-[hsl(var(--text))]">✖</p>
+            </button>
+          </ul>
+        )}
 
         <ul className="nav-right">
-        <li className="class1">
+        <li className="class1  hidden sm:flex ">
           <DropdownMenuDemo></DropdownMenuDemo>
         </li>       
 
-        <li>        
+        <li className=" hidden sm:flex">        
           {logged ? (
             <ProfileDropdownMenu titulo={"Meu Perfil"} >
             </ProfileDropdownMenu>
           ) : (
             <NavLink 
             to="/login"
-            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>
+            className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""} hidden sm:flex`}>
               Entrar
             </NavLink>
             )            
           }          
         </li>
 
-        <li>
+        <li className=" hidden sm:flex">
           <ModeToggle></ModeToggle>
-        </li>        
+        </li>
 
-      </ul>
+        <li className="flex sm:hidden">
+          <button onClick={() => {setMenuOpen(!menuOpen)}}>
+            <MenuIcon color="white"/>
+          </button>
+        </li>
+      </ul>      
     </nav>
   );
 }

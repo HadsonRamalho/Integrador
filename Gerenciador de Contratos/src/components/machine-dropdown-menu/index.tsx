@@ -7,12 +7,16 @@ import {
   } from "@/components/ui/dropdown-menu";
 import { NavLink } from "react-router-dom";
 
-export const MachineDropdownMenu = () => {    
+interface MachineDropdownMenuProps {
+    triggerColor: string;
+}
+
+export const MachineDropdownMenu: React.FC<MachineDropdownMenuProps> = ({ triggerColor }) => {    
     return(
         <div>
         <DropdownMenu>
         <DropdownMenuTrigger>
-        <p style={{color: 'white'}}>Máquinas</p>
+        <p style={{color: triggerColor || "white"}}>Máquinas</p>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
             <DropdownMenuSeparator />

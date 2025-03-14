@@ -45,12 +45,12 @@ export default function HowWorks() {
                 </ol>
                 
               </div>
-              <img className="howworks-image"  src= {Dawn} alt="Trator estacionado em um campo"/>
+              <img className="howworks-image hidden sm:block"  src= {Dawn} alt="Trator estacionado em um campo"/>
             
             </div>
             
             <div className="question-two">
-              <img className="howworks-image" src={Built} alt="Escavadeira amarela em uma colina"/>
+              <img className="howworks-image  hidden sm:block" src={Built} alt="Escavadeira amarela em uma colina"/>
                 <div className="text">
                 <h2><span style={{color: " #29A366"}}> MAQEXPRESS </span> é confiavél?</h2>
                 <p className="text-two"> Sim! A <span style ={{color: "#29A366"}}> MAQEXPRESS</span> foi pensada e desenvolvida para garantir um processo de locação seguro, transparente e eficiente. Nosso sistema conta com medidas de proteção para ambas as partes,  assegurando que lacadores e clientes tenham uma experiência Confiavél.
@@ -80,7 +80,7 @@ export default function HowWorks() {
                 <p>Não hesite em nos chamar! Estamos prontos para tornar sua experiência mais tranquila e segura. </p>
 
               </div>
-              <img className="howworks-image"  src={Besley} alt="Escavadeira laranja"/>
+              <img className="howworks-image  hidden sm:block"  src={Besley} alt="Escavadeira laranja"/>
    
             </div>
 

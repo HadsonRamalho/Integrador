@@ -10,7 +10,7 @@ interface MachineFilterProps {
 const MachineFilter: React.FC<MachineFilterProps> = ({ machines, filter, setFilter }) => {
   return (
     <div className="flex justify-center mb-4">
-      <Card className="bg-[hsl(var(--machine-card-bg))] w-[50%] h-[120px] border-[hsl(var(--primary))]">
+      <Card className="bg-[hsl(var(--machine-card-bg))] h-[120px] border-[hsl(var(--primary))] w-[90%] md:w-[50%]">
         <CardHeader>
           <p>Filtrar Máquinas</p>
         </CardHeader>

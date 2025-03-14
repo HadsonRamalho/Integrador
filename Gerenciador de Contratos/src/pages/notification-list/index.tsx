@@ -32,8 +32,9 @@ export const NotificationList = () => {
 
   return (
     <Layout>
-      <main className="mt-10 mb-10 flex justify-center items-center">
-        <Card className="bg-[hsl(var(--machine-card-bg))] m-4 border-[hsl(var(--primary))] w-[50vw]">
+      <main className="mt-10 mb-10 flex justify-center items-center sm:w-full">
+        <Card className="bg-[hsl(var(--machine-card-bg))] m-4 border-[hsl(var(--primary))]
+         sm:w-full md:w-[50vw]">
             <CardHeader className="text-center">
             <p className="text-[1.2rem]">Notificações</p>
             </CardHeader>
