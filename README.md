@@ -210,5 +210,64 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
  5. - Altera os campos desejados
  6. - Clica no botão 'Atualizar Máquina'
  7. - A máquina é atualizada
+   
+ ### Caso 11 - Atualização de Dados do Usuário
+- Ator: Usuário
+- Objetivo: Atualizar o endereço de um usuário
+- Pré-Condição: Estar logado em uma conta que já possua um endereço
+- Fluxo Principal:
+ 1. - O usuário acessa a página 'Minhas Informações'
+ 2. - Altera os campos do endereço que deseja atualizar
+ 3. - Clica no botão 'Atualizar endereço'
+ 4. - O endereço é atualizado
 
-[EM ANDAMENTO]
+### Caso 12 - Alugar uma Máquina
+- Ator: Usuário
+- Objetivo: Alugar uma máquina disponível no sistema
+- Pré-Condição: O sistema deve ter ao menos uma máquina disponível. O usuário precisa ter um endereço cadastrado.
+- Fluxo Principal:
+ 1. - Através da barra de navegação, o usuário acessa a página 'Máquinas Disponíveis' 
+ 2. - O sistema exibe a lista de máquinas disponíveis, com cada máquina disposta num card único
+ 3. - Clica na máquina que deseja alugar
+ 4. - Clica no botão 'Alugar Máquina'
+ 5. - O usuário é redirecionado para a página de aluguel da máquin
+ 6. - O usuário confirma suas informações
+ 7. - O usuário revisa as informações
+ 8. - Seleciona a medida do prazo (horas, dias, semanas, meses)
+ 9. - Seleciona o prazo de aluguel
+ 10. - Revisa as informações
+ 11. - Clica no botão 'Solicitar aluguel da máquina'
+ 12. - O sistema exibe uma mensagem informando que a solicitação foi enviada
+ 13. - O sistema exibe a data e o status da solicitação
+
+### Caso 13 - Listar Solicitações de Contratos
+- Ator: Usuário
+- Objetivo: Ver as solicitações emitidas e recebidas
+- Pré-Condição: O usuário deve estar logado em uma conta. O usuário deve ter emitido ou recebido ao menos uma solicitação de contrato.
+- Fluxo Principal:
+ 1. - Através da barra de navegação, o usuário acessa a página 'Solicitações de Contratos'
+ 2. - Seleciona a lista de 'Solicitações recebidas' ou 'Solicitações emitidas'
+ 3. - O sistema exibe uma lista de solicitações
+
+### Caso 14 - Atualizar o Status de uma Solicitação
+- Ator: Usuário
+- Objetivo: Aprovar ou recusar uma solicitação
+- Pré-Condição: O usuário deve estar logado em uma conta. O usuário deve ter emitido ou recebido ao menos uma solicitação de contrato.
+- Fluxo Principal:
+ 1. - Através da barra de navegação, o usuário acessa a página 'Solicitações de Contratos'
+ 2. - Seleciona a lista de 'Solicitações recebidas' ou 'Solicitações emitidas'
+ 3. - O sistema exibe uma lista de solicitações
+ 4. - O usuário clica no botão 'Aprovar solicitação' ou 'Recusar solicitação'
+ 5. - O sistema atualiza o status da solicitação
+
+### Caso 15 - Ver um Contrato
+- Ator: Usuário
+- Objetivo: Realizar o download do PDF de um contrato
+- Pré-Condição: O usuário deve estar logado em uma conta. O usuário deve ter emitido ou recebido ao menos uma solicitação de contrato.
+- Fluxo Principal:
+ 1. - Através da barra de navegação, o usuário acessa a página 'Solicitações de Contratos'
+ 2. - Seleciona a lista de 'Solicitações recebidas' ou 'Solicitações emitidas'
+ 3. - O sistema exibe uma lista de solicitações
+ 4. - Se a solicitação tiver sido aprovada, o usuário verá o botão 'Ver contrato'
+ 5. - Clica em 'Ver contrato'
+ 6. - O sistema abre uma nova janela, na qual é exibida o PDF do contrato
