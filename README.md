@@ -211,7 +211,7 @@ Primeiro, abra um terminal e navegue até a pasta `/Documents` ou `/Documentos`.
  6. - Clica no botão 'Atualizar Máquina'
  7. - A máquina é atualizada
    
- ### Caso 11 - Atualização de Dados do Usuário
+ ### Caso 11 - Atualização de Endereço do Usuário
 - Ator: Usuário
 - Objetivo: Atualizar o endereço de um usuário
 - Pré-Condição: Estar logado em uma conta que já possua um endereço
