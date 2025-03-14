@@ -137,10 +137,10 @@ export default function CreateMachine() {
         imageIds.push(data.idimagem);          
       } catch (err) {
         console.error("Erro na requisição de imagem:", err);
-        alert("Erro ao enviar imagem.");
+        //alert("Erro ao enviar imagem.");
       }
     }
-    alert("Imagens enviadas com sucesso!");
+    //alert("Imagens enviadas com sucesso!");
     setMachineImages([]);
     return imageIds;
   };
@@ -178,6 +178,11 @@ export default function CreateMachine() {
 
   const tryCreateMachine = async () => {
     setIsLoading(true);
+    if (!name || !serialNumber || !rentValue || !description || !selectedEquipment){
+      alert("Preencha todos os campos");
+      setIsLoading(false);
+      return;
+    }
     if(machineImages.length < 1){
       alert("A máquina deve possuir ao menos uma imagem.");
       setIsLoading(false);
