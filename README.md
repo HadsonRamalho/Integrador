@@ -5,14 +5,13 @@ Versão atual: v0.1003
  - [JavaScript](https://developer.mozilla.org/pt-BR/docs/Learn/Getting_started_with_the_web/JavaScript_basics)
  - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)
  - [React](https://react.dev/learn)
- - [Styled-components💅](https://styled-components.com/docs/basics#getting-started)
+ - [TailwindCSS](https://tailwindcss.com/docs/styling-with-utility-classes)
 #### Backend:
 - [Rust-book](https://rust-br.github.io/rust-book-pt-br/)
 - [Rust-by-example](https://doc.rust-lang.org/stable/rust-by-example/) 
 - [Rustlings](https://github.com/rust-lang/rustlings)
 #### Banco de dados:
- - [PostgreSQL + pgAdmin](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
- - AWS
+ - [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
  #### Versionamento:
   - [Git](https://git-scm.com/downloads)
   - [GitHub/Repositório](https://github.com/HadsonRamalho/Integrador)
