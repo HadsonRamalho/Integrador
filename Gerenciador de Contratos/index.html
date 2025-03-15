@@ -6,9 +6,35 @@
     <link rel="icon" type="image/svg+xml" href="./maq.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MAQEXPRESS</title>
+    <script>
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.register('./sw.js')
+          .then(function (registration){
+            console.log("Service Worker rodando", );
+            //registration.showNotification('MaqExpress está disponível para instalação!');
+          })
+          .catch(function(err){
+            console.log("Service Worker falhou", err);
+            alert(err);
+          });
+      } 
+      window.addEventListener("beforeinstallprompt", function (e) {
+          e.userChoice.then(function (choiceResult) {
+            console.log(choiceResult.outcome);
+            if (choiceResult.outcome == "dismissed") {
+              console.log("Usuário cancelou instalação");
+              return;
+            }
+            console.log("Usuário aceitou insstalação");
+            return;
+            
+          });
+        });
+    </script>
   </head>
   <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
   </body>
 </html>
