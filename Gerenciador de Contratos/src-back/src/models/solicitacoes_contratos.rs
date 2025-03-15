@@ -42,6 +42,7 @@ pub async fn busca_solicitacoes_idlocador(conn: &mut PgConnection, id: String)
 
     let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = solicitacoes_contratos
       .filter(idlocador.eq(id))
+      .order_by(datasolicitacao.desc())
       .get_results(conn);
     
     match res{
@@ -60,6 +61,7 @@ pub async fn busca_solicitacoes_idlocatario(conn: &mut PgConnection, id: String)
 
     let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = solicitacoes_contratos
       .filter(idlocatario.eq(id))
+      .order_by(datasolicitacao.desc())
       .get_results(conn);
     
     match res{
@@ -78,6 +80,7 @@ pub async fn busca_solicitacoes_idmaquina(conn: &mut PgConnection, id: String)
 
     let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = solicitacoes_contratos
       .filter(idmaquina.eq(id))
+      .order_by(datasolicitacao.desc())
       .get_results(conn);
     
     match res{
