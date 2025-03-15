@@ -52,6 +52,8 @@ const RentMachine = () => {
 
   const [requestId, setRequestId] = useState<string>();
 
+  const [sendingRequest, setSendingRequest] = useState(false);
+
   const navigate = useNavigate();
 
   const handleValorAluguel = async () => {
@@ -237,6 +239,7 @@ const RentMachine = () => {
       return;
     }
     try {
+      setSendingRequest(true);
       const id = await createContractRequest(
         machineOwnerId,
         user?.idusuario,
@@ -249,9 +252,11 @@ const RentMachine = () => {
       setRequestId(id);
       setStep("status-solicitação");
       alert("A solicitação de aluguel foi enviada!");
+      setSendingRequest(false);
     } catch (err) {
       console.error(err);
       alert("Houve um erro ao enviar a solicitação de aluguel.");
+      setSendingRequest(false);
     }
   };
 
@@ -560,7 +565,9 @@ const RentMachine = () => {
                       className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
                     </CardContent>
                   </Card>
-                  <Button onClick={handleContractRequest}>Solicitar aluguel da máquina</Button>
+                  <Button onClick={handleContractRequest}
+                  disabled={sendingRequest}
+                  >{sendingRequest ? ("Solicitando...") : ("Solicitar o aluguel da máquina")}</Button>
                   <CardDescription>
                     <p className="text-[hsl(var(--text))]">O dono da máquina vai receber uma notificação e poderá aprovar
                     o aluguel da máquina.</p>

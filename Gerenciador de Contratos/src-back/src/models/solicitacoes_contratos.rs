@@ -40,8 +40,8 @@ pub async fn busca_solicitacoes_idlocador(conn: &mut PgConnection, id: String)
     -> Result<Vec<SolicitacaoContrato>, String>{
     use crate::schema::solicitacoes_contratos::dsl::*;
 
-    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = solicitacoes_contratos
-      .filter(idlocador.eq(id))
+    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = diesel::QueryDsl::order_by(solicitacoes_contratos
+      .filter(idlocador.eq(id)), datasolicitacao.desc())
       .get_results(conn);
     
     match res{
@@ -76,8 +76,8 @@ pub async fn busca_solicitacoes_idmaquina(conn: &mut PgConnection, id: String)
     -> Result<Vec<SolicitacaoContrato>, String>{
     use crate::schema::solicitacoes_contratos::dsl::*;
 
-    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = solicitacoes_contratos
-      .filter(idmaquina.eq(id))
+    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = diesel::QueryDsl::order_by(solicitacoes_contratos
+      .filter(idmaquina.eq(id)), datasolicitacao.desc())
       .get_results(conn);
     
     match res{
