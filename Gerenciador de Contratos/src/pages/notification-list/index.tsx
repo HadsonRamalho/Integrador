@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { NotificationCard } from "@/components/notification-card";
 import { Notification } from "@/interfaces/notifications";
 import { loadNotificationsByUserId } from "@/services/api/notifications/notifications";
+import NotificationFilter from "@/components/notification-filter";
 
 export const NotificationList = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -26,8 +27,8 @@ export const NotificationList = () => {
     }
   }, [notifications]);
 
-  const filteredMachines = notifications.filter((machine) =>
-    filter ? machine.status === filter : true
+  const filteredNotifications = notifications.filter((notification) =>
+    filter ? notification.status === filter : true
   );
 
   return (
@@ -39,11 +40,11 @@ export const NotificationList = () => {
             <p className="text-[1.2rem]">Notificações</p>
             </CardHeader>
           <CardContent>
-          <div className="FILTRO flex justify-center items-center rounded-md bg-[hsl(var(--primary))] mt-0 mb-4">
-              
+          <div className="flex justify-center items-center rounded-md mt-0 mb-4">
+              <NotificationFilter notifications={notifications} setFilter={setFilter} filter={filter}/>
           </div>
           <div className={`grid`}>
-          {filteredMachines.length === 0 ? (
+          {filteredNotifications.length === 0 ? (
             <Card>
               <CardHeader>
                 <h2 className="text-[hsl(var(--primary))]">
@@ -63,7 +64,7 @@ export const NotificationList = () => {
               </CardContent>
             </Card>
           ) : (
-            filteredMachines.map((notification: Notification) => (
+            filteredNotifications.map((notification: Notification) => (
               <div
                 key={notification.idnotificacao}
                 className="border-[hsl(var(--primary))] mb-4">
