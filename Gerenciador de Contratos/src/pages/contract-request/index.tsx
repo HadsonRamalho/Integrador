@@ -156,18 +156,18 @@ export default function ContractRequest() {
 
     return (
     <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-2 w-full">
-      <CardContent className="flex gap-4 mt-4">
-        <Label className="mt-2 mb-2 w-[30%]">Data do Contrato</Label>
+      <CardContent className="grid grid-cols-1 md:flex gap-4 mt-4">
+        <Label className="mt-2 mb-2 w-full md:w-[30%]">Data do Contrato</Label>
         <Input
           value={formatDate(contractInfo?.datacontrato)}
           disabled={true}
-          className="p-2 w-[50%] text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+          className="p-2 w-full md:w-[50%] text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
         
-        <Label className="mt-2 mb-2 w-[50%]">Status do Contrato</Label>
+        <Label className="mt-2 mb-2 w-full md:w-[50%]">Status do Contrato</Label>
         <Input
           value={contractInfo?.statuscontrato}
           disabled={true}
-          className="p-2 text-black w-[50%] bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+          className="p-2 text-black w-full md:w-[50%] bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
         <Button onClick={handleLoadPdf} disabled={loadingPdf}>
          {loadingPdf ? ("Carregando...") : ("Ver contrato")}</Button>  
       </CardContent>
@@ -223,7 +223,7 @@ export default function ContractRequest() {
     <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-2">
       <CardContent>
         <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] mb-0 mt-4">
-        <CardContent className="grid grid-cols-4 gap-4 mt-4">
+        <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
         <Label className="mt-2 mb-2">Nome do Solicitante</Label>
         <Input
           value={requestOrigin?.nome}
@@ -271,7 +271,7 @@ export default function ContractRequest() {
       {request.origemsolicitacao !== localStorage.getItem("USER_ID") && (
         <div>
         {request.statussolicitacao === "Aguardando aprovação" && (
-          <CardFooter className="flex justify-center gap-4">
+          <CardFooter className="grid grid-cols-1 md:flex justify-center gap-4">
             <Button className="bg-[#882727]"
             onClick={() => {handleUpdateRequest("Solicitação recusada")}}>Recusar Aluguel</Button>
             <Button
@@ -282,7 +282,7 @@ export default function ContractRequest() {
       )}
 
       {request.statussolicitacao === "Solicitação aprovada" && (
-        <CardFooter className="flex justify-center gap-4">
+        <CardFooter className="grid grid-cols-1 md:flex justify-center gap-4">
             <ContractInfo request={request}/>      
         </CardFooter>
       )}
@@ -292,22 +292,26 @@ export default function ContractRequest() {
 
   return(
     <Layout>
-      <main className="contract-dropdown-container">
-      <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))] mb-10">
+      <main className="contract-dropdown-container w-full m-0">
+      <Card className="w-full md:w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))] mb-10 m-0">
       <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]">
         <strong>Solicitações de Contrato</strong>
       </CardHeader>
         <CardContent className="flex flex-col items-center justify-center h-full text-center p-5">
         <Tabs defaultValue="recebidas" className="w-full">
-            <TabsList className="bg-[hsl(var(--background))]">
+            <TabsList className="grid bg-[hsl(var(--background))] w-full h-full p-0 m-0 sm:flex sm:flex-col">
             <TabsTrigger 
-              className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 data-[state=active]:border-[hsl(var(--primary))]" 
+              className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] 
+              data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 
+              data-[state=active]:border-[hsl(var(--primary))]" 
               value="recebidas"
             >
               Solicitações recebidas
             </TabsTrigger>
             <TabsTrigger 
-              className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 data-[state=active]:border-[hsl(var(--primary))]" 
+              className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))]
+               data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 
+               data-[state=active]:border-[hsl(var(--primary))]" 
               value="emitidas"
             >
               Solicitações emitidas

@@ -164,7 +164,7 @@ export default function UserProfile() {
   }
 
     return (
-      <Card className="user-profile-card rounded-xl border-[1px] border-[hsl(var(--primary))]">
+      <Card className="user-profile-card rounded-xl border-[1px] border-[hsl(var(--primary))] w-full md:w-[40vw] ">
         <CardHeader>
           <CardTitle className="user-profile-card-header">Minhas Informações</CardTitle>
         </CardHeader>
@@ -204,13 +204,9 @@ export default function UserProfile() {
             onChange={(e) => setSenha(e.target.value)}
             />
           </>) : (<></>)}
-
-          <CardDescription className="user-profile-card-description">
-            Data de Cadastro: {formatDate(user.datacadastro)}
-          </CardDescription>
-          <CardContent>
-            <Button className="user-profile-button" onClick={handleChange}>Atualizar  perfil</Button>
-          </CardContent>
+            <CardContent className="flex flex-col items-center justify-center mt-0">
+              <Button className="hover:bg-[#169e69]" onClick={handleChange}>Atualizar perfil</Button>
+            </CardContent>
         </CardContent>
       </Card>
     );
@@ -304,7 +300,7 @@ export default function UserProfile() {
           className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
           onChange={(e) => setComplemento(e.target.value)}/>
           <CardContent>
-            <Button onClick={handleUpdateAddress} className="user-profile-button">Atualizar endereço</Button>
+            <Button onClick={handleUpdateAddress}>Atualizar endereço</Button>
           </CardContent>
         </CardContent>
       </Card>
@@ -388,7 +384,7 @@ export default function UserProfile() {
             onChange={(e) => setBankAgency(e.target.value)}/>
             
             <CardContent>
-              <Button onClick={handleUpdateBankAccount} className="user-profile-button">Atualizar conta bancária</Button>
+              <Button onClick={handleUpdateBankAccount}>Atualizar conta bancária</Button>
             </CardContent>
           </CardContent>
         </Card>
@@ -444,7 +440,7 @@ export default function UserProfile() {
     <Layout>
       <main>        
         <div className="user-profile-container">
-        <div>
+        <div className="w-full md:w-auto">
           {user ? (
             <UserCard user={user} />            
             ) : error ? (

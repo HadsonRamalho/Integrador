@@ -18,7 +18,7 @@ const NotificationFilter: React.FC<NotificationFilterProps> = ({ notifications ,
           <CardDescription className="mb-4">
             <div className="flex justify-center">
               <select
-                className="w-[60%] pl-2 bg-white h-[30px] text-black border-[hsl(var(--primary))] rounded-md border-[1px]"
+                className="w-full md:w-[60%] pl-2 bg-white h-[30px] text-black border-[hsl(var(--primary))] rounded-md border-[1px]"
                 onChange={(e) => setFilter(e.target.value)}
                 value={filter}
                 required
