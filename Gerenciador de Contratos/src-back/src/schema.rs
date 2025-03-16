@@ -2,7 +2,7 @@
 
 diesel::table! {
     codigos_recuperacao (idcodigo) {
-        #[max_length = 12]
+        #[max_length = 6]
         codigo -> Varchar,
         datacriacao -> Timestamp,
         dataexpiracao -> Timestamp,
@@ -231,7 +231,7 @@ diesel::table! {
         #[max_length = 64]
         idusuario -> Varchar,
         #[max_length = 64]
-        origemconta -> Nullable<Varchar>,
+        origemconta -> Varchar,
     }
 }
 
