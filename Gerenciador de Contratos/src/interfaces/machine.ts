@@ -17,3 +17,19 @@ export interface MachineRentValue{
     medida_prazo: string;
     prazo: number;
 }
+
+export interface MachineInput{
+    idusuario: string;
+    nome: string;
+    numeroserie: string;
+    valoraluguel: number;
+    disponivelaluguel: string;
+    status: string;
+    descricao: string;
+    categoria: string;
+}
+
+export interface MachineIds{
+    idmaquina: string;
+    idpublico: string;
+}

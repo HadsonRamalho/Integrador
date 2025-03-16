@@ -1,12 +1,13 @@
 use axum::{extract::Query, http::StatusCode, Json};
 use pwhash::unix::verify;
+use reqwest::Response;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 use validator::Validate;
 
 use crate::models::{self, usuarios::Usuario};
 
-use super::{codigos_recuperacao::gera_codigo_recuperacao, cria_conn, envia_emails::envia_email_codigo, formata_cnpj, formata_cpf, gera_hash};
+use super::{codigos_recuperacao::gera_codigo_recuperacao, cria_conn, envia_emails::envia_email_codigo, formata_cnpj, formata_cpf, gera_hash, notificacoes::{cadastra_notificacao, NotificacaoInput}};
 
 #[derive(Serialize, Deserialize, ToSchema)]
 pub struct UsuarioReturn{
@@ -16,7 +17,7 @@ pub struct UsuarioReturn{
     pub documento: String,
     pub datacadastro: String,
     pub idusuario: String,
-    pub origemconta: Option<String>
+    pub origemconta: String
 }
 
 impl From<Usuario> for UsuarioReturn {
@@ -109,7 +110,7 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
         documento,
         datacadastro: now,
         idusuario,
-        origemconta: Some("Sistema".to_string())
+        origemconta: "Sistema".to_string()
     };
 
     let conn = &mut cria_conn()?;
@@ -122,6 +123,13 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
             return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
         }
     }
+    
+    cadastra_notificacao(Json(NotificacaoInput{
+        idusuario: idusuario_clone.clone(),
+        titulo: "Bem-Vindo!".to_string(),
+        mensagem: "Você realizou seu cadastro na MaqExpress! Clique nessa mensagem para ver as máquinas disponíveis no catálogo.".to_string(),
+        onclick: "/machine".to_string(),
+    })).await?.1.0;
 
     let codigo = gera_codigo_recuperacao(email_clone.clone()).await?.1.0.codigo;
     match envia_email_codigo(email_clone, "ativação de conta", codigo).await{

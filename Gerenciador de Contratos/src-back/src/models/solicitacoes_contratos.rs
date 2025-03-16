@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use diesel::{prelude::{Insertable, Queryable}, query_dsl::methods::FilterDsl, ExpressionMethods, PgConnection, RunQueryDsl, Selectable};
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
+#[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug, Clone)]
 #[diesel(table_name = crate::schema::solicitacoes_contratos)]
 #[diesel(check_for_backend(diesel::pg::Pg))] 
 pub struct SolicitacaoContrato{ 
@@ -40,8 +40,8 @@ pub async fn busca_solicitacoes_idlocador(conn: &mut PgConnection, id: String)
     -> Result<Vec<SolicitacaoContrato>, String>{
     use crate::schema::solicitacoes_contratos::dsl::*;
 
-    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = solicitacoes_contratos
-      .filter(idlocador.eq(id))
+    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = diesel::QueryDsl::order_by(solicitacoes_contratos
+      .filter(idlocador.eq(id)), datasolicitacao.desc())
       .get_results(conn);
     
     match res{
@@ -76,8 +76,8 @@ pub async fn busca_solicitacoes_idmaquina(conn: &mut PgConnection, id: String)
     -> Result<Vec<SolicitacaoContrato>, String>{
     use crate::schema::solicitacoes_contratos::dsl::*;
 
-    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = solicitacoes_contratos
-      .filter(idmaquina.eq(id))
+    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = diesel::QueryDsl::order_by(solicitacoes_contratos
+      .filter(idmaquina.eq(id)), datasolicitacao.desc())
       .get_results(conn);
     
     match res{

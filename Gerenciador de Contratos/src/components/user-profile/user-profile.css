@@ -4,8 +4,8 @@
     align-items: center;
     justify-content: center;
     height: 100%;
+    width: 100%;
     background-color: hsl(var(--background));
-    font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
     
@@ -13,7 +13,6 @@
 
 .user-profile-card{
     background-color: hsl(var(--machine-card-bg));
-    width: 40vw;
 }
 
 .user-profile-card-header{
@@ -44,14 +43,6 @@
     margin-bottom: 10px;
 }
 
-.user-profile-button{
-    background-color: hsl(var(--primary));
-    color: hsl(var(--text));
-    margin-top: 5vh;
-}
-
-
-
 @media (max-width: 480px) {
     .user-profile-button {
       margin-top: 10px;
@@ -59,10 +50,6 @@
       left: 13vw;
       position: absolute;
     }
-}
-
-.user-profile-button:hover{    
-    background-color: #169e69;
 }
 
 label{

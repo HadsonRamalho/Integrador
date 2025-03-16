@@ -4,10 +4,35 @@
     font-size: 16px;
     border: none;
     outline: none;
- 
 }
 
 .search-icon {
     color: hsl(var(--primary));
     margin-right: 8px;
+}
+.faq{
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    width: 90%;
+    justify-self: center;
+    margin-bottom: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.botao{
+    display: flex;
+    justify-self: center;
+}
+
+
+
+hr{
+    background-color:hsl(var(--background));
+    border-top: 1px solid #6b7280;
+    display: block;
+    height: 1px;
+    line-height: 19px;
+    margin-top: 0;
 }

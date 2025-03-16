@@ -246,3 +246,23 @@ pub async fn gera_contrato_idsolicitacao(Query(id): Query<IdInput>)
     return Ok((StatusCode::OK, Json(contratopdf)))
 
 }
+
+pub async fn busca_contrato_idsolicitacao(Query(id): Query<IdInput>)
+    -> Result<(StatusCode, Json<Contrato>), (StatusCode, Json<String>)>{
+    if id.id.trim().is_empty(){
+      return Err((StatusCode::BAD_REQUEST, Json("Um ou mais campos estão vazios.".to_string())))
+    }
+
+    let id = id.id.trim().to_string();
+
+    let conn = &mut cria_conn()?;
+
+    match models::contratos::busca_contrato_idsolicitacao(conn, id).await{
+      Ok(contrato) => {
+        return Ok((StatusCode::OK, Json(contrato)))
+      },
+      Err(e) => {
+        return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
+      }
+    }
+}

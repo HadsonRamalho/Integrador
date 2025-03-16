@@ -39,20 +39,3 @@ utoipa-axum = "0.2"
 
 reqwest = { version = "0.12.12", features = ["json"] }
 oauth2 = "5.0.0"
-
-tonic = "*"
-prost = "0.13"
-prost-build = "*"
-
-
-[[bin]] # Bin to run the HelloWorld gRPC server
-name = "helloworld-server"
-path = "src/server.rs"
-
-[[bin]] # Bin to run the HelloWorld gRPC client
-name = "helloworld-client"
-path = "src/client.rs"
-
-[build-dependencies]
-tonic-build = "*"
-prost-build = "*"

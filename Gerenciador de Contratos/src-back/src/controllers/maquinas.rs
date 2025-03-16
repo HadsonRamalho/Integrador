@@ -7,7 +7,7 @@ use rand::random;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-use crate::{client::hello_world::{greeter_client::GreeterClient, HelloRequest}, controllers::{maquinas_usuarios::{cadastra_maquina_usuario, MaquinaUsuarioInput}, usuarios::{busca_usuario_id, IdInput}}, models::{self, maquinas::Maquina, str_to_f64_bigdecimal}};
+use crate::{controllers::{maquinas_usuarios::{cadastra_maquina_usuario, MaquinaUsuarioInput}, usuarios::{busca_usuario_id, IdInput}}, models::{self, maquinas::Maquina, str_to_f64_bigdecimal}};
 
 use super::{cria_conn, gera_hash};
 
@@ -155,14 +155,6 @@ pub async fn deleta_maquina_id(id: String)
 pub async fn lista_todas_maquinas()
     -> Result<(StatusCode, Json<Vec<Maquina>>), (StatusCode, Json<String>)>{
     let conn = &mut cria_conn()?;
-
-    let mut client = GreeterClient::connect("http://[::1]:50051").await.unwrap();
-
-    let request = tonic::Request::new(HelloRequest {
-        name: "HelloMáquina".into(),
-    });
-
-    let response = client.say_hello(request).await.unwrap();
     
     match models::maquinas::lista_todas_maquinas(conn).await{
         Ok(maquinas) => {

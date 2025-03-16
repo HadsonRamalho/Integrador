@@ -4,7 +4,7 @@ use axum::{
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
 use utoipa::openapi::Contact;
-use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, contas_bancarias::{atualiza_conta_bancaria, busca_conta_bancaria_idusuario, cadastra_conta_bancaria}, contratos::gera_contrato_idsolicitacao, enderecos::{atualiza_endereco, busca_endereco_id, busca_endereco_idusuario, cadastra_endereco_usuario}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina, recupera_imagens_maquina}, locadoras::{busca_locadora_idusuario, cadastra_locadora}, locatarios::{busca_locatario_idusuario, cadastra_locatario}, maquinas::{atualiza_maquina, busca_maquina_id, busca_maquina_idpublico, cadastra_maquina, calcula_valor_aluguel, lista_todas_maquinas, pesquisa_maquina}, maquinas_usuarios::{busca_maquinas_usuario_idusuario, busca_usuario_idmaquina}, multipart::cadastra_imagem, oauth::{google_oauth_handler, Config}, solicitacoes_contratos::{atualiza_status_solicitacao, busca_solicitacao_idsolicitacao, busca_solicitacoes_idlocador, busca_solicitacoes_idlocatario, cadastra_solicitacao_contrato}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_documento, busca_usuario_id, cadastra_usuario, deleta_usuario, realiza_login, redefine_senha_usuario}};
+use crate::controllers::{codigos_recuperacao::{envia_codigo_recuperacao, verifica_codigo_recuperacao}, contas_bancarias::{atualiza_conta_bancaria, busca_conta_bancaria_idusuario, cadastra_conta_bancaria}, contratos::{busca_contrato_idsolicitacao, gera_contrato_idsolicitacao}, enderecos::{atualiza_endereco, busca_endereco_id, busca_endereco_idusuario, cadastra_endereco_usuario}, imagens_maquinas::{cadastra_imagem_maquina, recupera_imagem_maquina, recupera_imagens_maquina}, locadoras::{busca_locadora_idusuario, cadastra_locadora}, locatarios::{busca_locatario_idusuario, cadastra_locatario}, maquinas::{atualiza_maquina, busca_maquina_id, busca_maquina_idpublico, cadastra_maquina, calcula_valor_aluguel, lista_todas_maquinas, pesquisa_maquina}, maquinas_usuarios::{busca_maquinas_usuario_idusuario, busca_usuario_idmaquina}, multipart::cadastra_imagem, notificacoes::{atualiza_status_notificacao, busca_notificacoes_idusuario, cadastra_notificacao}, oauth::{google_oauth_handler, Config}, solicitacoes_contratos::{atualiza_status_solicitacao, busca_solicitacao_idsolicitacao, busca_solicitacoes_idlocador, busca_solicitacoes_idlocatario, cadastra_solicitacao_contrato}, usuarios::{self, atualiza_email_usuario, atualiza_senha_usuario, atualiza_usuario, busca_email_usuario, busca_usuario_documento, busca_usuario_id, cadastra_usuario, deleta_usuario, realiza_login, redefine_senha_usuario}};
 use crate::controllers::usuarios::busca_usuario_email;
 use crate::routes::usuarios::{__path_realiza_login, __path_cadastra_usuario, __path_busca_usuario_email, __path_atualiza_usuario, __path_atualiza_senha_usuario, __path_redefine_senha_usuario, __path_busca_email_usuario, __path_atualiza_email_usuario, __path_busca_usuario_id};
 use crate::controllers::codigos_recuperacao::__path_envia_codigo_recuperacao;
@@ -104,6 +104,11 @@ pub fn cria_rotas() -> Router<>{
         .route("/busca_solicitacoes_idlocatario/", get(busca_solicitacoes_idlocatario))
 
         .route("/gera_contrato_idsolicitacao/", get(gera_contrato_idsolicitacao))
+        .route("/busca_contrato_idsolicitacao/", get(busca_contrato_idsolicitacao))
+
+        .route("/cadastra_notificacao",post(cadastra_notificacao))
+        .route("/busca_notificacoes_idusuario/", get(busca_notificacoes_idusuario))
+        .route("/atualiza_status_notificacao", patch(atualiza_status_notificacao))
 
         .route("/calcula_valor_aluguel", post(calcula_valor_aluguel))
 

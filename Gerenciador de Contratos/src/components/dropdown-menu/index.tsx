@@ -7,11 +7,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Address } from "@/interfaces/address";
 import { Input } from "@/layouts"
-import { loadAddressUserId } from "@/services/api/address/address";
+import { loadAddressByCep, loadAddressUserId } from "@/services/api/address/address";
 import { useEffect, useState } from "react"
 
 
-export function DropdownMenuDemo() {
+export function DropdownMenuDemo({ triggerColor }: { triggerColor: string }) {
   const [cep, setCep] = useState("");
   const [pais, setPais] = useState("Brasil");
   const [estado, setEstado] = useState("");
@@ -42,27 +42,9 @@ export function DropdownMenuDemo() {
     }
   }, [endereco]);
   
-  const CarregaEndereco = async () =>{
-    try {
-      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`,
-     {method:'GET'} );
-     if(!res.ok){
-      throw new Error( await res.text());
-     }
-     const endereco = await res.json();
-     setEstado(endereco.estado);
-     setCidade(endereco.localidade);
-     console.log(endereco);
-     setTriggerText(`${endereco.localidade}`);
-     localStorage.setItem("cidade_dropdownmenu", endereco.localidade);
-     
-    } catch (error) {
-      console.error(error);
-    }
-  }
   return (
     <DropdownMenu>
-  <DropdownMenuTrigger>{localStorage.getItem("cidade_dropdownmenu")||TriggerText }</DropdownMenuTrigger>
+  <DropdownMenuTrigger style={{color: triggerColor || "white"}}>{localStorage.getItem("cidade_dropdownmenu")||TriggerText }</DropdownMenuTrigger>
   <DropdownMenuContent>
     <DropdownMenuSeparator />
     <DropdownMenuLabel>
@@ -71,7 +53,6 @@ export function DropdownMenuDemo() {
      type="cep"
      value={cep}
      onChange={(e) =>setCep(e.target.value)}
-     onBlur={CarregaEndereco}
      disabled={true}
      />
     </DropdownMenuLabel>

@@ -2,7 +2,7 @@ use axum::{extract::Query, Json};
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 
-use crate::{controllers::{contratos::{cadastra_contrato, ContratoInput}, enderecos::busca_endereco_idusuario, usuarios::UserId}, models::{self, solicitacoes_contratos::SolicitacaoContrato}};
+use crate::{controllers::{contratos::{cadastra_contrato, ContratoInput}, enderecos::busca_endereco_idusuario, notificacoes::{cadastra_notificacao, NotificacaoInput}, usuarios::UserId}, models::{self, solicitacoes_contratos::SolicitacaoContrato}};
 
 use super::{cria_conn, gera_hash, usuarios::IdInput};
 
@@ -52,16 +52,32 @@ pub async fn cadastra_solicitacao_contrato(input: Json<SolicitacaoContratoInput>
     if valorsolicitacao < 1.{
       return Err((StatusCode::BAD_REQUEST, Json("O valor do aluguel não é válido.".to_string())))
     }
-    
+
     let conn = &mut cria_conn()?;
-    match models::solicitacoes_contratos::cadastra_solicitacao_contrato(conn, solicitacao).await{
+    let id = match models::solicitacoes_contratos::cadastra_solicitacao_contrato(conn, solicitacao.clone()).await{
       Ok(id) => {
-        return Ok((StatusCode::OK, Json(id)))
+        id
       },
       Err(e) => {
         return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(e)))
       }
-    }
+    };
+
+    cadastra_notificacao(Json(NotificacaoInput{
+      idusuario: solicitacao.idlocador.clone(),
+      titulo: "Alguém solicitou uma máquina!".to_string(),
+      mensagem: "Um cliente acabou de solicitar uma de suas máquinas! Clique aqui para ver suas solicitações.".to_string(),
+      onclick: "/contract-request".to_string(),
+    })).await?.1.0;
+
+    cadastra_notificacao(Json(NotificacaoInput{
+      idusuario: solicitacao.idlocatario.clone(),
+      titulo: "Você solicitou uma máquina!".to_string(),
+      mensagem: "Enviamos uma notificação para o dono da máquina que você solicitou. Ele receberá a notificação em breve, e poderá decidir se aprova ou recusa sua solicitação. Clique nessa mensagem para acompanhar suas solicitações.".to_string(),
+      onclick: "/contract-request".to_string(),
+    })).await?.1.0;
+
+    return Ok((StatusCode::OK, Json(id)))
 }
 
 pub async fn busca_solicitacao_idsolicitacao(Query(id): Query<IdInput>)

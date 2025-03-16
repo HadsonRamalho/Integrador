@@ -35,6 +35,7 @@
     --hover: 150 67% 85%;
     --machine-card-bg: 156 100% 97%;
     --red:0, 98%, 35%;
+    --text-invert: 0 0% 98%;
   }
  
   .dark {
@@ -68,7 +69,8 @@
     --text: 0 0% 98%;/*branco*/
     --hover: 150 67% 85%;/*verde menta claro*/
     --machine-card-bg: 156 20% 7%;/*preto*/
-    --red:0, 98%, 35%
+    --red:0, 98%, 35%;
+    --text-invert: 264, 79%, 3%;/*branco*/
   }
 }
 
@@ -83,6 +85,7 @@
 
 body {
   background-color: hsl(var(--background)); 
+  font-family: 'Inter', 'Poppins','Roboto', sans-serif ;
 }
 
 p {

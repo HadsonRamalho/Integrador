@@ -5,6 +5,7 @@ pub mod enderecos_usuarios;
 pub mod enderecos;
 pub mod locatarios;
 pub mod contas_bancarias;
+pub mod locadoras;
 
 #[tokio::test]
 async fn test_cria_conn_ok(){

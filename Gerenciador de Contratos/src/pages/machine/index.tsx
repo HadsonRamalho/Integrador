@@ -31,7 +31,7 @@ export default function Machine() {
 
   return (
     <Layout>
-      <main className="mt-10">
+      <main className="mt-10 mb-10">
       <MachineFilter machines={machines} filter={filter} setFilter={setFilter} />
 
       <div className={`machine-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`} >

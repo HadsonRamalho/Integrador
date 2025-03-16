@@ -3,12 +3,12 @@
     "name": "MaqExpress",
     "icons": [
       {
-        "src": "./maq.png",
+        "src": "./maq_v2.png",
         "type": "image/png",
         "sizes": "192x192"
       },
       {
-        "src": "./maq.png",
+        "src": "./maq_v2.png",
         "type": "image/png",
         "sizes": "512x512"
       }
@@ -28,19 +28,25 @@
         "icons": [{ "src": "./icon192.png", "sizes": "192x192" }]
       }
     ],
-    "description": "Confiança no aluguel de máquinas!",
+    "description": "Encontre a máquina ideal para sua obra ou disponibilize seus equipamentos para locação com segurança e sem burocracia. ",
     "screenshots": [
       {
-        "src": "./screenshot1.png",
+        "src": "./screenshot1.jpg",
         "type": "image/png",
-        "sizes": "1080x2036",
-        "form_factor": "any"
+        "sizes": "1080x1920",
+        "form_factor": "narrow"
       },
       {
         "src": "./screenshot2.jpg",
         "type": "image/jpg",
-        "sizes": "1080x2031",
-        "form_factor": "any"
+        "sizes": "1080x1920",
+        "form_factor": "narrow"
+      },
+      {
+        "src": "./screenshot3.jpg",
+        "type": "image/jpg",
+        "sizes": "1080x1920",
+        "form_factor": "narrow"
       }
     ]
   }

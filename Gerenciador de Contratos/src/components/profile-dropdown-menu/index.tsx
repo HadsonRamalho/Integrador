@@ -46,7 +46,15 @@ export const ProfileDropdownMenu = () => {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-                Notificações
+                <NavLink to={"/contract-request"}>
+                    <p style={{color: "black", fontSize: '15px'}}>Solicitações de Contratos</p>
+                </NavLink>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator/>
+            <DropdownMenuItem>
+            <NavLink to={"/notification-list"}>
+                    <p style={{color: "black", fontSize: '15px'}}>Notificações</p>
+                </NavLink>
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuLabel>
