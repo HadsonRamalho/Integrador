@@ -17,7 +17,7 @@ pub struct UsuarioReturn{
     pub documento: String,
     pub datacadastro: String,
     pub idusuario: String,
-    pub origemconta: Option<String>
+    pub origemconta: String
 }
 
 impl From<Usuario> for UsuarioReturn {
@@ -110,7 +110,7 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
         documento,
         datacadastro: now,
         idusuario,
-        origemconta: Some("Sistema".to_string())
+        origemconta: "Sistema".to_string()
     };
 
     let conn = &mut cria_conn()?;

@@ -1,6 +1,8 @@
 use diesel::{prelude::{Insertable, Queryable}, query_dsl::methods::FilterDsl, ExpressionMethods, PgConnection, RunQueryDsl, Selectable};
 use serde::{Deserialize, Serialize};
 
+use crate::controllers::cria_conn;
+
 #[derive(Queryable, Selectable, Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = crate::schema::locadoras)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -58,5 +60,26 @@ pub async fn busca_locadora_idlocadora(conn: &mut PgConnection, id: String)
       Err(e) => {
         return Err(e.to_string())
       }
+    }
+}
+
+
+pub async fn deleta_locadora(id: String)
+    -> Result<(), String>{
+    use crate::schema::locadoras::dsl::*;
+
+    let conn = &mut cria_conn().unwrap();
+
+    let res = diesel::delete(locadoras)
+        .filter(idlocadora.eq(id))
+        .execute(conn);
+
+    match res{
+        Ok(_) => {
+            Ok(())
+        },
+        Err(e) => {
+            return Err(e.to_string())
+        }
     }
 }

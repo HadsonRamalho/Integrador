@@ -78,13 +78,12 @@ pub async fn envia_codigo_recuperacao(input: Json<EmailInput>)
 
     let idusuario = busca_usuario_email(Query(EmailInput{email: email_clone.clone()})).await?.1.0;
     let usuario = busca_usuario_id(Query(IdInput{id: idusuario.clone()})).await?.1.0;
-    if let Some(origemconta) = usuario.origemconta{
-        if origemconta != "Sistema"{
-            return Err((StatusCode::BAD_REQUEST, 
-                Json("Não é possível solicitar a recuperação de senha de uma conta criada usando o Google.".to_string())))
-        }
-    }
+    let origemconta = usuario.origemconta;
 
+    if origemconta != "Sistema"{
+        return Err((StatusCode::BAD_REQUEST, 
+            Json("Não é possível solicitar a recuperação de senha de uma conta criada usando o Google.".to_string())))
+    }
 
     let codigoreturn = gera_codigo_recuperacao(email_clone.clone()).await?.1.0;
     let res = envia_email_codigo(email_clone.clone(), "recuperação de senha", codigoreturn.codigo.clone()).await?;

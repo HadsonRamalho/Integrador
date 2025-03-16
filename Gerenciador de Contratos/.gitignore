@@ -37,5 +37,6 @@ target/
 src-back/target 
 src-tauri/target 
 src-back/images
+src-back/diesel.toml
 
 node_modules

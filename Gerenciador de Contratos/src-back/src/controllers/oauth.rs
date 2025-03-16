@@ -205,7 +205,7 @@ pub async fn cadastra_usuario_oauth(usuario: CredenciaisUsuarioGoogle)
         documento: "Não definido".to_string(),
         datacadastro: now,
         idusuario,
-        origemconta: Some("Google".to_string())
+        origemconta: "Google".to_string()
     };
 
     let conn = &mut cria_conn()?;

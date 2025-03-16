@@ -13,7 +13,7 @@ pub struct Usuario {
     pub documento: String,
     pub datacadastro: NaiveDateTime,
     pub idusuario: String,
-    pub origemconta: Option<String>
+    pub origemconta: String
 }
 
 pub async fn cadastra_usuario(conn: &mut PgConnection, usuario: Usuario) 
