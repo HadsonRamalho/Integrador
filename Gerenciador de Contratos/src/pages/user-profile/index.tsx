@@ -57,7 +57,7 @@ export default function UserProfile() {
   async function AtualizaUsuario(nome_novo: string, email_novo: string, documento_novo: string, senha: string) {
     try {
       const res = await fetch(
-        "https://g6v9psc0-3003.brs.devtunnels.ms/atualiza_usuario",
+        "http://localhost:3003/atualiza_usuario",
         {
           method: "PUT",
           headers: {
@@ -87,7 +87,7 @@ export default function UserProfile() {
   async function DeletaUsuario(id: string) {
     try {
       const res = await fetch(
-        `https://g6v9psc0-3003.brs.devtunnels.ms/deleta_usuario/?id=${encodeURIComponent(id)}`,
+        `http://localhost:3003/deleta_usuario/?id=${encodeURIComponent(id)}`,
         {
           method: "DELETE",
           headers: {

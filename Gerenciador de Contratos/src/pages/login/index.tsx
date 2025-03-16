@@ -12,6 +12,8 @@ import GoogleLoginButton from "@/components/google-login-button";
 import { createUser } from "@/services/api/user/user";
 import { UserInput } from "@/interfaces/user";
 
+import process from "process";
+
 export default function AuthPage() {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
@@ -70,9 +72,12 @@ export default function AuthPage() {
     }
   };
 
+  const API_URL = process.env.FRONT_URL || "http://localhost:5173";
+
   const redirectGoogle = async () => {
     console.log('Redirecionando para o Google...');
-    const redirectUri = 'https://g6v9psc0-5173.brs.devtunnels.ms/auth/google/callback';
+    alert(API_URL);
+    const redirectUri = `${API_URL}/auth/google/callback`;
     const clientId = '853000099698-mja71sb0chsva2m9eu3prpktl31psg5q.apps.googleusercontent.com';
   
     const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=email&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&client_id=${clientId}`;

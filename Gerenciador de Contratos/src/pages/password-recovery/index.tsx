@@ -10,7 +10,9 @@ import {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp"
+} from "@/components/ui/input-otp";
+
+import process from "process";
 
 export default function PasswordRecovery() {
   const [email, setEmail] = useState("");
@@ -24,8 +26,9 @@ export default function PasswordRecovery() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const navigate = useNavigate();
+  
+  const API_URL = process.env.VITE_URL_BASE || "http://localhost:3003";
 
-  const API_URL = import.meta.env.BASE_URL;
 
   const loadUserId = async () => {
     try {
