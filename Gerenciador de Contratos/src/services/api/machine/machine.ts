@@ -1,5 +1,6 @@
+import { env } from "process";
 import { client } from "..";
-import { Machine, MachineRentValue } from "@/interfaces/machine";
+import { Machine, MachineIds, MachineInput, MachineRentValue } from "@/interfaces/machine";
 
 export async function listMachine(): Promise<Machine[]> {
   try {
@@ -36,7 +37,8 @@ export const loadMachineImage = async (machineId: string): Promise<string> => {
 
     const imagePath = response.data;
 
-    const imageUrl = `https://g6v9psc0-3003.brs.devtunnels.ms${imagePath}`;
+    const imageUrl = `${import.meta.env.VITE_URL_BASE}${imagePath}`;
+    console.log(imageUrl);
     return imageUrl;
   } catch (error) {
     console.error(error);
@@ -119,7 +121,7 @@ export const loadMachineImages = async (machineId: string): Promise<string[]> =>
 
     const imagesUrls: string[] = [];
     imagesPath.map((path) => {
-      const imageUrl = `https://g6v9psc0-3003.brs.devtunnels.ms${path}`;
+      const imageUrl = `${import.meta.env.VITE_URL_BASE}${path}`;
       imagesUrls.push(imageUrl);
     })
     return imagesUrls;
@@ -169,6 +171,26 @@ export async function loadMachineById(id: string): Promise<Machine> {
     console.error(error.response?.status, error.message);
     throw new Error(
       `Falha ao carregar informações da máquina: Código [${error.response?.status}]`
+    );
+  }
+}
+
+
+export async function createMachine(machine: MachineInput): Promise<MachineIds>{
+  try {
+    const response = await client.post<MachineIds>(`/cadastra_maquina`, machine);
+
+    if (response.status === 200) {
+      const data = response.data;
+      return data;
+    }
+    console.warn("Resposta inesperada:", response.status);
+    throw new Error(`Erro ao cadastrar a máquina. Status code: ${response.status}`);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error(error.response?.status, error.message);
+    throw new Error(
+      `Falha ao cadastrar informações da máquina: Código [${error.response?.status}]`
     );
   }
 }

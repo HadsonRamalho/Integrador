@@ -23,6 +23,10 @@ import {
 import { loadUserById } from "@/services/api/user/user";
 import { User } from "@/interfaces/user";
 import { useNavigate } from "react-router-dom";
+import { createImage, createMachineImage } from "@/services/api/image/image";
+import { MachineInput } from "@/interfaces/machine";
+import { createMachine } from "@/services/api/machine/machine";
+import { MachineImage } from "@/interfaces/image";
 
 export default function CreateMachine() {
   const [name, setName] = useState("");
@@ -43,6 +47,8 @@ export default function CreateMachine() {
   const [bankName, setBankName] = useState<string>();
   const [bankAccountNumber, setBankAccountNumber] = useState<string>();
   const [bankAgency, setBankAgency] = useState<string>();
+  const [accountId, setAccountId] = useState<string>();
+  const [cadastrando, setCadastrando] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -72,7 +78,7 @@ export default function CreateMachine() {
     }
   }
 
-  const handleSubmitBankAccount = () => {
+  const handleSubmitBankAccount = async () => {
     if(!user){
       console.warn("Usuário não está logado");
       return;
@@ -82,19 +88,22 @@ export default function CreateMachine() {
       return;
     }
     try{
-      createBankAccount(user.idusuario, bankAccountNumber, bankAgency, bankName);
-      loadBankAccount();
+      setCadastrando(true);
+      const account = await createBankAccount(user.idusuario, bankAccountNumber, bankAgency, bankName);
+      setAccountId(account);
       console.log("Conta criada!");
+      setCadastrando(false);
     } catch(error){
       console.log(error);
+      setCadastrando(false);
     }
   }
-
+ 
   useEffect(() => {
     if(user){
       loadBankAccount();
     }
-  }, [user]);
+  }, [user, accountId]);
 
   const handleImageChange = (index: number, file: File) => {
     const updatedImages = [...machineImages];
@@ -119,22 +128,8 @@ export default function CreateMachine() {
       singleFormData.append("file", file);
 
       try {
-        const response = await fetch(`https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_imagem`, {
-          method: "POST",
-          body: singleFormData,
-        });
-
-        if (!response.ok) {
-          throw new Error(await response.text() || "Erro ao cadastrar imagem");
-        }
-
-        const data = await response.json();
-        
-        if (!data || !data.idimagem) {
-          throw new Error("Erro ao obter o ID de uma imagem");
-        }
-        
-        imageIds.push(data.idimagem);          
+        const res = await createImage(singleFormData);
+        imageIds.push(res.idimagem);   
       } catch (err) {
         console.error("Erro na requisição de imagem:", err);
         //alert("Erro ao enviar imagem.");
@@ -145,39 +140,34 @@ export default function CreateMachine() {
     return imageIds;
   };
 
-  const createMachine = async () => {
+  const newMachine = async () => {
     const idusuario = localStorage.getItem("USER_ID");
+    if (!idusuario){
+      alert("Você precisa estar logado para cadastrar uma máquina.");
+      return;
+    }
     try{
-      const response = await fetch(`https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_maquina`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          idusuario,
-
-          nome: name,
-          numeroserie: serialNumber, 
-          valoraluguel: rentValue,
-          disponivelaluguel: rentDisponibility,
-          status: "Ativo",
-          descricao: description,
-          categoria: selectedEquipment}),
-      });
-
-      if (!response.ok) {
-        throw new Error(await response.text() || "Erro ao cadastrar máquina");
-      }
+      const maquina: MachineInput = {
+        idusuario,
+        nome: name,
+        numeroserie: serialNumber, 
+        valoraluguel: rentValue,
+        disponivelaluguel: rentDisponibility,
+        status: "Ativo",
+        descricao: description,
+        categoria: selectedEquipment};
       
-      const res = await response.json();
-      return res.idmaquina;
+      const res = await createMachine(maquina);
+      
+      return res;
     } catch(err){
       console.error(err);
     }
   }
 
   const tryCreateMachine = async () => {
-    setIsLoading(true);
+    try{
+      setIsLoading(true);
     if (!name || !serialNumber || !rentValue || !description || !selectedEquipment){
       alert("Preencha todos os campos");
       setIsLoading(false);
@@ -193,29 +183,25 @@ export default function CreateMachine() {
       setIsLoading(false);
       return;
     }
-    const machineid = await createMachine();
+    const machineid = await newMachine();
     await submitImages();
-    await connectMachineImage(machineid);
+    await connectMachineImage(machineid?.idmaquina);
     setIsLoading(false);
+    } catch(error){
+      alert("Erro ao cadastrar a máquina.");
+      setIsLoading(false);
+    }
   }
 
   const connectMachineImage = async (idmaquina: any) => {
     try {
       for (const idimagem of imageIds) {
-        const response = await fetch(`https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_imagem_maquina`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({idimagem, idmaquina}),
-        });
-  
-        if (!response.ok) {
-          console.error("Erro ao vincular imagem à máquina. Status:", response.status);
-          throw new Error("Erro ao vincular a imagem à máquina: " + await response.text());  
-        } 
-        const data = await response.json();
-        console.log("Imagem vinculada à máquina:", data);              
+        const data: MachineImage = {
+          idimagem,
+          idmaquina: idmaquina
+        };
+        const res = await createMachineImage(data);
+        console.log("Imagem vinculada à máquina:", res);              
       }
     } catch (err) {
       console.error("Erro ao vincular imagens:", err);
@@ -360,8 +346,11 @@ export default function CreateMachine() {
               > Farei isso depois
               </AlertDialogCancel>
               <AlertDialogAction
-              onClick={handleSubmitBankAccount}>
-                Cadastrar
+              onClick={handleSubmitBankAccount}
+              disabled={cadastrando}>
+                {cadastrando ?
+                ("Cadastrando...")
+                : ("Cadastrar")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

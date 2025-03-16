@@ -25,7 +25,7 @@ export default function PasswordRecovery() {
 
   const navigate = useNavigate();
 
-  const API_URL = "https://g6v9psc0-3003.brs.devtunnels.ms";
+  const API_URL = import.meta.env.BASE_URL;
 
   const loadUserId = async () => {
     try {

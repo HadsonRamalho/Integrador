@@ -40,3 +40,4 @@ src-back/images
 src-back/diesel.toml
 
 node_modules
+.env

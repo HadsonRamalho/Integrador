@@ -34,6 +34,7 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
       const response = await loadMachineImage(machineId);
       const imageUrl = response;
       setImage(imageUrl);
+      console.warn(imageUrl);
       setLoadingImage(false);
     } catch (error) {
       console.error(error);

@@ -11,3 +11,10 @@ export interface User{
   datacadastro: string,
   origemconta: string
 }
+
+export interface UserInput{
+  nome: string;
+  email: string;
+  senha: string;
+  documento: string;
+}

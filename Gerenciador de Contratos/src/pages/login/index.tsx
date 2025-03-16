@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { handleAxiosError } from "@/services/api/error/error";
 import { useAuth } from "@/hooks/auth";
 import GoogleLoginButton from "@/components/google-login-button";
+import { createUser } from "@/services/api/user/user";
+import { UserInput } from "@/interfaces/user";
 
 export default function AuthPage() {
   const [mode, setMode] = useState("login");
@@ -18,6 +20,8 @@ export default function AuthPage() {
   const [senha, setSenha] = useState("");
   const [document, setDocument] = useState("");
   const [password, setPassword] = useState("");
+
+  const [cadastrando, setCadastrando] = useState(false);
 
   const navigate = useNavigate();
   const { signIn } = useAuth();
@@ -43,31 +47,26 @@ export default function AuthPage() {
   };
 
   const createAccount = async () => {
+    if (!name || !emailS || !password || !document){
+      alert("Preencha todos os campos");
+      return;
+    }
     try {
-      const res = await fetch(
-        "https://g6v9psc0-3003.brs.devtunnels.ms/cadastra_usuario",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nome: name,
-            email: emailS,
-            documento: document,
-            senha: password,
-          }),
-        }
-      );
-      if (!res.ok) {
-        const erro = await res.text();
-        console.log("Erro ao tentar criar a conta:", erro);
-        throw new Error(erro);
-      }
-      console.log("Conta criada!");
+      setCadastrando(true);
+      const data: UserInput = {
+        nome: name,
+        documento: document,
+        senha: password,
+        email: emailS
+      };
+      await createUser(data);
+      alert("Sua conta foi criada! Você já pode fazer login.");
+      setCadastrando(false);
       setMode("login");
     } catch (erro) {
       console.error(erro);
+      setCadastrando(false);
+      alert(`Houve um erro ao tentar criar sua conta. ${erro.message}`);
     }
   };
 
@@ -165,7 +164,11 @@ export default function AuthPage() {
                     className="input-login"
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <Button onClick={createAccount}>Criar Conta</Button>
+                  <Button onClick={createAccount} disabled={cadastrando}>
+                    {cadastrando ?
+                    ("Cadastrando...")
+                    : ("Criar Conta")}
+                  </Button>
                   <span className="link">
                     Já possui conta?{" "}
                     <a
