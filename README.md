@@ -1,5 +1,5 @@
 # MaqExpress
-Versão atual: v0.1003
+Versão atual: v0.1503
 ## Materiais para a equipe
 #### Frontend:
  - [JavaScript](https://developer.mozilla.org/pt-BR/docs/Learn/Getting_started_with_the_web/JavaScript_basics)
