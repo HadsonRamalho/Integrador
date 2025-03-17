@@ -299,7 +299,7 @@ export default function ContractRequest() {
       </CardHeader>
         <CardContent className="flex flex-col items-center justify-center h-full text-center p-5">
         <Tabs defaultValue="recebidas" className="w-full">
-            <TabsList className="grid bg-[hsl(var(--background))] w-full h-full p-0 pb-4 m-0 sm:flex sm:flex-col">
+            <TabsList className="grid bg-[hsl(var(--background))] w-full h-full p-0 pb-4 m-0 sm:flex sm:flex-col  bg-[hsl(var(--background))]">
             <TabsTrigger 
               className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] 
               data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 

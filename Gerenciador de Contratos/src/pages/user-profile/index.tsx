@@ -450,7 +450,7 @@ export default function UserProfile() {
         <div className="user-profile-container">
         <div className="w-full md:w-[60%]">
         <Tabs defaultValue="usuario" className="w-full">
-          <TabsList className="grid grid-cols-1 h-full md:flex">
+          <TabsList className="grid grid-cols-1 h-full md:flex bg-[hsl(var(--background))]">
           <TabsTrigger 
             className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] 
             data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 
