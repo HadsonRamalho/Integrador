@@ -8,15 +8,17 @@
 
 @media (max-width: 480px) {
     .machine-list-grid{
-        display: flex;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         justify-items: center;
+        gap: 0px;
+        margin: 0;
+        padding: 0;
     }
 }
 
 .machine-list-grid.single-item {
     max-width: 350px;
-    max-height: 600px;
+    max-height: 500px;
     margin: 0;
     overflow: hidden;
     transition: transform 0.3s ease;

@@ -74,7 +74,7 @@ export default function ContractRequest() {
       <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] m-2 mt-4">
         <CardContent>
           <p className="text-black mt-4 mb-4">Endereço do Solicitante</p>
-          <CardContent className="grid grid-cols-4 gap-4 mt-4">
+          <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 p-0 m-0">
             <Label className="mt-2 mb-2">CEP</Label>
             <Input
               value={addressInfo?.cep}

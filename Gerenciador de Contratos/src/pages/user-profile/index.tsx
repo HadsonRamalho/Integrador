@@ -24,7 +24,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { loadBankAccountByUserId, updateBankAccount } from "@/services/api/bank-account";
 import { BankAccount } from "@/interfaces/bank-account";
-import { formatDate } from "@/services/api/format/format";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 export default function UserProfile() {
   const navigate = useNavigate();
@@ -53,6 +54,25 @@ export default function UserProfile() {
   const [logradouro, setLogradouro] = useState<string>();
   const [numero, setNumero] = useState<string>();
   const [complemento, setComplemento] = useState<string>();
+  const [bankAccount, setBankAccount] = useState<BankAccount>();
+
+  const loadBankAccount = async () => {
+    if(!user){
+      return;
+    }
+    try{
+      const res = await loadBankAccountByUserId(user.idusuario);
+      setBankAccount(res);
+    } catch(error){
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    if(user){
+      loadBankAccount();
+    }
+  }, [user]);
 
   async function AtualizaUsuario(nome_novo: string, email_novo: string, documento_novo: string, senha: string) {
     try {
@@ -143,6 +163,11 @@ export default function UserProfile() {
     user: User;
   }
 
+  interface BankAccountCardProps{
+    user: User;
+    bankAccount: BankAccount;
+  }
+
   interface AddressCardProps {
     user: User;
     address: Address;
@@ -164,7 +189,7 @@ export default function UserProfile() {
   }
 
     return (
-      <Card className="user-profile-card rounded-xl border-[1px] border-[hsl(var(--primary))] w-full md:w-[40vw] ">
+      <Card className="user-profile-card rounded-xl border-[1px] border-[hsl(var(--primary))] w-full ">
         <CardHeader>
           <CardTitle className="user-profile-card-header">Minhas Informações</CardTitle>
         </CardHeader>
@@ -204,7 +229,7 @@ export default function UserProfile() {
             onChange={(e) => setSenha(e.target.value)}
             />
           </>) : (<></>)}
-            <CardContent className="flex flex-col items-center justify-center mt-0">
+            <CardContent className="flex flex-col items-center justify-center mt-8">
               <Button className="hover:bg-[#169e69]" onClick={handleChange}>Atualizar perfil</Button>
             </CardContent>
         </CardContent>
@@ -297,43 +322,22 @@ export default function UserProfile() {
           <Input
           id="complemento"
           value={complemento}
-          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100 mb-4"
+          className="text-black rounded-md border-[1px] border-[hsl(var(--primary))] bg-neutral-100"
           onChange={(e) => setComplemento(e.target.value)}/>
           <CardContent>
-            <Button onClick={handleUpdateAddress}>Atualizar endereço</Button>
+            <Button className="mt-8" onClick={handleUpdateAddress}>Atualizar endereço</Button>
           </CardContent>
         </CardContent>
       </Card>
     );
   };
 
-  const BankAccountCard: React.FC<UserCardProps> = ({ user }) => {
-    const [bankName, setBankName] = useState<string>();
-    const [bankAccountNumber, setBankAccountNumber] = useState<string>();
-    const [bankAgency, setBankAgency] = useState<string>();
-    const [bankAccountId, setBankAccountId] = useState<string>();
+  const BankAccountCard: React.FC<BankAccountCardProps> = ({ user, bankAccount }) => {
+    const [bankName, setBankName] = useState<string>(bankAccount.nomebanco);
+    const [bankAccountNumber, setBankAccountNumber] = useState<string>(bankAccount.numeroconta);
+    const [bankAgency, setBankAgency] = useState<string>(bankAccount.numeroagencia);
+    const [bankAccountId, setBankAccountId] = useState<string>(bankAccount.idconta);
 
-    const loadBankAccount = async () => {
-      if(!user){
-        return;
-      }
-      try{
-        const res = await loadBankAccountByUserId(user.idusuario);
-        setBankName(res.nomebanco);
-        setBankAccountNumber(res.numeroconta);
-        setBankAgency(res.numeroagencia);
-        setBankAccountId(res.idconta);
-      } catch(error){
-        console.error(error);
-      }
-    }
-
-    useEffect(() => {
-      if(user){
-        loadBankAccount();
-      }
-    }, [user]);
-    
     const handleUpdateBankAccount = async () => {
       if (!bankAccountId || !bankAgency || !bankAccountNumber || !bankName){
         alert("Preencha todos os campos para atualizar a conta bancária.");
@@ -359,7 +363,7 @@ export default function UserProfile() {
 
     return (
       <div>
-        {bankAccountId && (
+        {bankAccountId ? (
           <Card className="mt-2 border-[hsl(var(--primary))] bg-[hsl(var(--machine-card-bg))]">
           <CardHeader>
             <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Minha Conta Bancária</CardTitle>
@@ -388,6 +392,10 @@ export default function UserProfile() {
             </CardContent>
           </CardContent>
         </Card>
+        ) : (
+          <Card className="border-[hsl(var(--primary))] border-[1px] h-[120px] flex justify-center items-center">
+            Carregando...
+          </Card>
         )}
       </div>
     );
@@ -440,7 +448,30 @@ export default function UserProfile() {
     <Layout>
       <main>        
         <div className="user-profile-container">
-        <div className="w-full md:w-auto">
+        <div className="w-full md:w-[60%]">
+        <Tabs defaultValue="usuario" className="w-full">
+          <TabsList className="grid grid-cols-1 h-full md:flex">
+          <TabsTrigger 
+            className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] 
+            data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 
+            data-[state=active]:border-[hsl(var(--primary))]" 
+            value="usuario"
+            >Minhas Informações</TabsTrigger>
+            <TabsTrigger 
+            className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] 
+            data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 
+            data-[state=active]:border-[hsl(var(--primary))]" 
+            value="endereco">Meu Endereço</TabsTrigger>
+            {(user && bankAccount) && (
+            <TabsTrigger 
+            className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] 
+            data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 
+            data-[state=active]:border-[hsl(var(--primary))]" 
+            value="conta-banco"
+            >Minha Conta Bancária</TabsTrigger>
+            )}
+          </TabsList>
+          <TabsContent value="usuario" className="w-full">
           {user ? (
             <UserCard user={user} />            
             ) : error ? (
@@ -450,15 +481,22 @@ export default function UserProfile() {
             </div>
             ) : (
             <p>Carregando usuário...</p>
-        )}
-        {address && user ? (
-          <AddressCard user={user} address={address} />
-        ) : (
-          <p>Carregando endereço...</p>
-        )}
-        {user && (
-          <BankAccountCard user={user}/>
-        )}
+          )}
+          </TabsContent>
+          <TabsContent value="endereco" className="w-full">
+          {address && user ? (
+            <AddressCard user={user} address={address} />
+          ) : (
+            <p>Carregando endereço...</p>
+          )}
+          </TabsContent>
+          <TabsContent value="conta-banco" className="w-full">
+          {(user && bankAccount) && (
+            <BankAccountCard bankAccount={bankAccount} user={user}/>
+          )}
+          </TabsContent>
+        </Tabs>
+      
         </div>      
         </div>
         <div>

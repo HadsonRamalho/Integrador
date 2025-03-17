@@ -12,8 +12,6 @@ import GoogleLoginButton from "@/components/google-login-button";
 import { createUser } from "@/services/api/user/user";
 import { UserInput } from "@/interfaces/user";
 
-import process from "process";
-
 export default function AuthPage() {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
@@ -24,16 +22,23 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
 
   const [cadastrando, setCadastrando] = useState(false);
+  const [entrando, setEntrando] = useState(false);
 
   const navigate = useNavigate();
   const { signIn } = useAuth();
 
   const RealizaLogin = async () => {
     try {
+      if (!email || !senha){
+        alert("Preencha todos os campos.");
+        return;
+      }
+      setEntrando(true);
       const credentials = { email: email, password: senha };
 
       await signIn(credentials);
       console.log("Login realizado com sucesso.");
+      setEntrando(false);
 
       navigate("/");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,6 +50,7 @@ export default function AuthPage() {
       }
       console.error(erro.message || erro);
       alert(erro.message || erro);
+      setEntrando(false);
     }
   };
 
@@ -72,12 +78,9 @@ export default function AuthPage() {
     }
   };
 
-  const API_URL = process.env.FRONT_URL || "http://localhost:5173";
-
   const redirectGoogle = async () => {
     console.log('Redirecionando para o Google...');
-    alert(API_URL);
-    const redirectUri = `${API_URL}/auth/google/callback`;
+    const redirectUri = 'http://localhost:5173/auth/google/callback';
     const clientId = '853000099698-mja71sb0chsva2m9eu3prpktl31psg5q.apps.googleusercontent.com';
   
     const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=email&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&client_id=${clientId}`;
@@ -89,7 +92,7 @@ export default function AuthPage() {
   return (
     <Layout>
       <main>
-        <div className="container">
+        <div className="container ml-0 md:ml-[6%]">
           <div className="content ">
           <div className="titulo">
                 <h1> MaqExpress</h1>
@@ -123,8 +126,10 @@ export default function AuthPage() {
                   >
                     Esqueci a senha
                   </a>
-                  <Button className="button" onClick={RealizaLogin}>
-                    Entrar
+                  <Button disabled={entrando} className="button" onClick={RealizaLogin}>
+                    {entrando ? 
+                    ("Entrando...")
+                    : ("Entrar")}
                   </Button>
                   <GoogleLoginButton onClick={redirectGoogle}></GoogleLoginButton>
                   <span className="link">

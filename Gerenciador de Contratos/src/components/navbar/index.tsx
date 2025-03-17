@@ -78,7 +78,7 @@ export function NavBar() {
         </li>
         </ul>
         {menuOpen && (
-          <ul className="sm:hidden absolute top-0 left-0 w-full h-[60svh] bg-[hsl(var(--machine-card-bg))] text-red flex flex-col items-center justify-center space-y-6 text-lg">
+          <ul style={{zIndex: 1000}} className="sm:hidden absolute top-0 left-0 w-full h-[60svh] bg-[hsl(var(--machine-card-bg))] text-red flex flex-col items-center justify-center space-y-6 text-lg">
             <li>
               <NavLink to="/" className="class1" onClick={() => setMenuOpen(false)}>
                 <p className="text-[hsl(var(--text))]">Início</p>

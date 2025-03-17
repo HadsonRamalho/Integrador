@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '@/layouts/default';
 import { useAuth } from '@/hooks/auth';
-import process from 'process';
 
 function GoogleAuthCallback() {
   const [searchParams] = useSearchParams();
-  const [message, setMessage] = useState("Autenticando...");
-  const API_URL = process.env.VITE_URL_BASE || "http://localhost:3003";
+  const [message, setMessage] = useState("Carregando...");
+  const API_URL = "http://localhost:3003";
   const navigate = useNavigate();
   const { signIn } = useAuth();
   const loadUserId = async (email: string) => {
@@ -47,7 +46,7 @@ function GoogleAuthCallback() {
 
       try {
         const res = await fetch(
-            `http://localhost:3003/auth/google`,
+            "http://localhost:3003/auth/google",
             {
               method: "POST",
               headers: {
@@ -67,7 +66,7 @@ function GoogleAuthCallback() {
         const obj = await res.json();
         console.log('email: ', obj.email);
         console.log("Autenticado!");
-        setMessage('Autenticado');
+        setMessage('autenticado');
         alert('Autenticação realizada com sucesso!');
         await loadUserId(obj.email);
         localStorage.setItem("PROFILE_IMAGE_URL", obj.picture);
@@ -75,7 +74,7 @@ function GoogleAuthCallback() {
       } catch (error) {
         console.error('Erro ao enviar código ao backend:', error);
         alert('Falha na autenticação!');
-        setMessage('Erro ao autenticar');
+        setMessage('erro ao autenticar');
       }
     };
 
@@ -85,7 +84,7 @@ function GoogleAuthCallback() {
   return (
     <Layout>
       <div>
-        <h1>{message}</h1>
+        <h1>Autenticando...</h1>
         <p style={{color: 'white'}}>{message}</p>
       </div>
     </Layout>

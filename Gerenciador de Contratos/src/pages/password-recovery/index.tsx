@@ -161,12 +161,12 @@ export default function PasswordRecovery() {
   return (
     <>
       <Layout>
-        <main>
-          <div className="password-recovery">
-            <div className="input-box height-[400px] mb-10">
+        <main className="md:pb-20 md:pt-10">
+          <div className="password-recovery flex justify-center items-center">
+            <div className="input-box  w-full md:w-[50%] m-4 h-[50%] p-4">
               <h2 className="title">Recuperação de senha</h2>
               {(!isCodeInputVisible && !isPasswordInputVisible) && (
-                <>                 
+                <>
                   <Input
                     type="email"
                     value={email}
