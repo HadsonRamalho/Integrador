@@ -93,10 +93,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/helpcenter",
-    element: (
-      <PrivateRoute>
-        <HelpCenter/>
-      </PrivateRoute>)
+    element: <HelpCenter/>
   },
  
   {

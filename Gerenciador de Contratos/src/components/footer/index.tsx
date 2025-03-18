@@ -18,6 +18,7 @@ function Footer() {
       <section className="footer-section">
         <h2 className="uppercase">Fale conosco</h2>
         <ul>
+          <li><a href="/helpcenter">Central de Ajuda</a></li>
           <strong>E-mail</strong>
           <li>
             <a href="mailto:gerenciadordecontratosgdc@gmail.com">gerenciadordecontratosgdc@gmail.com
