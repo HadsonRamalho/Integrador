@@ -161,8 +161,7 @@ diesel::table! {
         status -> Varchar,
         datacadastro -> Timestamp,
         dataatualizacao -> Timestamp,
-        #[max_length = 64]
-        descricao -> Varchar,
+        descricao -> Text,
     }
 }
 
