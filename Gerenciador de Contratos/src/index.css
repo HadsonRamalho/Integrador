@@ -85,13 +85,23 @@
 
 body {
   background-color: hsl(var(--background)); 
-  font-family: Georgia, 'Poppins','Roboto', sans-serif ;
+  font-family: 'Inter', 'Poppins','Roboto', sans-serif ;
 }
 
-p {
+h1, h2, h3, h4, span{
+  font-family: 'Poppins', sans-serif;
   color: hsl(var(--text));
 }
 
-h1{
+p{
+  font-family: 'Inter', sans-serif;
   color: hsl(var(--text));
+}
+
+li, a, strong{
+  font-family: 'Poppins', sans-serif;
+}
+
+input{
+  font-family: 'Roboto', sans-serif;
 }
