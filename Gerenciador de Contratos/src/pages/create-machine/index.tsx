@@ -212,11 +212,11 @@ export default function CreateMachine() {
   return (
   <Layout>
     <div className="flex justify-center items-center min-h-screen">
-      <Card className="form-maquinas border-[hsl(var(--primary))] mt-10 w-full max-w-3xl mb-10">
+      <Card className="bg-[hsl(var(--machine-card-bg))] border-[hsl(var(--primary))] mt-10 w-full max-w-3xl mb-10">
         <CardHeader>
           <h2 className="text-[25px] text-[hsl(var(--text))]">Cadastro de Máquina</h2>
         </CardHeader>
-        <CardContent className="form-content space-y-4">
+        <CardContent className="">
           <CardDescription>
             <Label htmlFor="machine-name" className="mb-1">Nome da Máquina</Label>
             <Input
@@ -298,9 +298,9 @@ export default function CreateMachine() {
               ))}
             </div>
   
-            <div className="button-group-maquinas flex gap-4 mt-6">
+            <div className="grid mt-6 grid-cols-1 justify-center">
               <Button onClick={addImageInput}>Adicionar Imagem</Button>
-              <Button disabled={loading} onClick={tryCreateMachine}>
+              <Button className="mt-4" disabled={loading} onClick={tryCreateMachine}>
                 {loading ? (
                   <>Cadastrando...</>
                 ) : (<>Cadastrar Máquina</>)} 

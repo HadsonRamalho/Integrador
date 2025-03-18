@@ -24,27 +24,6 @@
     width: 100%;  
 } */
 
-.form-maquinas {
-    width: 100vw;
-    background-color: hsl(var(--machine-card-bg));
-    padding: 20px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px; 
-}
-
-.form-maquinas input, select, textarea{
-    margin-left: 0%;
-}
-
-.form-maquinas label{
-    color: hsl(var(--text));
-    font-size: 1rem;
-    padding-left: 0;
-}
-
 .machine-image-update img{
     max-width: 90%;
     max-height: 40%;
