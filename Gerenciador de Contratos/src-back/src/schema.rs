@@ -102,7 +102,6 @@ diesel::table! {
         idimagem -> Varchar,
         #[max_length = 128]
         nome -> Varchar,
-        bin -> Bytea,
         #[max_length = 128]
         link -> Varchar,
     }

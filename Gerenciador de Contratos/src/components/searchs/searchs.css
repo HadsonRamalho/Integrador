@@ -77,7 +77,7 @@
 .search-machine-grid.single-item {
     max-width: 350px;
     max-height: 600px;
-    margin: 0;
+    padding: 25px;
     overflow: hidden;
     transition: transform 0.3s ease;
     grid-template-columns: 1fr;

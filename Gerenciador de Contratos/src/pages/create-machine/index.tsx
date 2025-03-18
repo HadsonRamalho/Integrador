@@ -187,6 +187,7 @@ export default function CreateMachine() {
     await submitImages();
     await connectMachineImage(machineid?.idmaquina);
     setIsLoading(false);
+    alert("Máquina cadastrada!");
     } catch(error){
       alert("Erro ao cadastrar a máquina.");
       setIsLoading(false);
@@ -253,7 +254,7 @@ export default function CreateMachine() {
             <br></br>
             <select
               id="rent-disponibility"
-              className="w-full  h-[30px] text-black mb-4 border-[hsl(var(--primary))] rounded-m border-[1px] bg-neutral-100"
+              className="w-full  h-[30px] text-black mb-4 border-[hsl(var(--primary))] rounded-md border-[1px] bg-neutral-100"
               onChange={(e) => setRentDisponibility(e.target.value)}
               value={rentDisponibility}
               required

@@ -15,7 +15,6 @@
 }
 
 .machine-card{
-    width: 90%;
     height: 80%;
     margin-top: 4vh;
     border-color: hsl(var(--primary));

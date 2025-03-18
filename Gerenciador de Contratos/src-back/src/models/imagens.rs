@@ -8,21 +8,18 @@ use diesel::Queryable;
 
 #[derive(Queryable, Selectable, Serialize, Deserialize, Insertable)]
 #[table_name = "imagens"]
-pub struct Imagem {
+pub struct Imagem { 
     pub idimagem: String,
     pub nome: String,
-    pub bin: Vec<u8>,
     pub link: String
 }
 
-pub async fn cadastra_imagem(conn: &mut PgConnection, nome: String, bin: Vec<u8>) -> Result<String, String> {
+pub async fn cadastra_imagem(conn: &mut PgConnection, nome: String) -> Result<String, String> {
     use crate::schema::imagens;
-    println!("Tamanho da imagem que será salva: {}", bin.len());
     let id = gera_hash(&nome);
     let nova_imagem = Imagem {
         idimagem: id.clone(),
         nome,
-        bin,
         link: "".to_string()
     };
 
