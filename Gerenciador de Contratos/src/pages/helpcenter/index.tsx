@@ -14,9 +14,12 @@ export default function HelpCenter() {
     { id: 1, categoria: "FAQ", descricao: "como faço isso?" },
     { id: 2, categoria: "Tutorial", descricao: "como faço pra atualizar meus dados?" },
     { id: 3, categoria: "Suporte", descricao: "Como entro em contato com suporte?" },
+    { id: 4, categoria: "Como me cadastro?", descricao: "Acesse a página de cadastro" },
   ]
   const filteredDoubts = duvidas.filter((duvidas) =>
     duvidas.categoria.toLowerCase().includes(search.toLowerCase())
+    ||
+    duvidas.descricao.toLowerCase().includes(search.toLowerCase())
   );
   return (
     <Layout>
@@ -39,10 +42,10 @@ export default function HelpCenter() {
 
         {filteredDoubts.length > 0 ? (
           filteredDoubts.map((duvidas) => (
-            <Card key={duvidas.id} className="faq">
+            <Card key={duvidas.id} className="faq w-[90%] m-4">
               <CardContent>
-                <h2 className="text-black">{duvidas.categoria}</h2>
-                <h4 className="text-black">{duvidas.descricao}</h4>
+                <p className="text-black text-[1.25rem] mt-2 mb-2">{duvidas.categoria}</p>
+                <p className="text-black">{duvidas.descricao}</p>
 
               </CardContent>
             </Card>
@@ -50,7 +53,7 @@ export default function HelpCenter() {
         ) : (
           <p className="">Nenhum resultado encontrado.</p>
         )}
-        <Button className="botao"><a href="mailto:gerenciadordecontratosgdc@gmail.com">Falar com o Suporte</a></Button>
+        <Button className="botao mb-4"><a href="mailto:gerenciadordecontratosgdc@gmail.com">Falar com o Suporte</a></Button>
       </div>
     </div>
     </Layout>

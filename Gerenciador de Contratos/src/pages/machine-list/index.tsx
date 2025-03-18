@@ -14,10 +14,13 @@ import { Machine as Maquina } from "@/interfaces/machine";
 import { Button } from "@/components/ui/button";
 import MachineFilter from "@/components/machine-filter";
 import { MachineCard } from "@/components/machine-card";
+import { useNavigate } from "react-router-dom";
 
 export const MachineList = () => {
   const [machines, setMachines] = useState<Machine[]>([]);
   const [filter, setFilter] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const id = localStorage.getItem("USER_ID");
@@ -69,7 +72,7 @@ export const MachineList = () => {
                   </p>
                   <div className="m-4">
                     <Button className="m-2">Relatar problema</Button>
-                    <Button className="m-2">Cadastrar uma máquina</Button>
+                    <Button className="m-2" onClick={() => (navigate("/create-machine"))}>Cadastrar uma máquina</Button>
                   </div>
                 </div>
               </CardContent>
@@ -78,7 +81,8 @@ export const MachineList = () => {
             filteredMachines.map((machine: Maquina) => (
               <div
                 key={machine.idmaquina}
-                style={{ width: "90%", maxWidth: '350px', height: "600px", maxHeight: '600px', padding: '0' }}
+                className="h-full mb-4 md:h-[600px]"
+                style={{ width: "90%", maxWidth: '350px', maxHeight: '500px', padding: '0' }}
               >
                 <MachineCard machine={machine} />
               </div>

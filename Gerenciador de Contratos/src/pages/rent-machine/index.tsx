@@ -289,7 +289,7 @@ const RentMachine = () => {
       <main>
         {step === "cadastro-locatario" ? (
           <div className="rent-machine-container">
-            <Card className="bg-[hsl(var(--machine-card-bg))] w-[60vw] m-4 border-[hsl(var(--primary))]">
+            <Card className="bg-[hsl(var(--machine-card-bg))] w-full md:w-[60vw] m-4 border-[hsl(var(--primary))]">
               <CardHeader>
               <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Minhas Informações</CardTitle>
               </CardHeader>
@@ -297,8 +297,8 @@ const RentMachine = () => {
                 <p>Confirme seus dados antes de alugar a máquina. Só é necessário realizar esse processo uma vez.</p>
                 <p>Se precisar atualizar alguma informação, acesse o seu perfil.</p>
               </CardDescription>
-                <CardContent className="flex flex-col items-center w-full">
-                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                <CardContent className="flex flex-col items-center w-full p-4">
+                <Card className="w-full md:w-[80%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))] p-4">
                   <Label className="text-[hsl(var(--text))] mt-2 ">Nome</Label>
                   <Input
                   value={user?.nome}
@@ -318,7 +318,7 @@ const RentMachine = () => {
                   className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
                 </Card>
                 {address ? (
-                  <Card className="mt-2 w-[60%] bg-[hsl(var(--machine-card-bg))] pb-10 border-[hsl(var(--primary))]">
+                  <Card className="mt-2 w-full md:w-[80%] bg-[hsl(var(--machine-card-bg))] pb-10 border-[hsl(var(--primary))] p-4">
                   <Label className="text-[hsl(var(--text))] mt-2">CEP</Label>
                   <Input
                   value={address?.cep}
@@ -389,7 +389,7 @@ const RentMachine = () => {
           </div>
         ) : step === "revisão-solicitação" ? (
           <div className="rent-machine-container">
-            <Card className="bg-[hsl(var(--machine-card-bg))] w-[60vw] m-4 border-[hsl(var(--primary))]">
+            <Card className="bg-[hsl(var(--machine-card-bg))] w-full md:w-[60%] m-4 border-[hsl(var(--primary))]">
               <CardHeader>
               <CardTitle className="text-[1.5rem] text-[hsl(var(--primary))]">Revisão da Solicitação</CardTitle>
               </CardHeader>
@@ -398,7 +398,7 @@ const RentMachine = () => {
                 <p>Se precisar atualizar alguma informação, acesse o seu perfil.</p>
               </CardDescription>
                 <CardContent className="flex flex-col items-center w-full">
-                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                <Card className="w-full md:w-[80%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
                 <CardHeader className="text-[hsl(var(--text))]  text-[1.25rem]"><strong>Máquina </strong>
                   <img
                     src={machineImage}
@@ -434,7 +434,7 @@ const RentMachine = () => {
                 )}
                 </Card>
 
-                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                <Card className="w-full md:w-[80%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
                 <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]"><strong>Aluguel</strong>
                  </CardHeader>
                  <CardContent>
@@ -483,7 +483,7 @@ const RentMachine = () => {
 
                  </CardContent>
                  </Card>
-                 <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
+                 <Card className="w-full md:w-[80%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))]">
                  <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]"><strong>Informações para Pagamento</strong>
                  </CardHeader>
                     <CardContent>
@@ -512,7 +512,7 @@ const RentMachine = () => {
                       className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
                     </CardContent>
                 </Card>
-                <Card className="w-[60%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))] mb-10">
+                <Card className="w-full md:w-[80%] mt-2 bg-[hsl(var(--machine-card-bg))] pb-4 border-[hsl(var(--primary))] mb-10">
                  <CardHeader className="text-[hsl(var(--text))] text-[1.25rem]"><strong>Endereço para Retirada</strong>
                  </CardHeader>
                     <CardContent>

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "../ui/skeleton";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import { formatCurrency } from "@/services/api/format/format";
 export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
   const [image, setImage] = useState("");
   const [loadingImage, setLoadingImage] = useState(true);
@@ -119,7 +120,7 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
           </div>
           <CardDescription>
             <p className="machine-card-description">
-              Preço: <strong>R$ {machine.valoraluguel}</strong>
+              Valor Mensal: <strong>{formatCurrency(machine.valoraluguel)}</strong>
             </p>
             <p className="machine-card-description">
               Categoria: {machine.categoria}

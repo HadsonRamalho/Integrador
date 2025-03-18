@@ -45,9 +45,9 @@ export const NotificationList = () => {
           </div>
           <div className={`grid`}>
           {filteredNotifications.length === 0 ? (
-            <Card>
+            <Card className="bg-[hsl(var(--machine-card-bg))] border-[hsl(var(--primary))]">
               <CardHeader>
-                <h2 className="text-[hsl(var(--primary))]">
+                <h2 className="text-[hsl(var(--primary))] ">
                   Erro ao carregar lista de notificações
                 </h2>
               </CardHeader>

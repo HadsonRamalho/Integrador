@@ -18,7 +18,7 @@ export const MachineDropdownMenu: React.FC<MachineDropdownMenuProps> = ({ trigge
         <DropdownMenuTrigger>
         <p style={{color: triggerColor || "white"}}>Máquinas</p>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent style={{zIndex: 1001}}>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
                 <NavLink to={"/machine"} className={({ isActive }) => `class1  ${isActive ? "link-nav-active" : ""}`}>

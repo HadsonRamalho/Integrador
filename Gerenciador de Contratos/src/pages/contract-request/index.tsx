@@ -74,7 +74,7 @@ export default function ContractRequest() {
       <Card className="border-[hsl(var(--primary))] bg-[hsl(var(--hover))] m-2 mt-4">
         <CardContent>
           <p className="text-black mt-4 mb-4">Endereço do Solicitante</p>
-          <CardContent className="grid grid-cols-4 gap-4 mt-4">
+          <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 p-0 m-0">
             <Label className="mt-2 mb-2">CEP</Label>
             <Input
               value={addressInfo?.cep}
@@ -299,7 +299,7 @@ export default function ContractRequest() {
       </CardHeader>
         <CardContent className="flex flex-col items-center justify-center h-full text-center p-5">
         <Tabs defaultValue="recebidas" className="w-full">
-            <TabsList className="grid bg-[hsl(var(--background))] w-full h-full p-0 m-0 sm:flex sm:flex-col">
+            <TabsList className="grid bg-[hsl(var(--background))] w-full h-full p-0 pb-4 m-0 sm:flex sm:flex-col  bg-[hsl(var(--background))]">
             <TabsTrigger 
               className="text-[hsl(var(--primary))] data-[state=active]:bg-[hsl(var(--primary))] 
               data-[state=active]:text-[hsl(var(--text))] data-[state=active]:border-2 
@@ -319,16 +319,26 @@ export default function ContractRequest() {
             </TabsList>
           <TabsContent value="recebidas">
 
-            {requests?.map((req) => (
+            {(requests && requests?.length > 0) ? requests?.map((req) => (
               <RequestCard request={req}/>
-            ))}
+            ))
+            :(
+              <p className="text-[hsl(var(--text))] mt-4">
+              Você ainda não possui solicitações de contrato.
+            </p>
+            )}
 
           </TabsContent>
           <TabsContent value="emitidas">
             
-          {renterRequests?.map((req) => (
+          {(renterRequests && renterRequests.length > 0) ? renterRequests?.map((req) => (
             <RequestCard request={req}/>
-          ))}
+          )) 
+          : (
+            <p className="text-[hsl(var(--text))] mt-4">
+              Você ainda não possui solicitações de contrato.
+            </p>
+          )}
 
           </TabsContent>
         </Tabs>

@@ -27,13 +27,13 @@ export const ProfileDropdownMenu = () => {
         <div>
         <DropdownMenu>
         <DropdownMenuTrigger>
-        <Avatar>
+        <Avatar className="border-[hsl(var(--primary))] border-[2px]">
                 <AvatarImage src={localStorage.getItem("PROFILE_IMAGE_URL") || "https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg"} />                    
         </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-            <DropdownMenuLabel>
-                <Avatar>
+        <DropdownMenuContent style={{zIndex: 1001}}>
+            <DropdownMenuLabel className="flex items-center justify-center">
+                <Avatar className="border-[hsl(var(--primary))] border-[2px]">
                 <AvatarImage src={localStorage.getItem("PROFILE_IMAGE_URL") || "https://i.pinimg.com/736x/f1/13/b7/f113b7eb12a6e28b201152535c8b89da.jpg"} />                    
                 </Avatar>
             

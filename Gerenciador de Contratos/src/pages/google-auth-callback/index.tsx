@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/auth';
 function GoogleAuthCallback() {
   const [searchParams] = useSearchParams();
   const [message, setMessage] = useState("Carregando...");
-  const API_URL = "https://g6v9psc0-3003.brs.devtunnels.ms";
+  const API_URL = "http://localhost:3003";
   const navigate = useNavigate();
   const { signIn } = useAuth();
   const loadUserId = async (email: string) => {
@@ -46,7 +46,7 @@ function GoogleAuthCallback() {
 
       try {
         const res = await fetch(
-            "https://g6v9psc0-3003.brs.devtunnels.ms/auth/google",
+            "http://localhost:3003/auth/google",
             {
               method: "POST",
               headers: {

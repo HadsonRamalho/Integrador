@@ -10,7 +10,9 @@ import {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp"
+} from "@/components/ui/input-otp";
+
+import process from "process";
 
 export default function PasswordRecovery() {
   const [email, setEmail] = useState("");
@@ -24,8 +26,9 @@ export default function PasswordRecovery() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const navigate = useNavigate();
+  
+  const API_URL = process.env.VITE_URL_BASE || "http://localhost:3003";
 
-  const API_URL = import.meta.env.BASE_URL;
 
   const loadUserId = async () => {
     try {
@@ -158,12 +161,12 @@ export default function PasswordRecovery() {
   return (
     <>
       <Layout>
-        <main>
-          <div className="password-recovery">
-            <div className="input-box height-[400px] mb-10">
+        <main className="md:pb-20 md:pt-10">
+          <div className="password-recovery flex justify-center items-center">
+            <div className="input-box  w-full md:w-[50%] m-4 h-[50%] p-4">
               <h2 className="title">Recuperação de senha</h2>
               {(!isCodeInputVisible && !isPasswordInputVisible) && (
-                <>                 
+                <>
                   <Input
                     type="email"
                     value={email}

@@ -5,8 +5,9 @@ import {
   loadMachinePublicId,
   loadUserMachines,
   loadMachineImages,
+  loadMachineRentValue,
 } from "@/services/api/machine/machine";
-import { Machine as Maquina } from "@/interfaces/machine";
+import { MachineRentValue, Machine as Maquina } from "@/interfaces/machine";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import "@/components/machine-details/machine-details.css";
@@ -41,7 +42,9 @@ export default function MachineDetails() {
   const [showAlert, setShowAlert] = useState(false);
   const toggleAlert = () => setShowAlert(!showAlert);
   const [machineOwner, setMachineOwner] = useState(false);
-
+  const [machineHour, setMachineHour] = useState<number>(0);
+  const [machineDay, setMachineDay] = useState<number>(0);
+  const [machineWeek, setMachineWeek] = useState<number>(0);
   
 
   useEffect(() => {
@@ -106,11 +109,46 @@ export default function MachineDetails() {
     }
   }, [machine]);
 
+  const fetchMachinePrices = async (idmaquina: string) => {
+    const dados_horas: MachineRentValue = {
+      idmaquina: idmaquina,
+      medida_prazo: 'Horas',
+      prazo: 1
+    };
+    const dados_dias: MachineRentValue = {
+      idmaquina: idmaquina,
+      medida_prazo: 'Dias',
+      prazo: 1
+    };
+    const dados_semanas: MachineRentValue = {
+      idmaquina: idmaquina,
+      medida_prazo: 'Semanas',
+      prazo: 1
+    };
+    try {
+      const resHour = await loadMachineRentValue(dados_horas);
+      const resDay = await loadMachineRentValue(dados_dias);
+      const resWeek = await loadMachineRentValue(dados_semanas);
+      setMachineHour(resHour);
+      setMachineDay(resDay);
+      setMachineWeek(resWeek);
+    } catch (error) {
+      console.error(error); 
+    }
+
+  }
+
+  useEffect(() => {
+    if(machine){
+      fetchMachinePrices(machine.idmaquina);
+    }
+  }, [machine]);
+
   return (
     <Layout>
       <main>
         <div className="flex justify-center items-center">
-          <Card className="machine-details-card">
+          <Card className="machine-details-card w-full md:w-[60%]">
             {machine ? (
               <CardContent className="mt-4">
               <div className="machine-details-image">
@@ -145,11 +183,30 @@ export default function MachineDetails() {
                 className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
               <CardDescription className="m-2">
-              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (Mensal)</Label>
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (por mês)</Label>
               <Input
                 value={formatCurrency(machine.valoraluguel)}
                 disabled={true}
                 className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+              
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (por semana)</Label>
+              <Input
+                value={formatCurrency(machineWeek)}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+              
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (por dia)</Label>
+              <Input
+                value={formatCurrency(machineDay)}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+              
+              <Label className="text-[hsl(var(--text))] mt-2 mb-2">Valor do Aluguel (por hora)</Label>
+              <Input
+                value={formatCurrency(machineHour)}
+                disabled={true}
+                className="p-2 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
+              
 
               <Label className="text-[hsl(var(--text))] mt-2 mb-2">Categoria da Máquina</Label>
               <Input
@@ -175,7 +232,7 @@ export default function MachineDetails() {
                 disabled={true}
                 className="p-2 h-20 text-black bg-white rounded-md border-[1px] border-[hsl(var(--primary))] w-[100%]"/>
 
-                <div className="flex justify-center items-center m-2">
+                <div className="grid grid-cols-1 md:flex justify-center items-center m-2">
                 {machine?.disponivelaluguel === "Sim" ?
                 (
                   <Button className="m-2"
