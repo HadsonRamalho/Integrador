@@ -183,7 +183,7 @@ pub async fn gera_contrato_idsolicitacao(Query(id): Query<IdInput>)
     let locador = busca_usuario_id(Query(IdInput{id: contrato.idlocador})).await?.1.0;
 
     let tipodocumentolocatario = tipo_documento(&locatario.documento)?;
-    let tipodocumentolocador = tipo_documento(&locatario.documento)?;
+    let tipodocumentolocador = tipo_documento(&locador.documento)?;
 
     let enderecolocatario = busca_endereco_idusuario(Query(UserId{idusuario: locatario.idusuario})).await?.1.0;
     let enderecolocador = busca_endereco_idusuario(Query(UserId{idusuario: locador.idusuario.clone()})).await?.1.0;

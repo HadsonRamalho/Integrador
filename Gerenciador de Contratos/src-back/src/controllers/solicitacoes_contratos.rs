@@ -149,6 +149,16 @@ pub async fn atualiza_status_solicitacao(input: Json<StatusSolicitacaoInput>)
         }
     };
 
+    let idlocatario = busca_solicitacao_idsolicitacao(Query(IdInput { id: {input.id.clone()} })).await?.1.0.idlocatario;
+
+    let idnotificacao = cadastra_notificacao(
+      Json(NotificacaoInput { 
+        idusuario: idlocatario, 
+        titulo: "Sua solicitação de aluguel foi atualizada!".to_string(), 
+        mensagem: format!("Uma locadora atualizou o status de sua solicitação para '{}'. Clique aqui para ver suas solicitações.", solicitacao.statussolicitacao.clone()), 
+        onclick: ("/contract-request".to_string()) })
+    ).await?.1.0;
+
     if solicitacao.statussolicitacao != "Solicitação aprovada"{
       return Ok((StatusCode::OK, Json(solicitacao)))
     }

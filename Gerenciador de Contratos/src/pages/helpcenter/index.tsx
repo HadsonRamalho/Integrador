@@ -53,7 +53,10 @@ export default function HelpCenter() {
         ) : (
           <p className="">Nenhum resultado encontrado.</p>
         )}
+        <div className="flex items-center justify-center">
         <Button className="botao mb-4"><a href="mailto:gerenciadordecontratosgdc@gmail.com">Falar com o Suporte</a></Button>
+
+        </div>
       </div>
     </div>
     </Layout>
