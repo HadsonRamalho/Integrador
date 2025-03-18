@@ -85,7 +85,7 @@
 
 body {
   background-color: hsl(var(--background)); 
-  font-family: 'Inter', 'Poppins','Roboto', sans-serif ;
+  font-family: Georgia, 'Poppins','Roboto', sans-serif ;
 }
 
 p {
