@@ -102,7 +102,6 @@ diesel::table! {
         idimagem -> Varchar,
         #[max_length = 128]
         nome -> Varchar,
-        bin -> Bytea,
         #[max_length = 128]
         link -> Varchar,
     }
@@ -162,8 +161,7 @@ diesel::table! {
         status -> Varchar,
         datacadastro -> Timestamp,
         dataatualizacao -> Timestamp,
-        #[max_length = 64]
-        descricao -> Varchar,
+        descricao -> Text,
     }
 }
 

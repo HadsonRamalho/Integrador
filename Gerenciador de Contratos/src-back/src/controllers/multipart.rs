@@ -31,7 +31,7 @@ pub async fn cadastra_imagem(data: TypedMultipart<Img>)
     let conn = &mut cria_conn()?;
 
     // Insere os dados da imagem no banco de dados
-    match crate::models::imagens::cadastra_imagem(conn, nomearquivo.clone(), bin).await {
+    match crate::models::imagens::cadastra_imagem(conn, nomearquivo.clone()).await {
         Ok(idimagem) => {
             let nome_hash = format!("{}_{}", &idimagem[..20], nomearquivo);
             let file_path = format!("./images/{}", &nome_hash);

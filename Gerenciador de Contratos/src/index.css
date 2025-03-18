@@ -88,10 +88,24 @@ body {
   font-family: 'Inter', 'Poppins','Roboto', sans-serif ;
 }
 
-p {
+h1, h2, h3, h4{
+  font-family: 'Poppins', sans-serif;
   color: hsl(var(--text));
 }
 
-h1{
+span{
+  font-family: 'Poppins', sans-serif;
+}
+
+p{
+  font-family: 'Inter', sans-serif;
   color: hsl(var(--text));
+}
+
+li, a, strong{
+  font-family: 'Poppins', sans-serif;
+}
+
+input{
+  font-family: 'Roboto', sans-serif;
 }

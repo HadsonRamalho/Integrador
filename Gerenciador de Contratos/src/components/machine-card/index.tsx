@@ -60,7 +60,7 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
 
   return (
     <div>
-              <div>
+      <div>
           <AlertDialog open={showAlert} onOpenChange={toggleAlert}>
             <AlertDialogTrigger asChild></AlertDialogTrigger>
             <AlertDialogContent>
@@ -115,7 +115,7 @@ export const MachineCard: React.FC<{ machine: Machine }> = ({ machine }) => {
               <div className="image-placeholder">Imagem indisponível</div>
             )}
           </div>
-          <div>
+          <div className="flex justify-center items-center">
             <h1 className="ml-0 w-[250px]">{machine.nome}</h1>
           </div>
           <CardDescription>

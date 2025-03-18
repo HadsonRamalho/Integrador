@@ -58,8 +58,8 @@ pub async fn busca_solicitacoes_idlocatario(conn: &mut PgConnection, id: String)
     -> Result<Vec<SolicitacaoContrato>, String>{
     use crate::schema::solicitacoes_contratos::dsl::*;
 
-    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = solicitacoes_contratos
-      .filter(idlocatario.eq(id))
+    let res: Result<Vec<SolicitacaoContrato>, diesel::result::Error> = diesel::QueryDsl::order_by(solicitacoes_contratos
+      .filter(idlocatario.eq(id)), datasolicitacao.desc())
       .get_results(conn);
     
     match res{
