@@ -230,6 +230,10 @@ diesel::table! {
         idusuario -> Varchar,
         #[max_length = 64]
         origemconta -> Varchar,
+        #[max_length = 64]
+        status -> Varchar,
+        #[max_length = 64]
+        idpublico -> Varchar,
     }
 }
 

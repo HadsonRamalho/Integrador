@@ -1,5 +1,6 @@
 use axum::{extract::Query, http::StatusCode, Json};
 use pwhash::unix::verify;
+use rand::Rng;
 use reqwest::Response;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
@@ -110,7 +111,9 @@ pub async fn cadastra_usuario(usuario: Json<UsuarioInput>)
         documento,
         datacadastro: now,
         idusuario,
-        origemconta: "Sistema".to_string()
+        origemconta: "Sistema".to_string(),
+        idpublico: rand::thread_rng().gen_range(111111..999999).to_string(),
+        status: "Ativo".to_string()
     };
 
     let conn = &mut cria_conn()?;
