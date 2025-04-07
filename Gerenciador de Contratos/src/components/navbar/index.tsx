@@ -133,7 +133,7 @@ export function NavBar() {
             </NavLink>
           </li>
           <li>
-            <DropdownMenuDemo triggerColor="hsl(var(--text))" />
+            <DropdownMenuDemo triggerColor="" />
           </li>
           <li>
             {logged ? (
@@ -163,7 +163,7 @@ export function NavBar() {
       <ul className="nav-right">
         <li className="class1  hidden sm:flex ">
           <DropdownMenuDemo
-            triggerColor={"hsl(var(--text))"}
+            triggerColor={""}
           ></DropdownMenuDemo>
         </li>
 
