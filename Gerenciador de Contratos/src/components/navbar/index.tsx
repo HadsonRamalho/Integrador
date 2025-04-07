@@ -169,7 +169,7 @@ export function NavBar() {
 
         <li className=" hidden sm:flex">
           {logged ? (
-            <ProfileDropdownMenu titulo={"Meu Perfil"}></ProfileDropdownMenu>
+            <ProfileDropdownMenu></ProfileDropdownMenu>
           ) : (
             <NavLink
               to="/login"

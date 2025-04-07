@@ -71,7 +71,7 @@ export default function AuthPage() {
       setCadastrando(false);
       setMode("login");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (erro) {
+    } catch (erro: any) {
       console.error(erro);
       setCadastrando(false);
       alert(`Houve um erro ao tentar criar sua conta. ${erro.message}`);

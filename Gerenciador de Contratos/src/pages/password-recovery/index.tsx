@@ -83,12 +83,11 @@ export default function PasswordRecovery() {
 
       setMessage("Código enviado com sucesso. Verifique seu e-mail!");
       setIsCodeInputVisible(true);
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       setTimeout(() => setIsUpdating(false));
       setMessage("Erro ao enviar o código de recuperação.");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (error.message.includes("Google")) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setMessage(JSON.parse(error.message));
       }
       console.error(error);

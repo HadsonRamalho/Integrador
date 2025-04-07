@@ -1,3 +1,5 @@
+/** eslint-disable @typescript-eslint/no-unused-vars */
+
 import Layout from "@/layouts/default";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
