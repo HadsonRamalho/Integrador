@@ -1,10 +1,6 @@
 import Logged from "@/pages/logged";
 import Home from "@/pages/home";
-<<<<<<< HEAD
-import  Machine  from "@/pages/machine";
-=======
 import Machine  from "@/pages/machine";
->>>>>>> fa40764953dd316783ccdb1ed4055b77b0c04a35
 import Login from "@/pages/login";
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./privateRoute";

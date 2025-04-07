@@ -1,27 +1,4 @@
 import Layout from "@/layouts/default";
-<<<<<<< HEAD
-import  "@/components/navbar/navbar.css";
-function App() {
-  return (
-    <>
-      <Layout>
-        <main>
-          <div className="home">
-          <h1>Locação De Maquinas e Equipamentos</h1>
-          <p className="descricao">Lorem ipsum dolor sit, amet consectetur a.</p>
-          </div>
-          <div className="grid">
-            <h2 className="teste">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime tempore omnis sunt! odio?</h2>
-            <div className="quadro">
-              <img src="" alt="" />
-              
-            </div>
-            <div className="quadro2">
-              <img src="" alt="" />
-              
-            </div>
-          </div>
-=======
 import "@/components/home/home.css";
 import {
   Forklift,
@@ -213,7 +190,6 @@ function Home() {
               </Carousel>
             </div>
           </section>
->>>>>>> fa40764953dd316783ccdb1ed4055b77b0c04a35
         </main>
       </Layout>
     </>

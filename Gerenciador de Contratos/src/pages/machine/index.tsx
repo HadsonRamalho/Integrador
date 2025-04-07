@@ -1,12 +1,4 @@
 import Layout from "@/layouts/default";
-<<<<<<< HEAD
-
-export default function Machine() {
-  return (
-    <Layout>
-      <main>
-        <h1>Maquinas Disponiveis</h1>
-=======
 import { useEffect, useState } from "react";
 import { listMachine } from "@/services/api/machine/machine";
 import { Button } from "@/components/ui/button";
@@ -66,7 +58,6 @@ export default function Machine() {
               ))
           )}
         </div>        
->>>>>>> fa40764953dd316783ccdb1ed4055b77b0c04a35
       </main>
     </Layout>
   );

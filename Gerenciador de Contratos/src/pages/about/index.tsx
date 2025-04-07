@@ -1,12 +1,7 @@
 import "@/components/about/about.css";
 import { Button } from "@/components/ui/button";
 import Layout from "@/layouts/default";
-<<<<<<< HEAD
-
-
-=======
 import { useNavigate } from "react-router-dom";
->>>>>>> fa40764953dd316783ccdb1ed4055b77b0c04a35
 export default function About() {
     const navigate = useNavigate();
   return (

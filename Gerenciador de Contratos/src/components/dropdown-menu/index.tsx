@@ -43,7 +43,7 @@ export function DropdownMenuDemo({ triggerColor }: { triggerColor: string }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger style={{ color: triggerColor || "white" }}>
+      <DropdownMenuTrigger >
         {localStorage.getItem("cidade_dropdownmenu") || TriggerText}
       </DropdownMenuTrigger>
       <DropdownMenuContent style={{ zIndex: 1001 }}>

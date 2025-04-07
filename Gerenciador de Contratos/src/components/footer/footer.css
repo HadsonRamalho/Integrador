@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-/* .bg-gray {
-  background-color: #ccc ;
-} */
-=======
 .footer-container {
   background-color: hsl(var(--primary));
   display: flex;
@@ -44,4 +39,3 @@
 
 
 
->>>>>>> fa40764953dd316783ccdb1ed4055b77b0c04a35
