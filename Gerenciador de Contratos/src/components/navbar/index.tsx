@@ -63,7 +63,7 @@ export function NavBar() {
         <li className=" hidden sm:flex">
           {logged ? (
             <MachineDropdownMenu
-              triggerColor={"hsl(var(--text))"}
+              triggerColor={""}
             ></MachineDropdownMenu>
           ) : (
             <NavLink
@@ -112,14 +112,14 @@ export function NavBar() {
           </li>
           <li>
             {logged ? (
-              <MachineDropdownMenu triggerColor="hsl(var(--text))" />
+              <MachineDropdownMenu triggerColor="" />
             ) : (
               <NavLink
                 to="/machine"
                 className="class1"
                 onClick={() => setMenuOpen(false)}
               >
-                <p className="text-[hsl(var(--text))]">Máquinas</p>
+                <p >Máquinas</p>
               </NavLink>
             )}
           </li>
@@ -129,11 +129,11 @@ export function NavBar() {
               className="class1"
               onClick={() => setMenuOpen(false)}
             >
-              <p className="text-[hsl(var(--text))]">Sobre</p>
+              <p >Sobre</p>
             </NavLink>
           </li>
           <li>
-            <DropdownMenuDemo triggerColor="hsl(var(--text))" />
+            <DropdownMenuDemo triggerColor="" />
           </li>
           <li>
             {logged ? (
@@ -163,7 +163,7 @@ export function NavBar() {
       <ul className="nav-right">
         <li className="class1  hidden sm:flex ">
           <DropdownMenuDemo
-            triggerColor={"hsl(var(--text))"}
+            triggerColor={""}
           ></DropdownMenuDemo>
         </li>
 

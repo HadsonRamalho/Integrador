@@ -16,4 +16,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       </ThemeProvider>
     </PwaInstallProvider>
   </Providers>
+  
 );

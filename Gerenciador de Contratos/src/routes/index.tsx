@@ -22,6 +22,7 @@ import About from "@/pages/about";
 import { NotificationList } from "@/pages/notification-list";
 
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -109,6 +110,14 @@ const router = createBrowserRouter([
       <NotificationList/>
     </PrivateRoute>
   ),
+  },
+  {
+    path: "/machine",
+    element: <Machine/>,
+  },
+  {
+    path: "/login",
+    element: <Login/>,
   },
   {
     path: "/logado",
