@@ -43,7 +43,7 @@ export const MachineList = () => {
     <Layout>
       <main className="mt-10 mb-10">
         <div className="flex justify-center items-center ">
-          <div className="rounded-md w-[50vw]">
+          <div className="rounded-md w-full md:w-[50vw]">
             <MachineFilter
               machines={machines}
               filter={filter}

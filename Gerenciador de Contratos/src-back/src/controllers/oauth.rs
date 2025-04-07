@@ -1,5 +1,6 @@
 use axum::{extract::{Query, State}, Json};
 use hyper::StatusCode;
+use rand::Rng;
 use reqwest::{Client, Url};
 use serde::{Deserialize, Serialize};
 use std::{env, sync::Arc};
@@ -205,7 +206,9 @@ pub async fn cadastra_usuario_oauth(usuario: CredenciaisUsuarioGoogle)
         documento: "Não definido".to_string(),
         datacadastro: now,
         idusuario,
-        origemconta: "Google".to_string()
+        origemconta: "Google".to_string(),
+        status: "Ativo".to_string(),
+        idpublico: rand::thread_rng().gen_range(111111..999999).to_string(),
     };
 
     let conn = &mut cria_conn()?;

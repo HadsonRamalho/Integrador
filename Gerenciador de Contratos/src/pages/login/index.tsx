@@ -90,7 +90,7 @@ export default function AuthPage() {
   };
   
   return (
-    <Layout>
+  
       <main>
         <div className="container ml-0 md:ml-[6%]">
           <div className="content ">
@@ -198,6 +198,6 @@ export default function AuthPage() {
           </div>
         </div>
       </main>
-    </Layout>
+
   );
 }

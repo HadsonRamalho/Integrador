@@ -8,12 +8,14 @@ use crate::{controllers::{cria_conn, usuarios::AtualizaUsuarioInput}, schema::us
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Usuario {
     pub nome: String,
-    pub email: String,
+    pub email: String, 
     pub senha: String,
     pub documento: String,
     pub datacadastro: NaiveDateTime,
     pub idusuario: String,
-    pub origemconta: String
+    pub origemconta: String,
+    pub status: String,
+    pub idpublico: String
 }
 
 pub async fn cadastra_usuario(conn: &mut PgConnection, usuario: Usuario) 
