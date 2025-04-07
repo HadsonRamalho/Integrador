@@ -2,7 +2,6 @@ import "@/components/login/login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/layouts/Input";
-import Layout from "@/layouts/default";
 import maquina from "@/assets/authpage.jpg";
 import { Button } from "@/components/ui/button";
 //import { loginUser } from "@/services/api/user/user";
