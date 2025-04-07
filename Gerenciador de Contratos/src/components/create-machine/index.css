@@ -1,0 +1,30 @@
+.form-content {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    display: inline-block;
+  
+}
+  
+.button-group-maquinas {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* .container-maquinas {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-color: hsl(var(--background)); 
+    height: 50vh; 
+     padding-top: 10%;  
+    width: 100%;  
+} */
+
+.machine-image-update img{
+    max-width: 90%;
+    max-height: 40%;
+}

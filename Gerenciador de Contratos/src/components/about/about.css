@@ -1,0 +1,37 @@
+.about-maqexpress {
+    padding: 40px;
+    text-align: center;
+    border-radius: 8px;
+  }
+ 
+  .about-maqexpress h2 {
+    color: hsl(var(--text));
+    font-size: 2rem;
+  }
+  
+  .about-maqexpress p {
+    color: hsl(var(--text));
+    font-size: 1.2rem;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .purpose-personality {
+    padding: 40px;
+    text-align: center;
+
+    border-radius: 8px;
+  }
+  
+  .purpose-personality h2 {
+    color:hsl(var(--text));
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .purpose-personality p {
+    color:hsl(var(--text));
+    font-size: 1.2rem;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  

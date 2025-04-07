@@ -1,0 +1,103 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+section {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+
+.home-container {
+
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.titulo-section {
+    text-align: center;
+    padding: 50px 20px;
+
+}
+
+.titulo-section h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.titulo-section p {
+    font-size: 1.1rem;
+
+    margin-bottom: 20px;
+}
+
+.busca-search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+}
+
+.busca-search Input {
+    border: 1px solid hsl(var(--primary));
+    border: radius 5px;
+    padding: 10px;
+    width: 300px;
+    font-size: 1rem;
+
+}
+
+.busca-search button {
+    border-radius: 5px;
+    font-size: 1rem;
+
+}
+
+.beneficio-section {
+    justify-content: center;
+    padding: 50px, 20px;
+}
+
+.beneficios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+
+}
+.card-content{
+    padding: 50px 20px;
+}
+
+.destaque-section {
+    text-align: center;
+    color: hsl(var(--text));
+  
+}
+
+.teste {
+    text-align: center;
+    padding: 20px;
+    color: hsl(var(--text));
+}
+
+.card:hover {
+    transform: scale(1.1);
+    transition: transform 0.10s ease;
+   
+}
+
+.carousel:hover{
+    transform: scale(1.05);
+    transition: transform 0.2s ease; 
+    
+}
+
+.carousel-item:hover{
+    transition: transform 0.5 ease;
+    transform: scale(0.95);
+}
+

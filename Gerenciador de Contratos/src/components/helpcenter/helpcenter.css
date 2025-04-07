@@ -1,0 +1,27 @@
+.search-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
+
+.search-icon {
+    color: hsl(var(--primary));
+    margin-right: 8px;
+}
+.faq{
+    display: flex;
+    gap: 20px;
+    justify-self: center;
+    cursor: pointer;
+}
+
+hr{
+    background-color:hsl(var(--background));
+    border-top: 1px solid #6b7280;
+    display: block;
+    height: 1px;
+    line-height: 19px;
+    margin-top: 0;
+}

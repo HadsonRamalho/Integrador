@@ -1,3 +1,47 @@
+<<<<<<< HEAD
 /* .bg-gray {
   background-color: #ccc ;
 } */
+=======
+.footer-container {
+  background-color: hsl(var(--primary));
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap; 
+  padding: 20px 20px;
+}
+
+.footer-section {
+  color: hsl(var(--foreground));
+  min-width: 200px;
+  text-align: left;
+  padding: 10px 20px;
+}
+
+.footer-section h2 {
+  font-size: 16px;
+ 
+  font-weight: bold;
+  color: hsl(var(--foreground));
+  text-align: left;
+  padding: 0;
+}
+
+
+
+.footer-section li  {
+  margin: 6px 0;
+  margin-bottom: 13px;
+ 
+}
+
+.footer-section ul li a:hover {
+  text-decoration: none;
+  color: hsl(var(--ring));
+  transition: color 0.3s ease;
+}
+
+
+
+>>>>>>> fa40764953dd316783ccdb1ed4055b77b0c04a35

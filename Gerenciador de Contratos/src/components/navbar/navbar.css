@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body{
   margin: 0px;
   
@@ -64,4 +65,46 @@ body{
 
 
 
+=======
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.nav-left {
+  display: flex;
+ align-self: flex-start;
+  gap: 50px;
+  align-items: center;
+}
+
+.nav-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+
+}
+
+.class1 {
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.imagem {
+  max-height: 50px;
+  width: auto;
+}
+
+.bg-nav {
+  background-color: hsl(var(--primary)) ;
+  padding: 4px;
+} 
+>>>>>>> fa40764953dd316783ccdb1ed4055b77b0c04a35
 

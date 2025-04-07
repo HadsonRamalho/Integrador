@@ -1,0 +1,27 @@
+.machine-list-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
+    grid-template-rows: repeat(1, 1fr);
+    gap: 16px;
+    justify-items: center;
+}
+
+@media (max-width: 480px) {
+    .machine-list-grid{
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        justify-items: center;
+        gap: 0px;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.machine-list-grid.single-item {
+    max-width: 350px;
+    max-height: 500px;
+    margin: 0;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    grid-template-columns: 1fr;
+    justify-content: center;
+}

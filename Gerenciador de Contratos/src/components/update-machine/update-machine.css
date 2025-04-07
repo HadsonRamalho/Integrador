@@ -1,0 +1,47 @@
+.form-content-update {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    display: inline-block;
+  
+}
+  
+.button-group-maquinas-update {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.container-maquinas-update {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-color: hsl(var(--background)); 
+    /* height: 50vh; */
+     /* padding-top: 10%;  */
+    width: 100%;
+     
+}
+
+.form-maquinas-update {
+    width: 100vw;
+    background-color: hsl(var(--machine-card-bg));
+    padding: 20px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px; 
+}
+
+.form-maquinas-update input, select, textarea{
+    margin-left: 0%;
+}
+
+.form-maquinas-update label{
+    color: hsl(var(--text));
+    font-size: 1rem;
+    padding-left: 0;
+}
