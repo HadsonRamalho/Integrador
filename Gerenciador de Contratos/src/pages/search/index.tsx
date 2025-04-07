@@ -11,7 +11,7 @@ import { Search } from "lucide-react";
 const DetalhesMaquina = () => {
   const [maquinas, setMaquinas] = useState<Maquina[]>([]);
   const { busca } = useParams();
-  const [filter, setFilter] = useState(busca);
+  const [filter, setFilter] = useState(busca || "");
 
   useEffect(() => {
     const listMachines = async () => {
@@ -22,9 +22,10 @@ const DetalhesMaquina = () => {
     listMachines();
   }, []);
 
-  const filteredMachines = maquinas.filter((maquina) =>
-    maquina.nome.toLowerCase().includes(filter.toLowerCase()) || 
-    maquina.categoria.toLowerCase().includes(filter.toLowerCase())
+  const filteredMachines = maquinas.filter(
+    (maquina) =>
+      maquina.nome.toLowerCase().includes(filter.toLowerCase()) ||
+      maquina.categoria.toLowerCase().includes(filter.toLowerCase()),
   );
 
   return (
@@ -52,9 +53,9 @@ const DetalhesMaquina = () => {
               </div>
             ) : filteredMachines.length > 0 ? (
               filteredMachines.map((maquina) => (
-                <div 
-                  className={`search-machine-grid ${filteredMachines.length === 1 ? 'single-item' : ''}`}
-                  key={maquina.idmaquina}                  
+                <div
+                  className={`search-machine-grid ${filteredMachines.length === 1 ? "single-item" : ""}`}
+                  key={maquina.idmaquina}
                 >
                   <MachineCard machine={maquina} />
                 </div>
