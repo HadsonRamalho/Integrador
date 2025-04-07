@@ -115,30 +115,6 @@ export default function UserProfile() {
     }
   }
 
-  async function DeletaUsuario(id: string) {
-    try {
-      const res = await fetch(
-        `http://localhost:3003/deleta_usuario/?id=${encodeURIComponent(id)}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      if (!res.ok) {
-        const erro = await res.text();
-        console.log("Erro ao deletar: ", erro);
-        throw new Error(erro);
-      }
-      console.log("Conta deletada!");
-      alert("Conta deletada com sucesso!");
-      navigate("/login");
-    } catch (erro) {
-      console.error(erro);
-    }
-  }
-
   useEffect(() => {
     async function buscaEndereco(id: string) {
       try {
