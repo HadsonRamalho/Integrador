@@ -35,13 +35,9 @@ target/
 *.rmeta
 
 src-back/target 
-<<<<<<< HEAD
-src-tauri/target 
-=======
 src-tauri/target 
 src-back/images
 src-back/diesel.toml
 
 node_modules
 .env
->>>>>>> fa40764953dd316783ccdb1ed4055b77b0c04a35
