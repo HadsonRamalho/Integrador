@@ -19,25 +19,27 @@ export default function PasswordRecovery() {
   const [message, setMessage] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isCodeInputVisible, setIsCodeInputVisible] = useState(false);
-  const [code, setCode] = useState(""); 
+  const [code, setCode] = useState("");
 
   const [isPasswordInputVisible, setIsPasswordInputVisible] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const navigate = useNavigate();
-  
-  const API_URL = process.env.VITE_URL_BASE || "http://localhost:3003";
 
+  const API_URL = process.env.VITE_URL_BASE || "http://localhost:3003";
 
   const loadUserId = async () => {
     try {
-      const res = await fetch(`${API_URL}/busca_usuario_email/?email=${encodeURIComponent(email)}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
+      const res = await fetch(
+        `${API_URL}/busca_usuario_email/?email=${encodeURIComponent(email)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       if (!res.ok) {
         throw new Error(await res.text());
@@ -46,13 +48,12 @@ export default function PasswordRecovery() {
       const userid = await res.json();
       console.log("idusuario: ", userid);
       return userid;
-
     } catch (error) {
       setTimeout(() => setIsUpdating(false));
       setMessage("Erro ao enviar o código de recuperação.");
       console.error(error);
     }
-  }
+  };
 
   const handleSubmit = async () => {
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -77,15 +78,16 @@ export default function PasswordRecovery() {
 
       const idcodigo = await res.json();
       console.log("idcodigo: ", idcodigo[0]);
-      
+
       setTimeout(() => setIsUpdating(false));
 
       setMessage("Código enviado com sucesso. Verifique seu e-mail!");
       setIsCodeInputVisible(true);
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       setTimeout(() => setIsUpdating(false));
       setMessage("Erro ao enviar o código de recuperação.");
-      if (error.message.includes("Google")){
+      if (error.message.includes("Google")) {
         setMessage(JSON.parse(error.message));
       }
       console.error(error);
@@ -140,7 +142,7 @@ export default function PasswordRecovery() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ idusuario: userid, senha_nova: newPassword}),
+        body: JSON.stringify({ idusuario: userid, senha_nova: newPassword }),
       });
 
       if (!res.ok) {
@@ -165,7 +167,7 @@ export default function PasswordRecovery() {
           <div className="password-recovery flex justify-center items-center">
             <div className="input-box  w-full md:w-[50%] m-4 h-[50%] p-4">
               <h2 className="title">Recuperação de senha</h2>
-              {(!isCodeInputVisible && !isPasswordInputVisible) && (
+              {!isCodeInputVisible && !isPasswordInputVisible && (
                 <>
                   <Input
                     type="email"
@@ -182,25 +184,25 @@ export default function PasswordRecovery() {
 
               {isCodeInputVisible && (
                 <>
-                <label>Insira o código que foi enviado para o e-mail:</label>
+                  <label>Insira o código que foi enviado para o e-mail:</label>
                   <InputOTP maxLength={4} onChange={setCode}>
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator />
-                  <InputOTPGroup>
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                  </InputOTPGroup>
-                </InputOTP>
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                    </InputOTPGroup>
+                  </InputOTP>
                   <Button onClick={handleCodeSubmit} disabled={isUpdating}>
                     {isUpdating ? "Verificando código..." : "Verificar código"}
                   </Button>
                 </>
               )}
 
-            {isPasswordInputVisible && (
+              {isPasswordInputVisible && (
                 <>
                   <Input
                     type="password"
@@ -222,10 +224,14 @@ export default function PasswordRecovery() {
                 </>
               )}
               <p className="m-4">{message}</p>
-              <Button onClick={() => {navigate(-1)}}>
+              <Button
+                onClick={() => {
+                  navigate(-1);
+                }}
+              >
                 Voltar
               </Button>
-            </div>            
+            </div>
           </div>
         </main>
       </Layout>
