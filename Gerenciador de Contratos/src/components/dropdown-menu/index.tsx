@@ -10,7 +10,7 @@ import { Input } from "@/layouts";
 import { loadAddressUserId } from "@/services/api/address/address";
 import { useEffect, useState } from "react";
 
-export function DropdownMenuDemo({ triggerColor }: { triggerColor: string }) {
+export function DropdownMenuDemo() {
   const [cep, setCep] = useState("");
   const [pais, setPais] = useState("Brasil");
   const [estado, setEstado] = useState("");
@@ -43,7 +43,7 @@ export function DropdownMenuDemo({ triggerColor }: { triggerColor: string }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger >
+      <DropdownMenuTrigger>
         {localStorage.getItem("cidade_dropdownmenu") || TriggerText}
       </DropdownMenuTrigger>
       <DropdownMenuContent style={{ zIndex: 1001 }}>
