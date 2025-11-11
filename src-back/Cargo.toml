@@ -1,0 +1,39 @@
+[package]
+name = "maqexpress-api"
+version = "0.0.0"
+description = "MaqExpress"
+authors = ["Hadson Ramalho", "Maura Gusmão", "Jefferson Ferreira"]
+edition = "2021"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+dotenv = "0.15.0"
+pwhash = "1"
+lettre = "0.11.7"
+chrono = { version = "^0", features = ["serde"] }
+thiserror = "1.0"
+tokio = { version = "1", features = ["full", "macros", "rt-multi-thread"] }
+
+axum = { version = "0.8.1", features = [ "macros", "multipart"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dotenvy = "0.15"
+tower-http = {version = "0.6.1", features = ["cors", "fs"] }
+validator = { version = "0.18", features = ["derive"] }
+
+diesel = { version = "2.2.0", features = ["postgres", "chrono"] }
+pq-sys = { version = "0.6", features = ["bundled"] }
+openssl-sys = { version = "0.9.100", features = ["vendored"] }
+
+bigdecimal = "0.1.2"
+rand = "0.8.5"
+
+hyper = "1"
+axum_typed_multipart = "0.15.1"
+
+utoipa = "5"
+utoipa-swagger-ui = { version = "9", features = ["axum"] }
+utoipa-axum = "0.2"
+
+reqwest = { version = "0.12.12", features = ["json"] }
+oauth2 = "5.0.0"

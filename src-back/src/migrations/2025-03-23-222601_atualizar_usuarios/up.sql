@@ -1,0 +1,3 @@
+-- Your SQL goes here
+ALTER TABLE usuarios ADD COLUMN status VARCHAR(64) NOT NULL;
+ALTER TABLE usuarios ADD COLUMN idpublico VARCHAR(64) NOT NULL;
