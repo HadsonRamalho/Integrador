@@ -1,0 +1,20 @@
+{
+  "name": "integrador",
+  "version": "1.0.0",
+  "description": "Versão atual: v0.1603\r ## Materiais para a equipe\r #### Frontend:\r  - [JavaScript](https://developer.mozilla.org/pt-BR/docs/Learn/Getting_started_with_the_web/JavaScript_basics)\r  - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)\r  - [React](https://react.dev/learn)\r  - [TailwindCSS](https://tailwindcss.com/docs/styling-with-utility-classes)\r #### Backend:\r - [Rust-book](https://rust-br.github.io/rust-book-pt-br/)\r - [Rust-by-example](https://doc.rust-lang.org/stable/rust-by-example/) \r - [Rustlings](https://github.com/rust-lang/rustlings)\r #### Banco de dados:\r  - [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)\r  #### Versionamento:\r   - [Git](https://git-scm.com/downloads)\r   - [GitHub/Repositório](https://github.com/HadsonRamalho/Integrador)\r  #### IDE:\r   - [Visual Studio Code](https://code.visualstudio.com/)\r    #### Extensões para a IDE:\r    [(Backend) Rust-Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HadsonRamalho/Integrador.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HadsonRamalho/Integrador/issues"
+  },
+  "homepage": "https://github.com/HadsonRamalho/Integrador#readme"
+}

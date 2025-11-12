@@ -2,7 +2,6 @@ import "@/components/login/login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/layouts/Input";
-import maquina from "@/assets/authpage.jpg";
 import { Button } from "@/components/ui/button";
 //import { loginUser } from "@/services/api/user/user";
 import { handleAxiosError } from "@/services/api/error/error";
@@ -193,7 +192,7 @@ export default function AuthPage() {
           </div>
         </div>
         <div className="imagem-login">
-          <img src={maquina} alt="" />
+         
         </div>
       </div>
     </main>

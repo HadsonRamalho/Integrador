@@ -53,7 +53,7 @@ export function DropdownMenuDemo({ triggerColor }: { triggerColor: string }) {
             placeholder="CEP"
             type="cep"
             value={cep}
-            onChange={(e) => setCep(e.target.value)}
+            onChange={(e: { target: { value: any } }) => setCep(e.target.value)}
             disabled={true}
           />
         </DropdownMenuLabel>
@@ -62,7 +62,9 @@ export function DropdownMenuDemo({ triggerColor }: { triggerColor: string }) {
           <Input
             placeholder="País"
             value={pais}
-            onChange={(e) => setPais(e.target.value)}
+            onChange={(e: { target: { value: any } }) =>
+              setPais(e.target.value)
+            }
             disabled={true}
           />
         </DropdownMenuLabel>
@@ -71,7 +73,9 @@ export function DropdownMenuDemo({ triggerColor }: { triggerColor: string }) {
           <Input
             placeholder="Estado"
             value={estado}
-            onChange={(e) => setEstado(e.target.value)}
+            onChange={(e: { target: { value: any } }) =>
+              setEstado(e.target.value)
+            }
             disabled={true}
           />
         </DropdownMenuLabel>
@@ -80,7 +84,9 @@ export function DropdownMenuDemo({ triggerColor }: { triggerColor: string }) {
           <Input
             placeholder="Cidade"
             value={cidade}
-            onChange={(e) => setCidade(e.target.value)}
+            onChange={(e: { target: { value: any } }) =>
+              setCidade(e.target.value)
+            }
             disabled={true}
           />
         </DropdownMenuLabel>

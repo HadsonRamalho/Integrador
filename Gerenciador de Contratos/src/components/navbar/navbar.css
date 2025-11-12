@@ -1,41 +1,41 @@
-
 nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
 }
 
 .nav-left {
-  display: flex;
- align-self: flex-start;
-  gap: 50px;
-  align-items: center;
+    display: flex;
+    align-self: flex-start;
+    gap: 50px;
+    align-items: center;
 }
 
 .nav-right {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
-
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
 }
 
 .class1 {
-  text-decoration: none;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: color 0.3s;
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.3s;
 }
 
 .imagem {
-  max-height: 50px;
-  width: auto;
+    max-height: 50px;
+    width: auto;
 }
 
 .bg-nav {
-  background-color: hsl(var(--primary)) ;
-  padding: 4px;
-} 
-
+    background-color: hsl(var(--primary));
+    padding: 4px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
