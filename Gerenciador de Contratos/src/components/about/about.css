@@ -1,35 +1,34 @@
-.about-maqexpress {
-    padding: 40px;
-    text-align: center;
-    border-radius: 8px;
+.teste5 {
+    background-color: green;
+    
 }
 
-.about-maqexpress h2 {
-    color: hsl(var(--text));
-    font-size: 2rem;
+.teste2 {
+
+    padding: 20px;
+
+    
+    
+    
+ 
 }
 
-.about-maqexpress p {
-    color: hsl(var(--text));
-    font-size: 1.2rem;
-    margin-top: 10px;
-    line-height: 1.5;
-}
-.purpose-personality {
-    padding: 40px;
-    text-align: center;
-    border-radius: 8px;
-}
+.teste3 {
 
-.purpose-personality h2 {
-    color: hsl(var(--text));
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
+    display: flex;
+    padding: 10px;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
 
-.purpose-personality p {
-    color: hsl(var(--text));
-    font-size: 1.2rem;
-    margin-top: 10px;
-    line-height: 1.5;
+
+
+    
+}
+.teste4{
+   
+     width: 50%;
+     height: 12em;
+     text-align:center;
+ 
 }
