@@ -1,0 +1,130 @@
+import { createBrowserRouter } from "react-router-dom";
+import About from "@/pages/about";
+import ContractRequest from "@/pages/contract-request";
+import CreateMachine from "@/pages/create-machine";
+import GoogleAuthCallback from "@/pages/google-auth-callback";
+import HelpCenter from "@/pages/helpcenter";
+import Home from "@/pages/home";
+import HowWorks from "@/pages/howworks";
+import Logged from "@/pages/logged";
+import { Login } from "@/pages/login/Login";
+import Machine from "@/pages/machine";
+import MachineDetails from "@/pages/machine-details";
+import { MachineList } from "@/pages/machine-list";
+import { NotificationList } from "@/pages/notification-list";
+import PasswordRecovery from "@/pages/password-recovery/index.js";
+import PdfExample from "@/pages/pdf-example";
+import { Prohibited } from "@/pages/prohibited";
+import RentMachine from "@/pages/rent-machine";
+import DetalhesMaquina from "@/pages/search";
+import UpdateMachine from "@/pages/update-machine";
+import UserProfile from "@/pages/user-profile";
+import PrivateRoute from "./privateRoute";
+
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <Home />,
+		errorElement: <h1>404</h1>,
+	},
+	{
+		path: "/howworks",
+		element: <HowWorks />,
+	},
+	{
+		path: "/machine",
+		element: <Machine />,
+	},
+	{
+		path: "/machine-details/:publicid",
+		element: <MachineDetails />,
+	},
+	{
+		path: "/maquinas/:busca",
+		element: <DetalhesMaquina />,
+	},
+	{
+		path: "/machine-list",
+		element: <MachineList />,
+	},
+	{
+		path: "/update-machine/:publicid",
+		element: <UpdateMachine />,
+	},
+	{
+		path: "/pdf-example",
+		element: <PdfExample />,
+	},
+	{
+		path: "/password-recovery",
+		element: <PasswordRecovery />,
+	},
+	{
+		path: "/login",
+		element: <Login />,
+	},
+	{
+		path: "/about",
+		element: <About />,
+	},
+	{
+		path: "/rent-machine/:publicid",
+		element: (
+			<PrivateRoute>
+				<RentMachine />
+			</PrivateRoute>
+		),
+	},
+	{
+		path: "/create-machine",
+		element: (
+			<PrivateRoute>
+				<CreateMachine />
+			</PrivateRoute>
+		),
+	},
+	{
+		path: "/user-profile",
+		element: (
+			<PrivateRoute>
+				<UserProfile />
+			</PrivateRoute>
+		),
+	},
+	{
+		path: "/helpcenter",
+		element: <HelpCenter />,
+	},
+
+	{
+		path: "/contract-request",
+		element: <ContractRequest />,
+	},
+	{
+		path: "/notification-list",
+		element: (
+			<PrivateRoute>
+				<NotificationList />
+			</PrivateRoute>
+		),
+	},
+	{
+		path: "/logado",
+		element: (
+			<PrivateRoute>
+				<Logged />,
+			</PrivateRoute>
+		),
+	},
+	{
+		path: "/auth/google/callback",
+		element: <GoogleAuthCallback />,
+	},
+
+	{
+		path: "/entrada-proibida",
+		element: <Prohibited />,
+	},
+]);
+
+export default router;
