@@ -1,0 +1,57 @@
+[package]
+name = "gerenciador-de-contratos"
+version = "0.0.0"
+description = "Gerenciador de Contratos"
+authors = ["Hadson Ramalho, Jefferson Ferreira"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+dotenv = "0.15.0"
+pwhash = "1"
+lettre = "0.11.7"
+chrono = { version = "^0", features = ["serde"] }
+thiserror = "1.0"
+tokio = { version = "1", features = ["full", "macros", "rt-multi-thread"] }
+
+axum = { version = "0.8.1", features = [ "macros", "multipart"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dotenvy = "0.15"
+tower-http = {version = "0.6.1", features = ["cors", "fs"] }
+validator = { version = "0.18", features = ["derive"] }
+
+diesel = { version = "2.2.9", features = [
+    "postgres",
+    "chrono",
+    "numeric",
+    "serde_json",
+] }
+pq-sys = { version = "0.6", features = ["bundled"] }
+openssl-sys = { version = "0.9.100", features = ["vendored"] }
+
+bigdecimal = "0.1.2"
+rand = "0.8.5"
+
+hyper = "1"
+axum_typed_multipart = "0.15.1"
+
+utoipa = "5"
+utoipa-swagger-ui = { version = "9", features = ["axum"] }
+utoipa-axum = "0.2"
+
+reqwest = { version = "0.12.12", features = ["json"] }
+oauth2 = "5.0.0"
+diesel-async = { version = "0.5.2", features = [
+    "postgres",
+    "tokio",
+    "deadpool",
+] }
+futures-util = "0.3.31"
+rustls = "0.23.28"
+rustls-platform-verifier = "0.6.0"
+tokio-postgres-rustls = "0.13.0"
+tokio-postgres = "0.7.13"
+envy = "0.4.2"
